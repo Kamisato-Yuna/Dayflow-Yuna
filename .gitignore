@@ -8,6 +8,9 @@ LLMEvalScript.swift
 Dayflow/eval/
 evals/
 build/
+build/SourcePackages/
+build/xcode-derived/
+build/xcode-sourcepackages/
 build_tmp/
 build_universal/
 .claude/
@@ -24,6 +27,7 @@ agents.md
 
 # Internal tools
 tools/
+.codegraph/
 
 # Eval frameworks
 claudeeval/
