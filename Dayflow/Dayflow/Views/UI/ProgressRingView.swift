@@ -98,7 +98,7 @@ struct ProgressRingView: View {
         .scaleEffect(ringScale)
         .rotationEffect(.degrees(ringRotation))
 
-      Text("\(displayPercent)%")
+      Text(String(displayPercent) + "%")
         .font(.custom("Figtree-Bold", size: 16))
         .foregroundColor(K.textColor)
         .scaleEffect(percentScale)

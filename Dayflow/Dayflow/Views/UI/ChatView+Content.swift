@@ -12,7 +12,7 @@ extension ChatView {
         // 清除 chat button (only show if t这里 are messages)
         if !chatService.messages.isEmpty {
           Button(action: { resetConversation() }) {
-            Text("清除")
+            Text("清空")
               .font(.custom("Figtree", size: 12).weight(.semibold))
               .foregroundColor(Color(hex: "F96E00"))
               .padding(.horizontal, 10)
@@ -27,7 +27,7 @@ extension ChatView {
               )
           }
           .buttonStyle(.plain)
-          .help("清除 chat")
+          .help("清空对话")
           .pointingHandCursor()
         }
 

@@ -115,15 +115,15 @@ struct ChatView: View {
     .onChange(of: chatService.messages.count) { _, _ in
       sync记忆FromStoreIfNeeded()
     }
-    .alert("Switch provider?", isPresented: $showToolSwitchConfirm) {
-      Button("Switch and 重置", role: .destructive) {
+    .alert("切换提供方？", isPresented: $showToolSwitchConfirm) {
+      Button("切换并重置", role: .destructive) {
         confirmProviderSwitch()
       }
       Button("取消", role: .cancel) {
         pendingProviderSelection = nil
       }
     } message: {
-      Text("Switching to \(pendingProviderLabel) will clear this chat's context.")
+      Text("切换为 \(pendingProviderLabel) 后会清空当前对话的上下文。")
     }
     .environment(\.colorScheme, .light)
   }

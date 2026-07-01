@@ -16,14 +16,14 @@ struct SettingsOtherTabView: View {
 
   private var appPreferencesSection: some View {
     SettingsSection(
-      title: "App preferences",
-      subtitle: "General toggles and telemetry settings."
+      title: "应用偏好",
+      subtitle: "常用开关与数据上报设置。"
     ) {
       VStack(alignment: .leading, spacing: 0) {
         SettingsRow(
-          label: "Launch Dayflow at login",
+          label: "登录后自动启动 Dayflow",
           subtitle:
-            "Keeps the menu bar controller running right after you sign in so capture can resume instantly."
+            "登录后自动启动菜单栏服务，录制可在你开机后立即恢复。"
         ) {
           SettingsToggle(
             is开启: Binding(
@@ -33,36 +33,36 @@ struct SettingsOtherTabView: View {
           )
         }
 
-        SettingsRow(label: "Share crash reports and anonymous usage data") {
+        SettingsRow(label: "分享崩溃报告与匿名使用数据") {
           SettingsToggle(is开启: $viewModel.analyticsEnabled)
         }
 
         SettingsRow(
-          label: "Show Dock icon",
-          subtitle: "When off, Dayflow runs as a menu bar-only app."
+          label: "显示 Dock 图标",
+          subtitle: "关闭后，Dayflow 将仅在菜单栏运行。"
         ) {
           SettingsToggle(is开启: $viewModel.showDockIcon)
         }
 
         SettingsRow(
-          label: "Show app/website icons in timeline",
-          subtitle: "When off, timeline cards won't show app or website icons."
+          label: "显示应用和网站图标",
+          subtitle: "关闭后，时间线卡片不再显示应用或网站图标。"
         ) {
           SettingsToggle(is开启: $viewModel.showTimelineAppIcons)
         }
 
         SettingsRow(
-          label: "Show daily goal popups",
+          label: "显示每日目标弹窗",
           subtitle:
-            "When off, Dayflow won't automatically open goal setup or yesterday's review after 4am."
+            "关闭后，Dayflow 不再在凌晨 4 点后自动打开目标设置或昨日复盘。"
         ) {
           SettingsToggle(is开启: $viewModel.showDailyGoalPopups)
         }
 
         SettingsRow(
-          label: "Save all timelapses to disk",
+          label: "将所有延时摄影保存到磁盘",
           subtitle:
-            "New and reprocessed timeline cards will pre-generate timelapse videos and store them on disk instead of building them on demand. Uses more storage and background processing.",
+            "新建与重处理时间线卡片会提前生成延时摄影并保存在磁盘中，不再按需生成。此功能会增加磁盘占用和后台处理。",
           showsDivider: false
         ) {
           SettingsToggle(is开启: $viewModel.save全部TimelapsesToDisk)
@@ -75,9 +75,9 @@ struct SettingsOtherTabView: View {
 
   private var outputLanguageSection: some View {
     SettingsSection(
-      title: "Output language override",
+      title: "AI 输出语言",
       subtitle:
-        "The default language is English. You can specify any language 这里 (examples: English, 简体中文, Español, 日本語, 한국어, Français)."
+        "该设置控制 AI 回复使用的语言，不影响界面语言（默认显示中文）。你可以填写任意语言，例如：English、简体中文、Español、日本語、한국어、Français。"
     ) {
       HStack(spacing: 10) {
         TextField("English", text: $viewModel.outputLanguageOverride)
@@ -90,7 +90,7 @@ struct SettingsOtherTabView: View {
           }
 
         SettingsSecondaryButton(
-          title: viewModel.isOutputLanguageOverrideSaved ? "Saved" : "保存",
+          title: viewModel.isOutputLanguageOverrideSaved ? "已保存" : "保存",
           systemImage: viewModel.isOutputLanguageOverrideSaved
             ? "checkmark" : nil,
           isDisabled: viewModel.isOutputLanguageOverrideSaved,

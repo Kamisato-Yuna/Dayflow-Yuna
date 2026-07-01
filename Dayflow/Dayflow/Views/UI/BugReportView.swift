@@ -19,7 +19,7 @@ struct BugReportView: View {
           .foregroundColor(.black.opacity(0.9))
 
         Text(
-          "邮箱 works great if you want to drop a quick note, Discord if you want to join the community, and if you’d prefer to chat, find some time on my calendar - I’d love to dig into why Dayflow is or isn’t working well for you."
+          "如果你想快速反馈建议可以发邮件；如果你想加入社区可以上 Discord；如果想深入交流，我也很乐意你在我的日历里找个时间聊聊。"
         )
         .font(.custom("Figtree", size: 16))
         .foregroundColor(.black.opacity(0.65))
@@ -64,7 +64,7 @@ struct BugReportView: View {
                     .renderingMode(.original)
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 22, height: 18)
-                  Text("加入 Discord")
+                  Text("加入 Discord 社区")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
@@ -134,7 +134,7 @@ struct BugReportView: View {
                     .font(.system(size: 16, weight: .semibold))
                   Text(
                     didCopyDebugLogs
-                      ? "已复制" : (isCopyingDebugLogs ? "Preparing..." : "Copy debug logs")
+                      ? "已复制" : (isCopyingDebugLogs ? "准备中..." : "复制调试日志")
                   )
                   .font(.custom("Figtree", size: 15).weight(.semibold))
                 }

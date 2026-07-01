@@ -361,7 +361,7 @@ struct LLMProviderSetupView: View {
 
         VStack(alignment: .leading, spacing: 12) {
           Text(
-            "Choose your Gemini model. We recommend 3.5 Flash, with 3.1 Flash-Lite available as a fallback."
+            "请选择你的 Gemini 模型。我们建议使用 3.5 Flash，3.1 Flash-Lite 可作为回退。"
           )
           .font(.custom("Figtree", size: 16))
           .fontWeight(.semibold)
@@ -391,20 +391,20 @@ struct LLMProviderSetupView: View {
     case .modelDownload(let command):
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("下载 AI 模型")
+          Text("下载人工智能模型")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
 
-          Text("This model enables Dayflow to understand what's on your screen")
+          Text("该模型可以让 Dayflow 理解你屏幕上显示的内容")
             .font(.custom("Figtree", size: 14))
             .foregroundColor(.black.opacity(0.6))
         }
 
         TerminalCommandView(
-          title: "Run this command:",
+          title: "运行这条命令：",
           subtitle:
-            "This will download the \(LocalModelPreset.qwen3VL4B.displayName) model (about 5GB)",
+            "这将下载 \(LocalModelPreset.qwen3VL4B.displayName) 模型（约 5GB）",
           command: command
         )
 
@@ -430,10 +430,8 @@ struct LLMProviderSetupView: View {
               .lineLimit(nil)
             // Additional guidance for the local intro step only
             if step.id == "intro" && providerType == "ollama" {
-              (Text("继续d users can pick any ") + Text("vision-capable").fontWeight(.bold)
-                + Text(
-                  " LLM, but we strongly recommend using Qwen3-VL 4B based on our internal benchmarks."
-                ))
+              (Text("你可以选择任意支持视觉能力的 LLM，但根据我们内部基准测试，强烈建议使用 ") + Text("Qwen3-VL 4B")
+                .fontWeight(.bold) + Text("。"))
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(.black.opacity(0.6))
                 .fixedSize(horizontal: false, vertical: true)
@@ -469,7 +467,7 @@ struct LLMProviderSetupView: View {
                     .foregroundColor(.black.opacity(0.65))
                   Picker("引擎", selection: $setupState.local引擎) {
                     Text("LM Studio").tag(Local引擎.lmstudio)
-                    Text("自定义 model").tag(Local引擎.custom)
+                    Text("自定义模型").tag(Local引擎.custom)
                   }
                   .pickerStyle(.segmented)
                   .frame(maxWidth: 380)
@@ -523,13 +521,13 @@ struct LLMProviderSetupView: View {
     case .apiKeyInstructions:
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("Get your Gemini API key")
+          Text("获取你的 Gemini API key")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
 
           Text(
-            "allows you to run Dayflow for free. 全部 you need is a Google account - no credit card required."
+            "可让你免费使用 Dayflow。你只需要一个 Google 账号，不需要信用卡。"
           )
           .font(.custom("Figtree", size: 14))
           .foregroundColor(.black.opacity(0.6))
@@ -561,7 +559,7 @@ struct LLMProviderSetupView: View {
               .foregroundColor(.black.opacity(0.6))
               .frame(width: 20, alignment: .leading)
 
-            Text("Click \"Get API key\" in the top right")
+            Text("在右上角点击“获取 API key”")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.8))
           }
