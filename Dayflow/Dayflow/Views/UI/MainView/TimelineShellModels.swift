@@ -30,8 +30,8 @@ struct TimelineWeekRange: Equatable, Sendable {
   let weekEnd: Date
   let days: [TimelineWeekDay]
 
-  private static let calendar: Calendar = {
-    var calendar = Calendar(identifier: .gregorian)
+  private static let calendar: 日历 = {
+    var calendar = 日历(identifier: .gregorian)
     calendar.timeZone = .autoupdatingCurrent
     calendar.firstWeekday = 2
     return calendar
@@ -77,7 +77,7 @@ struct TimelineWeekRange: Equatable, Sendable {
     }
   }
 
-  static func containing(_ date: Date, calendar: Calendar = Self.calendar) -> TimelineWeekRange {
+  static func containing(_ date: Date, calendar: 日历 = Self.calendar) -> TimelineWeekRange {
     let timelineDate = timelineDisplayDate(from: date, now: date)
     let anchorDay = calendar.startOfDay(for: timelineDate)
     let weekday = calendar.component(.weekday, from: anchorDay)
@@ -91,7 +91,7 @@ struct TimelineWeekRange: Equatable, Sendable {
     return TimelineWeekRange(weekStart: weekStart, weekEnd: weekEnd)
   }
 
-  func shifted(byWeeks weeks: Int, calendar: Calendar = Self.calendar) -> TimelineWeekRange {
+  func shifted(byWeeks weeks: Int, calendar: 日历 = Self.calendar) -> TimelineWeekRange {
     let shiftedStart = calendar.date(byAdding: .day, value: weeks * 7, to: weekStart) ?? weekStart
     let shiftedEnd = calendar.date(byAdding: .day, value: 7, to: shiftedStart) ?? shiftedStart
     return TimelineWeekRange(weekStart: shiftedStart, weekEnd: shiftedEnd)

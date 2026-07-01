@@ -15,14 +15,14 @@ final class OllamaProvider {
       return m
     }
     // Fallback to a sensible default
-    let engine: LocalEngine = isLMStudio ? .lmstudio : .ollama
+    let engine: Local引擎 = isLMStudio ? .lmstudio : .ollama
     return LocalModelPreferences.defaultModelId(for: engine)
   }
   var isLMStudio: Bool {
-    (UserDefaults.standard.string(forKey: "llmLocalEngine") ?? "ollama") == "lmstudio"
+    (UserDefaults.standard.string(forKey: "llmLocal引擎") ?? "ollama") == "lmstudio"
   }
-  var isCustomEngine: Bool {
-    (UserDefaults.standard.string(forKey: "llmLocalEngine") ?? "ollama") == "custom"
+  var is自定义引擎: Bool {
+    (UserDefaults.standard.string(forKey: "llmLocal引擎") ?? "ollama") == "custom"
   }
   var customAPIKey: String? {
     let trimmed =
@@ -32,8 +32,8 @@ final class OllamaProvider {
   }
 
   // Get the actual local engine type for analytics tracking
-  var localEngine: String {
-    UserDefaults.standard.string(forKey: "llmLocalEngine") ?? "ollama"
+  var local引擎: String {
+    UserDefaults.standard.string(forKey: "llmLocal引擎") ?? "ollama"
   }
 
   init(endpoint: String = "http://localhost:1234") {
@@ -54,7 +54,7 @@ final class OllamaProvider {
 
   func logCallDuration(operation: String, duration: TimeInterval, status: Int? = nil) {
     let statusText = status.map { " status=\($0)" } ?? ""
-    print("⏱️ [\(localEngine)] \(operation) \(String(format: "%.2f", duration))s\(statusText)")
+    print("⏱️ [\(local引擎)] \(operation) \(String(format: "%.2f", duration))s\(statusText)")
   }
 
   func generateActivityCards(
@@ -173,12 +173,12 @@ final class OllamaProvider {
     let cleaned = raw.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !cleaned.isEmpty else { return categories.first?.name ?? "" }
     let normalized = cleaned.lowercased()
-    if let match = categories.first(where: {
+    if let match = categories.first(w这里: {
       $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalized
     }) {
       return match.name
     }
-    if let idle = categories.first(where: { $0.isIdle }) {
+    if let idle = categories.first(w这里: { $0.isIdle }) {
       let idleLabels = [
         "idle", "idle time", idle.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
       ]

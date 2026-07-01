@@ -39,7 +39,7 @@ final class TimelineReviewFrameLoader: @unchecked Sendable {
     let queue = OperationQueue()
     queue.name = "com.dayflow.timelineReview.decode"
     queue.qualityOfService = .utility
-    queue.maxConcurrentOperationCount = 2  // Throttled maximum concurrency to save Cores
+    queue.maxConcurrentOperation数量 = 2  // Throttled maximum concurrency to save Cores
     return queue
   }()
   private let syncQueue = DispatchQueue(label: "com.dayflow.timelineReview.decode.sync")
@@ -148,7 +148,7 @@ final class TimelineReviewFrameLoader: @unchecked Sendable {
   private func storeImage(_ image: CGImage, for index: Int) {
     syncQueue.sync {
       cache[index] = image
-      cacheOrder.removeAll { $0 == index }
+      cacheOrder.remove全部 { $0 == index }
       cacheOrder.append(index)
 
       while cacheOrder.count > cacheLimit {
@@ -178,7 +178,7 @@ final class TimelineReviewFrameLoader: @unchecked Sendable {
       kCGImageSourceCreateThumbnailWithTransform: true,
       kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
     ]
-    // Silently requests the machine's Hardware Media Engines (M1/M2) to bypass the CPU for JPEG operations.
+    // Silently requests the machine's Hardware Media 引擎s (M1/M2) to bypass the CPU for JPEG operations.
     var finalOptions = options
     finalOptions["kCGImageSourceUseHardwareAcceleration" as CFString] = true
 

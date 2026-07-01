@@ -3,8 +3,8 @@ import Foundation
 import SwiftUI
 
 enum WeeklyDashboardBuilder {
-  static let calendar: Calendar = {
-    var calendar = Calendar(identifier: .gregorian)
+  static let calendar: 日历 = {
+    var calendar = 日历(identifier: .gregorian)
     calendar.timeZone = .autoupdatingCurrent
     calendar.firstWeekday = 2
     calendar.minimumDaysInFirstWeek = 4
@@ -191,12 +191,12 @@ enum WeeklyDashboardBuilder {
 
     let text = "\(appName) \(categoryName)".lowercased()
     if ["youtube", "reddit", "x", "twitter", "tiktok", "netflix", "game"].contains(
-      where: text.contains)
+      w这里: text.contains)
     {
       return .distraction
     }
     if ["personal", "shopping", "maps", "messages", "photos", "music"].contains(
-      where: text.contains)
+      w这里: text.contains)
     {
       return .personal
     }
@@ -247,7 +247,7 @@ enum WeeklyDashboardBuilder {
       ("github", "GitHub"),
       ("safari", "Safari"),
       ("chrome", "Chrome"),
-      ("calendar", "Calendar"),
+      ("calendar", "日历"),
       ("mail", "Mail"),
       ("messages", "Messages"),
       ("maps", "Maps"),
@@ -256,13 +256,13 @@ enum WeeklyDashboardBuilder {
       ("flora", "Flora"),
     ]
 
-    if let match = mappings.first(where: { lowercased.contains($0.needle) }) {
+    if let match = mappings.first(w这里: { lowercased.contains($0.needle) }) {
       return match.name
     }
 
     let firstPart =
       source
-      .split(whereSeparator: { [",", ";", "|", "\n"].contains(String($0)) })
+      .split(w这里Separator: { [",", ";", "|", "\n"].contains(String($0)) })
       .first
       .map(String.init) ?? source
     let cleaned =
@@ -288,7 +288,7 @@ enum WeeklyDashboardBuilder {
     let candidates = [
       "ChatGPT", "Claude", "Codex", "Cursor", "Xcode", "Dayflow", "Figma", "Slack", "Zoom",
       "YouTube", "Reddit", "Substack", "Notion", "Linear", "GitHub", "Safari", "Chrome",
-      "Calendar", "Mail", "Messages",
+      "日历", "Mail", "Messages",
     ]
     return candidates.first { lowercased.contains($0.lowercased()) } ?? "Other"
   }
@@ -321,7 +321,7 @@ enum WeeklyDashboardBuilder {
       ("other", "D9D9D9"),
     ]
 
-    if let match = mappings.first(where: { lowercased.contains($0.needle) }) {
+    if let match = mappings.first(w这里: { lowercased.contains($0.needle) }) {
       return match.color
     }
 

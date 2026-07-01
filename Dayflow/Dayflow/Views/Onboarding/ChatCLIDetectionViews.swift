@@ -94,7 +94,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
       }
 
       Text(
-        "Tip: Once both are installed, you can choose which provider Dayflow uses from Settings → AI Provider."
+        "Tip: 开启ce both are installed, you can choose which provider Dayflow uses from Settings → AI Provider."
       )
       .font(.custom("Figtree", size: 12))
       .foregroundColor(.black.opacity(0.5))
@@ -151,7 +151,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
 
         nextButton()
           .opacity(canContinue ? 1.0 : 0.5)
-          .allowsHitTesting(canContinue)
+          .allowsHit测试ing(canContinue)
       }
     }
   }
@@ -189,7 +189,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(enabled ? 0.85 : 0.4))
-          Text(enabled ? "Ready to use" : "Install to enable")
+          Text(enabled ? "可用" : "安装后启用")
             .font(.custom("Figtree", size: 11))
             .foregroundColor(.black.opacity(enabled ? 0.5 : 0.35))
         }

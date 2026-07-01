@@ -22,7 +22,7 @@ struct LLMProviderSetupView: View {
 
   // Layout constants
   let sidebarWidth: CGFloat = 250
-  let fixedOffset: CGFloat = 50
+  let fixed关闭set: CGFloat = 50
 
   @StateObject var setupState = ProviderSetupState()
   @State var sidebarOpacity: Double = 0
@@ -48,7 +48,7 @@ struct LLMProviderSetupView: View {
             }
           }
           .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
-          // Position where sidebar items start: 20 + 16 = 36px
+          // Position w这里 sidebar items start: 20 + 16 = 36px
           .padding(.leading, 36)  // Align with sidebar item structure
           .pointingHandCursor()
 
@@ -65,10 +65,10 @@ struct LLMProviderSetupView: View {
 
           Spacer()
         }
-        .padding(.leading, 40)  // Gap between sidebar and content
+        .padding(.leading, 40)  // 空档 between sidebar and content
       }
-      .padding(.leading, fixedOffset)
-      .padding(.top, fixedOffset / 2)
+      .padding(.leading, fixed关闭set)
+      .padding(.top, fixed关闭set / 2)
       .padding(.bottom, 20)
 
       // Main content area with sidebar and content
@@ -94,7 +94,7 @@ struct LLMProviderSetupView: View {
         .opacity(contentOpacity)
         .textSelection(.enabled)
       }
-      .padding(.leading, fixedOffset)
+      .padding(.leading, fixed关闭set)
 
       Spacer()  // Push everything to top
     }
@@ -108,8 +108,8 @@ struct LLMProviderSetupView: View {
 
   var nextButtonText: String {
     if let title = setupState.currentStep.contentType.informationTitle {
-      if (title == "Testing" || title == "Test Connection") && !setupState.testSuccessful {
-        return "Test Required"
+      if (title == "测试ing" || title == "测试 Connection") && !setupState.testSuccessful {
+        return "测试 Required"
       }
     }
     return "下一步"
@@ -126,7 +126,7 @@ struct LLMProviderSetupView: View {
         content: {
           HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill").font(.system(size: 14))
-            Text("Complete Setup").font(.custom("Figtree", size: 14)).fontWeight(.semibold)
+            Text("完成设置").font(.custom("Figtree", size: 14)).fontWeight(.semibold)
           }
         },
         background: Color(red: 0.25, green: 0.17, blue: 0),
@@ -169,7 +169,7 @@ struct LLMProviderSetupView: View {
     case .localChoice:
       VStack(alignment: .leading, spacing: 20) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("Choose your local AI engine")
+          Text("选择本地 AI 引擎")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
@@ -182,7 +182,7 @@ struct LLMProviderSetupView: View {
         HStack(alignment: .center, spacing: 12) {
           DayflowSurfaceButton(
             action: {
-              setupState.selectEngine(.lmstudio)
+              setupState.select引擎(.lmstudio)
               openLMStudioDownload()
             },
             content: {
@@ -229,7 +229,7 @@ struct LLMProviderSetupView: View {
           .font(.custom("Figtree", size: 24))
           .fontWeight(.semibold)
           .foregroundColor(.black.opacity(0.9))
-        if setupState.localEngine == .ollama {
+        if setupState.local引擎 == .ollama {
           Text("After installing Ollama, run this in your terminal to download the model (≈5GB):")
             .font(.custom("Figtree", size: 14))
             .foregroundColor(.black.opacity(0.6))
@@ -238,7 +238,7 @@ struct LLMProviderSetupView: View {
             subtitle: "Downloads Qwen3 Vision 4B for Ollama",
             command: "ollama pull qwen3-vl:4b"
           )
-        } else if setupState.localEngine == .lmstudio {
+        } else if setupState.local引擎 == .lmstudio {
           VStack(alignment: .leading, spacing: 16) {
             Text("After installing LM Studio, download the recommended model:")
               .font(.custom("Figtree", size: 14))
@@ -268,7 +268,7 @@ struct LLMProviderSetupView: View {
                 .foregroundColor(.black.opacity(0.65))
 
               Text(
-                "Once downloaded, turn on 'Local Server' in LM Studio (default http://localhost:1234)"
+                "开启ce downloaded, turn on 'Local Server' in LM Studio (default http://localhost:1234)"
               )
               .font(.custom("Figtree", size: 13))
               .foregroundColor(.black.opacity(0.65))
@@ -277,7 +277,7 @@ struct LLMProviderSetupView: View {
 
             // Fallback manual instructions
             VStack(alignment: .leading, spacing: 4) {
-              Text("Manual setup:")
+              Text("手动设置：")
                 .font(.custom("Figtree", size: 12))
                 .fontWeight(.semibold)
                 .foregroundColor(.black.opacity(0.5))
@@ -391,7 +391,7 @@ struct LLMProviderSetupView: View {
     case .modelDownload(let command):
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("Download the AI model")
+          Text("下载 AI 模型")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
@@ -430,7 +430,7 @@ struct LLMProviderSetupView: View {
               .lineLimit(nil)
             // Additional guidance for the local intro step only
             if step.id == "intro" && providerType == "ollama" {
-              (Text("Advanced users can pick any ") + Text("vision-capable").fontWeight(.bold)
+              (Text("继续d users can pick any ") + Text("vision-capable").fontWeight(.bold)
                 + Text(
                   " LLM, but we strongly recommend using Qwen3-VL 4B based on our internal benchmarks."
                 ))
@@ -445,47 +445,47 @@ struct LLMProviderSetupView: View {
         // Content area scrolls if needed; Next stays visible below
         ScrollView(.vertical, showsIndicators: true) {
           VStack(alignment: .leading, spacing: 16) {
-            if title == "Testing" || title == "Test Connection" {
+            if title == "测试ing" || title == "测试 Connection" {
               if providerType == "gemini" {
-                TestConnectionView(
-                  onTestComplete: { success in
-                    setupState.hasTestedConnection = true
+                测试ConnectionView(
+                  on测试Complete: { success in
+                    setupState.has测试edConnection = true
                     setupState.testSuccessful = success
                   }
                 )
               } else if providerType == "chatgpt_claude" {
-                ChatCLITestView(
+                ChatCLI测试View(
                   selectedTool: setupState.preferredCLITool,
-                  onTestComplete: { success in
-                    setupState.hasTestedConnection = true
+                  on测试Complete: { success in
+                    setupState.has测试edConnection = true
                     setupState.testSuccessful = success
                   }
                 )
               } else {
-                // Engine selection: LM Studio or Custom
+                // 引擎 selection: LM Studio or 自定义
                 VStack(alignment: .leading, spacing: 12) {
-                  Text("Which tool are you using?")
+                  Text("你正在使用哪个工具？")
                     .font(.custom("Figtree", size: 14))
                     .foregroundColor(.black.opacity(0.65))
-                  Picker("Engine", selection: $setupState.localEngine) {
-                    Text("LM Studio").tag(LocalEngine.lmstudio)
-                    Text("Custom model").tag(LocalEngine.custom)
+                  Picker("引擎", selection: $setupState.local引擎) {
+                    Text("LM Studio").tag(Local引擎.lmstudio)
+                    Text("自定义 model").tag(Local引擎.custom)
                   }
                   .pickerStyle(.segmented)
                   .frame(maxWidth: 380)
                 }
-                .onChange(of: setupState.localEngine) { _, newValue in
-                  setupState.selectEngine(newValue)
+                .onChange(of: setupState.local引擎) { _, newValue in
+                  setupState.select引擎(newValue)
                 }
 
-                LocalLLMTestView(
+                LocalLLM测试View(
                   baseURL: $setupState.localBaseURL,
                   modelId: $setupState.localModelId,
                   apiKey: $setupState.localAPIKey,
-                  engine: setupState.localEngine,
-                  showInputs: setupState.localEngine == .custom,
-                  onTestComplete: { success in
-                    setupState.hasTestedConnection = true
+                  engine: setupState.local引擎,
+                  showInputs: setupState.local引擎 == .custom,
+                  on测试Complete: { success in
+                    setupState.has测试edConnection = true
                     setupState.testSuccessful = success
                   }
                 )
@@ -529,7 +529,7 @@ struct LLMProviderSetupView: View {
             .foregroundColor(.black.opacity(0.9))
 
           Text(
-            "allows you to run Dayflow for free. All you need is a Google account - no credit card required."
+            "allows you to run Dayflow for free. 全部 you need is a Google account - no credit card required."
           )
           .font(.custom("Figtree", size: 14))
           .foregroundColor(.black.opacity(0.6))
@@ -543,7 +543,7 @@ struct LLMProviderSetupView: View {
               .frame(width: 20, alignment: .leading)
 
             Group {
-              Text("Visit Google AI Studio ")
+              Text("打开 Google AI Studio ")
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(.black.opacity(0.8))
                 + Text("(aistudio.google.com)")
@@ -572,21 +572,21 @@ struct LLMProviderSetupView: View {
               .foregroundColor(.black.opacity(0.6))
               .frame(width: 20, alignment: .leading)
 
-            Text("Create a new API key and copy it")
+            Text("生成新 API Key 并复制")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.8))
           }
         }
         .padding(.vertical, 12)
 
-        // Buttons row with Open Google AI Studio on left, Next on right
+        // Buttons row with 打开 Google AI Studio on left, Next on right
         HStack {
           DayflowSurfaceButton(
             action: openGoogleAIStudio,
             content: {
               HStack(spacing: 8) {
                 Image(systemName: "safari").font(.system(size: 14))
-                Text("Open Google AI Studio").font(.custom("Figtree", size: 14)).fontWeight(
+                Text("打开 Google AI Studio").font(.custom("Figtree", size: 14)).fontWeight(
                   .semibold)
               }
             },
@@ -617,7 +617,7 @@ struct LLMProviderSetupView: View {
     // Persist local config immediately after a successful local test when user advances
     if activeProviderType == "ollama" {
       if case .information(let title, _) = setupState.currentStep.contentType,
-        title == "Testing" || title == "Test Connection",
+        title == "测试ing" || title == "测试 Connection",
         setupState.testSuccessful
       {
         persistLocalSettings()
@@ -657,9 +657,9 @@ struct LLMProviderSetupView: View {
     type.persist()
     // Store model id for local engines
     UserDefaults.standard.set(setupState.localModelId, forKey: "llmLocalModelId")
-    LocalModelPreferences.syncPreset(for: setupState.localEngine, modelId: setupState.localModelId)
+    LocalModelPreferences.syncPreset(for: setupState.local引擎, modelId: setupState.localModelId)
     // Store local engine selection for header/model defaults
-    UserDefaults.standard.set(setupState.localEngine.rawValue, forKey: "llmLocalEngine")
+    UserDefaults.standard.set(setupState.local引擎.rawValue, forKey: "llmLocal引擎")
     // Also store the endpoint explicitly for other parts of the app if needed
     UserDefaults.standard.set(endpoint, forKey: "llmLocalBaseURL")
     persistLocalAPIKey(setupState.localAPIKey)

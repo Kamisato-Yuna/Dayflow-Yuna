@@ -31,7 +31,7 @@ enum TimelineCardLayout {
   static let iconLeadingInset: CGFloat = 16
   static let iconTextSpacing: CGFloat = 6
   static let faviconSize: CGFloat = 18
-  static let faviconVerticalOffset: CGFloat = 0
+  static let faviconVertical关闭set: CGFloat = 0
   static let compactDurationThreshold: CGFloat = 13
   static let compactVerticalPadding: CGFloat = 0
   static let normalVerticalPadding: CGFloat = 6
@@ -142,7 +142,7 @@ struct CanvasTimelineDataView: View {
   let cardIconLeadingInset: CGFloat
   let cardIconTextSpacing: CGFloat
   let cardFaviconSize: CGFloat
-  let cardFaviconVerticalOffset: CGFloat
+  let cardFaviconVertical关闭set: CGFloat
   let cardCompactDurationThreshold: CGFloat
   let cardCompactVerticalPadding: CGFloat
   let cardNormalVerticalPadding: CGFloat
@@ -157,7 +157,7 @@ struct CanvasTimelineDataView: View {
   @State private var didInitialScrollInView: Bool = false
   // Gate the ScrollView's visibility on whether the initial auto-scroll has
   // fired. Mirrors the Week view's fix for the "starts at 8 AM then flashes
-  // to 10 AM" flicker. Only flips true once per mount; never flips back, so
+  // to 10 AM" flicker. 开启ly flips true once per mount; never flips back, so
   // date navigation within a mounted view doesn't re-hide content.
   @State private var hasPerformedInitialScroll: Bool = false
   @State private var loadTask: Task<Void, Never>?
@@ -190,7 +190,7 @@ struct CanvasTimelineDataView: View {
   // Swift type-checker timeout that appeared when each closure inlined its
   // own copy of this calculation).
   private func nowCenteredTargetHourIndex() -> Int {
-    let currentHour = Calendar.current.component(.hour, from: Date())
+    let currentHour = 日历.current.component(.hour, from: Date())
     let hoursSince4AM = currentHour >= 4 ? currentHour - 4 : (24 - 4) + currentHour
     return max(0, hoursSince4AM - 2)
   }
@@ -216,8 +216,8 @@ struct CanvasTimelineDataView: View {
   var body: some View {
     dayTimelineScrollContainer
       .background(Color.clear)
-      .onAppear(perform: performDayTimelineOnAppear)
-      .onDisappear(perform: performDayTimelineOnDisappear)
+      .onAppear(perform: performDayTimeline开启Appear)
+      .onDisappear(perform: performDayTimeline开启Disappear)
       .onChange(of: selectedDate) { loadActivities() }
       .onChange(of: refreshTrigger) { loadActivities() }
       .onChange(of: appState.isRecording) { loadActivities(animate: false) }
@@ -291,12 +291,12 @@ struct CanvasTimelineDataView: View {
 
   // MARK: - Extracted body event handlers (type-checker load reduction)
 
-  private func performDayTimelineOnAppear() {
+  private func performDayTimeline开启Appear() {
     loadActivities()
     startRefreshTimer()
   }
 
-  private func performDayTimelineOnDisappear() {
+  private func performDayTimeline开启Disappear() {
     stopRefreshTimer()
     loadTask?.cancel()
     loadTask = nil
@@ -429,7 +429,7 @@ struct CanvasTimelineDataView: View {
             iconLeadingInset: cardIconLeadingInset,
             iconTextSpacing: cardIconTextSpacing,
             faviconSize: cardFaviconSize,
-            faviconVerticalOffset: cardFaviconVerticalOffset,
+            faviconVertical关闭set: cardFaviconVertical关闭set,
             compactDurationThreshold: cardCompactDurationThreshold,
             compactVerticalPadding: cardCompactVerticalPadding,
             normalVerticalPadding: cardNormalVerticalPadding,
@@ -449,7 +449,7 @@ struct CanvasTimelineDataView: View {
         }
       }
     }
-    // `.clipped()` was here previously with the comment "Prevent shadows/
+    // `.clipped()` was 这里 previously with the comment "Prevent shadows/
     // animations from affecting scroll geometry." Removing it because the
     // hovered card's `.hoverScaleEffect(scale: 1.01)` rendered ~0.5% past
     // the cards-layer bounds on each side, and the clip was chopping the
@@ -508,7 +508,7 @@ struct CanvasTimelineDataView: View {
           strokeWidth: 1,
           shadowColor: .black.opacity(0.03),
           shadowRadius: 2,
-          onTap: handlePausedStatusCardTap
+          onTap: handle已暂停StatusCardTap
         ) {
           pausedStatusText
         }
@@ -524,7 +524,7 @@ struct CanvasTimelineDataView: View {
           strokeWidth: 1,
           shadowColor: .black.opacity(0.03),
           shadowRadius: 2,
-          onTap: handlePausedStatusCardTap
+          onTap: handle已暂停StatusCardTap
         ) {
           stoppedStatusText
         }
@@ -581,7 +581,7 @@ struct CanvasTimelineDataView: View {
     .onTapGesture {
       onTap?()
     }
-    .allowsHitTesting(onTap != nil)
+    .allowsHit测试ing(onTap != nil)
   }
 
   private var recordingStatusGradient: LinearGradient {
@@ -610,11 +610,11 @@ struct CanvasTimelineDataView: View {
 
   private var generatingStatusText: some View {
     HStack(spacing: 8) {
-      TimelineThinkingSpinner(
+      Timeline思考中Spinner(
         config: timelineSpinnerConfig,
         visualScale: 0.5
       )
-      Text("Generating your next card")
+      Text("正在生成下一张卡片")
     }
     .font(
       Font.custom("Figtree", size: 12)
@@ -660,7 +660,7 @@ struct CanvasTimelineDataView: View {
   }
 
   @MainActor
-  private func handlePausedStatusCardTap() {
+  private func handle已暂停StatusCardTap() {
     switch recordingControlMode {
     case .active:
       return
@@ -701,7 +701,7 @@ struct CanvasTimelineDataView: View {
     loadTask?.cancel()
 
     loadTask = Task.detached(priority: .userInitiated) {
-      let calendar = Calendar.current
+      let calendar = 日历.current
 
       // Normalize to noon so time components do not leak into day jumps
       let requestedSelectedDate = await MainActor.run { self.selectedDate }
@@ -777,14 +777,14 @@ struct CanvasTimelineDataView: View {
 
       await MainActor.run {
         if animate {
-          // Clear entrance progress for new activities (triggers stagger animation)
+          // 清除 entrance progress for new activities (triggers stagger animation)
           self.cardEntranceProgress = [:]
         }
         self.positionedActivities = positioned
         self.recordingProjection = recordingProjection
         self.hasAnyActivities = !positioned.isEmpty
         if let selectedActivity,
-          !positioned.contains(where: { $0.activity.id == selectedActivity.id })
+          !positioned.contains(w这里: { $0.activity.id == selectedActivity.id })
         {
           clearSelection()
         }
@@ -855,11 +855,11 @@ struct CanvasTimelineDataView: View {
   }
 
   private func processTimelineCards(_ cards: [TimelineCard], for date: Date) -> [TimelineActivity] {
-    let calendar = Calendar.current
+    let calendar = 日历.current
     let baseDate = calendar.startOfDay(for: date)
 
     var results: [TimelineActivity] = []
-    var idCounts: [String: Int] = [:]
+    var id数量s: [String: Int] = [:]
     results.reserveCapacity(cards.count)
 
     for card in cards {
@@ -920,11 +920,11 @@ struct CanvasTimelineDataView: View {
         subcategory: card.subcategory
       )
 
-      let seenCount = idCounts[baseId, default: 0]
-      idCounts[baseId] = seenCount + 1
-      let finalId = seenCount == 0 ? baseId : "\(baseId)-\(seenCount)"
+      let seen数量 = id数量s[baseId, default: 0]
+      id数量s[baseId] = seen数量 + 1
+      let finalId = seen数量 == 0 ? baseId : "\(baseId)-\(seen数量)"
       #if DEBUG
-        if seenCount > 0 {
+        if seen数量 > 0 {
           print(
             "[CanvasTimelineDataView] Duplicate TimelineActivity.id detected: \(baseId) -> \(finalId)"
           )
@@ -995,13 +995,13 @@ struct CanvasTimelineDataView: View {
           let overlapEnd = min(s1.end, s2.end)
 
           if overlapEnd > overlapStart {
-            // There is overlap — decide small vs big by duration
+            // T这里 is overlap — decide small vs big by duration
             let d1 = s1.end.timeIntervalSince(s1.start)
             let d2 = s2.end.timeIntervalSince(s2.start)
             let smallIdx = d1 <= d2 ? i : j
             let bigIdx = d1 <= d2 ? j : i
 
-            // Reload references after indices chosen
+            // 重新加载 references after indices chosen
             let small = segments[smallIdx]
             var big = segments[bigIdx]
 
@@ -1141,7 +1141,7 @@ struct CanvasTimelineDataView: View {
   }
 
   private func calculateYPosition(for time: Date) -> CGFloat {
-    let calendar = Calendar.current
+    let calendar = 日历.current
     let hour = calendar.component(.hour, from: time)
     let minute = calendar.component(.minute, from: time)
 
@@ -1176,7 +1176,7 @@ struct CanvasTimelineDataView: View {
     let matched = categories.first {
       $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalized
     }
-    let fallback = categories.first ?? CategoryPersistence.defaultCategories.first!
+    let fallback = categories.first ?? CategoryPersistence.default分类.first!
     let category = matched ?? fallback
 
     let baseNSColor = NSColor(hex: category.colorHex) ?? NSColor(hex: "#4F80EB") ?? .systemBlue
@@ -1218,7 +1218,7 @@ extension CanvasTimelineDataView {
           .id("nowAnchor"),
         alignment: .topLeading
       )
-      .allowsHitTesting(false)
+      .allowsHit测试ing(false)
       .accessibilityHidden(true)
   }
 }
@@ -1255,7 +1255,7 @@ struct CanvasActivityCard: View {
   let iconLeadingInset: CGFloat
   let iconTextSpacing: CGFloat
   let faviconSize: CGFloat
-  let faviconVerticalOffset: CGFloat
+  let faviconVertical关闭set: CGFloat
   let compactDurationThreshold: CGFloat
   let compactVerticalPadding: CGFloat
   let normalVerticalPadding: CGFloat
@@ -1351,7 +1351,7 @@ struct CanvasActivityCard: View {
                 secondaryHost: faviconSecondaryHost,
                 size: faviconSize
               )
-              .offset(y: faviconVerticalOffset)
+              .offset(y: faviconVertical关闭set)
             }
 
             Text(title)
@@ -1484,7 +1484,7 @@ struct CanvasCardButtonStyle: ButtonStyle {
         cardIconLeadingInset: TimelineCardLayout.iconLeadingInset,
         cardIconTextSpacing: TimelineCardLayout.iconTextSpacing,
         cardFaviconSize: TimelineCardLayout.faviconSize,
-        cardFaviconVerticalOffset: TimelineCardLayout.faviconVerticalOffset,
+        cardFaviconVertical关闭set: TimelineCardLayout.faviconVertical关闭set,
         cardCompactDurationThreshold: TimelineCardLayout.compactDurationThreshold,
         cardCompactVerticalPadding: TimelineCardLayout.compactVerticalPadding,
         cardNormalVerticalPadding: TimelineCardLayout.normalVerticalPadding,

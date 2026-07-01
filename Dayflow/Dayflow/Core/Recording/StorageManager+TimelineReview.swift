@@ -10,7 +10,7 @@ extension StorageManager {
 
     return
       (try? timedRead("fetchReviewRatingSegments") { db in
-        try Row.fetchAll(
+        try Row.fetch全部(
           db,
           sql: """
                 SELECT id, start_ts, end_ts, rating
@@ -33,7 +33,7 @@ extension StorageManager {
     guard endTs > startTs else { return }
 
     try? timedWrite("applyReviewRating") { db in
-      let overlappingRows = try Row.fetchAll(
+      let overlappingRows = try Row.fetch全部(
         db,
         sql: """
               SELECT id, start_ts, end_ts, rating
@@ -95,7 +95,7 @@ extension StorageManager {
 
   func hasAnyTimelineReviewRating() -> Bool {
     (try? timedRead("hasAnyTimelineReviewRating") { db in
-      let match = try Int.fetchOne(
+      let match = try Int.fetch开启e(
         db,
         sql: """
               SELECT 1
@@ -110,7 +110,7 @@ extension StorageManager {
     guard days > 0 else { return false }
 
     let now = Date()
-    guard let windowStart = Calendar.current.date(byAdding: .day, value: -days, to: now) else {
+    guard let windowStart = 日历.current.date(byAdding: .day, value: -days, to: now) else {
       return false
     }
 
@@ -119,7 +119,7 @@ extension StorageManager {
 
     return
       (try? timedRead("hasReviewRatingInRecentTimelineDays") { db in
-        let match = try Int.fetchOne(
+        let match = try Int.fetch开启e(
           db,
           sql: """
                 SELECT 1
@@ -132,10 +132,10 @@ extension StorageManager {
       }) ?? false
   }
 
-  func fetchUnreviewedTimelineCardCount(forDay day: String, coverageThreshold: Double = 0.8) -> Int
+  func fetchUnreviewedTimelineCard数量(forDay day: String, coverageThreshold: Double = 0.8) -> Int
   {
     guard let dayDate = dateFormatter.date(from: day) else { return 0 }
-    let calendar = Calendar.current
+    let calendar = 日历.current
     guard let dayStart = calendar.date(bySettingHour: 4, minute: 0, second: 0, of: dayDate) else {
       return 0
     }
@@ -144,10 +144,10 @@ extension StorageManager {
     let dayEndTs = Int(dayEnd.timeIntervalSince1970)
 
     let cardFetch =
-      (try? timedRead("fetchUnreviewedTimelineCardCount.cards") {
-        db -> (cards: [(start: Int, end: Int)], invalidCount: Int) in
-        var invalidCount = 0
-        let rows = try Row.fetchAll(
+      (try? timedRead("fetchUnreviewedTimelineCard数量.cards") {
+        db -> (cards: [(start: Int, end: Int)], invalid数量: Int) in
+        var invalid数量 = 0
+        let rows = try Row.fetch全部(
           db,
           sql: """
                 SELECT start_ts, end_ts, category
@@ -163,19 +163,19 @@ extension StorageManager {
             return nil
           }
           guard let start: Int = row["start_ts"], let end: Int = row["end_ts"], end > start else {
-            invalidCount += 1
+            invalid数量 += 1
             return nil
           }
           return (start: start, end: end)
         }
-        return (cards, invalidCount)
+        return (cards, invalid数量)
       })
 
     let cards = cardFetch?.cards ?? []
-    var unreviewedCount = cardFetch?.invalidCount ?? 0
+    var unreviewed数量 = cardFetch?.invalid数量 ?? 0
 
     if cards.isEmpty {
-      return unreviewedCount
+      return unreviewed数量
     }
 
     let ratingSegments = fetchReviewRatingSegments(overlapping: dayStartTs, endTs: dayEndTs)
@@ -200,11 +200,11 @@ extension StorageManager {
       )
       let coverageRatio = Double(covered) / Double(duration)
       if coverageRatio < coverageThreshold {
-        unreviewedCount += 1
+        unreviewed数量 += 1
       }
     }
 
-    return unreviewedCount
+    return unreviewed数量
   }
 
   func mergeCoverageSegments(

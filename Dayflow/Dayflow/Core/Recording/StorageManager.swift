@@ -36,8 +36,8 @@ final class StorageManager: StorageManaging, @unchecked Sendable {
   }
 
   struct DatabaseContentionSnapshot {
-    let activeReadCount: Int
-    let activeWriteCount: Int
+    let activeRead数量: Int
+    let activeWrite数量: Int
     let activeReadLabels: String
     let activeWriteLabels: String
     let recentReadLabels: String
@@ -126,8 +126,8 @@ final class StorageManager: StorageManaging, @unchecked Sendable {
         .sorted { $0.completedAt > $1.completedAt }
 
       return DatabaseContentionSnapshot(
-        activeReadCount: activeReads.count,
-        activeWriteCount: activeWrites.count,
+        activeRead数量: activeReads.count,
+        activeWrite数量: activeWrites.count,
         activeReadLabels: Self.formatActive(activeReads, now: now),
         activeWriteLabels: Self.formatActive(activeWrites, now: now),
         recentReadLabels: Self.formatRecent(recentReads),
@@ -186,7 +186,7 @@ final class StorageManager: StorageManaging, @unchecked Sendable {
   // TEMPORARY DEBUG: Remove after identifying slow queries
   let debugSlowQueries = true
   let slowThresholdMs: Double = 100  // Log anything over 100ms
-  let dbMaxReaderCount = 5
+  let dbMaxReader数量 = 5
 
   // Dedicated queue for database writes to prevent main thread blocking
   let dbWriteQueue = DispatchQueue(label: "com.dayflow.storage.writes", qos: .utility)
@@ -223,7 +223,7 @@ final class StorageManager: StorageManaging, @unchecked Sendable {
 
     // Configure database with WAL mode for better performance and safety
     var config = Configuration()
-    config.maximumReaderCount = dbMaxReaderCount
+    config.maximumReader数量 = dbMaxReader数量
     config.prepareDatabase { db in
       if !db.configuration.readonly {
         try db.execute(sql: "PRAGMA journal_mode = WAL")
@@ -311,9 +311,9 @@ final class StorageManager: StorageManaging, @unchecked Sendable {
           "exec_ms": Int(execMs.rounded()),
           "caller_thread": Thread.isMainThread ? "main" : "background",
           "caller_qos": DatabaseContentionTracker.qosLabel(Thread.current.qualityOfService),
-          "pool_max_readers": dbMaxReaderCount,
-          "active_reads": contentionSnapshot?.activeReadCount ?? 0,
-          "active_writes": contentionSnapshot?.activeWriteCount ?? 0,
+          "pool_max_readers": dbMaxReader数量,
+          "active_reads": contentionSnapshot?.activeRead数量 ?? 0,
+          "active_writes": contentionSnapshot?.activeWrite数量 ?? 0,
           "active_read_labels": contentionSnapshot?.activeReadLabels ?? "none",
           "active_write_labels": contentionSnapshot?.activeWriteLabels ?? "none",
           "recent_read_labels": contentionSnapshot?.recentReadLabels ?? "none",
@@ -349,9 +349,9 @@ final class StorageManager: StorageManaging, @unchecked Sendable {
         "error": "\(error)",
         "caller_thread": Thread.isMainThread ? "main" : "background",
         "caller_qos": DatabaseContentionTracker.qosLabel(Thread.current.qualityOfService),
-        "pool_max_readers": dbMaxReaderCount,
-        "active_reads": contentionSnapshot?.activeReadCount ?? 0,
-        "active_writes": contentionSnapshot?.activeWriteCount ?? 0,
+        "pool_max_readers": dbMaxReader数量,
+        "active_reads": contentionSnapshot?.activeRead数量 ?? 0,
+        "active_writes": contentionSnapshot?.activeWrite数量 ?? 0,
         "active_read_labels": contentionSnapshot?.activeReadLabels ?? "none",
         "active_write_labels": contentionSnapshot?.activeWriteLabels ?? "none",
         "recent_read_labels": contentionSnapshot?.recentReadLabels ?? "none",
@@ -403,9 +403,9 @@ final class StorageManager: StorageManaging, @unchecked Sendable {
           "exec_ms": Int(execMs.rounded()),
           "caller_thread": Thread.isMainThread ? "main" : "background",
           "caller_qos": DatabaseContentionTracker.qosLabel(Thread.current.qualityOfService),
-          "pool_max_readers": dbMaxReaderCount,
-          "active_reads": contentionSnapshot?.activeReadCount ?? 0,
-          "active_writes": contentionSnapshot?.activeWriteCount ?? 0,
+          "pool_max_readers": dbMaxReader数量,
+          "active_reads": contentionSnapshot?.activeRead数量 ?? 0,
+          "active_writes": contentionSnapshot?.activeWrite数量 ?? 0,
           "active_read_labels": contentionSnapshot?.activeReadLabels ?? "none",
           "active_write_labels": contentionSnapshot?.activeWriteLabels ?? "none",
           "recent_read_labels": contentionSnapshot?.recentReadLabels ?? "none",
@@ -441,9 +441,9 @@ final class StorageManager: StorageManaging, @unchecked Sendable {
         "error": "\(error)",
         "caller_thread": Thread.isMainThread ? "main" : "background",
         "caller_qos": DatabaseContentionTracker.qosLabel(Thread.current.qualityOfService),
-        "pool_max_readers": dbMaxReaderCount,
-        "active_reads": contentionSnapshot?.activeReadCount ?? 0,
-        "active_writes": contentionSnapshot?.activeWriteCount ?? 0,
+        "pool_max_readers": dbMaxReader数量,
+        "active_reads": contentionSnapshot?.activeRead数量 ?? 0,
+        "active_writes": contentionSnapshot?.activeWrite数量 ?? 0,
         "active_read_labels": contentionSnapshot?.activeReadLabels ?? "none",
         "active_write_labels": contentionSnapshot?.activeWriteLabels ?? "none",
         "recent_read_labels": contentionSnapshot?.recentReadLabels ?? "none",

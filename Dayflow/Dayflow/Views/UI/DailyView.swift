@@ -12,8 +12,8 @@ struct DailyView: View {
   @State var lockScreenConfettiTrigger: Int = 0
   @State var notificationAuthorizationStatus: UNAuthorizationStatus = .notDetermined
   @State var isCheckingNotificationAuthorization: Bool = false
-  @State var isRequestingNotificationPermission: Bool = false
-  @State var completedAccessBatchCount: Int = 0
+  @State var isRequestingNotification权限: Bool = false
+  @State var completedAccessBatch数量: Int = 0
   @State var workflowRows: [DailyWorkflowGridRow] = []
   @State var workflowTotals: [DailyWorkflowTotalItem] = []
   @State var workflowStats: [DailyWorkflowStatChip] = DailyWorkflowStatChip.placeholder
@@ -29,10 +29,10 @@ struct DailyView: View {
   @State var loadedStandupFallbackSourceDay: String? = nil
   @State var standupDraftSaveTask: Task<Void, Never>? = nil
   @State var standupCopyState: DailyStandupCopyState = .idle
-  @State var standupCopyResetTask: Task<Void, Never>? = nil
+  @State var standupCopy重置Task: Task<Void, Never>? = nil
   @State var standupRegenerateState: DailyStandupRegenerateState = .idle
   @State var standupRegenerateTask: Task<Void, Never>? = nil
-  @State var standupRegenerateResetTask: Task<Void, Never>? = nil
+  @State var standupRegenerate重置Task: Task<Void, Never>? = nil
   @State var standupRegeneratingDotsPhase: Int = 1
   @State var hasPersistedStandupEntry: Bool = false
   @State var dailyRecapProvider: DailyRecapProvider = DailyRecapProvider.load()
@@ -86,20 +86,20 @@ struct DailyView: View {
 
   var hasDailyMinimumAccess: Bool {
     FeatureAccessRequirements.hasRequiredBatches(
-      completedAccessBatchCount,
-      requiredBatchCount: FeatureAccessRequirements.dailyRequiredBatchCount
+      completedAccessBatch数量,
+      requiredBatch数量: FeatureAccessRequirements.dailyRequiredBatch数量
     )
   }
 
   var dailyAccessProgressText: String {
     FeatureAccessRequirements.progressText(
-      completedBatchCount: completedAccessBatchCount,
+      completedBatch数量: completedAccessBatch数量,
       requiredHours: FeatureAccessRequirements.dailyRequiredHours
     )
   }
 
   func refreshDailyAccessProgress() {
-    completedAccessBatchCount = FeatureAccessRequirements.completedBatchCount()
+    completedAccessBatch数量 = FeatureAccessRequirements.completedBatch数量()
   }
 }
 

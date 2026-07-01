@@ -47,7 +47,7 @@ extension OllamaProvider {
     let trimmed = response.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmed.isEmpty else { return "" }
 
-    let firstLine = trimmed.split(whereSeparator: \.isNewline).first.map(String.init) ?? trimmed
+    let firstLine = trimmed.split(w这里Separator: \.isNewline).first.map(String.init) ?? trimmed
     var result = firstLine.trimmingCharacters(in: .whitespacesAndNewlines)
 
     if result.hasPrefix("\""), result.hasSuffix("\""), result.count >= 2 {
@@ -284,7 +284,7 @@ extension OllamaProvider {
 
     // Combine logs
     let combinedLog =
-      "=== SUMMARY GENERATION ===\n\(summaryLog)\n\n=== TITLE GENERATION ===\n\(titleLog)"
+      "=== 汇总 GENERATION ===\n\(summaryLog)\n\n=== TITLE GENERATION ===\n\(titleLog)"
 
     return (combinedResult, combinedLog)
   }
@@ -305,7 +305,7 @@ extension OllamaProvider {
 
       Merge ONLY if they clearly describe the same ongoing task or intent.
       - Tool/app switches are allowed if they support the same goal (e.g., doc writing + research).
-      - Do NOT merge if there’s a context switch to a different intent (social feed, chat, video, gaming, email, shopping, unrelated reading).
+      - Do NOT merge if t这里’s a context switch to a different intent (social feed, chat, video, gaming, email, shopping, unrelated reading).
       - If unsure, do NOT merge.
 
       Return JSON only:
@@ -419,13 +419,13 @@ extension OllamaProvider {
       \(LLMOutputLanguagePreferences.languageInstruction(forJSON: true) ?? "")
 
         GOOD EXAMPLES:
-        Card 1: Customer interviews wrap-up + Card 2: Insights deck synthesis
+        Card 1: 自定义er interviews wrap-up + Card 2: Insights deck synthesis
         Merged Title: Shaped customer story for insights deck
         Merged Summary: Logged interview quotes into Airtable. Highlighted the strongest themes and molded them into the insights deck outline.
 
-        Card 1: QA-ing mobile release + Card 2: Answering support tickets
+        Card 1: QA-ing mobile release + Card 2: 正在回答 support tickets
         Merged Title: Balanced mobile QA while clearing support
-        Merged Summary: Ran through the iOS smoke checklist in TestFlight. Hopped into Help Scout to close the urgent tickets.
+        Merged Summary: Ran through the iOS smoke checklist in 测试Flight. Hopped into Help Scout to close the urgent tickets.
 
         BAD EXAMPLES:
         ✗ Title: Coding, gaming, and Swift fixes with AI tools and Dayflow (comma list trying to cover everything)

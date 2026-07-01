@@ -36,7 +36,7 @@ final class NotificationService: NSObject, ObservableObject {
 
     // Check current permission status
     Task {
-      await checkPermissionStatus()
+      await check权限Status()
 
       // Reschedule if reminders are enabled
       if NotificationPreferences.isEnabled {
@@ -47,16 +47,16 @@ final class NotificationService: NSObject, ObservableObject {
 
   /// Request notification permission from the user
   @discardableResult
-  func requestPermission() async -> Bool {
+  func request权限() async -> Bool {
     do {
       let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
       await MainActor.run {
         self.permissionGranted = granted
       }
-      print("[NotificationService] requestPermission granted=\(granted)")
+      print("[NotificationService] request权限 granted=\(granted)")
       return granted
     } catch {
-      print("[NotificationService] Permission request failed: \(error)")
+      print("[NotificationService] 权限 request failed: \(error)")
       return false
     }
   }
@@ -74,7 +74,7 @@ final class NotificationService: NSObject, ObservableObject {
   /// Schedule all reminders based on current preferences
   func scheduleReminders() {
     // First, cancel all existing journal reminders
-    cancelAllReminders()
+    cancel全部Reminders()
 
     let weekdays = NotificationPreferences.weekdays
     guard !weekdays.isEmpty else { return }
@@ -114,7 +114,7 @@ final class NotificationService: NSObject, ObservableObject {
   }
 
   /// Cancel all journal reminder notifications
-  func cancelAllReminders() {
+  func cancel全部Reminders() {
     let center = self.center  // Capture locally while on MainActor
     center.getPendingNotificationRequests { requests in
       let journalIds =
@@ -146,7 +146,7 @@ final class NotificationService: NSObject, ObservableObject {
       )
 
       if status == .notDetermined {
-        let granted = await requestPermission()
+        let granted = await request权限()
         settings = await center.notificationSettings()
         status = settings.authorizationStatus
         print(
@@ -189,7 +189,7 @@ final class NotificationService: NSObject, ObservableObject {
     var status = settings.authorizationStatus
 
     if status == .notDetermined {
-      _ = await requestPermission()
+      _ = await request权限()
       settings = await center.notificationSettings()
       status = settings.authorizationStatus
     }
@@ -211,7 +211,7 @@ final class NotificationService: NSObject, ObservableObject {
 
   // MARK: - Private Methods
 
-  private func checkPermissionStatus() async {
+  private func check权限Status() async {
     let settings = await center.notificationSettings()
     await MainActor.run {
       self.permissionGranted = Self.canScheduleNotifications(for: settings.authorizationStatus)
@@ -231,8 +231,8 @@ final class NotificationService: NSObject, ObservableObject {
     print("[NotificationService] removed pending notification identifier=\(identifier)")
 
     let content = UNMutableNotificationContent()
-    content.title = "Your daily recap for yesterday is ready"
-    content.body = "Tap to open it in Daily view."
+    content.title = "昨日复盘已就绪"
+    content.body = "点按在每日复盘中打开。"
     content.sound = .default
     content.categoryIdentifier = "daily_recap"
     content.userInfo = ["day": day]
@@ -291,8 +291,8 @@ final class NotificationService: NSObject, ObservableObject {
     center.removePendingNotificationRequests(withIdentifiers: [identifier])
 
     let content = UNMutableNotificationContent()
-    content.title = "Weekly view is ready"
-    content.body = "Tap to open your weekly review."
+    content.title = "周报已就绪"
+    content.body = "点按打开每周复盘。"
     content.sound = .default
     content.categoryIdentifier = "weekly_unlock"
 
@@ -371,7 +371,7 @@ final class NotificationService: NSObject, ObservableObject {
     dateComponents.minute = minute
     dateComponents.weekday = weekday
 
-    let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+    let trigger = UN日历NotificationTrigger(dateMatching: dateComponents, repeats: true)
 
     let content = UNMutableNotificationContent()
     content.title = title

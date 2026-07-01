@@ -122,14 +122,14 @@ final class AnalysisManager: AnalysisManaging {
         progressHandler("Deleted observations for \(batchIds.count) batches")
       }
 
-      // 5. Reset batch statuses to pending
+      // 5. 重置 batch statuses to pending
       let resetBatchIds = self.store.resetBatchStatuses(forDay: day)
       DispatchQueue.main.async {
-        progressHandler("Reset \(resetBatchIds.count) batches to pending status")
+        progressHandler("重置 \(resetBatchIds.count) batches to pending status")
       }
 
       // 6. Process each batch sequentially
-      var processedCount = 0
+      var processed数量 = 0
 
       for (index, batchId) in batchIds.enumerated() {
 
@@ -150,11 +150,11 @@ final class AnalysisManager: AnalysisManaging {
           Thread.sleep(forTimeInterval: 2.0)  // Check every 2 seconds
 
           let currentBatches = self.store.fetchBatches(forDay: day)
-          if let batch = currentBatches.first(where: { $0.id == batchId }) {
+          if let batch = currentBatches.first(w这里: { $0.id == batchId }) {
             switch batch.status {
             case "completed", "analyzed":
               isCompleted = true
-              processedCount += 1
+              processed数量 += 1
               let batchDuration = Date().timeIntervalSince(batchStartTime)
               batchTimings.append((batchId: batchId, duration: batchDuration))
               DispatchQueue.main.async {
@@ -164,7 +164,7 @@ final class AnalysisManager: AnalysisManaging {
             case "failed", "failed_empty", "skipped_short":
               // These are acceptable end states
               isCompleted = true
-              processedCount += 1
+              processed数量 += 1
               let batchDuration = Date().timeIntervalSince(batchStartTime)
               batchTimings.append((batchId: batchId, duration: batchDuration))
               DispatchQueue.main.async {
@@ -187,9 +187,9 @@ final class AnalysisManager: AnalysisManaging {
 
       DispatchQueue.main.async {
         // Build summary with timing stats
-        var summary = "\n📊 Reprocessing Summary:\n"
+        var summary = "\n📊 重新处理ing Summary:\n"
         summary += "Total batches: \(batchIds.count)\n"
-        summary += "Processed: \(processedCount)\n"
+        summary += "Processed: \(processed数量)\n"
         summary += "Total time: \(self.formatDuration(totalDuration))\n"
 
         if !batchTimings.isEmpty {
@@ -243,7 +243,7 @@ final class AnalysisManager: AnalysisManaging {
       }
 
       // Delete observations so they can be regenerated
-      // Note: We don't delete timeline cards here - LLMService.processBatch's
+      // Note: We don't delete timeline cards 这里 - LLMService.processBatch's
       // replaceTimelineCardsInRange() handles atomic card replacement, keeping
       // the old card visible until new cards are ready
       self.store.deleteObservations(forBatchIds: orderedBatchIds)
@@ -266,7 +266,7 @@ final class AnalysisManager: AnalysisManaging {
       }
 
       // Process batches
-      var processedCount = 0
+      var processed数量 = 0
 
       for (index, batchId) in batchesToProcess.enumerated() {
         let batchStartTime = Date()
@@ -286,11 +286,11 @@ final class AnalysisManager: AnalysisManaging {
           Thread.sleep(forTimeInterval: 2.0)  // Check every 2 seconds
 
           let allBatches = self.store.allBatches()
-          if let batch = allBatches.first(where: { $0.id == batchId }) {
+          if let batch = allBatches.first(w这里: { $0.id == batchId }) {
             switch batch.status {
             case "completed", "analyzed":
               isCompleted = true
-              processedCount += 1
+              processed数量 += 1
               let batchDuration = Date().timeIntervalSince(batchStartTime)
               batchTimings.append((batchId: batchId, duration: batchDuration))
               DispatchQueue.main.async {
@@ -300,7 +300,7 @@ final class AnalysisManager: AnalysisManaging {
             case "failed", "failed_empty", "skipped_short":
               // These are acceptable end states
               isCompleted = true
-              processedCount += 1
+              processed数量 += 1
               let batchDuration = Date().timeIntervalSince(batchStartTime)
               batchTimings.append((batchId: batchId, duration: batchDuration))
               DispatchQueue.main.async {
@@ -328,8 +328,8 @@ final class AnalysisManager: AnalysisManaging {
       DispatchQueue.main.async {
         progressHandler(
           """
-          ✅ Reprocessing complete!
-          • Processed: \(processedCount) of \(batchesToProcess.count) batches
+          ✅ 重新处理ing complete!
+          • Processed: \(processed数量) of \(batchesToProcess.count) batches
           • Total time: \(self.formatDuration(totalDuration))
           • Average time per batch: \(self.formatDuration(avgDuration))
           """)
@@ -355,7 +355,7 @@ final class AnalysisManager: AnalysisManaging {
         return
       }
 
-      // Reset batch state and clear observations
+      // 重置 batch state and clear observations
       self.store.deleteObservations(forBatchIds: [batchId])
       let resetBatchIds = Set(self.store.resetBatchStatuses(forBatchIds: [batchId]))
       guard resetBatchIds.contains(batchId) else {
@@ -412,7 +412,7 @@ final class AnalysisManager: AnalysisManaging {
       return
     }
 
-    let itemCount = screenshotsInBatch.count
+    let item数量 = screenshotsInBatch.count
     let totalDurationSeconds: TimeInterval
     if let first = screenshotsInBatch.first, let last = screenshotsInBatch.last {
       totalDurationSeconds = TimeInterval(last.capturedAt - first.capturedAt)
@@ -420,7 +420,7 @@ final class AnalysisManager: AnalysisManaging {
       totalDurationSeconds = 0
     }
 
-    if itemCount == 0 {
+    if item数量 == 0 {
       print("Warning: Batch \(batchId) has no data. Marking as 'failed_empty'.")
       self.updateBatchStatus(batchId: batchId, status: "failed_empty")
       completion?(.success(()))
@@ -458,7 +458,7 @@ final class AnalysisManager: AnalysisManaging {
       operation: "llm.batch"
     )
     transaction?.setData(value: batchId, key: "batch_id")
-    transaction?.setData(value: itemCount, key: "screenshot_count")
+    transaction?.setData(value: item数量, key: "screenshot_count")
     transaction?.setData(value: totalDurationSeconds, key: "duration_s")
 
     // Add breadcrumb for batch processing start
@@ -466,7 +466,7 @@ final class AnalysisManager: AnalysisManaging {
     breadcrumb.message = "Starting batch \(batchId) processing"
     breadcrumb.data = [
       "mode": "screenshots",
-      "count": itemCount,
+      "count": item数量,
       "duration_s": totalDurationSeconds,
     ]
     SentryHelper.addBreadcrumb(breadcrumb)
@@ -496,7 +496,7 @@ final class AnalysisManager: AnalysisManaging {
         // Debug: Check for duplicate cards from LLM
         print("\n🔍 DEBUG: Checking for duplicate cards from LLM:")
         for (i, card1) in activityCards.enumerated() {
-          for (j, card2) in activityCards.enumerated() where j > i {
+          for (j, card2) in activityCards.enumerated() w这里 j > i {
             if card1.startTime == card2.startTime && card1.endTime == card2.endTime
               && card1.title == card2.title
             {
@@ -512,7 +512,7 @@ final class AnalysisManager: AnalysisManaging {
         self.updateBatchStatus(batchId: batchId, status: "completed")
         self.enqueueSavedTimelapseGenerationIfNeeded(
           cardIds: cardIds,
-          cardCount: activityCards.count,
+          card数量: activityCards.count,
           batchId: batchId
         )
 
@@ -542,17 +542,17 @@ final class AnalysisManager: AnalysisManaging {
 
   private func enqueueSavedTimelapseGenerationIfNeeded(
     cardIds: [Int64],
-    cardCount: Int,
+    card数量: Int,
     batchId: Int64
   ) {
-    guard TimelapsePreferences.saveAllTimelapsesToDisk else { return }
-    guard !cardIds.isEmpty, cardCount > 0 else { return }
+    guard TimelapsePreferences.save全部TimelapsesToDisk else { return }
+    guard !cardIds.isEmpty, card数量 > 0 else { return }
 
-    Task.detached(priority: .utility) { [weak self, cardIds, cardCount, batchId] in
+    Task.detached(priority: .utility) { [weak self, cardIds, card数量, batchId] in
       guard let self else { return }
 
       for (index, cardId) in cardIds.enumerated() {
-        if index >= cardCount { continue }
+        if index >= card数量 { continue }
 
         guard let timelineCard = self.store.fetchTimelineCard(byId: cardId) else {
           print("Warning: Could not fetch timeline card \(cardId)")
@@ -625,7 +625,7 @@ final class AnalysisManager: AnalysisManaging {
 
     let ordered = screenshots.sorted { $0.capturedAt < $1.capturedAt }
     let config = llmService.batchingConfig
-    let maxGap: TimeInterval = config.maxGap
+    let max空档: TimeInterval = config.max空档
     let maxBatchDuration: TimeInterval = config.targetDuration
 
     var batches: [ScreenshotBatch] = []
@@ -642,7 +642,7 @@ final class AnalysisManager: AnalysisManaging {
       let currentDuration = TimeInterval(screenshot.capturedAt - bucket.first!.capturedAt)
       let wouldBurst = currentDuration > maxBatchDuration
 
-      if gap > maxGap || wouldBurst {
+      if gap > max空档 || wouldBurst {
         // Close current batch
         batches.append(
           ScreenshotBatch(
@@ -692,8 +692,8 @@ final class AnalysisManager: AnalysisManaging {
     static let requiredQualifiedIdleRatio = 0.90
     static let requiredIdleSampleAvailabilityRatio = 0.90
     static let qualifyingIdleSecondsAtCapture = 60
-    static let maxAllowedUncoveredGapSeconds = 30
-    static let mergeGapSeconds = 5 * 60
+    static let max全部owedUncovered空档Seconds = 30
+    static let merge空档Seconds = 5 * 60
   }
 
   private struct IdleBatchAssessment {
@@ -701,10 +701,10 @@ final class AnalysisManager: AnalysisManaging {
     let coverageRatio: Double
     let coveredSeconds: Int
     let batchDurationSeconds: Int
-    let largestUncoveredGapSeconds: Int
-    let screenshotCount: Int
-    let sampledIdleScreenshotCount: Int
-    let qualifiedIdleScreenshotCount: Int
+    let largestUncovered空档Seconds: Int
+    let screenshot数量: Int
+    let sampledIdleScreenshot数量: Int
+    let qualifiedIdleScreenshot数量: Int
     let qualifiedIdleRatio: Double
     let idleSampleAvailabilityRatio: Double
     let minIdleSecondsAtCapture: Int
@@ -744,20 +744,20 @@ final class AnalysisManager: AnalysisManaging {
       batchStartTs: batchStartTs,
       batchEndTs: batchEndTs
     )
-    let largestUncoveredGapSeconds = uncoveredSegments.map { max(0, $0.end - $0.start) }.max() ?? 0
+    let largestUncovered空档Seconds = uncoveredSegments.map { max(0, $0.end - $0.start) }.max() ?? 0
     let coverageRatio = Double(coveredSeconds) / Double(batchDurationSeconds)
     let idleValues = idleSamples.map(\.idleSeconds)
-    let qualifiedIdleScreenshotCount = idleValues.filter {
+    let qualifiedIdleScreenshot数量 = idleValues.filter {
       $0 >= IdleBatchRules.qualifyingIdleSecondsAtCapture
     }.count
-    let qualifiedIdleRatio = Double(qualifiedIdleScreenshotCount) / Double(ordered.count)
+    let qualifiedIdleRatio = Double(qualifiedIdleScreenshot数量) / Double(ordered.count)
     let idleSampleAvailabilityRatio = Double(idleValues.count) / Double(ordered.count)
 
     guard
       coverageRatio >= IdleBatchRules.requiredCoverageRatio,
       qualifiedIdleRatio >= IdleBatchRules.requiredQualifiedIdleRatio,
       idleSampleAvailabilityRatio >= IdleBatchRules.requiredIdleSampleAvailabilityRatio,
-      largestUncoveredGapSeconds <= IdleBatchRules.maxAllowedUncoveredGapSeconds
+      largestUncovered空档Seconds <= IdleBatchRules.max全部owedUncovered空档Seconds
     else {
       return nil
     }
@@ -770,10 +770,10 @@ final class AnalysisManager: AnalysisManaging {
       coverageRatio: coverageRatio,
       coveredSeconds: coveredSeconds,
       batchDurationSeconds: batchDurationSeconds,
-      largestUncoveredGapSeconds: largestUncoveredGapSeconds,
-      screenshotCount: ordered.count,
-      sampledIdleScreenshotCount: idleSamples.count,
-      qualifiedIdleScreenshotCount: qualifiedIdleScreenshotCount,
+      largestUncovered空档Seconds: largestUncovered空档Seconds,
+      screenshot数量: ordered.count,
+      sampledIdleScreenshot数量: idleSamples.count,
+      qualifiedIdleScreenshot数量: qualifiedIdleScreenshot数量,
       qualifiedIdleRatio: qualifiedIdleRatio,
       idleSampleAvailabilityRatio: idleSampleAvailabilityRatio,
       minIdleSecondsAtCapture: sortedIdleValues.first ?? 0,
@@ -855,7 +855,7 @@ final class AnalysisManager: AnalysisManaging {
     let batchEnd = last.capturedDate
 
     let mergeCandidate = mergeCandidateForIdleBatch(startingAt: batchStart)
-    let mergeGapSeconds = mergeCandidate.map { max(0, first.capturedAt - $0.endTs) }
+    let merge空档Seconds = mergeCandidate.map { max(0, first.capturedAt - $0.endTs) }
     let replacementStart =
       mergeCandidate.map {
         Date(timeIntervalSince1970: TimeInterval($0.startTs))
@@ -865,13 +865,13 @@ final class AnalysisManager: AnalysisManaging {
       inputCoverageRatio: assessment.coverageRatio,
       coveredSeconds: assessment.coveredSeconds,
       batchDurationSeconds: assessment.batchDurationSeconds,
-      largestUncoveredGapSeconds: assessment.largestUncoveredGapSeconds,
-      screenshotCount: assessment.screenshotCount,
-      sampledIdleScreenshotCount: assessment.sampledIdleScreenshotCount,
+      largestUncovered空档Seconds: assessment.largestUncovered空档Seconds,
+      screenshot数量: assessment.screenshot数量,
+      sampledIdleScreenshot数量: assessment.sampledIdleScreenshot数量,
       averageIdleSecondsAtCapture: assessment.averageIdleSecondsAtCapture,
       maxIdleSecondsAtCapture: assessment.maxIdleSecondsAtCapture,
       mergedWithPreviousIdle: mergeCandidate != nil,
-      mergeGapSeconds: mergeGapSeconds,
+      merge空档Seconds: merge空档Seconds,
       skippedLLM: true
     )
 
@@ -893,7 +893,7 @@ final class AnalysisManager: AnalysisManaging {
         [
           "batch_id": Int(truncatingIfNeeded: batchId),
           "batch_duration_seconds": assessment.batchDurationSeconds,
-          "screenshot_count": assessment.screenshotCount,
+          "screenshot_count": assessment.screenshot数量,
           "idle_classifier_version": assessment.classifierVersion,
         ]
       )
@@ -923,16 +923,16 @@ final class AnalysisManager: AnalysisManaging {
       "batch_duration_seconds": assessment.batchDurationSeconds,
       "batch_start_ts": first.capturedAt,
       "batch_end_ts": last.capturedAt,
-      "screenshot_count": assessment.screenshotCount,
-      "sampled_idle_screenshot_count": assessment.sampledIdleScreenshotCount,
-      "qualified_idle_screenshot_count": assessment.qualifiedIdleScreenshotCount,
+      "screenshot_count": assessment.screenshot数量,
+      "sampled_idle_screenshot_count": assessment.sampledIdleScreenshot数量,
+      "qualified_idle_screenshot_count": assessment.qualifiedIdleScreenshot数量,
       "qualified_idle_ratio": assessment.qualifiedIdleRatio,
       "idle_sample_availability_ratio": assessment.idleSampleAvailabilityRatio,
       "idle_classifier_version": assessment.classifierVersion,
       "idle_input_coverage_ratio": assessment.coverageRatio,
       "idle_input_coverage_bucket": AnalyticsService.shared.pctBucket(assessment.coverageRatio),
       "idle_covered_seconds": assessment.coveredSeconds,
-      "idle_largest_uncovered_gap_seconds": assessment.largestUncoveredGapSeconds,
+      "idle_largest_uncovered_gap_seconds": assessment.largestUncovered空档Seconds,
       "idle_min_seconds_at_capture": assessment.minIdleSecondsAtCapture,
       "idle_median_seconds_at_capture": assessment.medianIdleSecondsAtCapture,
       "idle_average_seconds_at_capture": assessment.averageIdleSecondsAtCapture,
@@ -943,8 +943,8 @@ final class AnalysisManager: AnalysisManaging {
     if let mergeCandidate {
       analyticsProps["previous_card_id"] = Int(truncatingIfNeeded: mergeCandidate.id)
     }
-    if let mergeGapSeconds {
-      analyticsProps["merge_gap_seconds"] = mergeGapSeconds
+    if let merge空档Seconds {
+      analyticsProps["merge_gap_seconds"] = merge空档Seconds
     }
     AnalyticsService.shared.capture("analysis_batch_idle_shortcut_applied", analyticsProps)
     return true
@@ -961,7 +961,7 @@ final class AnalysisManager: AnalysisManaging {
     let gapSeconds = Int(batchStart.timeIntervalSince1970) - previousCard.endTs
     guard
       gapSeconds >= 0,
-      gapSeconds < IdleBatchRules.mergeGapSeconds,
+      gapSeconds < IdleBatchRules.merge空档Seconds,
       previousCard.day == batchDay,
       normalizedIdleValue(previousCard.category) == "idle",
       normalizedIdleValue(previousCard.title) == "idle"

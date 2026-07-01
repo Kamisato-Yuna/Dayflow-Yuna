@@ -64,9 +64,9 @@ struct Distraction: Codable, Sendable, Identifiable {
   let endTime: String
   let title: String
   let summary: String
-  let videoSummaryURL: String?  // Optional link to video summary for the distraction
+  let videoSummaryURL: String?  // 可选 link to video summary for the distraction
 
-  // Custom decoder to handle missing 'id'
+  // 自定义 decoder to handle missing 'id'
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     // Try to decode 'id', if not found or nil, assign a new UUID
@@ -78,7 +78,7 @@ struct Distraction: Codable, Sendable, Identifiable {
     self.videoSummaryURL = try container.decodeIfPresent(String.self, forKey: .videoSummaryURL)
   }
 
-  // Add explicit init to maintain memberwise initializer if needed elsewhere,
+  // Add explicit init to maintain memberwise initializer if needed elsew这里,
   // though Codable synthesis might handle this. It's good practice.
   init(
     id: UUID = UUID(), startTime: String, endTime: String, title: String, summary: String,
@@ -111,7 +111,7 @@ struct TimelineCard: Codable, Sendable, Identifiable {
   let detailedSummary: String
   let day: String
   let distractions: [Distraction]?
-  let videoSummaryURL: String?  // Optional link to primary video summary
+  let videoSummaryURL: String?  // 可选 link to primary video summary
   let otherVideoSummaryURLs: [String]?  // For merged cards, subsequent video URLs
   let appSites: AppSites?
   let isBackupGenerated: Bool?
@@ -234,8 +234,8 @@ struct TimelineCardShell: Sendable {
   let appSites: AppSites?
   let isBackupGenerated: Bool?
   let idleMetadata: IdleCardMetadata?
-  // No videoSummaryURL here, as it's added later
-  // No batchId here, as it's passed as a separate parameter to the save function
+  // No videoSummaryURL 这里, as it's added later
+  // No batchId 这里, as it's passed as a separate parameter to the save function
 
   init(
     startTimestamp: String,
@@ -269,13 +269,13 @@ struct IdleCardMetadata: Codable, Sendable {
   let inputCoverageRatio: Double
   let coveredSeconds: Int
   let batchDurationSeconds: Int
-  let largestUncoveredGapSeconds: Int
-  let screenshotCount: Int
-  let sampledIdleScreenshotCount: Int
+  let largestUncovered空档Seconds: Int
+  let screenshot数量: Int
+  let sampledIdleScreenshot数量: Int
   let averageIdleSecondsAtCapture: Double
   let maxIdleSecondsAtCapture: Int
   let mergedWithPreviousIdle: Bool
-  let mergeGapSeconds: Int?
+  let merge空档Seconds: Int?
   let skippedLLM: Bool
 }
 

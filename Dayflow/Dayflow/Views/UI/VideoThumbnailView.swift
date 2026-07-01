@@ -36,7 +36,7 @@ struct VideoThumbnailView: View {
       ZStack {
         thumbnailContent(geometry: geometry)
       }
-      // Also open the viewer when clicking anywhere on the preview area
+      // Also open the viewer when clicking anyw这里 on the preview area
       .contentShape(Rectangle())
       .onTapGesture { triggerExpansion(geometry: geometry) }
       .pointingHandCursor()
@@ -119,7 +119,7 @@ struct VideoThumbnailView: View {
             .font(.system(size: 24, weight: .bold))
         }
         .shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 2)
-        .accessibilityLabel("Play video summary")
+        .accessibilityLabel("播放视频摘要")
       }
       .buttonStyle(PlainButtonStyle())
       .pointingHandCursor()

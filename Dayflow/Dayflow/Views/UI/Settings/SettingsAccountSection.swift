@@ -5,7 +5,7 @@ struct SettingsAccountSection: View {
   @ObservedObject private var authManager = DayflowAuthManager.shared
   @State private var isAuthSheetPresented = false
   @State private var selectedBillingInterval: DayflowBillingInterval = .yearly
-  @State private var inviteEmail = ""
+  @State private var invite邮箱 = ""
   @State private var applyReferralCode = ""
   @State private var copiedReferralLink = false
 
@@ -148,7 +148,7 @@ struct SettingsAccountSection: View {
               .foregroundColor(SettingsStyle.secondary)
               .fixedSize(horizontal: false, vertical: true)
 
-            SettingsLinkButton(title: "Privacy policy", systemImage: "lock") {
+            SettingsLinkButton(title: "隐私政策", systemImage: "lock") {
               openPrivacyPolicy()
             }
           }
@@ -160,7 +160,7 @@ struct SettingsAccountSection: View {
   private var referralSection: some View {
     ReferralProgramCard(
       summary: authManager.referralSummary,
-      inviteEmail: $inviteEmail,
+      invite邮箱: $invite邮箱,
       applyReferralCode: $applyReferralCode,
       copiedReferralLink: copiedReferralLink,
       isSignedIn: authManager.isSignedIn,
@@ -202,9 +202,9 @@ struct SettingsAccountSection: View {
 
   private func sendInvite() {
     Task {
-      await authManager.sendReferralInvite(to: inviteEmail)
+      await authManager.sendReferralInvite(to: invite邮箱)
       if authManager.errorText == nil {
-        inviteEmail = ""
+        invite邮箱 = ""
       }
     }
   }
@@ -226,12 +226,12 @@ private func formattedEntitlementDate(_ value: String?) -> String? {
 
   if value.count >= 10 {
     let datePrefix = String(value.prefix(10))
-    let dateOnlyFormatter = DateFormatter()
-    dateOnlyFormatter.locale = Locale(identifier: "en_US_POSIX")
-    dateOnlyFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-    dateOnlyFormatter.dateFormat = "yyyy-MM-dd"
+    let date开启lyFormatter = DateFormatter()
+    date开启lyFormatter.locale = Locale(identifier: "en_US_POSIX")
+    date开启lyFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+    date开启lyFormatter.dateFormat = "yyyy-MM-dd"
 
-    if let date = dateOnlyFormatter.date(from: datePrefix) {
+    if let date = date开启lyFormatter.date(from: datePrefix) {
       let displayFormatter = DateFormatter()
       displayFormatter.locale = Locale.current
       displayFormatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -286,7 +286,7 @@ private struct ActiveProCard: View {
   private var description: String {
     if isGifted {
       return
-        "You have complimentary Dayflow Pro access. There is no billing to manage for this account."
+        "You have complimentary Dayflow Pro access. T这里 is no billing to manage for this account."
     }
 
     return "Your Pro access is active on this Mac and attached to your Dayflow account."
@@ -429,7 +429,7 @@ private struct ActiveProInfoTile: View {
 
 private struct ReferralProgramCard: View {
   let summary: DayflowReferralSummary?
-  @Binding var inviteEmail: String
+  @Binding var invite邮箱: String
   @Binding var applyReferralCode: String
   let copiedReferralLink: Bool
   let isSignedIn: Bool
@@ -471,7 +471,7 @@ private struct ReferralProgramCard: View {
 
   private var header: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Refer and earn rewards")
+      Text("推荐并获取奖励")
         .font(.custom("Figtree", size: 16))
         .fontWeight(.bold)
         .foregroundColor(Color(hex: "333333"))
@@ -557,7 +557,7 @@ private struct ReferralProgramCard: View {
   private var signInReferralPrompt: some View {
     HStack(alignment: .center, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Sign in to get your invite link")
+        Text("登录以获取邀请链接")
           .font(.custom("Figtree", size: 12))
           .fontWeight(.bold)
           .foregroundColor(Color(hex: "333333"))
@@ -583,7 +583,7 @@ private struct ReferralProgramCard: View {
 
   private var inviteLinkControl: some View {
     VStack(alignment: .leading, spacing: 5) {
-      Text("Your invite link")
+      Text("你的邀请链接")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "333333"))
 
@@ -606,17 +606,17 @@ private struct ReferralProgramCard: View {
 
   private var sendInviteControl: some View {
     VStack(alignment: .leading, spacing: 5) {
-      Text("Send invites")
+      Text("发送邀请")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "333333"))
 
       HStack(spacing: 8) {
-        ReferralEmailField(email: $inviteEmail, isDisabled: isBusy)
+        Referral邮箱Field(email: $invite邮箱, isDisabled: isBusy)
 
         ReferralMiniButton(
           title: "Send",
           style: .send,
-          isDisabled: isBusy || inviteEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+          isDisabled: isBusy || invite邮箱.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
           action: sendInviteAction
         )
       }
@@ -625,7 +625,7 @@ private struct ReferralProgramCard: View {
 
   private var howItWorks: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("How it works")
+      Text("使用方式")
         .font(.custom("Figtree", size: 12))
         .fontWeight(.bold)
         .foregroundColor(Color(hex: "333333"))
@@ -633,15 +633,15 @@ private struct ReferralProgramCard: View {
       VStack(alignment: .leading, spacing: 4) {
         ReferralStepRow(
           icon: .system("point.3.connected.trianglepath.dotted"),
-          content: Text("Share your invite link")
+          content: Text("分享你的邀请链接")
         )
         ReferralStepRow(
           icon: .menuBarMark,
-          content: Text("They sign up and get a ") + Text("free month of Dayflow Pro!").bold()
+          content: Text("他们注册后可获得") + Text("free month of Dayflow Pro!").bold()
         )
         ReferralStepRow(
           icon: .system("sparkles"),
-          content: Text("You earn ") + Text("1 month of Dayflow Pro (stackable!)").bold()
+          content: Text("你可获得 ") + Text("1 month of Dayflow Pro (stackable!)").bold()
             + Text(", when they use Dayflow for a week.")
         )
       }
@@ -693,7 +693,7 @@ private struct ReferralProgramCard: View {
 
   private var applyCodePanel: some View {
     VStack(alignment: .leading, spacing: 18) {
-      Text("Redeem a referral code")
+      Text("兑换推荐码")
         .font(.custom("Figtree", size: 12))
         .fontWeight(.bold)
         .foregroundColor(Color(hex: "333333"))
@@ -830,13 +830,13 @@ private struct DayflowSignInSheet: View {
   }
 
   @ObservedObject private var authManager = DayflowAuthManager.shared
-  @FocusState private var focusedField: Field?
+  @专注State private var focusedField: Field?
 
   let onDismiss: () -> Void
 
   @State private var step: Step = .email
   @State private var emailAddress = ""
-  @State private var verificationEmail: String?
+  @State private var verification邮箱: String?
   @State private var verificationCode = ""
   @State private var didAutoSubmitCode = false
 
@@ -861,7 +861,7 @@ private struct DayflowSignInSheet: View {
     .padding(26)
     .background(Color.white)
     .onAppear {
-      emailAddress = authManager.signedInEmail ?? emailAddress
+      emailAddress = authManager.signedIn邮箱 ?? emailAddress
       focusedField = step == .email ? .email : .code
     }
     .onChange(of: authManager.isSignedIn) { _, isSignedIn in
@@ -874,14 +874,14 @@ private struct DayflowSignInSheet: View {
 
   private var header: some View {
     VStack(alignment: .leading, spacing: 5) {
-      Text(step == .email ? "Sign in to Dayflow" : "Check your email")
+      Text(step == .email ? "Sign in to Dayflow" : "请检查你的邮箱")
         .font(.custom("InstrumentSerif-Regular", size: 30))
         .foregroundColor(SettingsStyle.text)
 
       Text(
         step == .email
           ? "Enter your email and Dayflow will send a 6 digit code."
-          : "Enter the code sent to \(verificationEmail ?? authManager.pendingEmail ?? emailAddressTrimmed)."
+          : "Enter the code sent to \(verification邮箱 ?? authManager.pending邮箱 ?? emailAddressTrimmed)."
       )
       .font(.custom("Figtree", size: 13))
       .foregroundColor(SettingsStyle.secondary)
@@ -962,8 +962,8 @@ private struct DayflowSignInSheet: View {
             Task {
               didAutoSubmitCode = false
               verificationCode = ""
-              await authManager.sendCode(to: verificationEmail ?? emailAddressTrimmed)
-              verificationEmail = authManager.pendingEmail ?? verificationEmail
+              await authManager.sendCode(to: verification邮箱 ?? emailAddressTrimmed)
+              verification邮箱 = authManager.pending邮箱 ?? verification邮箱
               focusedField = .code
             }
           }
@@ -973,8 +973,8 @@ private struct DayflowSignInSheet: View {
           title: "Change email",
           isDisabled: authManager.isBusy,
           action: {
-            authManager.useDifferentEmail()
-            verificationEmail = nil
+            authManager.useDifferent邮箱()
+            verification邮箱 = nil
             verificationCode = ""
             didAutoSubmitCode = false
             step = .email
@@ -990,7 +990,7 @@ private struct DayflowSignInSheet: View {
     Task {
       await authManager.sendCode(to: emailAddressTrimmed)
       if authManager.canVerifyCode, authManager.errorText == nil {
-        verificationEmail = authManager.pendingEmail ?? emailAddressTrimmed
+        verification邮箱 = authManager.pending邮箱 ?? emailAddressTrimmed
         verificationCode = ""
         didAutoSubmitCode = false
         step = .code
@@ -1001,7 +1001,7 @@ private struct DayflowSignInSheet: View {
 
   private func verifyCode() {
     guard verificationCodeTrimmed.count == 6 else { return }
-    guard let email = verificationEmail ?? authManager.pendingEmail else {
+    guard let email = verification邮箱 ?? authManager.pending邮箱 else {
       step = .email
       focusedField = .email
       return

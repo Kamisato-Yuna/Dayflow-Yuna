@@ -2,7 +2,7 @@
 //  VideoPlayerModal.swift
 //  Dayflow
 //
-//  Custom video timeline player with activity segments
+//  自定义 video timeline player with activity segments
 //
 
 import AVKit
@@ -144,7 +144,7 @@ struct VideoExpansionOverlay: View {
       {
         headerView
           .opacity(headerOpacity)
-          .offset(y: headerOffset)
+          .offset(y: header关闭set)
       }
 
       // Video area with matched geometry
@@ -173,7 +173,7 @@ struct VideoExpansionOverlay: View {
       // Scrubber (slides up during expansion)
       scrubberView
         .opacity(scrubberOpacity)
-        .offset(y: scrubberOffset)
+        .offset(y: scrubber关闭set)
     }
     .frame(width: targetWidth, height: targetHeight)
     .background(
@@ -246,7 +246,7 @@ struct VideoExpansionOverlay: View {
     }
     .frame(width: width, height: height)
     .overlay(alignment: .bottomTrailing) {
-      // Playback speed chip (20x, 40x, 60x)
+      // 播放速度 chip (20x, 40x, 60x)
       if expansionState.isHoveringVideo {
         Button(action: { viewModel.cycleSpeed() }) {
           Text("\(Int(viewModel.playbackSpeed * 20))x")
@@ -259,7 +259,7 @@ struct VideoExpansionOverlay: View {
         }
         .buttonStyle(ScaleButtonStyle())
         .padding(12)
-        .accessibilityLabel("Playback speed")
+        .accessibilityLabel("播放速度")
         .transition(
           .asymmetric(
             insertion: .opacity.combined(with: .scale(scale: 0.9, anchor: .bottomTrailing)),
@@ -302,7 +302,7 @@ struct VideoExpansionOverlay: View {
     }
   }
 
-  private var headerOffset: CGFloat {
+  private var header关闭set: CGFloat {
     switch expansionState.animationPhase {
     case .collapsed, .lifting, .collapsing: return -10
     case .flying: return -5
@@ -318,7 +318,7 @@ struct VideoExpansionOverlay: View {
     }
   }
 
-  private var scrubberOffset: CGFloat {
+  private var scrubber关闭set: CGFloat {
     switch expansionState.animationPhase {
     case .collapsed, .lifting, .collapsing: return 20
     case .flying: return 10
@@ -462,10 +462,10 @@ class VideoPlayerViewModel: ObservableObject {
   @Published var segments: [VideoSegment] = []
   @Published var isDragging: Bool = false
   @Published var hoverTime: Double? = nil
-  @Published var timelineOffset: CGFloat = 0
+  @Published var timeline关闭set: CGFloat = 0
   @Published var videoAspect: CGFloat = 16.0 / 9.0
 
-  // Playback speed options shown in the chip (mapped to 20x, 40x, 60x labels)
+  // 播放速度 options shown in the chip (mapped to 20x, 40x, 60x labels)
   let speedOptions: [Float] = [1.0, 2.0, 3.0]
 
   var player: AVPlayer?
@@ -578,7 +578,7 @@ class VideoPlayerViewModel: ObservableObject {
       VideoSegment(
         title: "Break", startTime: 780, endTime: 840, color: .yellow, activityType: .breaks),
       VideoSegment(
-        title: "Email responses", startTime: 840, endTime: 1020, color: .blue, activityType: .email),
+        title: "邮箱 responses", startTime: 840, endTime: 1020, color: .blue, activityType: .email),
       VideoSegment(
         title: "Coding session", startTime: 1020, endTime: 1680, color: .orange,
         activityType: .coding),
@@ -688,7 +688,7 @@ struct VideoPlayerModal: View {
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: viewModel.isPlaying)
             .frame(width: vw, height: vh)
             .overlay(alignment: .bottomTrailing) {
-              // Playback speed chip with animated appearance (Emil Kowalski: purposeful reveal)
+              // 播放速度 chip with animated appearance (Emil Kowalski: purposeful reveal)
               if isHoveringVideo {
                 Button(action: { viewModel.cycleSpeed() }) {
                   Text("\(Int(viewModel.playbackSpeed * 20))x")
@@ -701,7 +701,7 @@ struct VideoPlayerModal: View {
                 }
                 .buttonStyle(ScaleButtonStyle())
                 .padding(12)
-                .accessibilityLabel("Playback speed")
+                .accessibilityLabel("播放速度")
                 .transition(
                   .asymmetric(
                     insertion: .opacity.combined(with: .scale(scale: 0.9, anchor: .bottomTrailing)),

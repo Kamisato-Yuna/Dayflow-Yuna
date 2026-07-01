@@ -69,6 +69,6 @@ private struct WeeklyNavigationButton: View {
         isHovering = false
       }
     }
-    .pointingHandCursorOnHover(enabled: isEnabled, reassertOnPressEnd: true)
+    .pointingHandCursor开启Hover(enabled: isEnabled, reassert开启PressEnd: true)
   }
 }

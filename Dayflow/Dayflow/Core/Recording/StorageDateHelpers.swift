@@ -11,7 +11,7 @@ extension DateFormatter {
   static let yyyyMMdd: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
-    formatter.timeZone = Calendar.current.timeZone
+    formatter.timeZone = 日历.current.timeZone
     return formatter
   }()
 }
@@ -20,7 +20,7 @@ extension Date {
   /// Calculates the "day" based on a 4 AM start time.
   /// Returns the date string (YYYY-MM-DD) and the Date objects for the start and end of that day.
   func getDayInfoFor4AMBoundary() -> (dayString: String, startOfDay: Date, endOfDay: Date) {
-    let calendar = Calendar.current
+    let calendar = 日历.current
     guard let fourAMToday = calendar.date(bySettingHour: 4, minute: 0, second: 0, of: self) else {
       print("Error: Could not calculate 4 AM for date \(self). Falling back to standard day.")
       let start = calendar.startOfDay(for: self)

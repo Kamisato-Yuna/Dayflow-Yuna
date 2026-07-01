@@ -5,11 +5,11 @@ struct BugReportView: View {
   private let emailAddress = "jerry@dayflow.so"
   private let discordInviteURL = URL(string: "https://discord.gg/9YPAtctE6k")
   private let callBookingURL = URL(string: "https://cal.com/jerry-liu/15min")
-  @State private var didCopyEmail = false
-  @State private var copyResetTask: DispatchWorkItem? = nil
+  @State private var didCopy邮箱 = false
+  @State private var copy重置Task: DispatchWorkItem? = nil
   @State private var didCopyDebugLogs = false
   @State private var isCopyingDebugLogs = false
-  @State private var debugCopyResetTask: DispatchWorkItem? = nil
+  @State private var debugCopy重置Task: DispatchWorkItem? = nil
 
   var body: some View {
     VStack(spacing: 36) {
@@ -19,7 +19,7 @@ struct BugReportView: View {
           .foregroundColor(.black.opacity(0.9))
 
         Text(
-          "Email works great if you want to drop a quick note, Discord if you want to join the community, and if you’d prefer to chat, find some time on my calendar - I’d love to dig into why Dayflow is or isn’t working well for you."
+          "邮箱 works great if you want to drop a quick note, Discord if you want to join the community, and if you’d prefer to chat, find some time on my calendar - I’d love to dig into why Dayflow is or isn’t working well for you."
         )
         .font(.custom("Figtree", size: 16))
         .foregroundColor(.black.opacity(0.65))
@@ -29,7 +29,7 @@ struct BugReportView: View {
       }
       VStack(spacing: 24) {
         VStack(spacing: 12) {
-          Text("Reach out")
+          Text("联系我们")
             .font(.custom("Figtree", size: 14).weight(.medium))
             .foregroundColor(.black.opacity(0.55))
             .textCase(.uppercase)
@@ -37,12 +37,12 @@ struct BugReportView: View {
 
           HStack(spacing: 16) {
             DayflowSurfaceButton(
-              action: composeEmail,
+              action: compose邮箱,
               content: {
                 HStack(spacing: 12) {
                   Image(systemName: "envelope.fill")
                     .font(.system(size: 18, weight: .semibold))
-                  Text("Email")
+                  Text("邮箱")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
@@ -64,7 +64,7 @@ struct BugReportView: View {
                     .renderingMode(.original)
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 22, height: 18)
-                  Text("Join Discord")
+                  Text("加入 Discord")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
@@ -83,7 +83,7 @@ struct BugReportView: View {
                 HStack(spacing: 12) {
                   Image(systemName: "calendar.badge.clock")
                     .font(.system(size: 18, weight: .semibold))
-                  Text("Calendar")
+                  Text("日历")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
@@ -99,7 +99,7 @@ struct BugReportView: View {
         }
 
         VStack(spacing: 12) {
-          Text("Quick utilities")
+          Text("快速工具")
             .font(.custom("Figtree", size: 14).weight(.medium))
             .foregroundColor(.black.opacity(0.55))
             .textCase(.uppercase)
@@ -107,12 +107,12 @@ struct BugReportView: View {
 
           HStack(spacing: 16) {
             DayflowSurfaceButton(
-              action: copyEmail,
+              action: copy邮箱,
               content: {
                 HStack(spacing: 10) {
                   Image(systemName: "doc.on.doc")
                     .font(.system(size: 16, weight: .semibold))
-                  Text(didCopyEmail ? "已复制" : "Copy email")
+                  Text(didCopy邮箱 ? "已复制" : "复制邮箱")
                     .font(.custom("Figtree", size: 15).weight(.semibold))
                 }
               },
@@ -124,7 +124,7 @@ struct BugReportView: View {
               verticalPadding: 14,
               showShadow: true
             )
-            .opacity(didCopyEmail ? 0.85 : 1.0)
+            .opacity(didCopy邮箱 ? 0.85 : 1.0)
 
             DayflowSurfaceButton(
               action: copyDebugLogs,
@@ -158,7 +158,7 @@ struct BugReportView: View {
     .padding(.horizontal, 48)
   }
 
-  private func composeEmail() {
+  private func compose邮箱() {
     AnalyticsService.shared.capture("bug_report_email_tapped", ["destination": emailAddress])
 
     var components = URLComponents()
@@ -172,24 +172,24 @@ struct BugReportView: View {
     NSWorkspace.shared.open(url)
   }
 
-  private func copyEmail() {
+  private func copy邮箱() {
     let pasteboard = NSPasteboard.general
     pasteboard.clearContents()
     pasteboard.setString(emailAddress, forType: .string)
     AnalyticsService.shared.capture("bug_report_email_copied")
 
     withAnimation(.easeOut(duration: 0.2)) {
-      didCopyEmail = true
+      didCopy邮箱 = true
     }
 
-    copyResetTask?.cancel()
+    copy重置Task?.cancel()
     let work = DispatchWorkItem {
       withAnimation(.easeInOut(duration: 0.25)) {
-        didCopyEmail = false
+        didCopy邮箱 = false
       }
-      self.copyResetTask = nil
+      self.copy重置Task = nil
     }
-    copyResetTask = work
+    copy重置Task = work
     DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: work)
   }
 
@@ -254,14 +254,14 @@ struct BugReportView: View {
           didCopyDebugLogs = true
         }
 
-        debugCopyResetTask?.cancel()
+        debugCopy重置Task?.cancel()
         let work = DispatchWorkItem {
           withAnimation(.easeInOut(duration: 0.25)) {
             didCopyDebugLogs = false
           }
-          self.debugCopyResetTask = nil
+          self.debugCopy重置Task = nil
         }
-        debugCopyResetTask = work
+        debugCopy重置Task = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: work)
 
         isCopyingDebugLogs = false

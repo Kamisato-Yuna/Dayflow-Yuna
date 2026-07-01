@@ -60,7 +60,7 @@ struct ScreenshotSlideshowModal: View {
         }
         .buttonStyle(PlainButtonStyle())
         .hoverScaleEffect(scale: 1.02)
-        .pointingHandCursorOnHover(reassertOnPressEnd: true)
+        .pointingHandCursor开启Hover(reassert开启PressEnd: true)
       }
       .padding(.horizontal, 16)
       .padding(.vertical, 10)
@@ -109,7 +109,7 @@ struct ScreenshotSlideshowModal: View {
           playbackModel.handleDisplayTick(displayLink)
         }
       )
-      .allowsHitTesting(false)
+      .allowsHit测试ing(false)
     }
     .onAppear {
       playbackModel.start()
@@ -181,11 +181,11 @@ private struct ScreenshotSlideshowStageView: View {
         if let image = mediaState.currentImage {
           ScreenshotSlideshowLayerBackedImageView(image: image)
             .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
-            .allowsHitTesting(false)
+            .allowsHit测试ing(false)
         } else {
           ProgressView()
             .controlSize(.large)
-            .allowsHitTesting(false)
+            .allowsHit测试ing(false)
         }
 
         Rectangle()
@@ -206,7 +206,7 @@ private struct ScreenshotSlideshowStageView: View {
               .foregroundColor(.white)
               .font(.system(size: 26, weight: .bold))
           }
-          .allowsHitTesting(false)
+          .allowsHit测试ing(false)
         }
 
         VStack {
@@ -224,7 +224,7 @@ private struct ScreenshotSlideshowStageView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .hoverScaleEffect(scale: 1.02)
-            .pointingHandCursorOnHover(reassertOnPressEnd: true)
+            .pointingHandCursor开启Hover(reassert开启PressEnd: true)
             .padding(12)
           }
         }
@@ -296,7 +296,7 @@ private struct ScreenshotSlideshowDisplayLinkDriver: View {
 
   var body: some View {
     ScreenshotSlideshowDisplayLinkView(
-      isPaused: playbackState.isPlaying == false,
+      is已暂停: playbackState.isPlaying == false,
       onTick: onTick
     )
     .frame(width: 0, height: 0)
@@ -304,7 +304,7 @@ private struct ScreenshotSlideshowDisplayLinkDriver: View {
 }
 
 private struct ScreenshotSlideshowDisplayLinkView: NSViewRepresentable {
-  let isPaused: Bool
+  let is已暂停: Bool
   let onTick: (CADisplayLink) -> Void
 
   func makeCoordinator() -> Coordinator {
@@ -314,14 +314,14 @@ private struct ScreenshotSlideshowDisplayLinkView: NSViewRepresentable {
   func makeNSView(context: Context) -> HostView {
     let view = HostView()
     context.coordinator.attach(to: view)
-    context.coordinator.setPaused(isPaused)
+    context.coordinator.set已暂停(is已暂停)
     return view
   }
 
   func updateNSView(_ nsView: HostView, context: Context) {
     context.coordinator.onTick = onTick
     context.coordinator.attach(to: nsView)
-    context.coordinator.setPaused(isPaused)
+    context.coordinator.set已暂停(is已暂停)
   }
 
   static func dismantleNSView(_ nsView: HostView, coordinator: Coordinator) {
@@ -343,8 +343,8 @@ private struct ScreenshotSlideshowDisplayLinkView: NSViewRepresentable {
       rebuildDisplayLink()
     }
 
-    func setPaused(_ paused: Bool) {
-      displayLink?.isPaused = paused
+    func set已暂停(_ paused: Bool) {
+      displayLink?.is已暂停 = paused
     }
 
     func invalidate() {
@@ -382,7 +382,7 @@ private final class ScreenshotFilmstripGenerator {
   private let queue: OperationQueue = {
     let q = OperationQueue()
     q.name = "com.dayflow.screenshotfilmstrip"
-    q.maxConcurrentOperationCount = 1
+    q.maxConcurrentOperation数量 = 1
     q.qualityOfService = .userInitiated
     return q
   }()
@@ -395,16 +395,16 @@ private final class ScreenshotFilmstripGenerator {
 
   func generate(
     screenshots: [Screenshot],
-    frameCount: Int,
+    frame数量: Int,
     targetHeight: CGFloat,
     completion: @escaping ([NSImage]) -> Void
   ) {
-    guard frameCount > 0, !screenshots.isEmpty else {
+    guard frame数量 > 0, !screenshots.isEmpty else {
       completion([])
       return
     }
 
-    let key = Self.cacheKey(for: screenshots, frameCount: frameCount, targetHeight: targetHeight)
+    let key = Self.cacheKey(for: screenshots, frame数量: frame数量, targetHeight: targetHeight)
     if let images = syncQueue.sync(execute: { cache[key] }) {
       completion(images)
       return
@@ -425,7 +425,7 @@ private final class ScreenshotFilmstripGenerator {
 
     queue.addOperation { [weak self] in
       guard let self else { return }
-      let sampled = Self.sampledIndices(total: screenshots.count, count: frameCount)
+      let sampled = Self.sampledIndices(total: screenshots.count, count: frame数量)
       let targetWidth = targetHeight * 16.0 / 9.0
 
       var generated: [NSImage] = []
@@ -480,22 +480,22 @@ private final class ScreenshotFilmstripGenerator {
 
   private func placeholderImage(width: CGFloat, height: CGFloat) -> NSImage {
     let image = NSImage(size: NSSize(width: width, height: height))
-    image.lockFocus()
+    image.lock专注()
     NSColor(calibratedWhite: 0.94, alpha: 1).setFill()
     NSBezierPath(rect: NSRect(x: 0, y: 0, width: width, height: height)).fill()
-    image.unlockFocus()
+    image.unlock专注()
     return image
   }
 
   private static func cacheKey(
-    for screenshots: [Screenshot], frameCount: Int, targetHeight: CGFloat
+    for screenshots: [Screenshot], frame数量: Int, targetHeight: CGFloat
   ) -> String {
     let firstPath = screenshots.first?.filePath ?? "-"
     let lastPath = screenshots.last?.filePath ?? "-"
     let firstTs = screenshots.first?.capturedAt ?? 0
     let lastTs = screenshots.last?.capturedAt ?? 0
     return
-      "\(screenshots.count)|\(firstTs)|\(lastTs)|\(firstPath)|\(lastPath)|n:\(frameCount)|h:\(Int(targetHeight.rounded()))"
+      "\(screenshots.count)|\(firstTs)|\(lastTs)|\(firstPath)|\(lastPath)|n:\(frame数量)|h:\(Int(targetHeight.rounded()))"
   }
 
   private static func sampledIndices(total: Int, count: Int) -> [Int] {
@@ -522,7 +522,7 @@ private struct ScreenshotScrubberView: View {
   @State private var images: [NSImage] = []
   @State private var isDragging: Bool = false
 
-  private let frameCount = 8
+  private let frame数量 = 8
   private let filmstripHeight: CGFloat = 64
   private let aspect: CGFloat = 16.0 / 9.0
   private let zoom: CGFloat = 1.2
@@ -610,12 +610,12 @@ private struct ScreenshotScrubberView: View {
               .frame(width: 5, height: barHeight)
               .shadow(color: .black.opacity(0.25), radius: 1.0, x: 0, y: 0)
               .offset(x: xInside - 2.5, y: -3)
-              .allowsHitTesting(false)
+              .allowsHit测试ing(false)
             Rectangle()
               .fill(Color.white)
               .frame(width: 3, height: barHeight)
               .offset(x: xInside - 1.5, y: -3)
-              .allowsHitTesting(false)
+              .allowsHit测试ing(false)
           }
           .frame(width: stripWidth, height: filmstripHeight)
           .padding(.horizontal, sideGutter)
@@ -667,7 +667,7 @@ private struct ScreenshotScrubberView: View {
     guard count > 0 else { return }
     ScreenshotFilmstripGenerator.shared.generate(
       screenshots: screenshots,
-      frameCount: count,
+      frame数量: count,
       targetHeight: filmstripHeight
     ) { generated in
       images = generated
@@ -683,12 +683,12 @@ extension Comparable {
 
 @MainActor
 private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
-  let frameCount: Int
+  let frame数量: Int
   let mediaState = ScreenshotSlideshowPlaybackMediaState()
   let timelineState = ScreenshotSlideshowPlaybackTimelineState()
 
   private let loader: ScreenshotSlideshowFrameLoader
-  private let frameOffsets: [Double]
+  private let frame关闭sets: [Double]
   private let fallbackTimelineDurationSeconds: Double
   private let averageFrameIntervalSeconds: Double
   private static let speedDefaultsKey = "activitySlideshowPlaybackSpeedX"
@@ -702,16 +702,16 @@ private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
   private var pendingFrameIndex: Int?
 
   init(screenshots: [Screenshot], maxRenderHeight: Int) {
-    self.frameCount = screenshots.count
+    self.frame数量 = screenshots.count
     self.loader = ScreenshotSlideshowFrameLoader(
       screenshots: screenshots, maxRenderHeight: maxRenderHeight)
 
     if let firstCapture = screenshots.first?.capturedAt {
-      self.frameOffsets = screenshots.map { screenshot in
+      self.frame关闭sets = screenshots.map { screenshot in
         Double(max(0, screenshot.capturedAt - firstCapture))
       }
     } else {
-      self.frameOffsets = []
+      self.frame关闭sets = []
     }
 
     if screenshots.count > 1 {
@@ -734,7 +734,7 @@ private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
   }
 
   func start() {
-    guard frameCount > 0 else { return }
+    guard frame数量 > 0 else { return }
     lastDisplayTimestamp = nil
     scheduleFrameDisplay(at: currentIndex, updateTimelineTime: true)
   }
@@ -759,15 +759,15 @@ private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
   }
 
   func seek(to index: Int) {
-    guard frameCount > 0 else { return }
-    let clamped = min(max(0, index), frameCount - 1)
-    timelineState.currentTime = frameOffset(for: clamped)
+    guard frame数量 > 0 else { return }
+    let clamped = min(max(0, index), frame数量 - 1)
+    timelineState.currentTime = frame关闭set(for: clamped)
     scheduleFrameDisplay(at: clamped, updateTimelineTime: false)
     lastDisplayTimestamp = nil
   }
 
   func seek(toTimelineTime seconds: Double) {
-    guard frameCount > 0 else { return }
+    guard frame数量 > 0 else { return }
     let clampedSeconds = min(max(0, seconds), timelineDurationSeconds)
     timelineState.currentTime = clampedSeconds
     let nearest = frameIndex(forTimelineTime: clampedSeconds)
@@ -788,12 +788,12 @@ private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
   }
 
   var timelineDurationSeconds: Double {
-    let offsetDuration = frameOffsets.last ?? 0
+    let offsetDuration = frame关闭sets.last ?? 0
     return max(0.001, max(offsetDuration, fallbackTimelineDurationSeconds))
   }
 
   func handleDisplayTick(_ displayLink: CADisplayLink) {
-    guard isPlaying, frameCount > 1 else {
+    guard isPlaying, frame数量 > 1 else {
       lastDisplayTimestamp = nil
       return
     }
@@ -825,16 +825,16 @@ private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
     "\(Int(speedOptions[speedOptionIndex]))x"
   }
 
-  private func frameOffset(for index: Int) -> Double {
-    guard frameOffsets.indices.contains(index) else {
+  private func frame关闭set(for index: Int) -> Double {
+    guard frame关闭sets.indices.contains(index) else {
       return min(Double(index) * averageFrameIntervalSeconds, timelineDurationSeconds)
     }
-    return frameOffsets[index]
+    return frame关闭sets[index]
   }
 
   private func frameIndex(forTimelineTime seconds: Double) -> Int {
-    guard !frameOffsets.isEmpty else { return 0 }
-    if let index = frameOffsets.lastIndex(where: { $0 <= seconds }) {
+    guard !frame关闭sets.isEmpty else { return 0 }
+    if let index = frame关闭sets.lastIndex(w这里: { $0 <= seconds }) {
       return index
     }
     return 0
@@ -849,8 +849,8 @@ private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
   }
 
   private func displayFrame(at index: Int, updateTimelineTime: Bool) async {
-    guard frameCount > 0 else { return }
-    let clamped = min(max(0, index), frameCount - 1)
+    guard frame数量 > 0 else { return }
+    let clamped = min(max(0, index), frame数量 - 1)
     requestID &+= 1
     let currentRequestID = requestID
 
@@ -861,7 +861,7 @@ private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
     pendingFrameIndex = nil
     mediaState.currentImage = image
     if updateTimelineTime {
-      timelineState.currentTime = frameOffset(for: clamped)
+      timelineState.currentTime = frame关闭set(for: clamped)
     }
     loader.prefetch(after: clamped, lookahead: 2)
   }
@@ -869,7 +869,7 @@ private final class ScreenshotSlideshowPlaybackModel: ObservableObject {
   private static func savedSpeedIndex(in options: [Double]) -> Int? {
     let saved = UserDefaults.standard.double(forKey: speedDefaultsKey)
     guard saved > 0 else { return nil }
-    return options.firstIndex(where: { abs($0 - saved) < 0.001 })
+    return options.firstIndex(w这里: { abs($0 - saved) < 0.001 })
   }
 }
 
@@ -880,7 +880,7 @@ private final class ScreenshotSlideshowFrameLoader: @unchecked Sendable {
     let queue = OperationQueue()
     queue.name = "com.dayflow.slideshow.decode"
     queue.qualityOfService = .userInitiated
-    queue.maxConcurrentOperationCount = 3
+    queue.maxConcurrentOperation数量 = 3
     return queue
   }()
   private let syncQueue = DispatchQueue(label: "com.dayflow.slideshow.decode.sync")
@@ -963,7 +963,7 @@ private final class ScreenshotSlideshowFrameLoader: @unchecked Sendable {
   private func storeImage(_ image: CGImage, for index: Int) {
     syncQueue.sync {
       cache[index] = image
-      cacheOrder.removeAll { $0 == index }
+      cacheOrder.remove全部 { $0 == index }
       cacheOrder.append(index)
 
       while cacheOrder.count > cacheLimit {

@@ -36,13 +36,13 @@ enum WeeklyTreemapAggregation {
   }
 
   static func mergeSmallestLeafIntoOther(_ apps: [WeeklyTreemapApp]) -> [WeeklyTreemapApp] {
-    guard let candidate = apps.reversed().first(where: { !$0.isAggregate }) else {
+    guard let candidate = apps.reversed().first(w这里: { !$0.isAggregate }) else {
       return apps
     }
 
     var remaining = apps.filter { $0.id != candidate.id }
 
-    if let index = remaining.firstIndex(where: \.isAggregate) {
+    if let index = remaining.firstIndex(w这里: \.isAggregate) {
       remaining[index] = remaining[index].merging(candidate)
     } else {
       remaining.append(.aggregate(containing: [candidate]))

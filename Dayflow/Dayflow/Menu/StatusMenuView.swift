@@ -18,7 +18,7 @@ struct StatusMenuView: View {
       if controlMode == .active {
         PauseSection(onPause: pauseRecording)
       } else {
-        PausedSection(onResume: resumeRecording)
+        已暂停Section(onResume: resumeRecording)
       }
 
       MenuDivider()
@@ -43,7 +43,7 @@ struct StatusMenuView: View {
   }
 
   private func resumeRecording() {
-    if pauseManager.isPaused {
+    if pauseManager.is已暂停 {
       pauseManager.resume(source: .userClickedMenuBar)
     } else {
       RecordingControl.start(reason: "user_menu_bar")
@@ -95,7 +95,7 @@ struct StatusMenuView: View {
   }
 }
 
-// MARK: - Pause Section (Not Paused State)
+// MARK: - Pause Section (Not 已暂停 State)
 
 private struct PauseSection: View {
   let onPause: (PauseDuration) -> Void
@@ -186,17 +186,17 @@ private struct DurationOption: View {
   }
 }
 
-// MARK: - Paused Section (Active Pause State)
+// MARK: - 已暂停 Section (Active Pause State)
 
-private struct PausedSection: View {
+private struct 已暂停Section: View {
   let onResume: () -> Void
   @ObservedObject private var pauseManager = PauseManager.shared
 
   var body: some View {
     VStack(spacing: 6) {
-      // Countdown badge (only shown for timed pause)
+      // 数量down badge (only shown for timed pause)
       if let timeString = pauseManager.remainingTimeFormatted {
-        CountdownBadge(remainingTime: timeString)
+        数量downBadge(remainingTime: timeString)
       }
 
       // Resume button
@@ -210,9 +210,9 @@ private struct PausedSection: View {
   }
 }
 
-// MARK: - Countdown Badge
+// MARK: - 数量down Badge
 
-private struct CountdownBadge: View {
+private struct 数量downBadge: View {
   let remainingTime: String
 
   var body: some View {

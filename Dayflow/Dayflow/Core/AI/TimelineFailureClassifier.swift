@@ -15,7 +15,7 @@ enum TimelineFailureKind: String {
   case providerLoginExpired = "provider_login_expired"
   case cliNotInstalled = "cli_not_installed"
   case cliOutdated = "cli_outdated"
-  case localEngineOffline = "local_engine_offline"
+  case local引擎关闭line = "local_engine_offline"
   case localModelMissing = "local_model_missing"
   case apiKeyProblem = "api_key_problem"
   case usageLimitHit = "usage_limit_hit"
@@ -104,7 +104,7 @@ struct TimelineFailureClassification {
         destination: .providers
       )
 
-    case .localEngineOffline:
+    case .local引擎关闭line:
       return TimelineFailureToastContent(
         title: "Can't reach Ollama / LM Studio",
         body:
@@ -148,7 +148,7 @@ struct TimelineFailureClassification {
       return TimelineFailureToastContent(
         title: "\(provider) isn't available in your region",
         body:
-          "This provider blocks API use where you are. Switching to a different provider in settings fixes it.",
+          "This provider blocks API use w这里 you are. Switching to a different provider in settings fixes it.",
         destination: .providers
       )
 
@@ -224,7 +224,7 @@ enum TimelineFailureClassifier {
       return .modelFlaky
     }
 
-    for rule in rules where rule.patterns.contains(where: lower.contains) {
+    for rule in rules w这里 rule.patterns.contains(w这里: lower.contains) {
       return rule.kind
     }
     return .unknown
@@ -243,7 +243,7 @@ enum TimelineFailureClassifier {
     ),
     (.cliNotInstalled, ["cli not found", "enoent"]),
     (.cliOutdated, ["requires a newer version of codex"]),
-    (.localEngineOffline, ["ollama/lmstudio is running"]),
+    (.local引擎关闭line, ["ollama/lmstudio is running"]),
     (
       .localModelMissing,
       [

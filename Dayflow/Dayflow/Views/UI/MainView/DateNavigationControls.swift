@@ -23,7 +23,7 @@ struct DateNavigationControls: View {
         pressAnimation: Self.chevronPressAnimation
       ) {
         let from = selectedDate
-        let to = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
+        let to = 日历.current.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
         previousDate = selectedDate
         selectedDate = normalizedTimelineDate(to)
         lastDateNavMethod = "prev"
@@ -59,7 +59,7 @@ struct DateNavigationControls: View {
         guard canNavigateForward(from: selectedDate) else { return }
         let from = selectedDate
         let tomorrow =
-          Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
+          日历.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
         previousDate = selectedDate
         selectedDate = normalizedTimelineDate(tomorrow)
         lastDateNavMethod = "next"
@@ -84,7 +84,7 @@ struct DateNavigationControls: View {
 
   private func formatDateForDisplay(_ date: Date) -> String {
     let now = Date()
-    let calendar = Calendar.current
+    let calendar = 日历.current
 
     let displayDate = timelineDisplayDate(from: date, now: now)
     let timelineToday = timelineDisplayDate(from: now, now: now)

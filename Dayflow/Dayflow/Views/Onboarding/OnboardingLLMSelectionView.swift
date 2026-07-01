@@ -1,5 +1,5 @@
 //
-//  OnboardingLLMSelectionView.swift
+//  开启boardingLLMSelectionView.swift
 //  Dayflow
 //
 //  LLM provider selection view for onboarding flow
@@ -8,7 +8,7 @@
 import AppKit
 import SwiftUI
 
-struct OnboardingLLMSelectionView: View {
+struct 开启boardingLLMSelectionView: View {
   // Navigation callbacks
   var onBack: () -> Void
   var onNext: (String) -> Void  // Now passes the selected provider
@@ -29,13 +29,13 @@ struct OnboardingLLMSelectionView: View {
 
       // Constants
       let edgePadding: CGFloat = 40
-      let cardGap: CGFloat = 20
+      let card空档: CGFloat = 20
       let headerHeight: CGFloat = 70
       let footerHeight: CGFloat = 40
 
       // Card width calc (no min width, cap at 480)
       let availableWidth = windowWidth - (edgePadding * 2)
-      let rawCardWidth = (availableWidth - (cardGap * 2)) / 3
+      let rawCardWidth = (availableWidth - (card空档 * 2)) / 3
       let cardWidth = max(1, min(480, floor(rawCardWidth)))
 
       // Card height calc
@@ -47,7 +47,7 @@ struct OnboardingLLMSelectionView: View {
 
       VStack(spacing: 0) {
         // Header
-        Text("Choose a way to run Dayflow")
+        Text("选择 Dayflow 运行方式")
           .font(.custom("InstrumentSerif-Regular", size: titleSize))
           .multilineTextAlignment(.center)
           .foregroundColor(.black.opacity(0.9))
@@ -65,7 +65,7 @@ struct OnboardingLLMSelectionView: View {
         // Dynamic card area
         Spacer(minLength: 10)
 
-        HStack(spacing: cardGap) {
+        HStack(spacing: card空档) {
           ForEach(providerCards, id: \.id) { card in
             card
               .frame(width: cardWidth, height: cardHeight)
@@ -82,18 +82,18 @@ struct OnboardingLLMSelectionView: View {
             if cliDetected {
               Text("You have Codex/Claude CLI installed! ")
                 .foregroundColor(.black.opacity(0.6))
-                + Text("We recommend using it for the best experience.")
+                + Text("推荐使用它以获得最佳体验。")
                 .fontWeight(.semibold)
                 .foregroundColor(.black.opacity(0.8))
-                + Text(" You can switch at any time in the settings.")
+                + Text(" 你可随时在设置中切换。")
                 .foregroundColor(.black.opacity(0.6))
             } else {
               Text("Not sure which to choose? ")
                 .foregroundColor(.black.opacity(0.6))
-                + Text("Bring your own keys is the easiest setup (30s).")
+                + Text("自带密钥是最快上手方式（约 30 秒）。")
                 .fontWeight(.semibold)
                 .foregroundColor(.black.opacity(0.8))
-                + Text(" You can switch at any time in the settings.")
+                + Text(" 你可随时在设置中切换。")
                 .foregroundColor(.black.opacity(0.6))
             }
           }
@@ -133,7 +133,7 @@ struct OnboardingLLMSelectionView: View {
         ],
         isSelected: selectedProvider == "ollama",
         buttonMode: .onboarding(onProceed: {
-          // Only proceed if this provider is selected
+          // 开启ly proceed if this provider is selected
           if selectedProvider == "ollama" {
             saveProviderSelection()
             onNext("ollama")
@@ -168,7 +168,7 @@ struct OnboardingLLMSelectionView: View {
         ],
         isSelected: selectedProvider == "gemini",
         buttonMode: .onboarding(onProceed: {
-          // Only proceed if this provider is selected
+          // 开启ly proceed if this provider is selected
           if selectedProvider == "gemini" {
             saveProviderSelection()
             onNext("gemini")
@@ -240,7 +240,7 @@ struct OnboardingLLMSelectionView: View {
           ],
           isSelected: selectedProvider == "dayflow",
           buttonMode: .onboarding(onProceed: {
-              // Only proceed if this provider is selected
+              // 开启ly proceed if this provider is selected
               if selectedProvider == "dayflow" {
                   saveProviderSelection()
                   onNext("dayflow")
@@ -314,15 +314,15 @@ struct OnboardingLLMSelectionView: View {
   }
 }
 
-struct OnboardingLLMSelectionView_Previews: PreviewProvider {
+struct 开启boardingLLMSelectionView_Previews: PreviewProvider {
   static var previews: some View {
-    OnboardingLLMSelectionView(
+    开启boardingLLMSelectionView(
       onBack: {},
       onNext: { _ in }  // Takes provider string now
     )
     .frame(width: 1400, height: 900)
     .background(
-      Image("OnboardingBackgroundv2")
+      Image("开启boardingBackgroundv2")
         .resizable()
         .aspectRatio(contentMode: .fill)
         .ignoresSafeArea()

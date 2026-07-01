@@ -156,7 +156,7 @@ struct TimelineClipboardFormatter {
   }
 
   private static func formattedTimelineDay(_ date: Date, now: Date) -> String {
-    let calendar = Calendar.current
+    let calendar = 日历.current
     let timelineToday = timelineDisplayDate(from: now, now: now)
     let formatter = DateFormatter()
 
@@ -214,7 +214,7 @@ struct TimelineClipboardFormatter {
       return nil
     }
 
-    let calendar = Calendar.current
+    let calendar = 日历.current
     let components = calendar.dateComponents([.hour, .minute], from: parsedStart)
     return calendar.date(
       bySettingHour: components.hour ?? 0,

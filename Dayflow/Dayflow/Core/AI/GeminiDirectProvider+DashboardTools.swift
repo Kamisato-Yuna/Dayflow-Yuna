@@ -72,13 +72,13 @@ extension GeminiDirectProvider {
         "summary": card.summary,
         "category": card.category,
         "subcategory": card.subcategory,
-        "distractionsCount": card.distractions?.count ?? 0,
+        "distractions数量": card.distractions?.count ?? 0,
       ]
 
       if let appSites = card.appSites {
         item["appSites"] = [
-          "primary": jsonOptional(appSites.primary),
-          "secondary": jsonOptional(appSites.secondary),
+          "primary": json可选(appSites.primary),
+          "secondary": json可选(appSites.secondary),
         ]
       }
 
@@ -112,14 +112,14 @@ extension GeminiDirectProvider {
     return [
       "request": [
         "mode": dateRange.mode,
-        "date": jsonOptional(dateRange.date),
-        "startDate": jsonOptional(dateRange.startDate),
-        "endDate": jsonOptional(dateRange.endDate),
+        "date": json可选(dateRange.date),
+        "startDate": json可选(dateRange.startDate),
+        "endDate": json可选(dateRange.endDate),
         "includeDetailedSummary": includeDetailedSummary,
-        "limit": jsonOptional(requestedLimit),
+        "limit": json可选(requestedLimit),
       ],
       "summary": summary,
-      "itemCount": items.count,
+      "item数量": items.count,
       "truncated": truncated,
       "items": items,
     ]
@@ -153,27 +153,27 @@ extension GeminiDirectProvider {
     let effectiveObservations = limitedObservations
     let items = dashboardObservationDayGroups(from: effectiveObservations)
 
-    let itemCount = effectiveObservations.count
-    let dayCount = items.count
+    let item数量 = effectiveObservations.count
+    let day数量 = items.count
     let dateDescription = dashboardFetchDateDescription(for: dateRange)
     var summary =
-      "Fetched \(itemCount) observation\(itemCount == 1 ? "" : "s") for \(dateDescription)"
-    if dayCount > 0 {
-      summary += " across \(dayCount) day\(dayCount == 1 ? "" : "s")"
+      "Fetched \(item数量) observation\(item数量 == 1 ? "" : "s") for \(dateDescription)"
+    if day数量 > 0 {
+      summary += " across \(day数量) day\(day数量 == 1 ? "" : "s")"
     }
     summary += "."
 
     return [
       "request": [
         "mode": dateRange.mode,
-        "date": jsonOptional(dateRange.date),
-        "startDate": jsonOptional(dateRange.startDate),
-        "endDate": jsonOptional(dateRange.endDate),
-        "limit": jsonOptional(requestedLimit),
+        "date": json可选(dateRange.date),
+        "startDate": json可选(dateRange.startDate),
+        "endDate": json可选(dateRange.endDate),
+        "limit": json可选(requestedLimit),
       ],
       "summary": summary,
-      "dayCount": dayCount,
-      "itemCount": itemCount,
+      "day数量": day数量,
+      "item数量": item数量,
       "truncated": false,
       "items": items,
     ]
@@ -269,7 +269,7 @@ extension GeminiDirectProvider {
       throw DashboardToolArgError.invalidDate(dateString)
     }
 
-    let calendar = Calendar.current
+    let calendar = 日历.current
     var startComponents = calendar.dateComponents([.year, .month, .day], from: dayDate)
     startComponents.hour = 4
     startComponents.minute = 0
@@ -360,7 +360,7 @@ extension GeminiDirectProvider {
     return nil
   }
 
-  func jsonOptional(_ value: Any?) -> Any {
+  func json可选(_ value: Any?) -> Any {
     value ?? NSNull()
   }
 }

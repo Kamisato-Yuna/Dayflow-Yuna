@@ -30,10 +30,10 @@ final class OtherSettingsViewModel: ObservableObject {
       DayGoalPreferences.showDailyGoalPopups = showDailyGoalPopups
     }
   }
-  @Published var saveAllTimelapsesToDisk: Bool {
+  @Published var save全部TimelapsesToDisk: Bool {
     didSet {
-      guard saveAllTimelapsesToDisk != oldValue else { return }
-      TimelapsePreferences.saveAllTimelapsesToDisk = saveAllTimelapsesToDisk
+      guard save全部TimelapsesToDisk != oldValue else { return }
+      TimelapsePreferences.save全部TimelapsesToDisk = save全部TimelapsesToDisk
     }
   }
   @Published var outputLanguageOverride: String
@@ -45,10 +45,10 @@ final class OtherSettingsViewModel: ObservableObject {
   @Published var exportStatusMessage: String?
   @Published var exportErrorMessage: String?
   @Published var reprocessDayDate: Date
-  @Published var isReprocessingDay = false
+  @Published var is重新处理ingDay = false
   @Published var reprocessStatusMessage: String?
   @Published var reprocessErrorMessage: String?
-  @Published var showReprocessDayConfirm = false
+  @Published var show重新处理DayConfirm = false
 
   init() {
     analyticsEnabled = AnalyticsService.shared.isOptedIn
@@ -56,7 +56,7 @@ final class OtherSettingsViewModel: ObservableObject {
     showTimelineAppIcons =
       UserDefaults.standard.object(forKey: "showTimelineAppIcons") as? Bool ?? true
     showDailyGoalPopups = DayGoalPreferences.showDailyGoalPopups
-    saveAllTimelapsesToDisk = TimelapsePreferences.saveAllTimelapsesToDisk
+    save全部TimelapsesToDisk = TimelapsePreferences.save全部TimelapsesToDisk
     outputLanguageOverride = LLMOutputLanguagePreferences.override
     exportStartDate = timelineDisplayDate(from: Date())
     exportEndDate = timelineDisplayDate(from: Date())
@@ -103,7 +103,7 @@ final class OtherSettingsViewModel: ObservableObject {
     exportErrorMessage = nil
 
     Task.detached(priority: .userInitiated) { [start, end] in
-      let calendar = Calendar.current
+      let calendar = 日历.current
       let dayFormatter = DateFormatter()
       dayFormatter.dateFormat = "yyyy-MM-dd"
 
@@ -112,7 +112,7 @@ final class OtherSettingsViewModel: ObservableObject {
 
       var sections: [String] = []
       var totalActivities = 0
-      var dayCount = 0
+      var day数量 = 0
 
       while cursor <= endDate {
         let dayString = dayFormatter.string(from: cursor)
@@ -120,7 +120,7 @@ final class OtherSettingsViewModel: ObservableObject {
         totalActivities += cards.count
         let section = TimelineClipboardFormatter.makeMarkdown(for: cursor, cards: cards)
         sections.append(section)
-        dayCount += 1
+        day数量 += 1
 
         guard let next = calendar.date(byAdding: .day, value: 1, to: cursor) else { break }
         cursor = next
@@ -134,20 +134,20 @@ final class OtherSettingsViewModel: ObservableObject {
           exportText: exportText,
           startDate: start,
           endDate: end,
-          dayCount: dayCount,
-          activityCount: totalActivities
+          day数量: day数量,
+          activity数量: totalActivities
         )
       }
     }
   }
 
   func reprocessSelectedDay() {
-    guard !isReprocessingDay else { return }
+    guard !is重新处理ingDay else { return }
 
     let normalizedDate = timelineDisplayDate(from: reprocessDayDate)
     let dayString = DateFormatter.yyyyMMdd.string(from: normalizedDate)
 
-    isReprocessingDay = true
+    is重新处理ingDay = true
     reprocessErrorMessage = nil
     reprocessStatusMessage = "Starting reprocess for \(dayString)…"
 
@@ -164,12 +164,12 @@ final class OtherSettingsViewModel: ObservableObject {
           switch result {
           case .success:
             if self.reprocessStatusMessage == nil {
-              self.reprocessStatusMessage = "Reprocess completed."
+              self.reprocessStatusMessage = "重新处理 completed."
             }
           case .failure(let error):
             self.reprocessErrorMessage = error.localizedDescription
           }
-          self.isReprocessingDay = false
+          self.is重新处理ingDay = false
         }
       })
   }
@@ -179,8 +179,8 @@ final class OtherSettingsViewModel: ObservableObject {
     exportText: String,
     startDate: Date,
     endDate: Date,
-    dayCount: Int,
-    activityCount: Int
+    day数量: Int,
+    activity数量: Int
   ) {
     let dayFormatter = DateFormatter()
     dayFormatter.dateFormat = "yyyy-MM-dd"
@@ -197,7 +197,7 @@ final class OtherSettingsViewModel: ObservableObject {
 
     defer { isExportingTimelineRange = false }
 
-    guard response == .OK, let url = savePanel.url else {
+    guard response == .确定, let url = savePanel.url else {
       exportStatusMessage = nil
       exportErrorMessage = "Export canceled"
       return
@@ -207,15 +207,15 @@ final class OtherSettingsViewModel: ObservableObject {
       try exportText.write(to: url, atomically: true, encoding: .utf8)
       exportErrorMessage = nil
       exportStatusMessage =
-        "Saved \(activityCount) activit\(activityCount == 1 ? "y" : "ies") across \(dayCount) day\(dayCount == 1 ? "" : "s") to \(url.lastPathComponent)"
+        "Saved \(activity数量) activit\(activity数量 == 1 ? "y" : "ies") across \(day数量) day\(day数量 == 1 ? "" : "s") to \(url.lastPathComponent)"
 
       AnalyticsService.shared.capture(
         "timeline_exported",
         [
           "start_day": dayFormatter.string(from: startDate),
           "end_day": dayFormatter.string(from: endDate),
-          "day_count": dayCount,
-          "activity_count": activityCount,
+          "day_count": day数量,
+          "activity_count": activity数量,
           "format": "markdown",
           "file_extension": url.pathExtension.lowercased(),
         ])

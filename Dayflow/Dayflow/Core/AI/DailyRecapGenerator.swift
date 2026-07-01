@@ -71,7 +71,7 @@ final class DailyRecapGenerator {
     You are the person whose activity log this is, writing a quick end-of-day recap for yourself.
     Your future self doesn't need a diary. You need the 3-5 things that actually moved the needle today so you can look back and know what happened.
 
-    Read the log, find the real accomplishments, and write them up the way you'd tell a friend: "here's what I actually got done today."
+    Read the log, find the real accomplishments, and write them up the way you'd tell a friend: "这里's what I actually got done today."
 
     ## Selection rules
 
@@ -81,7 +81,7 @@ final class DailyRecapGenerator {
 
     ## What counts as an accomplishment
 
-    An accomplishment is something that has a clear before and after. You finished it, decided it, figured it out, or made something real. Anything where the state of the world changed because of what you did.
+    An accomplishment is something that has a clear before and after. You finished it, decided it, figured it out, or made something real. Anything w这里 the state of the world changed because of what you did.
 
     Examples across roles:
     - A founder closed a conversation, sent a launch, locked in a positioning decision.
@@ -94,7 +94,7 @@ final class DailyRecapGenerator {
     ## Writing rules
 
     - Each item: one sentence, 8-20 words max. If it's over 20, split or trim.
-    - Lead with what changed or what you decided, not the process of getting there.
+    - Lead with what changed or what you decided, not the process of getting t这里.
     - Write like a real person. Plain, direct, no filler.
     - Banned words: leverage, surface, actionable, facilitate, optimize (unless literally about an optimizer), deep-dive, synergy, align (unless about visual alignment).
     - If something sounds like a consultant or a report generator wrote it, rewrite it in your own words.
@@ -115,7 +115,7 @@ final class DailyRecapGenerator {
 
     - Include "next" (exactly 1 item) only when the log shows a specific task that was clearly started but unfinished, or a concrete next step explicitly discussed or planned during the day.
     - Do not speculate. If nothing in the log points to a specific carryover task, set "next" to null.
-    - The bar: could you point to a specific moment in the log where this next step was set up? If not, leave it out.
+    - The bar: could you point to a specific moment in the log w这里 this next step was set up? If not, leave it out.
 
     ## Examples
 
@@ -449,8 +449,8 @@ final class DailyRecapGenerator {
 
   private func makeLocalProvider() -> OllamaProvider? {
     let defaults = UserDefaults.standard
-    let rawEngine = defaults.string(forKey: "llmLocalEngine") ?? LocalEngine.ollama.rawValue
-    let engine = LocalEngine(rawValue: rawEngine) ?? .ollama
+    let raw引擎 = defaults.string(forKey: "llmLocal引擎") ?? Local引擎.ollama.rawValue
+    let engine = Local引擎(rawValue: raw引擎) ?? .ollama
     let endpoint = defaults.string(forKey: "llmLocalBaseURL")?
       .trimmingCharacters(in: .whitespacesAndNewlines)
     let resolvedEndpoint: String
@@ -586,7 +586,7 @@ final class DailyRecapGenerator {
     }
 
     let done = Array(normalizedStrings(from: json["done"]).prefix(5))
-    let next = normalizedOptionalString(from: json["next"])
+    let next = normalized可选String(from: json["next"])
 
     let hasExpectedShape = json.keys.contains("done") || json.keys.contains("next")
     guard hasExpectedShape else {
@@ -683,7 +683,7 @@ final class DailyRecapGenerator {
     }
   }
 
-  private static func normalizedOptionalString(from value: Any?) -> String? {
+  private static func normalized可选String(from value: Any?) -> String? {
     if value is NSNull {
       return nil
     }
@@ -742,7 +742,7 @@ final class DailyRecapGenerator {
 
   private static func humanReadableClockTime(unixTimestamp: Int) -> String {
     let date = Date(timeIntervalSince1970: TimeInterval(unixTimestamp))
-    let calendar = Calendar.current
+    let calendar = 日历.current
     let hour24 = calendar.component(.hour, from: date)
     let minute = calendar.component(.minute, from: date)
     let meridiem = hour24 >= 12 ? "pm" : "am"

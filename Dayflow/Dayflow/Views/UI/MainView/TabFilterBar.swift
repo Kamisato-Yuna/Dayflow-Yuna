@@ -3,7 +3,7 @@ import SwiftUI
 struct TabFilterBar: View {
   let categories: [TimelineCategory]
   let idleCategory: TimelineCategory?
-  let onManageCategories: () -> Void
+  let onManage分类: () -> Void
 
   @State private var chipRowWidth: CGFloat = 0
 
@@ -36,7 +36,7 @@ struct TabFilterBar: View {
 
         measuredChipRow
           .opacity(0)
-          .allowsHitTesting(false)
+          .allowsHit测试ing(false)
           .accessibilityHidden(true)
       }
       .frame(width: availableWidth, height: editButtonSize, alignment: .leading)
@@ -112,7 +112,7 @@ struct TabFilterBar: View {
 
   private var editButton: some View {
     CategoryEditCircleButton(
-      action: onManageCategories,
+      action: onManage分类,
       diameter: editButtonSize
     )
   }
@@ -124,7 +124,7 @@ struct TabFilterBar: View {
       endPoint: .trailing
     )
     .frame(width: 40)
-    .allowsHitTesting(false)
+    .allowsHit测试ing(false)
   }
 
   private struct ChipRowWidthPreferenceKey: PreferenceKey {

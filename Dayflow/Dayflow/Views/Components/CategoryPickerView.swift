@@ -48,7 +48,7 @@ struct CategoryPickerView: View {
               .foregroundColor(Color(red: 0.39, green: 0.35, blue: 0.33))  // #635953
 
               Button(action: onNavigateToEditor) {
-                Text("here")
+                Text("这里")
                   .font(Font.custom("Figtree", size: 10).weight(.medium))
                   .foregroundColor(Color(red: 1.0, green: 0.4, blue: 0.0))  // #ff6600
                   .underline()
@@ -164,7 +164,7 @@ struct CategoryPill: View {
           .fill(categoryColor)
           .frame(width: 8, height: 8)
 
-        // Category name - no line limit, text can wrap if needed
+        // 分类名称 - no line limit, text can wrap if needed
         Text(category.name)
           .font(Font.custom("Figtree", size: 10).weight(.medium))
           .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))

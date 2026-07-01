@@ -24,9 +24,9 @@ struct WeeklyTreemapSection: View {
     static let contentOrigin = CGPoint(x: 40, y: 86)
     static let contentTrailingInset: CGFloat = 40
     static let contentSize = CGSize(width: 797, height: 400)
-    static let categoryGap: CGFloat = 6
+    static let category空档: CGFloat = 6
     static let hoverCardSize = CGSize(width: 176, height: 92)
-    static let hoverCardGap: CGFloat = 10
+    static let hoverCard空档: CGFloat = 10
   }
 
   private var contentWidth: CGFloat {
@@ -62,7 +62,7 @@ struct WeeklyTreemapSection: View {
         value: { $0.weight },
         order: WeeklyTreemapCategory.displayOrder,
         in: CGRect(origin: .zero, size: proxy.size),
-        gap: Design.categoryGap
+        gap: Design.category空档
       )
 
       ZStack(alignment: .topLeading) {
@@ -91,7 +91,7 @@ struct WeeklyTreemapSection: View {
           )
           .transition(.opacity.combined(with: .scale(scale: 0.96, anchor: .center)))
           .zIndex(10)
-          .allowsHitTesting(false)
+          .allowsHit测试ing(false)
         }
       }
       .coordinateSpace(name: weeklyTreemapContentCoordinateSpace)
@@ -105,12 +105,12 @@ struct WeeklyTreemapSection: View {
     let centeredX = frame.midX - (cardWidth / 2)
     let x = min(max(centeredX, 0), size.width - cardWidth)
 
-    let preferredAboveY = frame.minY - cardHeight - Design.hoverCardGap
+    let preferredAboveY = frame.minY - cardHeight - Design.hoverCard空档
     if preferredAboveY >= 0 {
       return CGPoint(x: x, y: preferredAboveY)
     }
 
-    let belowY = frame.maxY + Design.hoverCardGap
+    let belowY = frame.maxY + Design.hoverCard空档
     let clampedBelowY = min(belowY, size.height - cardHeight)
     return CGPoint(x: x, y: max(clampedBelowY, 0))
   }

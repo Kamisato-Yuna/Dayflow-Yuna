@@ -9,39 +9,39 @@ extension WeeklyDashboardBuilder {
   static func buildHeatmap(
     from facts: [WeeklyCardFact],
     weekRange: WeeklyDateRange
-  ) -> WeeklyFocusHeatmapSnapshot {
+  ) -> Weekly专注HeatmapSnapshot {
     let visibleFacts = facts.filter { !$0.isSystem && !$0.isIdle }
     let visibleWindow = weeklyActivityWindow(from: visibleFacts)
     let bucketMinutes = 5.0
-    let bucketCount = max(1, Int(ceil((visibleWindow.end - visibleWindow.start) / bucketMinutes)))
+    let bucket数量 = max(1, Int(ceil((visibleWindow.end - visibleWindow.start) / bucketMinutes)))
     let descriptors = heatmapDayDescriptors(for: weekRange)
     let rows = descriptors.map { descriptor in
       let dayFacts = visibleFacts.filter {
         $0.dayString == descriptor.dayString
       }
 
-      return WeeklyFocusHeatmapRow(
+      return Weekly专注HeatmapRow(
         id: descriptor.id,
         label: descriptor.label,
         values: heatmapValues(
           for: dayFacts,
           visibleStart: visibleWindow.start,
           bucketMinutes: bucketMinutes,
-          bucketCount: bucketCount
+          bucket数量: bucket数量
         )
       )
     }
 
-    return WeeklyFocusHeatmapSnapshot(
-      title: "Focus and distraction heat map",
-      focusedLabel: "Focused work",
+    return Weekly专注HeatmapSnapshot(
+      title: "专注 and distraction heat map",
+      focusedLabel: "专注ed work",
       distractedLabel: "Distracted",
       startMinute: visibleWindow.start,
-      endMinute: visibleWindow.start + (Double(bucketCount) * bucketMinutes),
+      endMinute: visibleWindow.start + (Double(bucket数量) * bucketMinutes),
       bucketMinutes: bucketMinutes,
       timeLabels: weeklyTimeLabels(
         startMinute: visibleWindow.start,
-        endMinute: visibleWindow.start + (Double(bucketCount) * bucketMinutes)
+        endMinute: visibleWindow.start + (Double(bucket数量) * bucketMinutes)
       ),
       rows: rows
     )
@@ -56,12 +56,12 @@ extension WeeklyDashboardBuilder {
     let visibleStart = visibleWindow.start
     let visibleEnd = visibleWindow.end
     let slotMinutes = 15.0
-    let slotCount = max(1, Int((visibleEnd - visibleStart) / slotMinutes))
+    let slot数量 = max(1, Int((visibleEnd - visibleStart) / slotMinutes))
     let descriptors = dayDescriptors(for: weekRange, offsets: Array(0..<7))
 
     let rows = descriptors.map { descriptor in
       let dayFacts = visibleFacts.filter { $0.dayString == descriptor.dayString }
-      let cells = (0..<slotCount).map { slotIndex in
+      let cells = (0..<slot数量).map { slotIndex in
         workflowCell(
           slotIndex: slotIndex,
           dayFacts: dayFacts,
@@ -92,11 +92,11 @@ extension WeeklyDashboardBuilder {
     for facts: [WeeklyCardFact],
     visibleStart: Double,
     bucketMinutes: Double,
-    bucketCount: Int
+    bucket数量: Int
   ) -> [Double] {
-    var focusMinutes = Array(repeating: 0.0, count: bucketCount)
-    var distractionMinutes = Array(repeating: 0.0, count: bucketCount)
-    var switchPressure = Array(repeating: 0.0, count: bucketCount)
+    var focusMinutes = Array(repeating: 0.0, count: bucket数量)
+    var distractionMinutes = Array(repeating: 0.0, count: bucket数量)
+    var switchPressure = Array(repeating: 0.0, count: bucket数量)
     var previousFact: WeeklyCardFact?
 
     for fact in facts.sorted(by: { $0.startMinute < $1.startMinute }) {
@@ -192,7 +192,7 @@ extension WeeklyDashboardBuilder {
     let lastIndex = min(values.count - 1, Int(ceil((end - visibleStart) / bucketMinutes)) - 1)
     guard firstIndex <= lastIndex else { return }
 
-    for index in firstIndex...lastIndex where values.indices.contains(index) {
+    for index in firstIndex...lastIndex w这里 values.indices.contains(index) {
       let bucketStart = visibleStart + (Double(index) * bucketMinutes)
       let bucketEnd = bucketStart + bucketMinutes
       let overlap = max(0, min(end, bucketEnd) - max(start, bucketStart))
@@ -220,23 +220,23 @@ extension WeeklyDashboardBuilder {
     switchPressure: [Double],
     bucketMinutes: Double
   ) -> [Double] {
-    let cleanFocus = focusMinutes.indices.map { index in
+    let clean专注 = focusMinutes.indices.map { index in
       focusMinutes[index] >= bucketMinutes * 0.6 && distractionMinutes[index] < 1
     }
-    let focusRunLengths = heatmapRunLengths(from: cleanFocus)
+    let focusRunLengths = heatmapRunLengths(from: clean专注)
 
     let rawScores = focusMinutes.indices.map { index -> Double in
       let focusRatio = max(0, min(1, focusMinutes[index] / bucketMinutes))
       let distractionRatio = max(0, min(1, distractionMinutes[index] / bucketMinutes))
-      let sustainedFocusBoost = min(1, Double(focusRunLengths[index]) / 6)
-      let focusStrength = focusRatio * (0.35 + (0.65 * sustainedFocusBoost))
+      let sustained专注Boost = min(1, Double(focusRunLengths[index]) / 6)
+      let focusStrength = focusRatio * (0.35 + (0.65 * sustained专注Boost))
       let distractionStrength = min(1, distractionRatio * 1.25)
       let switchStrength = min(1, switchPressure[index] / 2) * 0.22
 
       return max(-1, min(1, distractionStrength + switchStrength - focusStrength))
     }
 
-    return smoothFocusedHeatmapScores(rawScores)
+    return smooth专注edHeatmapScores(rawScores)
   }
 
   private static func heatmapRunLengths(from values: [Bool]) -> [Int] {
@@ -263,7 +263,7 @@ extension WeeklyDashboardBuilder {
     return lengths
   }
 
-  private static func smoothFocusedHeatmapScores(_ scores: [Double]) -> [Double] {
+  private static func smooth专注edHeatmapScores(_ scores: [Double]) -> [Double] {
     guard scores.count > 2 else { return scores }
 
     return scores.indices.map { index in

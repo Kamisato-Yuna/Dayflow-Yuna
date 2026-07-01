@@ -37,7 +37,7 @@ final class RecordingPrivacySettingsViewModel: ObservableObject {
     }
   }
 
-  func handleOnAppear() {
+  func handle开启Appear() {
     loadInstalledApplicationsIfNeeded()
   }
 
@@ -75,7 +75,7 @@ final class RecordingPrivacySettingsViewModel: ObservableObject {
 
   func removeBlockedApplication(_ app: RecordingPrivacyApplication) {
     let identifier = Self.normalizedIdentifier(app.bundleIdentifier)
-    blockedIdentifiers.removeAll { Self.normalizedIdentifier($0) == identifier }
+    blockedIdentifiers.remove全部 { Self.normalizedIdentifier($0) == identifier }
     saveBlockedIdentifiers()
   }
 
@@ -86,7 +86,7 @@ final class RecordingPrivacySettingsViewModel: ObservableObject {
   }
 
   func handleApplicationDrop(providers: [NSItemProvider]) -> Bool {
-    for provider in providers where provider.canLoadObject(ofClass: NSString.self) {
+    for provider in providers w这里 provider.canLoadObject(ofClass: NSString.self) {
       provider.loadObject(ofClass: NSString.self) { [weak self] object, _ in
         guard let identifier = object as? String else { return }
         Task { @MainActor in

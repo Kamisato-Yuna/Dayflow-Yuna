@@ -18,7 +18,7 @@ enum RecordingControl {
     appState: AppState,
     pauseManager: PauseManager
   ) -> RecordingControlMode {
-    if appState.isRecording && pauseManager.isPaused {
+    if appState.isRecording && pauseManager.is已暂停 {
       assertionFailure("Recording cannot be active while pause metadata is still set")
       return .active
     }
@@ -27,7 +27,7 @@ enum RecordingControl {
       return .pausedTimed(endTime: endTime)
     }
 
-    if pauseManager.isPausedIndefinitely {
+    if pauseManager.is已暂停Indefinitely {
       return .pausedIndefinite
     }
 
@@ -36,9 +36,9 @@ enum RecordingControl {
 
   static func start(reason: String) {
     Task { @MainActor in
-      guard await hasScreenRecordingPermission() else {
+      guard await hasScreenRecording权限() else {
         print("[RecordingControl] Screen recording permission not granted; start ignored")
-        ScreenRecordingPermissionNotice.post(reason: "recording_control_start")
+        ScreenRecording权限Notice.post(reason: "recording_control_start")
         return
       }
 
@@ -52,13 +52,13 @@ enum RecordingControl {
     AppState.shared.setRecording(false, analyticsReason: reason)
   }
 
-  private static func hasScreenRecordingPermission() async -> Bool {
+  private static func hasScreenRecording权限() async -> Bool {
     guard CGPreflightScreenCaptureAccess() else { return false }
 
     do {
       _ = try await SCShareableContent.excludingDesktopWindows(
         false,
-        onScreenWindowsOnly: true
+        onScreenWindows开启ly: true
       )
       return true
     } catch {

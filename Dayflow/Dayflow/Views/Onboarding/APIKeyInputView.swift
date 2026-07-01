@@ -16,7 +16,7 @@ struct APIKeyInputView: View {
 
   @State private var showPassword = false
   @State private var validationState: ValidationState = .none
-  @FocusState private var isFocused: Bool
+  @专注State private var is专注ed: Bool
 
   enum ValidationState {
     case none
@@ -48,7 +48,7 @@ struct APIKeyInputView: View {
             }
           }
           .font(.custom("SF Mono", size: 13))
-          .focused($isFocused)
+          .focused($is专注ed)
           .onChange(of: apiKey) { _, newValue in
             let cleaned = cleanedAPIKey(newValue)
             guard cleaned == newValue else {
@@ -85,12 +85,12 @@ struct APIKeyInputView: View {
         .cornerRadius(8)
         .overlay(
           RoundedRectangle(cornerRadius: 8)
-            .stroke(borderColor, lineWidth: isFocused ? 2 : 1)
+            .stroke(borderColor, lineWidth: is专注ed ? 2 : 1)
         )
 
         // Validation message
         if validationState == .invalid {
-          Text("API key should be more than 10 characters")
+          Text("API Key 长度至少需要超过 10 个字符")
             .font(.custom("Figtree", size: 12))
             .foregroundColor(Color(hex: "E91515"))
             .transition(.opacity)
@@ -105,7 +105,7 @@ struct APIKeyInputView: View {
           .foregroundColor(Color(red: 0.34, green: 1, blue: 0.45).opacity(0.7))
 
         Text(
-          "Your API key is encrypted and stored in your macOS Keychain - never uploaded anywhere"
+          "Your API key is encrypted and stored in your macOS Keychain - never uploaded anyw这里"
         )
         .font(.custom("Figtree", size: 12))
         .foregroundColor(.black.opacity(0.5))
@@ -114,7 +114,7 @@ struct APIKeyInputView: View {
   }
 
   private var borderColor: Color {
-    if isFocused {
+    if is专注ed {
       switch validationState {
       case .valid:
         return Color(red: 0.34, green: 1, blue: 0.45).opacity(0.6)

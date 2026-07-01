@@ -23,7 +23,7 @@ enum NotificationPreferences {
   private static let defaultIntentionMinute = 0
   private static let defaultReflectionHour = 17  // 5 PM
   private static let defaultReflectionMinute = 0
-  private static let defaultWeekdays: Set<Int> = [2, 3, 4, 5, 6]  // Mon-Fri (Calendar weekday: 1=Sun, 2=Mon...)
+  private static let defaultWeekdays: Set<Int> = [2, 3, 4, 5, 6]  // Mon-Fri (日历 weekday: 1=Sun, 2=Mon...)
 
   // MARK: - Properties
 
@@ -74,7 +74,7 @@ enum NotificationPreferences {
     set { defaults.set(newValue, forKey: reflectionMinuteKey) }
   }
 
-  /// Calendar weekday values: 1=Sunday, 2=Monday, 3=Tuesday, 4=Wednesday, 5=Thursday, 6=Friday, 7=Saturday
+  /// 日历 weekday values: 1=Sunday, 2=Monday, 3=Tuesday, 4=Wednesday, 5=Thursday, 6=Friday, 7=Saturday
   static var weekdays: Set<Int> {
     get {
       guard let array = defaults.array(forKey: weekdaysKey) as? [Int] else {
@@ -89,12 +89,12 @@ enum NotificationPreferences {
 
   // MARK: - Convenience
 
-  /// Converts JournalRemindersView.Weekday rawValue (0=Sunday) to Calendar weekday (1=Sunday)
+  /// Converts JournalRemindersView.Weekday rawValue (0=Sunday) to 日历 weekday (1=Sunday)
   static func calendarWeekday(from viewWeekday: Int) -> Int {
     return viewWeekday + 1
   }
 
-  /// Converts Calendar weekday (1=Sunday) to JournalRemindersView.Weekday rawValue (0=Sunday)
+  /// Converts 日历 weekday (1=Sunday) to JournalRemindersView.Weekday rawValue (0=Sunday)
   static func viewWeekday(from calendarWeekday: Int) -> Int {
     return calendarWeekday - 1
   }

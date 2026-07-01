@@ -131,15 +131,15 @@ struct CategoryDonutChart: View {
           )
         )
         .frame(width: chartSize, height: chartSize)
-        .allowsHitTesting(false)  // Don't block interactions
+        .allowsHit测试ing(false)  // Don't block interactions
 
       // White circle in center - slightly smaller than donut hole to show grey gap on inner edge
-      let innerGap: CGFloat = 8  // 4px gap on each side (matches outer gap)
+      let inner空档: CGFloat = 8  // 4px gap on each side (matches outer gap)
       Circle()
         .fill(Color.white)
         .frame(
-          width: chartSize * innerRadiusRatio - innerGap,
-          height: chartSize * innerRadiusRatio - innerGap)
+          width: chartSize * innerRadiusRatio - inner空档,
+          height: chartSize * innerRadiusRatio - inner空档)
 
       // Center content
       centerContent
@@ -149,16 +149,16 @@ struct CategoryDonutChart: View {
 
   private var centerContent: some View {
     VStack(spacing: 4) {
-      Text("TOTAL")
+      Text("总计")
         .font(.custom("Figtree", size: 8).weight(.bold))
         .foregroundColor(Color(red: 0.65, green: 0.65, blue: 0.65))  // #a5a5a5
 
       VStack(spacing: 0) {
         let total = formattedTotal
-        Text("\(total.hours) hours")
+        Text("\(total.hours) 小时")
           .font(.custom("InstrumentSerif-Regular", size: 16))
           .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))  // #333333
-        Text("\(total.minutes) minutes")
+        Text("\(total.minutes) 分钟")
           .font(.custom("InstrumentSerif-Regular", size: 16))
           .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
       }
@@ -190,7 +190,7 @@ struct CategoryDonutChart: View {
           )
           .frame(width: 10.667, height: 8)
 
-        // Category name
+        // 分类名称
         Text(item.name)
           .font(.custom("FigtreeSans-Regular", size: 10))
           .foregroundColor(Color(red: 0.39, green: 0.39, blue: 0.39))  // #636363

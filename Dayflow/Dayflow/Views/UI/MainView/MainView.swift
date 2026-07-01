@@ -26,8 +26,8 @@ struct MainView: View {
   // Arrowless calendar card anchored to the timeline header's calendar pill
   // (distinct from `showDatePicker`, which drives a modal sheet used only by
   // the daily-view date pill).
-  @State var showTimelineCalendarPopover = false
-  @State var timelineCalendarButtonFrame: CGRect = .zero
+  @State var showTimeline日历Popover = false
+  @State var timeline日历ButtonFrame: CGRect = .zero
   @State var selectedActivity: TimelineActivity? = nil
   @State var weekInspectorContentVisible = false
   @State var scrollToNowTick: Int = 0
@@ -39,9 +39,9 @@ struct MainView: View {
   // Animation states for orchestrated entrance - Emil Kowalski principles
   @State var logoScale: CGFloat = 0.8
   @State var logoOpacity: Double = 0
-  @State var timelineOffset: CGFloat = -20
+  @State var timeline关闭set: CGFloat = -20
   @State var timelineOpacity: Double = 0
-  @State var sidebarOffset: CGFloat = -30
+  @State var sidebar关闭set: CGFloat = -30
   @State var sidebarOpacity: Double = 0
   @State var contentOpacity: Double = 0
 
@@ -70,19 +70,19 @@ struct MainView: View {
   @State var deleteTimelineTask: Task<Void, Never>? = nil
   @State var timelineHeaderTrailingWidth: CGFloat = 120
   @State var weeklyTrackedMinutes: Double = 0
-  @State var cardsToReviewCount: Int = 0
+  @State var cardsToReview数量: Int = 0
   @State var hasAnyTimelineReviewRating = false
   @State var hasRecentTimelineReviewRating = false
   @State var showTimelineReview = false
-  @State var reviewCountTask: Task<Void, Never>? = nil
+  @State var review数量Task: Task<Void, Never>? = nil
   @State var reviewSummaryRefreshToken: Int = 0
   @StateObject var retryCoordinator = RetryCoordinator()
   @State var weeklyHoursFrame: CGRect = .zero
   @State var timelineTimeLabelFrames: [CGRect] = []
   @State var weeklyHoursIntersectsCard: Bool = false
   @State var timelineFailureToastPayload: TimelineFailureToastPayload?
-  @State var showScreenRecordingPermissionNotice = false
-  @State var didDismissScreenRecordingPermissionNoticeThisSession = false
+  @State var showScreenRecording权限Notice = false
+  @State var didDismissScreenRecording权限NoticeThisSession = false
   @State var pendingGoalPromptDay: String?
   @Binding var goalFlowPresentation: DayGoalFlowPresentation?
 
@@ -104,13 +104,13 @@ struct MainView: View {
   var body: some View {
     mainLayout
       .onReceive(NotificationCenter.default.publisher(for: .navigateToDaily)) { notification in
-        let wasAlreadyOnDaily = selectedIcon == .daily
+        let wasAlready开启Daily = selectedIcon == .daily
         if let dayString = notification.userInfo?["day"] as? String,
           let dayDate = DateFormatter.yyyyMMdd.date(from: dayString)
         {
           setSelectedDate(dayDate)
         }
-        if wasAlreadyOnDaily {
+        if wasAlready开启Daily {
           consumePendingDailyRecapOpenIfNeeded(source: "daily_notification_navigation")
         }
         withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {

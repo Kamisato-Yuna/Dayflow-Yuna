@@ -16,7 +16,7 @@ struct CardsToReviewBadge: View {
       stackedCardsIcon
 
       // Label text
-      Text(count == 1 ? "card to review" : "cards to review")
+      Text("待复盘卡片")
         .font(.custom("Figtree", size: 10).weight(.medium))
         .foregroundColor(.white)
     }
@@ -114,7 +114,7 @@ struct CardsToReviewButton: View {
           }
         }, perform: {}
       )
-      .pointingHandCursorOnHover(reassertOnPressEnd: true)
+      .pointingHandCursor开启Hover(reassert开启PressEnd: true)
   }
 }
 
@@ -134,7 +134,7 @@ private struct CardsToReviewBadgePreview: View {
 
       // Controls
       VStack(spacing: 16) {
-        Text("Count: \(count)")
+        Text("数量: \(count)")
           .font(.system(size: 14, weight: .medium))
           .foregroundColor(.secondary)
 

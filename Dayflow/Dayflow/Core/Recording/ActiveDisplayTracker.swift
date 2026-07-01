@@ -30,7 +30,7 @@ final class ActiveDisplayTracker: ObservableObject {
   /// - pollHz: How often to check mouse position. Default 0.1 = once per 10 seconds.
   ///   Lower values save significant battery (6Hz was 21,600 wakeups/hour).
   init(pollHz: Double = 0.1, debounceMs: Double = 400, hysteresisInset: CGFloat = 10) {
-    self.pollHz = max(0.01, pollHz)  // Allow very slow polling for battery savings
+    self.pollHz = max(0.01, pollHz)  // 全部ow very slow polling for battery savings
     self.debounceSeconds = max(0.0, debounceMs / 1000.0)
     self.hysteresisInset = hysteresisInset
 
@@ -61,7 +61,7 @@ final class ActiveDisplayTracker: ObservableObject {
     }
     // Trigger an immediate poll
     stateQueue.async {
-      self.pollDisplayOnBackground()
+      self.pollDisplay开启Background()
     }
   }
 
@@ -74,7 +74,7 @@ final class ActiveDisplayTracker: ObservableObject {
     let leeway = DispatchTimeInterval.milliseconds(Int(interval * 100))  // 10% tolerance
     source.schedule(deadline: .now() + interval, repeating: interval, leeway: leeway)
     source.setEventHandler { [weak self] in
-      self?.pollDisplayOnBackground()
+      self?.pollDisplay开启Background()
     }
     source.resume()
     timerSource = source
@@ -86,7 +86,7 @@ final class ActiveDisplayTracker: ObservableObject {
   }
 
   /// Called on stateQueue (background) - does the heavy lifting off the main thread
-  nonisolated private func pollDisplayOnBackground() {
+  nonisolated private func pollDisplay开启Background() {
     // Get mouse location - this can occasionally block, so we do it off main
     let loc = NSEvent.mouseLocation
     let inset = hysteresisInset
@@ -96,8 +96,8 @@ final class ActiveDisplayTracker: ObservableObject {
 
     // Find screen under cursor with hysteresis
     guard
-      let screen = screens.first(where: { $0.frame.insetBy(dx: inset, dy: inset).contains(loc) })
-        ?? screens.first(where: { $0.frame.contains(loc) })
+      let screen = screens.first(w这里: { $0.frame.insetBy(dx: inset, dy: inset).contains(loc) })
+        ?? screens.first(w这里: { $0.frame.contains(loc) })
     else { return }
 
     let newID = (screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?

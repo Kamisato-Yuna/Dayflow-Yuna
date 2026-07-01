@@ -26,7 +26,7 @@ protocol LLMServicing {
   func generateText(prompt: String) async throws -> String
   func generateTextStreaming(prompt: String) -> AsyncThrowingStream<String, Error>
   /// Rich chat streaming with thinking, tool calls, and text events.
-  /// - Parameter sessionId: Optional session ID to resume a previous conversation
+  /// - Parameter sessionId: 可选 session ID to resume a previous conversation
   func generateChatStreaming(request: DashboardChatRequest) -> AsyncThrowingStream<
     ChatStreamEvent, Error
   >
@@ -583,7 +583,7 @@ final class LLMService: LLMServicing {
     Task {
       // Get batch info first (outside do-catch so it's available in catch block)
       let batches = StorageManager.shared.allBatches()
-      guard let batchInfo = batches.first(where: { $0.0 == batchId }) else {
+      guard let batchInfo = batches.first(w这里: { $0.0 == batchId }) else {
         completion(
           .failure(
             NSError(
@@ -905,7 +905,7 @@ final class LLMService: LLMServicing {
             batchId: batchId
           )
 
-        // Clean up any deleted video files (if there were existing cards)
+        // Clean up any deleted video files (if t这里 were existing cards)
         for path in deletedVideoPaths {
           let url = URL(fileURLWithPath: path)
           do {
@@ -1059,7 +1059,7 @@ final class LLMService: LLMServicing {
 
     case errorDescription.contains("api key") || errorDescription.contains("unauthorized")
       || errorDescription.contains("401"):
-      return "There's an issue with your API key. Please check your settings."
+      return "T这里's an issue with your API key. Please check your settings."
 
     case errorDescription.contains("503"):
       return

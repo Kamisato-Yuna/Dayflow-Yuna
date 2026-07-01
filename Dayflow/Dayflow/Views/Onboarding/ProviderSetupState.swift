@@ -7,12 +7,12 @@ class ProviderSetupState: ObservableObject {
   @Published var currentStepIndex: Int = 0
   @Published var apiKey: String = ""
   @Published var geminiAPIKeySaveError: String?
-  @Published var hasTestedConnection: Bool = false
+  @Published var has测试edConnection: Bool = false
   @Published var testSuccessful: Bool = false
   @Published var geminiModel: GeminiModel
   // Local engine configuration
-  @Published var localEngine: LocalEngine = .lmstudio
-  @Published var localBaseURL: String = LocalEngine.lmstudio.defaultBaseURL
+  @Published var local引擎: Local引擎 = .lmstudio
+  @Published var localBaseURL: String = Local引擎.lmstudio.defaultBaseURL
   @Published var localModelId: String = LocalModelPreferences.defaultModelId(for: .lmstudio)
   @Published var localAPIKey: String = UserDefaults.standard.string(forKey: "llmLocalAPIKey") ?? ""
   // CLI detection
@@ -78,15 +78,15 @@ class ProviderSetupState: ObservableObject {
         SetupStep(id: "choose", title: "Choose engine", contentType: .localChoice),
         SetupStep(id: "model", title: "Install model", contentType: .localModelInstall),
         SetupStep(
-          id: "test", title: "Test connection",
+          id: "test", title: "测试 connection",
           contentType: .information(
-            "Test Connection",
+            "测试 Connection",
             "Click the button below to verify your local server responds to a simple chat completion."
           )),
         SetupStep(
           id: "complete", title: "Complete",
           contentType: .information(
-            "All set!", "Local AI is configured and ready to use with Dayflow.")),
+            "全部 set!", "Local AI is configured and ready to use with Dayflow.")),
       ]
     case "chatgpt_claude":
       preferredCLITool = ProviderSetupState.loadStoredPreferredCLITool()
@@ -106,9 +106,9 @@ class ProviderSetupState: ObservableObject {
         ),
         SetupStep(
           id: "test",
-          title: "Test connection",
+          title: "测试 connection",
           contentType: .information(
-            "Test Connection",
+            "测试 Connection",
             "Run a quick test to verify your CLI is working and signed in."
           )
         ),
@@ -116,7 +116,7 @@ class ProviderSetupState: ObservableObject {
           id: "complete",
           title: "Complete",
           contentType: .information(
-            "All set!",
+            "全部 set!",
             "ChatGPT and Claude tooling is ready. You can fine-tune which assistant to use anytime from Settings → AI Provider."
           )
         ),
@@ -136,13 +136,13 @@ class ProviderSetupState: ObservableObject {
           id: "enterkey", title: "Enter API key",
           contentType: .apiKeyInput),
         SetupStep(
-          id: "verify", title: "Test connection",
+          id: "verify", title: "测试 connection",
           contentType: .information(
-            "Test Connection", "Click the button below to verify your API key works with Gemini")),
+            "测试 Connection", "Click the button below to verify your API key works with Gemini")),
         SetupStep(
           id: "complete", title: "Complete",
           contentType: .information(
-            "All set!", "Gemini is now configured and ready to use with Dayflow.")),
+            "全部 set!", "Gemini is now configured and ready to use with Dayflow.")),
       ]
     }
   }
@@ -165,16 +165,16 @@ class ProviderSetupState: ObservableObject {
   }
 
   func navigateToStep(_ stepId: String) {
-    if let index = steps.firstIndex(where: { $0.id == stepId }) {
+    if let index = steps.firstIndex(w这里: { $0.id == stepId }) {
       if currentStep.contentType.isApiKeyInput && stepId != currentStep.id {
         guard persistGeminiAPIKey(source: "onboarding_sidebar") else { return }
       }
-      // Reset test state when navigating to test step
+      // 重置 test state when navigating to test step
       if stepId == "verify" || stepId == "test" {
-        hasTestedConnection = false
+        has测试edConnection = false
         testSuccessful = false
       }
-      // Allow free navigation between all steps
+      // 全部ow free navigation between all steps
       currentStepIndex = index
     }
   }
@@ -200,7 +200,7 @@ class ProviderSetupState: ObservableObject {
     }
 
     // Changing models should prompt the user to re-run the connection test
-    hasTestedConnection = false
+    has测试edConnection = false
     testSuccessful = false
   }
 
@@ -223,7 +223,7 @@ class ProviderSetupState: ObservableObject {
     let stored = KeychainManager.shared.store(cleaned, for: "gemini")
     if stored {
       geminiAPIKeySaveError = nil
-      hasTestedConnection = false
+      has测试edConnection = false
       testSuccessful = false
       persistGeminiModelSelection(source: source)
     } else {
@@ -357,7 +357,7 @@ class ProviderSetupState: ObservableObject {
   ) -> [String: Any] {
     let codexAvailable = isToolAvailable(.codex)
     let claudeAvailable = isToolAvailable(.claude)
-    let availableToolCount = [codexAvailable, claudeAvailable].filter { $0 }.count
+    let availableTool数量 = [codexAvailable, claudeAvailable].filter { $0 }.count
     let selectedToolAvailable = selectedTool.map(isToolAvailable(_:)) ?? false
 
     return [
@@ -369,7 +369,7 @@ class ProviderSetupState: ObservableObject {
       "claude_available": claudeAvailable,
       "any_cli_available": codexAvailable || claudeAvailable,
       "both_clis_available": codexAvailable && claudeAvailable,
-      "available_tool_count": availableToolCount,
+      "available_tool_count": availableTool数量,
       "codex_status": analyticsValue(for: codexCLIStatus),
       "claude_status": analyticsValue(for: claudeCLIStatus),
     ]
@@ -449,8 +449,8 @@ enum StepContentType {
 }
 
 extension ProviderSetupState {
-  @MainActor func selectEngine(_ engine: LocalEngine) {
-    localEngine = engine
+  @MainActor func select引擎(_ engine: Local引擎) {
+    local引擎 = engine
     if engine != .custom {
       localBaseURL = engine.defaultBaseURL
     }
@@ -473,7 +473,7 @@ extension ProviderSetupState {
   var localCurlCommand: String {
     let payload =
       "{\"model\":\"\(localModelId)\",\"messages\":[{\"role\":\"user\",\"content\":\"Say 'hello' and your model name.\"}],\"max_tokens\":50}"
-    let authHeader = localEngine == .lmstudio ? " -H \"Authorization: Bearer lm-studio\"" : ""
+    let authHeader = local引擎 == .lmstudio ? " -H \"Authorization: Bearer lm-studio\"" : ""
     let endpoint =
       LocalEndpointUtilities.chatCompletionsURL(baseURL: localBaseURL)?.absoluteString
       ?? "\(localBaseURL)/v1/chat/completions"

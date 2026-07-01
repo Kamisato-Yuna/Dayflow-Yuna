@@ -1,5 +1,5 @@
 //
-//  LongestFocusCard.swift
+//  Longest专注Card.swift
 //  Dayflow
 //
 //  A card showing the longest focus duration with a timeline visualization
@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - Cached DateFormatter (creating DateFormatters is expensive due to ICU initialization)
 
-private let cachedFocusTimeFormatter: DateFormatter = {
+private let cached专注TimeFormatter: DateFormatter = {
   let formatter = DateFormatter()
   formatter.dateFormat = "h:mm a"
   return formatter
@@ -17,7 +17,7 @@ private let cachedFocusTimeFormatter: DateFormatter = {
 
 // MARK: - Data Model
 
-struct FocusBlock: Identifiable {
+struct 专注Block: Identifiable {
   let id: UUID
   let startTime: Date
   let endTime: Date
@@ -35,8 +35,8 @@ struct FocusBlock: Identifiable {
 
 // MARK: - Main View
 
-struct LongestFocusCard: View {
-  let focusBlocks: [FocusBlock]
+struct Longest专注Card: View {
+  let focusBlocks: [专注Block]
 
   // MARK: - Design Constants
 
@@ -88,7 +88,7 @@ struct LongestFocusCard: View {
 
   // MARK: - Computed Properties
 
-  private var longestBlock: FocusBlock? {
+  private var longestBlock: 专注Block? {
     focusBlocks.max(by: { $0.duration < $1.duration })
   }
 
@@ -111,8 +111,8 @@ struct LongestFocusCard: View {
     guard let longest = longestBlock, longest.duration > 0 else { return nil }
     let scale = Double(Design.timelineWidth / Design.referenceLongestWidth)
     let rangeDuration = longest.duration * scale
-    let startOffset = rangeDuration * Double(Design.referenceLongestStartX / Design.timelineWidth)
-    let rangeStart = longest.startTime.addingTimeInterval(-startOffset)
+    let start关闭set = rangeDuration * Double(Design.referenceLongestStartX / Design.timelineWidth)
+    let rangeStart = longest.startTime.addingTimeInterval(-start关闭set)
     let rangeEnd = rangeStart.addingTimeInterval(rangeDuration)
     return (rangeStart, rangeEnd)
   }
@@ -121,7 +121,7 @@ struct LongestFocusCard: View {
 
   var body: some View {
     ZStack(alignment: .topLeading) {
-      Text("Longest focus duration")
+      Text("最长专注时长")
         .font(.custom("InstrumentSerif-Regular", size: 16))
         .foregroundColor(Design.titleColor)
         .offset(x: Design.titleX, y: Design.titleY)
@@ -160,8 +160,8 @@ struct LongestFocusCard: View {
   }
 
   private func timelineAxis() -> some View {
-    let dotCount = 12
-    let dotSpacing = (Design.timelineWidth - Design.dotSize) / CGFloat(dotCount - 1)
+    let dot数量 = 12
+    let dotSpacing = (Design.timelineWidth - Design.dotSize) / CGFloat(dot数量 - 1)
     let lineY = Design.axisHeight / 2
 
     return ZStack(alignment: .leading) {
@@ -174,7 +174,7 @@ struct LongestFocusCard: View {
         style: StrokeStyle(lineWidth: 1, lineCap: .round, dash: [4, 2])
       )
 
-      ForEach(0..<dotCount, id: \.self) { index in
+      ForEach(0..<dot数量, id: \.self) { index in
         Circle()
           .fill(Design.axisColor)
           .frame(width: Design.dotSize, height: Design.dotSize)
@@ -217,9 +217,9 @@ struct LongestFocusCard: View {
     }
   }
 
-  private func timeLabels(for block: FocusBlock) -> some View {
+  private func timeLabels(for block: 专注Block) -> some View {
     ZStack {
-      Text(cachedFocusTimeFormatter.string(from: block.startTime))
+      Text(cached专注TimeFormatter.string(from: block.startTime))
         .font(.custom("Figtree-Bold", size: 10))
         .foregroundColor(Design.orangeSolid)
         .position(
@@ -227,7 +227,7 @@ struct LongestFocusCard: View {
           y: Design.labelTop + (Design.labelHeight / 2)
         )
 
-      Text(cachedFocusTimeFormatter.string(from: block.endTime))
+      Text(cached专注TimeFormatter.string(from: block.endTime))
         .font(.custom("Figtree-Bold", size: 10))
         .foregroundColor(Design.orangeSolid)
         .position(
@@ -246,7 +246,7 @@ struct LongestFocusCard: View {
     return CGFloat(offset / totalDuration) * Design.timelineWidth
   }
 
-  private func blockFrame(for block: FocusBlock, in range: (start: Date, end: Date)) -> (
+  private func blockFrame(for block: 专注Block, in range: (start: Date, end: Date)) -> (
     x: CGFloat, width: CGFloat
   ) {
     let startX = xPosition(for: block.startTime, in: range)
@@ -262,34 +262,34 @@ struct LongestFocusCard: View {
 
 // MARK: - Preview
 
-#Preview("Longest Focus Card") {
+#Preview("Longest 专注 Card") {
   // Create sample focus blocks for preview
-  let calendar = Calendar.current
+  let calendar = 日历.current
   let now = Date()
   let baseDate = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: now)!
 
-  let sampleBlocks: [FocusBlock] = [
+  let sampleBlocks: [专注Block] = [
     // Short block at 9:30 AM (15 min)
-    FocusBlock(
+    专注Block(
       startTime: calendar.date(byAdding: .minute, value: 30, to: baseDate)!,
       endTime: calendar.date(byAdding: .minute, value: 45, to: baseDate)!
     ),
     // Longest block at 11:24 AM - 2:49 PM (3h 25m)
-    FocusBlock(
+    专注Block(
       startTime: calendar.date(
         byAdding: .hour, value: 2, to: calendar.date(byAdding: .minute, value: 24, to: baseDate)!)!,
       endTime: calendar.date(
         byAdding: .hour, value: 5, to: calendar.date(byAdding: .minute, value: 49, to: baseDate)!)!
     ),
     // Medium block at 3:30 PM (45 min)
-    FocusBlock(
+    专注Block(
       startTime: calendar.date(
         byAdding: .hour, value: 6, to: calendar.date(byAdding: .minute, value: 30, to: baseDate)!)!,
       endTime: calendar.date(
         byAdding: .hour, value: 7, to: calendar.date(byAdding: .minute, value: 15, to: baseDate)!)!
     ),
     // Short block at 4:30 PM (20 min)
-    FocusBlock(
+    专注Block(
       startTime: calendar.date(
         byAdding: .hour, value: 7, to: calendar.date(byAdding: .minute, value: 30, to: baseDate)!)!,
       endTime: calendar.date(
@@ -297,32 +297,32 @@ struct LongestFocusCard: View {
     ),
   ]
 
-  LongestFocusCard(focusBlocks: sampleBlocks)
+  Longest专注Card(focusBlocks: sampleBlocks)
     .frame(width: 322)
     .padding(20)
     .background(Color(red: 0.98, green: 0.97, blue: 0.96))
 }
 
 #Preview("Empty State") {
-  LongestFocusCard(focusBlocks: [])
+  Longest专注Card(focusBlocks: [])
     .frame(width: 322)
     .padding(20)
     .background(Color(red: 0.98, green: 0.97, blue: 0.96))
 }
 
 #Preview("Single Block") {
-  let calendar = Calendar.current
+  let calendar = 日历.current
   let now = Date()
   let baseDate = calendar.date(bySettingHour: 14, minute: 0, second: 0, of: now)!
 
-  let singleBlock: [FocusBlock] = [
-    FocusBlock(
+  let singleBlock: [专注Block] = [
+    专注Block(
       startTime: baseDate,
       endTime: calendar.date(byAdding: .hour, value: 2, to: baseDate)!
     )
   ]
 
-  LongestFocusCard(focusBlocks: singleBlock)
+  Longest专注Card(focusBlocks: singleBlock)
     .frame(width: 322)
     .padding(20)
     .background(Color(red: 0.98, green: 0.97, blue: 0.96))

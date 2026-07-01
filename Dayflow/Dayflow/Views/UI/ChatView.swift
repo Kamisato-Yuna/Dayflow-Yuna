@@ -15,7 +15,7 @@ let chatViewDebugTimestampFormatter: DateFormatter = {
   return formatter
 }()
 
-let chatViewMemoryUpdatedFormatter: DateFormatter = {
+let chatView记忆UpdatedFormatter: DateFormatter = {
   let formatter = DateFormatter()
   formatter.dateFormat = "MMM d, h:mm a"
   return formatter
@@ -25,8 +25,8 @@ struct ChatView: View {
   @ObservedObject var chatService = ChatService.shared
   @State var inputText = ""
   @State var showWorkDetails = false
-  @State var isInputFocused = false
-  @State var composerFocusToken = 0
+  @State var isInput专注ed = false
+  @State var composer专注Token = 0
   @Namespace var bottomID
   @AppStorage("dashboardChatProvider") var selectedProviderRaw: String = "gemini"
   @AppStorage("chatCLIPreferredTool") var chatCLIPreferredTool: String = "codex"
@@ -34,20 +34,20 @@ struct ChatView: View {
   @State var geminiConfigured = false
   @State var codexDetected = false
   @State var claudeDetected = false
-  @State var completedAccessBatchCount = 0
+  @State var completedAccessBatch数量 = 0
   @State var cliDetectionTask: Task<Void, Never>?
   @State var didCheckCLI = false
   @State var showToolSwitchConfirm = false
   @State var pendingProviderSelection: DashboardChatProvider?
   @State var conversationId: UUID?
   @State var didAnimateWelcome = false
-  @State var showMemoryPanel = false
+  @State var show记忆Panel = false
   @State var memoryDraft = ""
-  @State var storedMemoryBlob = ""
+  @State var stored记忆Blob = ""
   @State var memoryUpdatedAt: Date?
   @State var chatVoteSelections: [UUID: TimelineRatingDirection] = [:]
   @State var thankedMessageIDs: Set<UUID> = []
-  @State var thankResetTasks: [UUID: Task<Void, Never>] = [:]
+  @State var thank重置Tasks: [UUID: Task<Void, Never>] = [:]
   @State var chatFeedbackTarget: ChatFeedbackTarget?
   @State var chatFeedbackMessage = ""
   @State var chatFeedbackShareLogs = true
@@ -59,14 +59,14 @@ struct ChatView: View {
       if isUnlocked {
         HStack(spacing: 0) {
           chatContent
-          if showMemoryPanel {
+          if show记忆Panel {
             memoryPanel
           }
           if chatService.showDebugPanel {
             debugPanel
           }
         }
-        .allowsHitTesting(chatFeedbackTarget == nil)
+        .allowsHit测试ing(chatFeedbackTarget == nil)
         .transition(.opacity)
 
         if let chatFeedbackTarget {
@@ -98,7 +98,7 @@ struct ChatView: View {
     }
     .onAppear {
       refreshChatAccessProgress()
-      loadMemoryFromStore(resetDraft: true)
+      load记忆FromStore(resetDraft: true)
       Task { await refreshRuntimeAvailability() }
     }
     .onReceive(Timer.publish(every: 30, on: .main, in: .common).autoconnect()) { _ in
@@ -107,16 +107,16 @@ struct ChatView: View {
     .onDisappear {
       cliDetectionTask?.cancel()
       cliDetectionTask = nil
-      for task in thankResetTasks.values {
+      for task in thank重置Tasks.values {
         task.cancel()
       }
-      thankResetTasks.removeAll()
+      thank重置Tasks.remove全部()
     }
     .onChange(of: chatService.messages.count) { _, _ in
-      syncMemoryFromStoreIfNeeded()
+      sync记忆FromStoreIfNeeded()
     }
     .alert("Switch provider?", isPresented: $showToolSwitchConfirm) {
-      Button("Switch and Reset", role: .destructive) {
+      Button("Switch and 重置", role: .destructive) {
         confirmProviderSwitch()
       }
       Button("取消", role: .cancel) {

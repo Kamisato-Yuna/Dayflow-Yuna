@@ -22,18 +22,18 @@ struct ConfettiBurstView: View {
     Color(hex: "F72585"),
     Color(hex: "7AE582"),
   ]
-  private let confettiCount = 60
+  private let confetti数量 = 60
 
   var body: some View {
     ZStack {
-      ForEach(0..<confettiCount, id: \.self) { index in
+      ForEach(0..<confetti数量, id: \.self) { index in
         ConfettiPiece(
           color: colors[index % colors.count],
           trigger: trigger
         )
       }
     }
-    .allowsHitTesting(false)
+    .allowsHit测试ing(false)
   }
 }
 

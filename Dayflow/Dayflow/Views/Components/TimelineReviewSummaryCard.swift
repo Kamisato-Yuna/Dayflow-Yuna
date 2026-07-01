@@ -31,7 +31,7 @@ struct TimelineReviewSummarySnapshot {
 
 struct TimelineReviewSummaryCard: View {
   let summary: TimelineReviewSummarySnapshot
-  let cardsToReviewCount: Int
+  let cardsToReview数量: Int
   var onReviewTap: (() -> Void)? = nil
 
   private enum Design {
@@ -88,7 +88,7 @@ struct TimelineReviewSummaryCard: View {
 
   private var header: some View {
     VStack(alignment: .leading, spacing: Design.headerSpacing) {
-      Text("Your review")
+      Text("你的复盘")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundColor(Design.titleColor)
 
@@ -96,18 +96,18 @@ struct TimelineReviewSummaryCard: View {
         .font(.custom("Figtree", size: 11))
         .lineSpacing(2)
         .onTapGesture {
-          guard cardsToReviewCount > 0 else { return }
+          guard cardsToReview数量 > 0 else { return }
           onReviewTap?()
         }
         .hoverScaleEffect(
-          enabled: cardsToReviewCount > 0,
+          enabled: cardsToReview数量 > 0,
           scale: 1.02
         )
-        .pointingHandCursorOnHover(
-          enabled: cardsToReviewCount > 0,
-          reassertOnPressEnd: true
+        .pointingHandCursor开启Hover(
+          enabled: cardsToReview数量 > 0,
+          reassert开启PressEnd: true
         )
-        .opacity(cardsToReviewCount > 0 ? 1 : 0.9)
+        .opacity(cardsToReview数量 > 0 ? 1 : 0.9)
     }
   }
 
@@ -119,16 +119,16 @@ struct TimelineReviewSummaryCard: View {
     var composed = Text(baseText)
       .foregroundColor(Design.subtitleColor)
 
-    guard cardsToReviewCount > 0 else {
+    guard cardsToReview数量 > 0 else {
       return composed
     }
 
-    let reviewText = "Review \(reviewCountText)"
+    let reviewText = "Review \(review数量Text)"
     composed =
       composed
       + Text(" \(reviewText)")
       .foregroundColor(Design.linkColor)
-      + Text(" to update your data.")
+      + Text(" 以更新你的数据。")
       .foregroundColor(Design.subtitleColor)
 
     return composed
@@ -223,7 +223,7 @@ struct TimelineReviewSummaryCard: View {
 
     let productive = ReviewMetric(
       id: "productive",
-      label: "Focused",
+      label: "专注ed",
       ratio: max(CGFloat(summary.productiveRatio), 0),
       durationText: durationText(summary.productiveDuration),
       style: metricStyle(
@@ -284,8 +284,8 @@ struct TimelineReviewSummaryCard: View {
     return Self.timeFormatter.string(from: last)
   }
 
-  private var reviewCountText: String {
-    cardsToReviewCount == 1 ? "1 card" : "\(cardsToReviewCount) cards"
+  private var review数量Text: String {
+    cardsToReview数量 == 1 ? "1 card" : "\(cardsToReview数量) cards"
   }
 
   private static let timeFormatter: DateFormatter = {
@@ -309,13 +309,13 @@ struct TimelineReviewSummaryCard: View {
         neutralDuration: 3000,
         productiveDuration: 7200
       ),
-      cardsToReviewCount: 4
+      cardsToReview数量: 4
     )
     .frame(width: 322)
 
     TimelineReviewSummaryCard(
       summary: .placeholder,
-      cardsToReviewCount: 0
+      cardsToReview数量: 0
     )
     .frame(width: 322)
   }

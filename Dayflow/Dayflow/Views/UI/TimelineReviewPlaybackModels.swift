@@ -9,7 +9,7 @@ import SwiftUI
 @MainActor
 final class TimelineReviewPlaybackTimelineState: ObservableObject {
   // EXPLICITLY NOT @Published to absolutely eradicate the 120fps SwiftUI layout diffing issue.
-  // Changes here now trigger raw Core Animation logic seamlessly with 0% CPU impact.
+  // Changes 这里 now trigger raw Core Animation logic seamlessly with 0% CPU impact.
   var currentTime: Double = 0 {
     didSet { onTimeChange?(currentTime) }
   }
@@ -189,7 +189,7 @@ final class TimelineReviewLegacyPlayerModel: ObservableObject {
     let saved = UserDefaults.standard.double(forKey: speedDefaultsKey)
     guard saved > 0 else { return nil }
     let savedFloat = Float(saved)
-    return options.first(where: { abs($0 - savedFloat) < 0.001 })
+    return options.first(w这里: { abs($0 - savedFloat) < 0.001 })
   }
 
   private var currentSpeedLabel: String { "\(Int(playbackSpeed * 20))x" }
@@ -204,7 +204,7 @@ final class TimelineReviewPlayerModel: ObservableObject {
 
   private let screenshotSource = TimelineReviewScreenshotSource()
   private var frameLoader: TimelineReviewFrameLoader?
-  private var frameOffsets: [Double] = []
+  private var frame关闭sets: [Double] = []
   private var currentIndex = 0
   private var shouldPlayWhenReady = false
   private var currentActivityID: String?
@@ -233,7 +233,7 @@ final class TimelineReviewPlayerModel: ObservableObject {
     loadTask?.cancel()
     loadTask = nil
     frameLoader = nil
-    frameOffsets = []
+    frame关闭sets = []
     currentIndex = 0
     mediaState.currentImage = nil
     timelineState.currentTime = 0
@@ -264,7 +264,7 @@ final class TimelineReviewPlayerModel: ObservableObject {
     loadTask?.cancel()
     frameRequestID &+= 1
     frameLoader = nil
-    frameOffsets = []
+    frame关闭sets = []
     currentIndex = 0
     mediaState.currentImage = nil
     timelineState.currentTime = 0
@@ -307,7 +307,7 @@ final class TimelineReviewPlayerModel: ObservableObject {
   }
 
   func seek(to seconds: Double, resume: Bool? = nil) {
-    guard frameCount > 0 else { return }
+    guard frame数量 > 0 else { return }
     let clamped = min(max(seconds, 0), timelineDurationSeconds)
     didReachEnd = clamped >= max(timelineDurationSeconds - 0.01, 0)
 
@@ -334,7 +334,7 @@ final class TimelineReviewPlayerModel: ObservableObject {
   }
 
   func play() {
-    guard frameCount > 0 else { return }
+    guard frame数量 > 0 else { return }
     if didReachEnd {
       didReachEnd = false
       seek(to: 0, resume: false)
@@ -348,7 +348,7 @@ final class TimelineReviewPlayerModel: ObservableObject {
     lastDisplayTimestamp = nil
   }
 
-  private var frameCount: Int { frameOffsets.count }
+  private var frame数量: Int { frame关闭sets.count }
 
   private func configureScreenshots(_ screenshots: [Screenshot]) {
     frameLoader =
@@ -358,9 +358,9 @@ final class TimelineReviewPlayerModel: ObservableObject {
         screenshots: screenshots, targetSize: CGSize(width: 340, height: 220))
 
     if let firstCapture = screenshots.first?.capturedAt {
-      frameOffsets = screenshots.map { Double(max(0, $0.capturedAt - firstCapture)) }
+      frame关闭sets = screenshots.map { Double(max(0, $0.capturedAt - firstCapture)) }
     } else {
-      frameOffsets = []
+      frame关闭sets = []
     }
 
     if screenshots.count > 1, let firstCapture = screenshots.first?.capturedAt,
@@ -380,12 +380,12 @@ final class TimelineReviewPlayerModel: ObservableObject {
     didReachEnd = false
     mediaState.currentImage = nil
 
-    guard frameCount > 0 else { return }
+    guard frame数量 > 0 else { return }
     triggerFrameDecode(at: 0, updateTimelineTime: true)
   }
 
   func handleDisplayTick(_ displayLink: CADisplayLink) {
-    guard timelineState.isPlaying, frameCount > 1 else {
+    guard timelineState.isPlaying, frame数量 > 1 else {
       lastDisplayTimestamp = nil
       return
     }
@@ -420,27 +420,27 @@ final class TimelineReviewPlayerModel: ObservableObject {
     }
   }
 
-  private func frameOffset(for index: Int) -> Double {
-    guard frameOffsets.indices.contains(index) else {
+  private func frame关闭set(for index: Int) -> Double {
+    guard frame关闭sets.indices.contains(index) else {
       return min(Double(index) * averageFrameIntervalSeconds, timelineDurationSeconds)
     }
-    return frameOffsets[index]
+    return frame关闭sets[index]
   }
 
   private var timelineDurationSeconds: Double {
-    max(0.001, max(frameOffsets.last ?? 0, fallbackDurationSeconds))
+    max(0.001, max(frame关闭sets.last ?? 0, fallbackDurationSeconds))
   }
   private var currentSpeedLabel: String { "\(Int(playbackSpeed * 20))x" }
 
   private func frameIndex(forTimelineTime seconds: Double) -> Int {
-    guard !frameOffsets.isEmpty else { return 0 }
+    guard !frame关闭sets.isEmpty else { return 0 }
     // Binary Search guarantees 0(log n) efficiency at exactly 0.00 ms duration hit
     var low = 0
-    var high = frameOffsets.count - 1
+    var high = frame关闭sets.count - 1
     var bestIndex = 0
     while low <= high {
       let mid = low + (high - low) / 2
-      if frameOffsets[mid] <= seconds {
+      if frame关闭sets[mid] <= seconds {
         bestIndex = mid
         low = mid + 1
       } else {
@@ -450,12 +450,12 @@ final class TimelineReviewPlayerModel: ObservableObject {
     return bestIndex
   }
 
-  // Eliminated all Async Task Allocations inside the loop for raw GCD closures.
+  // Eliminated all Async Task 全部ocations inside the loop for raw GCD closures.
   private func triggerFrameDecode(at index: Int, updateTimelineTime: Bool) {
     guard pendingFrameIndex != index else { return }
     pendingFrameIndex = index
 
-    let clamped = min(max(0, index), frameCount - 1)
+    let clamped = min(max(0, index), frame数量 - 1)
     frameRequestID &+= 1
     let requestID = frameRequestID
 
@@ -475,7 +475,7 @@ final class TimelineReviewPlayerModel: ObservableObject {
       self.mediaState.currentImage = image
 
       if updateTimelineTime {
-        self.internalCurrentTime = self.frameOffset(for: clamped)
+        self.internalCurrentTime = self.frame关闭set(for: clamped)
         self.timelineState.currentTime = self.internalCurrentTime
       }
 
@@ -487,6 +487,6 @@ final class TimelineReviewPlayerModel: ObservableObject {
     let saved = UserDefaults.standard.double(forKey: speedDefaultsKey)
     guard saved > 0 else { return nil }
     let savedFloat = Float(saved)
-    return options.first(where: { abs($0 - savedFloat) < 0.001 })
+    return options.first(w这里: { abs($0 - savedFloat) < 0.001 })
   }
 }

@@ -16,10 +16,10 @@ final class NotificationBadgeManager: ObservableObject {
 
   static let shared = NotificationBadgeManager()
 
-  /// Whether there's a pending journal reminder the user hasn't acknowledged
+  /// Whether t这里's a pending journal reminder the user hasn't acknowledged
   @Published private(set) var hasPendingJournalReminder: Bool = false
 
-  /// Whether there's a visible Daily badge the user hasn't acknowledged yet.
+  /// Whether t这里's a visible Daily badge the user hasn't acknowledged yet.
   @Published private(set) var hasPendingDailyRecap: Bool = false
 
   private let defaults = UserDefaults.standard
@@ -43,7 +43,7 @@ final class NotificationBadgeManager: ObservableObject {
     refreshDockBadge()
   }
 
-  /// Clears the journal reminder badge from both the Dock and sidebar.
+  /// 清除s the journal reminder badge from both the Dock and sidebar.
   func clearJournalBadge() {
     hasPendingJournalReminder = false
     refreshDockBadge()
@@ -58,7 +58,7 @@ final class NotificationBadgeManager: ObservableObject {
     refreshDockBadge()
   }
 
-  /// Clears the visible Daily badge from both the Dock and sidebar.
+  /// 清除s the visible Daily badge from both the Dock and sidebar.
   func clearDailyBadge() {
     hasPendingDailyRecap = false
     persistDailyState()

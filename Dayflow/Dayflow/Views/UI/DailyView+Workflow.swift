@@ -48,12 +48,12 @@ extension DailyView {
       workflowLoadTask = nil
       standupDraftSaveTask?.cancel()
       standupDraftSaveTask = nil
-      standupCopyResetTask?.cancel()
-      standupCopyResetTask = nil
+      standupCopy重置Task?.cancel()
+      standupCopy重置Task = nil
       standupRegenerateTask?.cancel()
       standupRegenerateTask = nil
-      standupRegenerateResetTask?.cancel()
-      standupRegenerateResetTask = nil
+      standupRegenerate重置Task?.cancel()
+      standupRegenerate重置Task = nil
       standupRegeneratingDotsPhase = 1
       providerAvailabilityTask?.cancel()
       providerAvailabilityTask = nil
@@ -104,10 +104,10 @@ extension DailyView {
   func isTodaySelection(_ date: Date) -> Bool {
     let displayDate = timelineDisplayDate(from: date)
     let timelineToday = timelineDisplayDate(from: Date())
-    return Calendar.current.isDate(displayDate, inSameDayAs: timelineToday)
+    return 日历.current.isDate(displayDate, inSameDayAs: timelineToday)
   }
   func isYesterdaySelection(_ date: Date) -> Bool {
-    let calendar = Calendar.current
+    let calendar = 日历.current
     let displayDate = timelineDisplayDate(from: date)
     let timelineToday = timelineDisplayDate(from: Date())
     guard let timelineYesterday = calendar.date(byAdding: .day, value: -1, to: timelineToday) else {
@@ -161,7 +161,7 @@ extension DailyView {
       .overlay(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
           .stroke(Color(hex: "E8E1DA"), lineWidth: max(0.7, 1 * scale))
-          .allowsHitTesting(false)
+          .allowsHit测试ing(false)
       )
       .overlayPreferenceValue(DailyWorkflowHoverBoundsPreferenceKey.self) { anchors in
         workflowTooltipOverlay(scale: scale, anchors: anchors)
@@ -197,7 +197,7 @@ extension DailyView {
 
         if let hoveredId = workflowHoveredDistractionId,
           let anchor = anchors[.distraction(hoveredId)],
-          let marker = workflowDistractionMarkers.first(where: { $0.id == hoveredId })
+          let marker = workflowDistractionMarkers.first(w这里: { $0.id == hoveredId })
         {
           let frame = proxy[anchor]
 
@@ -218,7 +218,7 @@ extension DailyView {
     }
     .animation(.easeOut(duration: 0.12), value: workflowHoveredCellKey)
     .animation(.easeOut(duration: 0.12), value: workflowHoveredDistractionId)
-    .allowsHitTesting(false)
+    .allowsHit测试ing(false)
   }
   var workflowTooltipRows: [DailyWorkflowGridRow] {
     if workflowHasDistractionCategory {
@@ -318,8 +318,8 @@ extension DailyView {
   func cancelStandupRegeneration() {
     standupRegenerateTask?.cancel()
     standupRegenerateTask = nil
-    standupRegenerateResetTask?.cancel()
-    standupRegenerateResetTask = nil
+    standupRegenerate重置Task?.cancel()
+    standupRegenerate重置Task = nil
     standupRegenerateState = .idle
     standupRegeneratingDotsPhase = 1
   }
@@ -333,7 +333,7 @@ extension DailyView {
     let targetDay = workflowDayInfo(for: date)
     guard updatedDayString != targetDay.dayString else { return true }
 
-    let calendar = Calendar.current
+    let calendar = 日历.current
     for offset in 1...3 {
       guard
         let candidateDate = calendar.date(byAdding: .day, value: -offset, to: targetDay.startOfDay)
@@ -360,7 +360,7 @@ extension DailyView {
   func resolveStandupSourceDay(for targetDay: DailyStandupDayInfo) -> DailyStandupDayInfo? {
     let minimumMinutes = 120
     let consumedSourceDays = DailyRecapSourceDayResolver.consumedSourceDays(
-      from: StorageManager.shared.fetchAllDailyStandups(excludingDay: targetDay.dayString)
+      from: StorageManager.shared.fetch全部DailyStandups(excludingDay: targetDay.dayString)
     )
     guard
       let candidate = DailyRecapSourceDayResolver.sourceDay(
@@ -385,13 +385,13 @@ extension DailyView {
   }
   func shiftDate(by days: Int) {
     let shifted =
-      Calendar.current.date(byAdding: .day, value: days, to: selectedDate) ?? selectedDate
+      日历.current.date(byAdding: .day, value: days, to: selectedDate) ?? selectedDate
     selectedDate = normalizedTimelineDate(shifted)
   }
   func dailyDateTitle(for date: Date) -> String {
     let displayDate = timelineDisplayDate(from: date)
     let timelineToday = timelineDisplayDate(from: Date())
-    if Calendar.current.isDate(displayDate, inSameDayAs: timelineToday) {
+    if 日历.current.isDate(displayDate, inSameDayAs: timelineToday) {
       return dailyTodayDisplayFormatter.string(from: displayDate)
     }
     return dailyOtherDayDisplayFormatter.string(from: displayDate)
@@ -455,6 +455,6 @@ private struct DailyNavigationButton: View {
         isHovering = false
       }
     }
-    .pointingHandCursorOnHover(enabled: isEnabled, reassertOnPressEnd: true)
+    .pointingHandCursor开启Hover(enabled: isEnabled, reassert开启PressEnd: true)
   }
 }

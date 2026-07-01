@@ -5,8 +5,8 @@ import SwiftUI
 /// Storyboard:
 ///   Idle → Menu:    pill 73→250 (bounce 0.15), chips cascade right-to-left (stagger 50ms)
 ///   Menu → Idle:    chips exit, pill 250→73 (bounce 0.2, 120ms delay)
-///   Menu → Paused:  chips exit, pill 250→84 (bounce 0.2), content morph, status text in
-///   Paused → Idle:  status out, pill 84→73 (bounce 0.35), content morph back
+///   Menu → 已暂停:  chips exit, pill 250→84 (bounce 0.2), content morph, status text in
+///   已暂停 → Idle:  status out, pill 84→73 (bounce 0.35), content morph back
 struct PausePillView: View {
   @ObservedObject private var appState = AppState.shared
   @ObservedObject private var pauseManager = PauseManager.shared
@@ -27,7 +27,7 @@ struct PausePillView: View {
   @State private var resumeBlur: Double = 0
 
   @State private var chipOpacity = [0.0, 0.0, 0.0, 0.0]
-  @State private var chipOffsetX = [10.0, 10.0, 10.0, 10.0]
+  @State private var chip关闭setX = [10.0, 10.0, 10.0, 10.0]
   @State private var chipScaleVal = [0.92, 0.92, 0.92, 0.92]
   @State private var chipBlurVal = [3.0, 3.0, 3.0, 3.0]
 
@@ -56,7 +56,7 @@ struct PausePillView: View {
   }
 
   private var statusText: String {
-    if pauseManager.isPausedIndefinitely {
+    if pauseManager.is已暂停Indefinitely {
       return "Dayflow paused indefinitely"
     }
 
@@ -106,20 +106,20 @@ struct PausePillView: View {
           .opacity(statusOpacity)
           .offset(y: statusY)
           .blur(radius: statusBlurVal)
-          .allowsHitTesting(false)
+          .allowsHit测试ing(false)
       }
 
       pill
     }
     .frame(height: 32)
     .fixedSize(horizontal: true, vertical: false)
-    .onAppear(perform: syncOnAppear)
+    .onAppear(perform: sync开启Appear)
     .onDisappear { cancelStatusVisibilityTask() }
     .onChange(of: appState.isRecording) {
       handleExternalRecordingChange()
     }
-    .onChange(of: pauseManager.isPaused) { _, isPaused in
-      handleExternalPauseChange(isPaused)
+    .onChange(of: pauseManager.is已暂停) { _, is已暂停 in
+      handleExternalPauseChange(is已暂停)
     }
   }
 
@@ -132,15 +132,15 @@ struct PausePillView: View {
         Grad.menu.opacity(phase == .menu ? 1 : 0)
         Grad.paused.opacity(phase == .paused ? 1 : 0)
       }
-      .allowsHitTesting(false)
+      .allowsHit测试ing(false)
       .animation(.easeInOut(duration: 0.35), value: phase)
 
       ZStack {
         shineLayer(Col.shineIdle).opacity(phase == .idle ? 1 : 0)
         shineLayer(Col.shineMenu).opacity(phase == .menu ? 1 : 0)
-        shineLayer(Col.shinePaused).opacity(phase == .paused ? 1 : 0)
+        shineLayer(Col.shine已暂停).opacity(phase == .paused ? 1 : 0)
       }
-      .allowsHitTesting(false)
+      .allowsHit测试ing(false)
       .animation(.easeInOut(duration: 0.35), value: phase)
 
       if showsPrimaryContent || showsChips {
@@ -165,7 +165,7 @@ struct PausePillView: View {
 
       Capsule()
         .strokeBorder(Color(hex: "FFE1C9"), lineWidth: 1.25)
-        .allowsHitTesting(false)
+        .allowsHit测试ing(false)
     }
     .frame(width: pillWidth, height: 32)
     .clipShape(Capsule())
@@ -197,7 +197,7 @@ struct PausePillView: View {
     .opacity(pauseOpacity)
     .scaleEffect(pauseScale)
     .blur(radius: pauseBlur)
-    .allowsHitTesting(false)
+    .allowsHit测试ing(false)
   }
 
   private var chipsContent: some View {
@@ -205,7 +205,7 @@ struct PausePillView: View {
       ForEach(0..<4, id: \.self) { i in chipButton(i) }
     }
     .padding(.leading, 8)
-    .allowsHitTesting(phase == .menu)
+    .allowsHit测试ing(phase == .menu)
   }
 
   private var resumeContent: some View {
@@ -221,7 +221,7 @@ struct PausePillView: View {
     .opacity(resumeOpacity)
     .scaleEffect(resumeScale)
     .blur(radius: resumeBlur)
-    .allowsHitTesting(false)
+    .allowsHit测试ing(false)
   }
 
   // MARK: - Shine
@@ -265,7 +265,7 @@ struct PausePillView: View {
     }
     .buttonStyle(PillChipButtonStyle())
     .opacity(chipOpacity[i])
-    .offset(x: chipOffsetX[i])
+    .offset(x: chip关闭setX[i])
     .scaleEffect(combinedScale)
     .blur(radius: chipBlurVal[i])
     .animation(.spring(duration: 0.15, bounce: 0), value: hovered)
@@ -302,7 +302,7 @@ struct PausePillView: View {
   private func startRecordingFromResumePill() {
     phase = .idle
     RecordingControl.start(reason: "user_main_app")
-    animatePausedToIdle()
+    animate已暂停ToIdle()
   }
 
   // MARK: - Idle → Menu
@@ -321,7 +321,7 @@ struct PausePillView: View {
         let delay = 0.06 + Double(3 - i) * 0.05
         withAnimation(.interpolatingSpring(stiffness: 500, damping: 25).delay(delay)) {
           chipOpacity[i] = 1
-          chipOffsetX[i] = 0
+          chip关闭setX[i] = 0
           chipScaleVal[i] = 1
           chipBlurVal[i] = 0
         }
@@ -340,7 +340,7 @@ struct PausePillView: View {
     }
   }
 
-  // MARK: - Menu → Paused
+  // MARK: - Menu → 已暂停
 
   private func startPause(_ duration: PauseDuration) {
     phase = .paused
@@ -378,15 +378,15 @@ struct PausePillView: View {
     }
   }
 
-  // MARK: - Paused → Idle
+  // MARK: - 已暂停 → Idle
 
   private func resumeFromPause() {
     phase = .idle
     pauseManager.resume(source: .userClickedMainApp)
-    animatePausedToIdle()
+    animate已暂停ToIdle()
   }
 
-  private func animatePausedToIdle() {
+  private func animate已暂停ToIdle() {
     hideStatusText(animation: .spring(duration: 0.2, bounce: 0))
 
     // Pill shrinks to idle
@@ -479,7 +479,7 @@ struct PausePillView: View {
       }
 
       if showStatusText {
-        presentStatusText(autoHide: pauseManager.isPausedIndefinitely, animationDelay: 0.35)
+        presentStatusText(autoHide: pauseManager.is已暂停Indefinitely, animationDelay: 0.35)
       }
     }
   }
@@ -490,7 +490,7 @@ struct PausePillView: View {
     for i in 0..<4 {
       withAnimation(.spring(duration: 0.2, bounce: 0)) {
         chipOpacity[i] = 0
-        chipOffsetX[i] = 4
+        chip关闭setX[i] = 4
         chipBlurVal[i] = 2
       }
     }
@@ -499,7 +499,7 @@ struct PausePillView: View {
   private func resetChips() {
     for i in 0..<4 {
       chipOpacity[i] = 0
-      chipOffsetX[i] = 10
+      chip关闭setX[i] = 10
       chipScaleVal[i] = 0.92
       chipBlurVal[i] = 3
     }
@@ -507,11 +507,11 @@ struct PausePillView: View {
 
   // MARK: - External State Sync
 
-  private func syncOnAppear() {
+  private func sync开启Appear() {
     switch controlMode {
     case .pausedTimed, .pausedIndefinite:
       setResumePillState(showStatusText: true)
-      if pauseManager.isPausedIndefinitely {
+      if pauseManager.is已暂停Indefinitely {
         scheduleStatusAutoHide(after: 3)
       }
     case .stopped:
@@ -521,25 +521,25 @@ struct PausePillView: View {
     }
   }
 
-  private func handleExternalPauseChange(_ isPaused: Bool) {
-    if isPaused {
+  private func handleExternalPauseChange(_ is已暂停: Bool) {
+    if is已暂停 {
       transitionToResumePill(showStatusText: true)
-    } else if !isPaused, phase == .paused {
+    } else if !is已暂停, phase == .paused {
       if controlMode == .stopped {
         setResumePillState(showStatusText: false)
       } else {
         phase = .idle
-        animatePausedToIdle()
+        animate已暂停ToIdle()
       }
     }
   }
 
   private func handleExternalRecordingChange() {
-    guard !pauseManager.isPaused else { return }
+    guard !pauseManager.is已暂停 else { return }
     if controlMode == .active {
       guard phase == .paused else { return }
       phase = .idle
-      animatePausedToIdle()
+      animate已暂停ToIdle()
       return
     }
 
@@ -698,7 +698,7 @@ private enum Grad {
 private enum Col {
   static let shineIdle = Color.white.opacity(0.5)
   static let shineMenu = Color(red: 0.949, green: 0.749, blue: 0.655).opacity(0.5)
-  static let shinePaused = Color(red: 1, green: 0.894, blue: 0.761).opacity(0.5)
+  static let shine已暂停 = Color(red: 1, green: 0.894, blue: 0.761).opacity(0.5)
 }
 
 // MARK: - Preview

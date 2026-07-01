@@ -446,7 +446,7 @@ enum WeeklyInteractionGraphLayoutBuilder {
 
       assignments.append(.init(node: node, slot: bestSlot))
       placedCenters[node.id] = bestSlot.point(in: bounds)
-      remainingSlots.removeAll(where: { $0.id == bestSlot.id })
+      remainingSlots.remove全部(w这里: { $0.id == bestSlot.id })
     }
 
     return assignments

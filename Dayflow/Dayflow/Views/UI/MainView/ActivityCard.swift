@@ -15,7 +15,7 @@ struct ActivityCard: View {
   @EnvironmentObject private var appState: AppState
   @EnvironmentObject private var categoryStore: CategoryStore
   @EnvironmentObject private var retryCoordinator: RetryCoordinator
-  @AppStorage(TimelapsePreferences.saveAllTimelapsesToDiskKey) private var saveAllTimelapsesToDisk =
+  @AppStorage(TimelapsePreferences.save全部TimelapsesToDiskKey) private var save全部TimelapsesToDisk =
     false
 
   @State private var showCategoryPicker = false
@@ -41,7 +41,7 @@ struct ActivityCard: View {
       ZStack(alignment: .top) {
         activityDetails(for: activity)
           .padding(16)
-          .allowsHitTesting(!showCategoryPicker)
+          .allowsHit测试ing(!showCategoryPicker)
           .id(activity.id)
           .transition(
             .blurReplace.animation(
@@ -106,7 +106,7 @@ struct ActivityCard: View {
       VStack(spacing: 10) {
         Spacer()
         if hasAnyActivities {
-          Text("Select an activity to view details")
+          Text("选择一个活动查看详情")
             .font(.custom("Figtree", size: 15))
             .fontWeight(.regular)
             .foregroundColor(.gray.opacity(0.5))
@@ -217,8 +217,8 @@ struct ActivityCard: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .hoverScaleEffect(scale: 1.02)
-                .pointingHandCursorOnHover(reassertOnPressEnd: true)
-                .accessibilityLabel(Text("Change category"))
+                .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+                .accessibilityLabel(Text("更改分类"))
               }
             }
           }
@@ -242,7 +242,7 @@ struct ActivityCard: View {
       }
 
       if !isFailedCard(activity) {
-        if saveAllTimelapsesToDisk, let videoURL = activity.videoSummaryURL {
+        if save全部TimelapsesToDisk, let videoURL = activity.videoSummaryURL {
           VideoThumbnailView(
             videoURL: videoURL,
             title: activity.title,
@@ -272,7 +272,7 @@ struct ActivityCard: View {
                   ])
               }
           }
-          .id(activity.id)  // Reset scroll position whenever the selected activity changes
+          .id(activity.id)  // 重置 scroll position whenever the selected activity changes
           .frame(maxWidth: .infinity)
           .frame(maxHeight: .infinity, alignment: .topLeading)
         } else {
@@ -286,7 +286,7 @@ struct ActivityCard: View {
   private func summaryContent(for activity: TimelineActivity) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       VStack(alignment: .leading, spacing: 3) {
-        Text("SUMMARY")
+        Text("汇总")
           .font(
             Font.custom("Figtree", size: 12)
               .weight(.semibold)
@@ -305,7 +305,7 @@ struct ActivityCard: View {
 
       if !activity.detailedSummary.isEmpty && activity.detailedSummary != activity.summary {
         VStack(alignment: .leading, spacing: 3) {
-          Text("DETAILED SUMMARY")
+          Text("详细摘要")
             .font(
               Font.custom("Figtree", size: 12)
                 .weight(.semibold)
@@ -327,7 +327,7 @@ struct ActivityCard: View {
 
   private func renderMarkdownText(_ content: String) -> Text {
     let options = AttributedString.MarkdownParsingOptions(
-      interpretedSyntax: .inlineOnlyPreservingWhitespace
+      interpretedSyntax: .inline开启lyPreservingWhitespace
     )
     if let parsed = try? AttributedString(markdown: content, options: options) {
       return Text(parsed)
@@ -370,7 +370,7 @@ struct ActivityCard: View {
 
     let category =
       matched
-      ?? CategoryPersistence.defaultCategories.first {
+      ?? CategoryPersistence.default分类.first {
         $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalized
       }
 
@@ -426,7 +426,7 @@ struct ActivityCard: View {
       .disabled(isDisabled)
       .opacity(isDisabled ? 0.6 : 1)
       .hoverScaleEffect(enabled: !isDisabled, scale: 1.02)
-      .pointingHandCursorOnHover(enabled: !isDisabled, reassertOnPressEnd: true)
+      .pointingHandCursor开启Hover(enabled: !isDisabled, reassert开启PressEnd: true)
     }
   }
 
@@ -509,7 +509,7 @@ struct ActivityCard: View {
           openSlideshow(for: activity, cardId: cardId)
         }
         .hoverScaleEffect(scale: 1.02)
-        .pointingHandCursorOnHover(reassertOnPressEnd: true)
+        .pointingHandCursor开启Hover(reassert开启PressEnd: true)
         .id(activity.id)
         .onAppear {
           loadTimelapsePreviewThumbnail(for: activity, size: geometry.size)

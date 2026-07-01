@@ -14,7 +14,7 @@ struct TimelineReviewCard: View {
   let playbackToggleToken: Int
   let onSummaryHover: (Bool) -> Void
 
-  @AppStorage(TimelapsePreferences.saveAllTimelapsesToDiskKey) private var saveAllTimelapsesToDisk =
+  @AppStorage(TimelapsePreferences.save全部TimelapsesToDiskKey) private var save全部TimelapsesToDisk =
     false
   @StateObject private var playerModel: TimelineReviewPlayerModel
   @StateObject private var legacyPlayerModel: TimelineReviewLegacyPlayerModel
@@ -149,14 +149,14 @@ struct TimelineReviewCard: View {
           isEnabled: isActive,
           onTick: { displayLink in playerModel.handleDisplayTick(displayLink) }
         )
-        .allowsHitTesting(false)
+        .allowsHit测试ing(false)
       }
     }
     .onAppear { syncPlaybackMode() }
     .onChange(of: isActive) { syncPlaybackMode() }
     .onChange(of: activity.id) { syncPlaybackMode() }
     .onChange(of: activity.videoSummaryURL) { syncPlaybackMode() }
-    .onChange(of: saveAllTimelapsesToDisk) { syncPlaybackMode() }
+    .onChange(of: save全部TimelapsesToDisk) { syncPlaybackMode() }
     .onChange(of: playbackToggleToken) { _, _ in
       guard isActive else { return }
       togglePlayback()
@@ -220,7 +220,7 @@ struct TimelineReviewCard: View {
   }
 
   private var usesLegacySavedTimelapsePlayback: Bool {
-    saveAllTimelapsesToDisk && !(activity.videoSummaryURL?.isEmpty ?? true)
+    save全部TimelapsesToDisk && !(activity.videoSummaryURL?.isEmpty ?? true)
   }
 
   private func syncPlaybackMode() {

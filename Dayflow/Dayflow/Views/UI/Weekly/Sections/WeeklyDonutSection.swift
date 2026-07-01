@@ -37,7 +37,7 @@ struct WeeklyDonutSection: View {
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
         .fill(Design.backgroundColor)
 
-      Text("Weekly distribution")
+      Text("周报分布")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Design.titleColor)
         .padding(.top, 16)
@@ -93,7 +93,7 @@ private struct WeeklyDonutChart: View {
   let size: CGFloat
 
   private let innerRadiusRatio: CGFloat = 0.62
-  private let innerGap: CGFloat = 8
+  private let inner空档: CGFloat = 8
 
   private var chartSize: CGFloat {
     size - 8
@@ -131,13 +131,13 @@ private struct WeeklyDonutChart: View {
           )
         )
         .frame(width: chartSize, height: chartSize)
-        .allowsHitTesting(false)
+        .allowsHit测试ing(false)
 
       Circle()
         .fill(Color.white)
         .frame(
-          width: chartSize * innerRadiusRatio - innerGap,
-          height: chartSize * innerRadiusRatio - innerGap
+          width: chartSize * innerRadiusRatio - inner空档,
+          height: chartSize * innerRadiusRatio - inner空档
         )
 
       WeeklyDonutCenterContent(totalMinutes: snapshot.totalMinutes)
@@ -154,7 +154,7 @@ private struct WeeklyDonutCenterContent: View {
 
   var body: some View {
     VStack(spacing: 4) {
-      Text("TOTAL")
+      Text("总计")
         .font(.custom("Figtree-Bold", size: 8))
         .foregroundStyle(Color(hex: "A5A5A5"))
 
@@ -228,7 +228,7 @@ private struct WeeklyDonutEmptyState: View {
         .frame(width: size - 20, height: size - 20)
 
       VStack(spacing: 4) {
-        Text("TOTAL")
+        Text("总计")
           .font(.custom("Figtree-Bold", size: 8))
           .foregroundStyle(Color(hex: "A5A5A5"))
 

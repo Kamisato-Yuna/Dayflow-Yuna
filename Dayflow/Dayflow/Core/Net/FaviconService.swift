@@ -47,7 +47,7 @@ final class FaviconService {
     ("findmy", "FindMyFavicon"),
     ("find my", "FindMyFavicon"),
     ("icloud.com/mail", "MailFavicon"),
-    ("icloud.com/calendar", "CalendarFavicon"),
+    ("icloud.com/calendar", "日历Favicon"),
     ("icloud.com/notes", "NotesFavicon"),
     ("icloud.com/reminders", "RemindersFavicon"),
     ("icloud.com/photos", "PhotosFavicon"),
@@ -106,7 +106,7 @@ final class FaviconService {
   // Used for generic words that need "apple" context to avoid false matches
   private let faviconDualPatterns: [(pattern1: String, pattern2: String, asset: String)] = [
     ("mail", "apple", "MailFavicon"),
-    ("calendar", "apple", "CalendarFavicon"),
+    ("calendar", "apple", "日历Favicon"),
     ("notes", "apple", "NotesFavicon"),
     ("reminders", "apple", "RemindersFavicon"),
     ("photos", "apple", "PhotosFavicon"),
@@ -250,7 +250,7 @@ final class FaviconService {
 
         for await img in group {
           if let img {
-            group.cancelAll()
+            group.cancel全部()
             return img
           }
         }

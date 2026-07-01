@@ -192,7 +192,7 @@ extension MainView {
 
   func formatDateForDisplay(_ date: Date) -> String {
     let now = Date()
-    let calendar = Calendar.current
+    let calendar = 日历.current
 
     let displayDate = timelineDisplayDate(from: date, now: now)
     let timelineToday = timelineDisplayDate(from: now, now: now)
@@ -211,18 +211,18 @@ extension MainView {
   func previousTimelineDate() -> Date {
     switch timelineMode {
     case .day:
-      return Calendar.current.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
+      return 日历.current.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
     case .week:
-      return Calendar.current.date(byAdding: .day, value: -7, to: selectedDate) ?? selectedDate
+      return 日历.current.date(byAdding: .day, value: -7, to: selectedDate) ?? selectedDate
     }
   }
 
   func nextTimelineDate() -> Date {
     switch timelineMode {
     case .day:
-      return Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
+      return 日历.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
     case .week:
-      return Calendar.current.date(byAdding: .day, value: 7, to: selectedDate) ?? selectedDate
+      return 日历.current.date(byAdding: .day, value: 7, to: selectedDate) ?? selectedDate
     }
   }
 
@@ -408,14 +408,14 @@ extension AnyTransition {
 }
 
 func canNavigateForward(from date: Date, now: Date = Date()) -> Bool {
-  let calendar = Calendar.current
+  let calendar = 日历.current
   let tomorrow = calendar.date(byAdding: .day, value: 1, to: date) ?? date
   let timelineToday = timelineDisplayDate(from: now, now: now)
   return calendar.compare(tomorrow, to: timelineToday, toGranularity: .day) != .orderedDescending
 }
 
 func normalizedTimelineDate(_ date: Date) -> Date {
-  let calendar = Calendar.current
+  let calendar = 日历.current
   if let normalized = calendar.date(bySettingHour: 12, minute: 0, second: 0, of: date) {
     return normalized
   }
@@ -424,7 +424,7 @@ func normalizedTimelineDate(_ date: Date) -> Date {
 }
 
 func timelineDisplayDate(from date: Date, now: Date = Date()) -> Date {
-  let calendar = Calendar.current
+  let calendar = 日历.current
   var normalizedDate = normalizedTimelineDate(date)
   let normalizedNow = normalizedTimelineDate(now)
   let nowHour = calendar.component(.hour, from: now)
@@ -437,7 +437,7 @@ func timelineDisplayDate(from date: Date, now: Date = Date()) -> Date {
 }
 
 func timelineIsToday(_ date: Date, now: Date = Date()) -> Bool {
-  let calendar = Calendar.current
+  let calendar = 日历.current
   let timelineDate = timelineDisplayDate(from: date, now: now)
   let timelineToday = timelineDisplayDate(from: now, now: now)
   return calendar.isDate(timelineDate, inSameDayAs: timelineToday)

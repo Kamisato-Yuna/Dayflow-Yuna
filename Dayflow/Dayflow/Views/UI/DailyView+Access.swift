@@ -19,23 +19,23 @@ extension DailyView {
           )
           .transition(.opacity.combined(with: .move(edge: .leading)))
         } else if accessFlowStep == .notifications {
-          DailyNotificationOnboardingView(
-            notificationPermissionMessage: notificationPermissionMessage,
-            notificationPermissionButtonTitle: notificationPermissionButtonTitle,
-            isNotificationPermissionButtonDisabled: isNotificationPermissionButtonDisabled,
+          DailyNotification开启boardingView(
+            notification权限Message: notification权限Message,
+            notification权限ButtonTitle: notification权限ButtonTitle,
+            isNotification权限ButtonDisabled: isNotification权限ButtonDisabled,
             isNotificationRecheckButtonDisabled: isNotificationRecheckButtonDisabled,
-            onNotificationPermissionAction: handleNotificationPermissionAction,
-            onRecheckPermissions: checkNotificationAuthorizationForUnlock
+            onNotification权限Action: handleNotification权限Action,
+            onRecheck权限s: checkNotificationAuthorizationForUnlock
           )
           .transition(.opacity.combined(with: .move(edge: .trailing)))
         } else {
-          DailyProviderOnboardingView(
+          DailyProvider开启boardingView(
             selectedProvider: dailyRecapProvider,
             providerAvailability: providerAvailability,
             isRefreshingProviderAvailability: isRefreshingProviderAvailability,
-            canContinue: canFinishDailyProviderOnboarding,
+            canContinue: canFinishDailyProvider开启boarding,
             onSelectProvider: selectDailyRecapProvider,
-            onContinue: finishDailyProviderOnboarding
+            onContinue: finishDailyProvider开启boarding
           )
           .transition(.opacity.combined(with: .move(edge: .trailing)))
         }
@@ -59,18 +59,18 @@ extension DailyView {
         .scaledToFill()
         .frame(width: geo.size.width, height: geo.size.height)
         .clipped()
-        .allowsHitTesting(false)
+        .allowsHit测试ing(false)
     }
   }
-  var isNotificationPermissionButtonDisabled: Bool {
-    isCheckingNotificationAuthorization || isRequestingNotificationPermission
+  var isNotification权限ButtonDisabled: Bool {
+    isCheckingNotificationAuthorization || isRequestingNotification权限
   }
   var isNotificationRecheckButtonDisabled: Bool {
-    isCheckingNotificationAuthorization || isRequestingNotificationPermission
+    isCheckingNotificationAuthorization || isRequestingNotification权限
   }
-  var notificationPermissionButtonTitle: String {
-    if isCheckingNotificationAuthorization || isRequestingNotificationPermission {
-      return "Checking..."
+  var notification权限ButtonTitle: String {
+    if isCheckingNotificationAuthorization || isRequestingNotification权限 {
+      return "检查中…"
     }
 
     if notificationAuthorizationStatus == .authorized {
@@ -83,7 +83,7 @@ extension DailyView {
 
     return "Turn on notifications"
   }
-  var notificationPermissionMessage: String {
+  var notification权限Message: String {
     if notificationAuthorizationStatus == .denied {
       return
         "Notifications are currently off for Dayflow. Enable them in System Settings to finish unlocking Daily."
@@ -97,7 +97,7 @@ extension DailyView {
       "Turn them on to continue. If you come back from System Settings, we'll check automatically."
   }
   func checkNotificationAuthorizationForUnlock() {
-    guard !isCheckingNotificationAuthorization, !isRequestingNotificationPermission else {
+    guard !isCheckingNotificationAuthorization, !isRequestingNotification权限 else {
       return
     }
 
@@ -120,25 +120,25 @@ extension DailyView {
       }
     }
   }
-  func handleNotificationPermissionAction() {
+  func handleNotification权限Action() {
     if notificationAuthorizationStatus == .authorized {
       advanceToDailyProviderStep()
     } else if notificationAuthorizationStatus == .denied {
       openNotificationSettings()
     } else {
-      requestNotificationPermissionForUnlock()
+      requestNotification权限ForUnlock()
     }
   }
-  func requestNotificationPermissionForUnlock() {
-    guard !isRequestingNotificationPermission else { return }
-    isRequestingNotificationPermission = true
+  func requestNotification权限ForUnlock() {
+    guard !isRequestingNotification权限 else { return }
+    isRequestingNotification权限 = true
 
     Task {
-      let granted = await NotificationService.shared.requestPermission()
+      let granted = await NotificationService.shared.request权限()
       let status = await NotificationService.shared.authorizationStatus()
 
       await MainActor.run {
-        isRequestingNotificationPermission = false
+        isRequestingNotification权限 = false
         notificationAuthorizationStatus = status
 
         if granted || canUnlockDaily(for: status) {
@@ -215,8 +215,8 @@ extension DailyView {
         canUnlockDaily(for: notificationAuthorizationStatus) ? .provider : .notifications
     }
   }
-  func finishDailyProviderOnboarding() {
-    guard canFinishDailyProviderOnboarding else {
+  func finishDailyProvider开启boarding() {
+    guard canFinishDailyProvider开启boarding else {
       return
     }
 
@@ -235,8 +235,8 @@ extension DailyView {
 
     standupRegenerateTask?.cancel()
     standupRegenerateTask = nil
-    standupRegenerateResetTask?.cancel()
-    standupRegenerateResetTask = nil
+    standupRegenerate重置Task?.cancel()
+    standupRegenerate重置Task = nil
     standupRegenerateState = .idle
     standupRegeneratingDotsPhase = 1
     loadedStandupDraftDay = nil

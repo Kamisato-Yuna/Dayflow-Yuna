@@ -2,7 +2,7 @@
 //  DayflowButton.swift
 //  Dayflow
 //
-//  Custom button component with Dayflow branding
+//  自定义 button component with Dayflow branding
 //
 
 import AppKit
@@ -13,7 +13,7 @@ struct DayflowButton: View {
   let action: () -> Void
   var width: CGFloat = 160
   var fontSize: CGFloat = 16
-  var isSubtle: Bool = false
+  var is轻微: Bool = false
 
   @State private var isPressed = false
   @State private var isHovered = false
@@ -41,7 +41,7 @@ struct DayflowButton: View {
         )
       }
 
-      // Reset and call action
+      // 重置 and call action
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         withAnimation(pressAnimation) {
           isPressed = false
@@ -49,7 +49,7 @@ struct DayflowButton: View {
         }
         action()
 
-        // Reset pulse
+        // 重置 pulse
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
           showPulse = false
         }
@@ -58,12 +58,12 @@ struct DayflowButton: View {
       Text(title)
         .font(.custom("Figtree", size: fontSize))
         .fontWeight(.semibold)
-        .foregroundColor(isSubtle ? .black.opacity(0.7) : .white)
+        .foregroundColor(is轻微 ? .black.opacity(0.7) : .white)
         .frame(width: width, height: 56, alignment: .center)
         .background(
           ZStack {
             // Main background
-            if isSubtle {
+            if is轻微 {
               Color.white.opacity(0.9)
             } else {
               Color(red: 1, green: 0.42, blue: 0.02)
@@ -72,7 +72,7 @@ struct DayflowButton: View {
             // Pulse effect
             if showPulse {
               Group {
-                if isSubtle {
+                if is轻微 {
                   Color.gray.opacity(0.1)
                 } else {
                   Color(red: 1, green: 0.42, blue: 0.02)
@@ -109,7 +109,7 @@ struct DayflowButton: View {
           RoundedRectangle(cornerRadius: 12)
             .inset(by: 0.75)
             .stroke(
-              isSubtle
+              is轻微
                 ? Color.black.opacity(isHovered ? 0.15 : 0.1)
                 : .white.opacity(isHovered ? 0.25 : 0.17),
               lineWidth: 1.5
@@ -122,8 +122,8 @@ struct DayflowButton: View {
           animation: pressAnimation
         )
         .scaleEffect(reduceMotion ? 1.0 : (isHovered ? 1.02 : 1.0))
-        .offset(y: reduceMotion ? 0 : (isHovered ? (isSubtle ? -1 : -2) : 0))
-        .brightness(isHovered ? (isSubtle ? 0.05 : 0.08) : 0)
+        .offset(y: reduceMotion ? 0 : (isHovered ? (is轻微 ? -1 : -2) : 0))
+        .brightness(isHovered ? (is轻微 ? 0.05 : 0.08) : 0)
     }
     .buttonStyle(.plain)  // Remove default button styling
     .pointingHandCursor()
@@ -141,7 +141,7 @@ struct DayflowButton_Previews: PreviewProvider {
       DayflowButton(title: "开始", action: {})
       DayflowButton(title: "继续", action: {}, width: 200)
       DayflowButton(title: "下一步", action: {}, width: 120, fontSize: 14)
-      DayflowButton(title: "Subtle", action: {}, isSubtle: true)
+      DayflowButton(title: "轻微", action: {}, is轻微: true)
     }
     .padding(40)
     .background(Color.gray.opacity(0.1))

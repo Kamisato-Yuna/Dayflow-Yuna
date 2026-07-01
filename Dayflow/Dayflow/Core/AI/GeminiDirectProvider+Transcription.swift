@@ -10,7 +10,7 @@ extension GeminiDirectProvider {
   ///   - videoDuration: Duration of the compressed video (in seconds)
   ///   - realDuration: Actual real-world duration this video represents (in seconds)
   ///   - compressionFactor: How much the timeline is compressed (e.g., 10 = 10x faster)
-  ///   - batchId: Optional batch ID for logging
+  ///   - batchId: 可选 batch ID for logging
   func transcribeVideoData(
     _ videoData: Data,
     mimeType: String,
@@ -41,7 +41,7 @@ extension GeminiDirectProvider {
       Screen Recording Transcription (Reconstruct Mode)
       Watch this screen recording and create an activity log detailed enough that someone could reconstruct the session.
       CRITICAL: This video is exactly \(durationString) long. ALL timestamps must be within 00:00 to \(durationString). No gaps.
-      Identifying the active app: On macOS, the app name is always shown in the top-left corner of the screen, right next to the Apple () menu. Check this FIRST to identify which app is being used. Do NOT guess — read the actual name from the menu bar. If you can't read it clearly, describe it generically (e.g., "code editor," "browser," "messaging app") rather than guessing a specific product name. Common code editors like Cursor, VS Code, Xcode, and Zed all look similar but have different names in the menu bar.
+      Identifying the active app: 开启 macOS, the app name is always shown in the top-left corner of the screen, right next to the Apple () menu. Check this FIRST to identify which app is being used. Do NOT guess — read the actual name from the menu bar. If you can't read it clearly, describe it generically (e.g., "code editor," "browser," "messaging app") rather than guessing a specific product name. Common code editors like Cursor, VS Code, Xcode, and Zed all look similar but have different names in the menu bar.
       For each segment, ask yourself:
       "What EXACTLY did they do? What SPECIFIC things can I see?"
       Capture:
@@ -177,7 +177,7 @@ extension GeminiDirectProvider {
             ])
         }
 
-        // SUCCESS! All validations passed
+        // SUCCESS! 全部 validations passed
         print("✅ Video transcription succeeded on attempt \(attempt + 1)")
         finalResponse = response
         finalObservations = observations
@@ -321,7 +321,7 @@ extension GeminiDirectProvider {
       // Prepare logging context
       let responseHeaders: [String: String] = httpResponse.allHeaderFields.reduce(into: [:]) {
         acc, kv in
-        if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
+        if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
           acc[k] = v.description
         }
       }
@@ -342,7 +342,7 @@ extension GeminiDirectProvider {
       let httpInfo = LLMHTTPInfo(
         httpStatus: httpResponse.statusCode, responseHeaders: responseHeaders, responseBody: data)
 
-      // Check HTTP status first - any 400+ is a failure, except for a special 503 case where
+      // Check HTTP status first - any 400+ is a failure, except for a special 503 case w这里
       // Gemini sometimes streams a valid payload before closing with an error.
       if httpResponse.statusCode >= 400 {
         if httpResponse.statusCode == 503, let recovered = recover503CandidateText(data) {
@@ -488,7 +488,7 @@ extension GeminiDirectProvider {
       return (text, model.rawValue)
 
     } catch {
-      // Only log if this is a network/transport error (not our custom GeminiError which was already logged)
+      // 开启ly log if this is a network/transport error (not our custom GeminiError which was already logged)
       if (error as NSError).domain != "GeminiError" {
         let modelName = model.rawValue
         let ctx = LLMCallContext(

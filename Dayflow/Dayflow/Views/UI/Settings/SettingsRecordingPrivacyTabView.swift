@@ -25,7 +25,7 @@ struct SettingsRecordingPrivacyTabView: View {
     }
     .frame(maxHeight: .infinity, alignment: .topLeading)
     .onAppear {
-      viewModel.handleOnAppear()
+      viewModel.handle开启Appear()
     }
   }
 
@@ -35,7 +35,7 @@ struct SettingsRecordingPrivacyTabView: View {
         .font(.system(size: 13, weight: .semibold))
         .foregroundColor(SettingsStyle.meta)
 
-      TextField("Search installed apps", text: $viewModel.searchText)
+      TextField("搜索已安装应用", text: $viewModel.searchText)
         .textFieldStyle(.plain)
         .font(.custom("Figtree", size: 13))
         .foregroundColor(SettingsStyle.text)
@@ -55,7 +55,7 @@ struct SettingsRecordingPrivacyTabView: View {
   private var installedAppsGrid: some View {
     VStack(alignment: .leading, spacing: 12) {
       HStack(alignment: .firstTextBaseline) {
-        Text("Installed apps")
+        Text("已安装应用")
           .font(.custom("Figtree", size: 13))
           .fontWeight(.semibold)
           .foregroundColor(SettingsStyle.text)
@@ -128,7 +128,7 @@ struct SettingsRecordingPrivacyTabView: View {
         Spacer()
 
         SettingsSecondaryButton(
-          title: "Clear",
+          title: "清除",
           isDisabled: viewModel.blockedApplications.isEmpty,
           action: viewModel.clearBlockedApplications
         )
@@ -137,7 +137,7 @@ struct SettingsRecordingPrivacyTabView: View {
       ScrollView(.horizontal, showsIndicators: false) {
         HStack(spacing: 12) {
           if viewModel.blockedApplications.isEmpty {
-            Text("Drag apps here to hide them from recording")
+            Text("将应用拖到这里可排除录制")
               .font(.custom("Figtree", size: 13))
               .foregroundColor(SettingsStyle.meta)
               .frame(height: 58)

@@ -41,7 +41,7 @@ enum LocalModelPreset: String, CaseIterable, Codable {
     }
   }
 
-  func modelId(for engine: LocalEngine) -> String {
+  func modelId(for engine: Local引擎) -> String {
     switch (self, engine) {
     case (.qwen3VL4B, .lmstudio):
       return "Qwen3-VL-4B-Instruct"
@@ -54,7 +54,7 @@ enum LocalModelPreset: String, CaseIterable, Codable {
     }
   }
 
-  func instructions(for engine: LocalEngine) -> LocalModelInstructionSet {
+  func instructions(for engine: Local引擎) -> LocalModelInstructionSet {
     switch engine {
     case .ollama, .custom:
       return LocalModelInstructionSet(
@@ -88,7 +88,7 @@ enum LocalModelPreset: String, CaseIterable, Codable {
         buttonTitle: "Open download in LM Studio",
         buttonURL: lmStudioDownloadURL,
         note:
-          "Tip: enable \"Launch local server\" so Dayflow can talk to LM Studio at \(LocalEngine.lmstudio.defaultBaseURL)."
+          "Tip: enable \"Launch local server\" so Dayflow can talk to LM Studio at \(Local引擎.lmstudio.defaultBaseURL)."
       )
     }
   }
@@ -130,13 +130,13 @@ enum LocalModelPreferences {
     defaults.removeObject(forKey: presetKey)
   }
 
-  static func syncPreset(for engine: LocalEngine, modelId: String) {
+  static func syncPreset(for engine: Local引擎, modelId: String) {
     let normalized = modelId.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !normalized.isEmpty else {
       clearPreset()
       return
     }
-    if let preset = LocalModelPreset.allCases.first(where: { $0.modelId(for: engine) == normalized }
+    if let preset = LocalModelPreset.allCases.first(w这里: { $0.modelId(for: engine) == normalized }
     ) {
       savePreset(preset)
     } else {
@@ -144,11 +144,11 @@ enum LocalModelPreferences {
     }
   }
 
-  static func defaultModelId(for engine: LocalEngine) -> String {
+  static func defaultModelId(for engine: Local引擎) -> String {
     LocalModelPreset.recommended.modelId(for: engine)
   }
 
-  static func shouldShowUpgradeBanner(engine: LocalEngine, modelId: String) -> Bool {
+  static func shouldShowUpgradeBanner(engine: Local引擎, modelId: String) -> Bool {
     if defaults.bool(forKey: upgradeDismissedKey) { return false }
     if currentPreset() == .qwen3VL4B { return false }
     let normalized = modelId.trimmingCharacters(in: .whitespacesAndNewlines)

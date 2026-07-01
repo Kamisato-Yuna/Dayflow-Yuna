@@ -16,7 +16,7 @@ struct TimelineReviewOverlay: View {
   @State private var activities: [TimelineActivity] = []
   @State private var currentIndex: Int = 0
   @State private var ratings: [String: TimelineReviewRating] = [:]
-  @State private var dragOffset: CGSize = .zero
+  @State private var drag关闭set: CGSize = .zero
   @State private var dragRotation: Double = 0
   @State private var activeOverlayRating: TimelineReviewRating? = nil
   @State private var isAnimatingOut: Bool = false
@@ -83,7 +83,7 @@ struct TimelineReviewOverlay: View {
     .background(
       TimelineReviewKeyHandler(
         onMove: { direction in handleMoveCommand(direction) },
-        onBack: { goBackOneCard(input: .keyboard) },
+        onBack: { goBack开启eCard(input: .keyboard) },
         onEscape: { dismissOverlay() },
         onTogglePlayback: { playbackToggleToken &+= 1 }
       )
@@ -178,7 +178,7 @@ struct TimelineReviewOverlay: View {
                 if isActive {
                   card
                     .rotationEffect(.degrees(dragRotation))
-                    .offset(dragOffset)
+                    .offset(drag关闭set)
                     .opacity(cardOpacity)
                     .simultaneousGesture(reviewDragGesture())
                 } else {
@@ -216,14 +216,14 @@ struct TimelineReviewOverlay: View {
 
   private var reviewBottomContent: some View {
     VStack(spacing: 14) {
-      Text("Swipe on each card on your Timeline to review your day.")
+      Text("在时间线中左右滑动每张卡片以回顾今天。")
         .font(.custom("Figtree", size: 14).weight(.medium))
         .foregroundColor(Color(hex: "98806D"))
         .lineLimit(1)
         .minimumScaleFactor(0.95)
 
       TimelineReviewRatingRow(
-        onUndo: { goBackOneCard(input: .button) },
+        on撤销: { goBack开启eCard(input: .button) },
         onSelect: { rating in commitRating(rating, input: .button) }
       )
     }
@@ -233,7 +233,7 @@ struct TimelineReviewOverlay: View {
     let summary = ratingSummary
     return VStack(spacing: 30) {
       VStack(spacing: 12) {
-        Text("All caught up!")
+        Text("全部 caught up!")
           .font(.custom("InstrumentSerif-Regular", size: 40))
           .foregroundColor(Color(hex: "333333"))
         Text(
@@ -279,7 +279,7 @@ struct TimelineReviewOverlay: View {
       Text("Nothing to review yet")
         .font(.custom("InstrumentSerif-Regular", size: 28))
         .foregroundColor(Color(hex: "333333"))
-      Text("Come back after a few timeline cards appear.")
+      Text("等几张时间线卡片生成后再回来。")
         .font(.custom("Figtree", size: 14).weight(.medium))
         .foregroundColor(Color(hex: "707070"))
     }
@@ -301,7 +301,7 @@ struct TimelineReviewOverlay: View {
   }
 
   private func categoryColor(for name: String) -> Color {
-    if let match = categoryStore.categories.first(where: { $0.name == name }) {
+    if let match = categoryStore.categories.first(w这里: { $0.name == name }) {
       return Color(hex: match.colorHex)
     }
     return Color(hex: "B984FF")
@@ -311,20 +311,20 @@ struct TimelineReviewOverlay: View {
     switch direction {
     case .left:
       commitRating(
-        .distracted, predictedTranslation: TimelineReviewRating.distracted.swipeOffset,
+        .distracted, predictedTranslation: TimelineReviewRating.distracted.swipe关闭set,
         input: .keyboard)
     case .right:
       commitRating(
-        .focused, predictedTranslation: TimelineReviewRating.focused.swipeOffset, input: .keyboard)
+        .focused, predictedTranslation: TimelineReviewRating.focused.swipe关闭set, input: .keyboard)
     case .up:
       commitRating(
-        .neutral, predictedTranslation: TimelineReviewRating.neutral.swipeOffset, input: .keyboard)
+        .neutral, predictedTranslation: TimelineReviewRating.neutral.swipe关闭set, input: .keyboard)
     default:
       break
     }
   }
 
-  private func goBackOneCard(input: TimelineReviewInput) {
+  private func goBack开启eCard(input: TimelineReviewInput) {
     guard !isAnimatingOut, !isBackAnimating else { return }
     guard currentIndex > 0 else { return }
     AnalyticsService.shared.capture("timeline_review_undo", ["input": input.rawValue])
@@ -337,10 +337,10 @@ struct TimelineReviewOverlay: View {
     activeOverlayRating = nil
     dragRotation = 0
     cardOpacity = 1
-    dragOffset = CGSize(width: 0, height: cardSize.height + 160)
+    drag关闭set = CGSize(width: 0, height: cardSize.height + 160)
 
     withAnimation(.spring(response: ReviewLayout.backAnimationDuration, dampingFraction: 0.85)) {
-      dragOffset = .zero
+      drag关闭set = .zero
     }
 
     DispatchQueue.main.asyncAfter(deadline: .now() + ReviewLayout.backAnimationDuration) {
@@ -351,7 +351,7 @@ struct TimelineReviewOverlay: View {
   private func beginTrackpadDrag() {
     guard !isAnimatingOut, currentActivity != nil else { return }
     isTrackpadDragging = true
-    trackpadTranslation = dragOffset
+    trackpadTranslation = drag关闭set
     lastTrackpadDelta = .zero
   }
 
@@ -363,8 +363,8 @@ struct TimelineReviewOverlay: View {
 
     let minimumUpdateDelta: CGFloat = 2.5
     let deltaFromRenderedState = CGSize(
-      width: trackpadTranslation.width - dragOffset.width,
-      height: trackpadTranslation.height - dragOffset.height
+      width: trackpadTranslation.width - drag关闭set.width,
+      height: trackpadTranslation.height - drag关闭set.height
     )
     guard
       abs(deltaFromRenderedState.width) >= minimumUpdateDelta
@@ -373,7 +373,7 @@ struct TimelineReviewOverlay: View {
       return
     }
 
-    dragOffset = trackpadTranslation
+    drag关闭set = trackpadTranslation
     dragRotation = Double(trackpadTranslation.width / 18)
     activeOverlayRating = ratingForGesture(trackpadTranslation)
   }
@@ -402,7 +402,7 @@ struct TimelineReviewOverlay: View {
           let isHorizontal = abs(value.translation.width) > abs(value.translation.height) * 1.2
           if !isHorizontal { return }
         }
-        dragOffset = value.translation
+        drag关闭set = value.translation
         dragRotation = Double(value.translation.width / 18)
         activeOverlayRating = ratingForGesture(value.translation)
       }
@@ -460,12 +460,12 @@ struct TimelineReviewOverlay: View {
     StorageManager.shared.applyReviewRating(startTs: startTs, endTs: endTs, rating: rating.rawValue)
     refreshRatingSummary()
 
-    let exitOffset = swipeExitOffset(for: rating, predictedTranslation: predictedTranslation)
+    let exit关闭set = swipeExit关闭set(for: rating, predictedTranslation: predictedTranslation)
     let exitRotation = swipeExitRotation(for: rating, predictedTranslation: predictedTranslation)
     let exitDuration = swipeExitDuration(predictedTranslation: predictedTranslation)
 
     withAnimation(.easeIn(duration: exitDuration)) {
-      dragOffset = exitOffset
+      drag关闭set = exit关闭set
       dragRotation = exitRotation
       cardOpacity = 0
     }
@@ -481,7 +481,7 @@ struct TimelineReviewOverlay: View {
 
   private func resetDragState(animated: Bool = true) {
     let reset = {
-      dragOffset = .zero
+      drag关闭set = .zero
       dragRotation = 0
       activeOverlayRating = nil
       cardOpacity = 1
@@ -496,11 +496,11 @@ struct TimelineReviewOverlay: View {
     }
   }
 
-  private func swipeExitOffset(for rating: TimelineReviewRating, predictedTranslation: CGSize?)
+  private func swipeExit关闭set(for rating: TimelineReviewRating, predictedTranslation: CGSize?)
     -> CGSize
   {
     let direction =
-      swipeDirectionVector(predictedTranslation) ?? swipeDirectionVector(rating.swipeOffset)
+      swipeDirectionVector(predictedTranslation) ?? swipeDirectionVector(rating.swipe关闭set)
       ?? CGSize(width: 0, height: -1)
     let distance = max(cardSize.width, cardSize.height) * 1.6
     return CGSize(width: direction.width * distance, height: direction.height * distance)

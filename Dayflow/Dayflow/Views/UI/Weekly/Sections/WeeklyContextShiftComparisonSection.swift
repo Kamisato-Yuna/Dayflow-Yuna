@@ -90,7 +90,7 @@ struct WeeklyContextShiftComparisonSection: View {
 
   private var chartColumn: some View {
     VStack(alignment: .leading, spacing: Design.xAxisTopSpacing) {
-      Text("Count")
+      Text("数量")
         .font(.custom("Figtree-Regular", size: 12))
         .foregroundStyle(Design.labelColor)
 
@@ -183,7 +183,7 @@ struct WeeklyContextShiftComparisonSection: View {
       }
       .buttonStyle(.plain)
       .hoverScaleEffect(scale: 1.02)
-      .pointingHandCursorOnHover(reassertOnPressEnd: true)
+      .pointingHandCursor开启Hover(reassert开启PressEnd: true)
     }
     .padding(Design.calloutPadding)
     .frame(width: Design.calloutWidth, alignment: .leading)

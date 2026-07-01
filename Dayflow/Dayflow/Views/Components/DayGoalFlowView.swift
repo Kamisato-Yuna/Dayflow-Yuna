@@ -210,11 +210,11 @@ struct DayGoalFlowView: View {
 
       GoalReviewCard(
         kind: .focus,
-        title: "Focus target: \(formatDuration(review.plan.focusTargetDuration))",
+        title: "专注 target: \(formatDuration(review.plan.focusTargetDuration))",
         subtitle: "Time spent: \(formatDuration(review.focusDuration))",
         targetDuration: review.plan.focusTargetDuration,
         actualDuration: review.focusDuration,
-        categories: review.focusCategories
+        categories: review.focus分类
       )
       .frame(width: 388, height: 236)
       .position(x: 600, y: 297)
@@ -245,7 +245,7 @@ struct DayGoalFlowView: View {
     let distractionStats = setupStats(for: .distraction)
 
     return ZStack(alignment: .topLeading) {
-      Text("Where do you want to spend your time today?")
+      Text("你今天想把时间花在哪里？")
         .font(.custom("Instrument Serif", size: 24))
         .foregroundColor(.black)
         .multilineTextAlignment(.center)
@@ -253,9 +253,9 @@ struct DayGoalFlowView: View {
         .position(x: 602, y: 64)
 
       GoalCategoryPool(
-        categories: unassignedCategories,
-        focusIDs: Set(draft.focusCategories.map(\.categoryID)),
-        distractionIDs: Set(draft.distractionCategories.map(\.categoryID)),
+        categories: unassigned分类,
+        focusIDs: Set(draft.focus分类.map(\.categoryID)),
+        distractionIDs: Set(draft.distraction分类.map(\.categoryID)),
         onCycle: cycleCategoryAssignment
       )
       .frame(width: 804, height: 87)
@@ -263,14 +263,14 @@ struct DayGoalFlowView: View {
 
       GoalSetupPanel(
         kind: .focus,
-        title: "Focus goal",
+        title: "专注 goal",
         durationMinutes: $draft.focusTargetMinutes,
         leadingStatTitle: "Yesterday’s focus",
         leadingStatMinutes: focusStats.yesterdayMinutes,
-        trailingStatTitle: "Last week’s Focus average",
+        trailingStatTitle: "Last week’s 专注 average",
         trailingStatMinutes: focusStats.lastWeekAverageMinutes,
         statScaleMaxMinutes: focusStats.scaleMaxMinutes,
-        selectedCategories: resolvedSnapshots(for: .focus),
+        selected分类: resolvedSnapshots(for: .focus),
         onRemoveCategory: { removeCategoryFromPanel($0, from: .focus) },
         onDropCategory: { moveCategoryFromDrop($0, to: .focus) }
       )
@@ -281,12 +281,12 @@ struct DayGoalFlowView: View {
         kind: .distraction,
         title: "Distraction limit",
         durationMinutes: $draft.distractionLimitMinutes,
-        leadingStatTitle: "Yesterday’s Distractions",
+        leadingStatTitle: "Yesterday’s 分心",
         leadingStatMinutes: distractionStats.yesterdayMinutes,
         trailingStatTitle: "Last week’s Distraction average",
         trailingStatMinutes: distractionStats.lastWeekAverageMinutes,
         statScaleMaxMinutes: distractionStats.scaleMaxMinutes,
-        selectedCategories: resolvedSnapshots(for: .distraction),
+        selected分类: resolvedSnapshots(for: .distraction),
         onRemoveCategory: { removeCategoryFromPanel($0, from: .distraction) },
         onDropCategory: { moveCategoryFromDrop($0, to: .distraction) }
       )
@@ -294,7 +294,7 @@ struct DayGoalFlowView: View {
       .position(x: 804, y: 385.5)
 
       HStack(spacing: 10) {
-        secondaryButton("Skip today", action: onSkip)
+        secondaryButton("跳过今天", action: onSkip)
 
         primaryButton("确认") {
           var plan = draft
@@ -311,17 +311,17 @@ struct DayGoalFlowView: View {
     }
   }
 
-  private var selectableCategories: [TimelineCategory] {
+  private var selectable分类: [TimelineCategory] {
     categories
       .filter { $0.isSystem == false && $0.isIdle == false }
       .sorted { $0.order < $1.order }
   }
 
-  private var unassignedCategories: [TimelineCategory] {
-    let assignedSnapshots = draft.focusCategories + draft.distractionCategories
+  private var unassigned分类: [TimelineCategory] {
+    let assignedSnapshots = draft.focus分类 + draft.distraction分类
     let assignedIDs = Set(assignedSnapshots.map(\.categoryID))
     let assignedNames = Set(assignedSnapshots.map { normalizedCategoryName($0.name) })
-    return selectableCategories.filter { category in
+    return selectable分类.filter { category in
       assignedIDs.contains(category.id.uuidString) == false
         && assignedNames.contains(normalizedCategoryName(category.name)) == false
     }
@@ -358,8 +358,8 @@ struct DayGoalFlowView: View {
   }
 
   private func currentCategory(for snapshot: DayGoalCategorySnapshot) -> TimelineCategory? {
-    selectableCategories.first(where: { $0.id.uuidString == snapshot.categoryID })
-      ?? selectableCategories.first {
+    selectable分类.first(w这里: { $0.id.uuidString == snapshot.categoryID })
+      ?? selectable分类.first {
         normalizedCategoryName($0.name) == normalizedCategoryName(snapshot.name)
       }
   }
@@ -370,8 +370,8 @@ struct DayGoalFlowView: View {
 
   private func cycleCategoryAssignment(_ category: TimelineCategory) {
     let id = category.id.uuidString
-    let focusIDs = Set(draft.focusCategories.map(\.categoryID))
-    let distractionIDs = Set(draft.distractionCategories.map(\.categoryID))
+    let focusIDs = Set(draft.focus分类.map(\.categoryID))
+    let distractionIDs = Set(draft.distraction分类.map(\.categoryID))
 
     if focusIDs.contains(id) {
       removeCategory(id, from: .focus)
@@ -392,22 +392,22 @@ struct DayGoalFlowView: View {
 
     switch kind {
     case .focus:
-      draft.focusCategories.append(
-        DayGoalCategorySnapshot(category: category, sortOrder: draft.focusCategories.count)
+      draft.focus分类.append(
+        DayGoalCategorySnapshot(category: category, sortOrder: draft.focus分类.count)
       )
     case .distraction:
-      draft.distractionCategories.append(
-        DayGoalCategorySnapshot(category: category, sortOrder: draft.distractionCategories.count)
+      draft.distraction分类.append(
+        DayGoalCategorySnapshot(category: category, sortOrder: draft.distraction分类.count)
       )
     }
     normalizeSortOrders()
   }
 
   private func moveCategory(_ categoryID: String, to kind: DayGoalCategoryKind) {
-    let draggedSnapshot = (draft.focusCategories + draft.distractionCategories)
+    let draggedSnapshot = (draft.focus分类 + draft.distraction分类)
       .first { $0.categoryID == categoryID }
     let category =
-      selectableCategories.first(where: { $0.id.uuidString == categoryID })
+      selectable分类.first(w这里: { $0.id.uuidString == categoryID })
       ?? draggedSnapshot.flatMap(currentCategory)
     guard let category
     else {
@@ -433,10 +433,10 @@ struct DayGoalFlowView: View {
   }
 
   private func assignmentKind(for categoryID: String) -> DayGoalCategoryKind? {
-    if draft.focusCategories.contains(where: { $0.categoryID == categoryID }) {
+    if draft.focus分类.contains(w这里: { $0.categoryID == categoryID }) {
       return .focus
     }
-    if draft.distractionCategories.contains(where: { $0.categoryID == categoryID }) {
+    if draft.distraction分类.contains(w这里: { $0.categoryID == categoryID }) {
       return .distraction
     }
     return nil
@@ -445,15 +445,15 @@ struct DayGoalFlowView: View {
   private func removeCategory(_ categoryID: String, from kind: DayGoalCategoryKind) {
     switch kind {
     case .focus:
-      draft.focusCategories.removeAll { $0.categoryID == categoryID }
+      draft.focus分类.remove全部 { $0.categoryID == categoryID }
     case .distraction:
-      draft.distractionCategories.removeAll { $0.categoryID == categoryID }
+      draft.distraction分类.remove全部 { $0.categoryID == categoryID }
     }
     normalizeSortOrders()
   }
 
   private func normalizeSortOrders() {
-    draft.focusCategories = draft.focusCategories.enumerated().map { index, snapshot in
+    draft.focus分类 = draft.focus分类.enumerated().map { index, snapshot in
       DayGoalCategorySnapshot(
         categoryID: snapshot.categoryID,
         name: snapshot.name,
@@ -461,7 +461,7 @@ struct DayGoalFlowView: View {
         sortOrder: index
       )
     }
-    draft.distractionCategories = draft.distractionCategories.enumerated().map { index, snapshot in
+    draft.distraction分类 = draft.distraction分类.enumerated().map { index, snapshot in
       DayGoalCategorySnapshot(
         categoryID: snapshot.categoryID,
         name: snapshot.name,
@@ -483,7 +483,7 @@ struct DayGoalFlowView: View {
     }
     .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
     .hoverScaleEffect(scale: 1.02)
-    .pointingHandCursorOnHover(reassertOnPressEnd: true)
+    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
   }
 
   private func secondaryButton(_ title: String, action: @escaping () -> Void) -> some View {
@@ -502,7 +502,7 @@ struct DayGoalFlowView: View {
     }
     .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
     .hoverScaleEffect(scale: 1.02)
-    .pointingHandCursorOnHover(reassertOnPressEnd: true)
+    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
   }
 
   private func formatDuration(_ duration: TimeInterval) -> String {
@@ -529,7 +529,7 @@ private struct GoalCategoryPool: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Drag and drop to set the categories you want to track")
+      Text("拖拽以设置你要追踪的分类")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "5E5E5E"))
 
@@ -550,7 +550,7 @@ private struct GoalCategoryPool: View {
           }
           .pointingHandCursor()
           .help(
-            "Drag into a goal panel, or click to cycle between Focus, Distraction, and untracked")
+            "Drag into a goal panel, or click to cycle between 专注, Distraction, and untracked")
         }
       }
     }
@@ -586,7 +586,7 @@ private struct GoalSetupPanel: View {
   let trailingStatTitle: String
   let trailingStatMinutes: Int
   let statScaleMaxMinutes: Int
-  let selectedCategories: [DayGoalCategorySnapshot]
+  let selected分类: [DayGoalCategorySnapshot]
   var onRemoveCategory: (String) -> Void
   var onDropCategory: (String) -> Void
 
@@ -602,7 +602,7 @@ private struct GoalSetupPanel: View {
   private var iconName: String {
     switch kind {
     case .focus:
-      return "DayGoalFocus"
+      return "DayGoal专注"
     case .distraction:
       return "DayGoalDistraction"
     }
@@ -665,12 +665,12 @@ private struct GoalSetupPanel: View {
 
   private var categoryBox: some View {
     VStack(alignment: .leading, spacing: 10) {
-      Text("Categories")
+      Text("分类")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "7A7A7A"))
 
       VStack(alignment: .leading, spacing: 6) {
-        ForEach(selectedCategories) { category in
+        ForEach(selected分类) { category in
           Button {
             onRemoveCategory(category.categoryID)
           } label: {
@@ -700,7 +700,7 @@ private struct GoalSetupPanel: View {
 
   private func handleCategoryDrop(_ providers: [NSItemProvider]) -> Bool {
     guard
-      let provider = providers.first(where: {
+      let provider = providers.first(w这里: {
         $0.hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
       })
     else {
@@ -846,7 +846,7 @@ private struct GoalNumberColumn: View {
   let labelLeft: CGFloat
   @State private var dragStartValue: Int?
   @State private var scrollAccumulator: CGFloat = 0
-  @State private var wheelOffset: CGFloat = 0
+  @State private var wheel关闭set: CGFloat = 0
 
   private let rowStride: CGFloat = 29
 
@@ -860,7 +860,7 @@ private struct GoalNumberColumn: View {
         wheelRow(offset: 2, size: 21, color: Color(hex: "AAA6A3"))
       }
       .frame(width: numberStackWidth)
-      .offset(x: numberStackLeft, y: numberStackTop + wheelOffset)
+      .offset(x: numberStackLeft, y: numberStackTop + wheel关闭set)
 
       Text(label)
         .font(.custom("Figtree", size: 14))
@@ -911,12 +911,12 @@ private struct GoalNumberColumn: View {
         applyScroll(deltaY, isPrecise: isPrecise)
       }
     )
-    .help("Drag or scroll to adjust \(label.lowercased())")
+    .help("拖动或滚动调整\(label)")
   }
 
   @ViewBuilder
   private func wheelRow(offset: Int, size: CGFloat, color: Color) -> some View {
-    if let rowValue = valueAtOffset(offset) {
+    if let rowValue = valueAt关闭set(offset) {
       wheelText(rowValue, size: size, color: color)
     } else {
       Color.clear
@@ -924,7 +924,7 @@ private struct GoalNumberColumn: View {
     }
   }
 
-  private func valueAtOffset(_ offset: Int) -> Int? {
+  private func valueAt关闭set(_ offset: Int) -> Int? {
     let proposedValue = value + offset * step
     guard range.contains(proposedValue) else { return nil }
     return proposedValue
@@ -993,7 +993,7 @@ private struct GoalNumberColumn: View {
         let remainingTranslation = gestureValue.translation.height - snappedTranslation
 
         self.value = nextValue
-        self.wheelOffset = rubberBandedOffset(remainingTranslation, at: nextValue)
+        self.wheel关闭set = rubberBanded关闭set(remainingTranslation, at: nextValue)
       }
       .onEnded { gestureValue in
         if let startValue = dragStartValue {
@@ -1037,26 +1037,26 @@ private struct GoalNumberColumn: View {
 
   private func startWheelMotion(direction: Int) {
     guard !reduceMotion else {
-      wheelOffset = 0
+      wheel关闭set = 0
       return
     }
 
-    wheelOffset = direction > 0 ? rowStride : -rowStride
+    wheel关闭set = direction > 0 ? rowStride : -rowStride
     settleWheel()
   }
 
   private func settleWheel() {
     guard !reduceMotion else {
-      wheelOffset = 0
+      wheel关闭set = 0
       return
     }
 
     withAnimation(.spring(duration: 0.22, bounce: 0)) {
-      wheelOffset = 0
+      wheel关闭set = 0
     }
   }
 
-  private func rubberBandedOffset(_ offset: CGFloat, at currentValue: Int) -> CGFloat {
+  private func rubberBanded关闭set(_ offset: CGFloat, at currentValue: Int) -> CGFloat {
     if currentValue == range.lowerBound && offset > 0 {
       return offset * 0.35
     }
@@ -1142,7 +1142,7 @@ private struct GoalReviewCard: View {
   }
 
   private var iconName: String {
-    kind == .focus ? "DayGoalFocus" : "DayGoalDistraction"
+    kind == .focus ? "DayGoal专注" : "DayGoalDistraction"
   }
 
   private var succeeded: Bool {
@@ -1217,7 +1217,7 @@ private struct GoalReviewCard: View {
   }
 
   private var resultBadge: some View {
-    Text(succeeded ? "NAILED IT" : "MISSED")
+    Text(succeeded ? "已达成" : "未达成")
       .font(.custom("Figtree", size: 10).weight(.heavy))
       .foregroundColor(succeeded ? Color(hex: "4AB43F") : Color(hex: "FA8282"))
       .padding(.horizontal, 15)
@@ -1304,7 +1304,7 @@ private struct GoalIconBubble: View {
         .fill(Color(hex: "E4E4E4"))
         .overlay(Circle().stroke(accent, lineWidth: 1))
 
-      Image(kind == .focus ? "DayGoalFocus" : "DayGoalDistraction")
+      Image(kind == .focus ? "DayGoal专注" : "DayGoalDistraction")
         .resizable()
         .scaledToFit()
         .frame(width: 24, height: 24)
@@ -1465,7 +1465,7 @@ private struct DayGoalFlowLayout: Layout {
       plan: plan,
       focusDuration: 270 * 60,
       distractedDuration: 85 * 60,
-      focusCategories: [
+      focus分类: [
         DayGoalCategoryResult(
           id: "research", name: "Research", colorHex: "#8BAAFF", duration: 74 * 60),
         DayGoalCategoryResult(id: "coding", name: "Coding", colorHex: "#CF8FFF", duration: 74 * 60),

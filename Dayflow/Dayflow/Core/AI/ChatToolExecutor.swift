@@ -59,7 +59,7 @@ struct ChatToolResult {
   let success: Bool
   let summary: String  // Human-readable summary for UI
   let dataForLLM: String  // Formatted data to inject into conversation
-  let itemCount: Int  // Number of items found
+  let item数量: Int  // Number of items found
 
   static func failure(tool: ChatTool, error: String) -> ChatToolResult {
     ChatToolResult(
@@ -67,7 +67,7 @@ struct ChatToolResult {
       success: false,
       summary: error,
       dataForLLM: "Error: \(error)",
-      itemCount: 0
+      item数量: 0
     )
   }
 }
@@ -112,7 +112,7 @@ final class ChatToolExecutor {
         success: false,
         summary: "Unknown tool",
         dataForLLM: "Error: Unknown tool '\(request.tool)'",
-        itemCount: 0
+        item数量: 0
       )
     }
 
@@ -145,7 +145,7 @@ final class ChatToolExecutor {
         summary: "No activities found for \(formatDateForDisplay(dateString))",
         dataForLLM:
           "No timeline cards found for \(dateString). Recording may not have been active on this day.",
-        itemCount: 0
+        item数量: 0
       )
     }
 
@@ -158,7 +158,7 @@ final class ChatToolExecutor {
       success: true,
       summary: summary,
       dataForLLM: formatted,
-      itemCount: cards.count
+      item数量: cards.count
     )
   }
 
@@ -188,7 +188,7 @@ final class ChatToolExecutor {
         summary: "No observations found for \(formatDateForDisplay(dateString))",
         dataForLLM:
           "No observations found for \(dateString). Recording may not have been active on this day.",
-        itemCount: 0
+        item数量: 0
       )
     }
 
@@ -201,7 +201,7 @@ final class ChatToolExecutor {
       success: true,
       summary: summary,
       dataForLLM: formatted,
-      itemCount: observations.count
+      item数量: observations.count
     )
   }
 
@@ -229,7 +229,7 @@ final class ChatToolExecutor {
         }
       }
       if let distractions = card.distractions, !distractions.isEmpty {
-        output += "  Distractions: \(distractions.count) noted\n"
+        output += "  分心: \(distractions.count) noted\n"
         for d in distractions {
           output += "    - \(d.startTime)-\(d.endTime): \(d.title)\n"
         }
@@ -265,7 +265,7 @@ final class ChatToolExecutor {
   private func dayBoundaries(for dateString: String) -> (start: Date, end: Date)? {
     guard let date = chatToolDayFormatter.date(from: dateString) else { return nil }
 
-    let calendar = Calendar.current
+    let calendar = 日历.current
     var startComponents = calendar.dateComponents([.year, .month, .day], from: date)
     startComponents.hour = 4
     startComponents.minute = 0

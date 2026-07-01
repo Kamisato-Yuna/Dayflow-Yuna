@@ -66,7 +66,7 @@ struct DayCategorySelectionEditor: View {
       }
       .buttonStyle(.plain)
       .hoverScaleEffect(scale: 1.02)
-      .pointingHandCursorOnHover(reassertOnPressEnd: true)
+      .pointingHandCursor开启Hover(reassert开启PressEnd: true)
       .padding(6)
       .background(
         Color(red: 0.98, green: 0.98, blue: 0.98).opacity(0.8)

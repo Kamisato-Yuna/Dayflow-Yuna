@@ -2,8 +2,8 @@ import AppKit
 import Foundation
 import SwiftUI
 
-enum LocalLLMTestConstants {
-  static let blankImageDataURL = LocalLLMTestImageFactory.blankImageDataURL(
+enum LocalLLM测试Constants {
+  static let blankImageDataURL = LocalLLM测试ImageFactory.blankImageDataURL(
     width: 1280, height: 720)
   static let prompt = "What color is this image? Answer with a single word."
   static let slowMachineMessage =
@@ -11,7 +11,7 @@ enum LocalLLMTestConstants {
   static let maxLatency: TimeInterval = 30
 }
 
-enum LocalLLMTestImageFactory {
+enum LocalLLM测试ImageFactory {
   static func blankImageDataURL(width: Int, height: Int) -> String {
     guard let data = makeWhiteImageData(width: width, height: height) else {
       assertionFailure("Failed to build local LLM test image")
@@ -52,27 +52,27 @@ enum LocalLLMTestImageFactory {
   }
 }
 
-struct LocalLLMTestView: View {
+struct LocalLLM测试View: View {
   @Binding var baseURL: String
   @Binding var modelId: String
   @Binding var apiKey: String
-  let engine: LocalEngine
+  let engine: Local引擎
   let showInputs: Bool
   let buttonLabel: String
   let basePlaceholder: String?
   let modelPlaceholder: String?
-  let onTestComplete: (Bool) -> Void
+  let on测试Complete: (Bool) -> Void
 
   init(
     baseURL: Binding<String>,
     modelId: Binding<String>,
     apiKey: Binding<String> = .constant(""),
-    engine: LocalEngine,
+    engine: Local引擎,
     showInputs: Bool = true,
-    buttonLabel: String = "Test Local API",
+    buttonLabel: String = "测试 Local API",
     basePlaceholder: String? = nil,
     modelPlaceholder: String? = nil,
-    onTestComplete: @escaping (Bool) -> Void
+    on测试Complete: @escaping (Bool) -> Void
   ) {
     _baseURL = baseURL
     _modelId = modelId
@@ -82,7 +82,7 @@ struct LocalLLMTestView: View {
     self.buttonLabel = buttonLabel
     self.basePlaceholder = basePlaceholder
     self.modelPlaceholder = modelPlaceholder
-    self.onTestComplete = onTestComplete
+    self.on测试Complete = on测试Complete
   }
 
   let accentColor = Color(red: 0.25, green: 0.17, blue: 0)
@@ -91,7 +91,7 @@ struct LocalLLMTestView: View {
     apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
   }
 
-  @State var isTesting = false
+  @State var is测试ing = false
   @State var resultMessage: String?
   @State var success: Bool = false
 
@@ -120,7 +120,7 @@ struct LocalLLMTestView: View {
 
         if engine == .custom {
           VStack(alignment: .leading, spacing: 6) {
-            Text("API key (optional)")
+            Text("API Key（可选）")
               .font(.custom("Figtree", size: 12))
               .fontWeight(.semibold)
               .foregroundColor(SettingsStyle.secondary)
@@ -137,19 +137,19 @@ struct LocalLLMTestView: View {
       }
 
       SettingsPrimaryButton(
-        title: isTesting ? "Testing…" : buttonLabel,
+        title: is测试ing ? "测试ing…" : buttonLabel,
         systemImage: "bolt.fill",
-        isLoading: isTesting,
-        action: runTest
+        isLoading: is测试ing,
+        action: run测试
       )
 
       if success {
-        SettingsStatusDot(state: .good, label: "Test successful.")
+        SettingsStatusDot(state: .good, label: "测试 successful.")
       } else if let msg = resultMessage {
         VStack(alignment: .leading, spacing: 6) {
           SettingsStatusDot(state: .bad, label: msg)
           Text(
-            "If you get stuck here, you can go back and choose the ‘Bring your own key’ option — it only takes a minute to set up."
+            "If you get stuck 这里, you can go back and choose the ‘Bring your own key’ option — it only takes a minute to set up."
           )
           .font(.custom("Figtree", size: 12))
           .foregroundColor(SettingsStyle.secondary)
@@ -158,16 +158,16 @@ struct LocalLLMTestView: View {
       }
     }
   }
-  func runTest() {
-    guard !isTesting else { return }
-    isTesting = true
+  func run测试() {
+    guard !is测试ing else { return }
+    is测试ing = true
     success = false
     resultMessage = nil
 
     guard let url = LocalEndpointUtilities.chatCompletionsURL(baseURL: baseURL) else {
       resultMessage = "Invalid base URL"
-      isTesting = false
-      onTestComplete(false)
+      is测试ing = false
+      on测试Complete(false)
       return
     }
 
@@ -177,8 +177,8 @@ struct LocalLLMTestView: View {
         LocalLLMChatMessage(
           role: "user",
           content: [
-            .text(LocalLLMTestConstants.prompt),
-            .imageDataURL(LocalLLMTestConstants.blankImageDataURL),
+            .text(LocalLLM测试Constants.prompt),
+            .imageDataURL(LocalLLM测试Constants.blankImageDataURL),
           ]
         )
       ],
@@ -204,36 +204,36 @@ struct LocalLLMTestView: View {
     URLSession.shared.dataTask(with: request) { data, response, error in
       DispatchQueue.main.async {
         let duration = Date().timeIntervalSince(startedAt)
-        if duration > LocalLLMTestConstants.maxLatency {
-          self.resultMessage = LocalLLMTestConstants.slowMachineMessage
+        if duration > LocalLLM测试Constants.maxLatency {
+          self.resultMessage = LocalLLM测试Constants.slowMachineMessage
           self.success = false
-          self.isTesting = false
-          self.onTestComplete(false)
+          self.is测试ing = false
+          self.on测试Complete(false)
           return
         }
         if let error = error {
           self.resultMessage = error.localizedDescription
-          self.isTesting = false
-          self.onTestComplete(false)
+          self.is测试ing = false
+          self.on测试Complete(false)
           return
         }
         guard let http = response as? HTTPURLResponse, let data = data else {
           self.resultMessage = "No response"
-          self.isTesting = false
-          self.onTestComplete(false)
+          self.is测试ing = false
+          self.on测试Complete(false)
           return
         }
         if http.statusCode == 200 {
           // Success: don't print raw response body; keep UI clean
           self.resultMessage = nil
           self.success = true
-          self.isTesting = false
-          self.onTestComplete(true)
+          self.is测试ing = false
+          self.on测试Complete(true)
         } else {
           let body = String(data: data, encoding: .utf8) ?? ""
           self.resultMessage = "HTTP \(http.statusCode): \(body)"
-          self.isTesting = false
-          self.onTestComplete(false)
+          self.is测试ing = false
+          self.on测试Complete(false)
         }
       }
     }.resume()

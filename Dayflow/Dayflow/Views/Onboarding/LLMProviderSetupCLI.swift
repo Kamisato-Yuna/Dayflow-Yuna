@@ -18,7 +18,7 @@ struct CLIResult {
 }
 
 /// Run a CLI command via login shell.
-/// This replicates Terminal.app behavior - if user can run it in Terminal, it works here.
+/// This replicates Terminal.app behavior - if user can run it in Terminal, it works 这里.
 @discardableResult
 func runCLI(
   _ command: String,
@@ -67,8 +67,8 @@ final class StreamingCLI {
   /// - Parameters:
   ///   - command: The command name (e.g., "codex", "claude") - no path needed
   ///   - args: Arguments to pass to the command
-  ///   - env: Optional environment variable overrides
-  ///   - cwd: Optional working directory
+  ///   - env: 可选 environment variable overrides
+  ///   - cwd: 可选 working directory
   ///   - onStdout: Callback for stdout chunks
   ///   - onStderr: Callback for stderr chunks
   ///   - onFinish: Callback when process exits with exit code

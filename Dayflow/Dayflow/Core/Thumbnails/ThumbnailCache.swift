@@ -2,7 +2,7 @@
 //  ThumbnailCache.swift
 //  Dayflow
 //
-//  On-demand thumbnail generation (no caching - memory efficient).
+//  开启-demand thumbnail generation (no caching - memory efficient).
 //
 
 import AVFoundation
@@ -15,7 +15,7 @@ final class ThumbnailCache {
   private let queue: OperationQueue = {
     let q = OperationQueue()
     q.name = "com.dayflow.thumbnailgen"
-    q.maxConcurrentOperationCount = 2
+    q.maxConcurrentOperation数量 = 2
     q.qualityOfService = .userInitiated
     return q
   }()

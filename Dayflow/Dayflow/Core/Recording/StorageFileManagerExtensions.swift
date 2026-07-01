@@ -5,7 +5,7 @@ extension FileManager {
     guard
       let enumerator = enumerator(
         at: url,
-        includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .isDirectoryKey],
+        includingPropertiesForKeys: [.totalFile全部ocatedSizeKey, .isDirectoryKey],
         options: [.skipsHiddenFiles]
       )
     else { return 0 }
@@ -14,13 +14,13 @@ extension FileManager {
     for case let fileURL as URL in enumerator {
       do {
         let values = try fileURL.resourceValues(forKeys: [
-          .totalFileAllocatedSizeKey, .isDirectoryKey,
+          .totalFile全部ocatedSizeKey, .isDirectoryKey,
         ])
         if values.isDirectory == true {
           // Directories report 0, rely on enumerator to traverse contents
           continue
         }
-        total += Int64(values.totalFileAllocatedSize ?? 0)
+        total += Int64(values.totalFile全部ocatedSize ?? 0)
       } catch {
         continue
       }

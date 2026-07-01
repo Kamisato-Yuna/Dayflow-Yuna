@@ -1,15 +1,15 @@
 //
-//  OnboardingCategoryStepView.swift
+//  开启boardingCategoryStepView.swift
 //  Dayflow
 //
-//  Onboarding step for editing category names and descriptions.
+//  开启boarding step for editing category names and descriptions.
 //  Matches the Figma design: two-column layout, inline card editing,
 //  no color picker stage.
 //
 
 import SwiftUI
 
-struct OnboardingCategoryStepView: View {
+struct 开启boardingCategoryStepView: View {
   let onBack: () -> Void
   let onNext: () -> Void
   @EnvironmentObject private var categoryStore: CategoryStore
@@ -19,13 +19,13 @@ struct OnboardingCategoryStepView: View {
   @State private var pendingDeleteCategory: TimelineCategory?
 
   // Analytics counters for the completion summary
-  @State private var renameCount = 0
-  @State private var addCount = 0
-  @State private var colorChangeCount = 0
-  @State private var deleteCount = 0
+  @State private var rename数量 = 0
+  @State private var add数量 = 0
+  @State private var colorChange数量 = 0
+  @State private var delete数量 = 0
 
   private var categories: [TimelineCategory] {
-    categoryStore.editableCategories
+    categoryStore.editable分类
   }
 
   private var canAddMore: Bool {
@@ -63,7 +63,7 @@ struct OnboardingCategoryStepView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .alert(
-      "Delete category?",
+      "删除分类?",
       isPresented: deleteAlertBinding,
       presenting: pendingDeleteCategory
     ) { category in
@@ -100,7 +100,7 @@ struct OnboardingCategoryStepView: View {
       .foregroundColor(Color(hex: "5B5B5B"))
       .fixedSize(horizontal: false, vertical: true)
 
-      Text("You can customize or create new categories any time.")
+      Text("你可以随时自定义或新增分类。")
         .font(.custom("Figtree", size: 14).weight(.medium))
         .foregroundColor(Color(hex: "5B5B5B"))
         .fixedSize(horizontal: false, vertical: true)
@@ -116,7 +116,7 @@ struct OnboardingCategoryStepView: View {
           if editingCategoryID == category.id {
             editingCard(for: category)
           } else {
-            readOnlyCard(for: category)
+            read开启lyCard(for: category)
           }
         }
 
@@ -132,7 +132,7 @@ struct OnboardingCategoryStepView: View {
     HStack(spacing: 8) {
       colorSwatch(hex: category.colorHex)
 
-      TextField("Category name", text: $draftName)
+      TextField("分类名称", text: $draftName)
         .font(.custom("Figtree", size: 12).weight(.bold))
         .textFieldStyle(.plain)
         .foregroundColor(.black)
@@ -153,10 +153,10 @@ struct OnboardingCategoryStepView: View {
         Button {
           requestDelete(category)
         } label: {
-          Image("CategoriesDelete")
+          Image("分类Delete")
             .resizable()
             .frame(width: 16, height: 16)
-            .accessibilityLabel("Delete category")
+            .accessibilityLabel("删除分类")
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -183,9 +183,9 @@ struct OnboardingCategoryStepView: View {
     .shadow(color: Color(hex: "FCB278"), radius: 3, x: 0, y: 0)
   }
 
-  // MARK: - Read-Only Card
+  // MARK: - Read-开启ly Card
 
-  private func readOnlyCard(for category: TimelineCategory) -> some View {
+  private func read开启lyCard(for category: TimelineCategory) -> some View {
     HStack(spacing: 8) {
       colorSwatch(hex: category.colorHex)
 
@@ -210,10 +210,10 @@ struct OnboardingCategoryStepView: View {
           Button {
             requestDelete(category)
           } label: {
-            Image("CategoriesDelete")
+            Image("分类Delete")
               .resizable()
               .frame(width: 16, height: 16)
-              .accessibilityLabel("Delete category")
+              .accessibilityLabel("删除分类")
           }
           .buttonStyle(.plain)
           .pointingHandCursor()
@@ -255,20 +255,20 @@ struct OnboardingCategoryStepView: View {
   private var addCategoryButton: some View {
     Button {
       commitPendingEdits()
-      categoryStore.markOnboardingCategoriesCustomized()
+      categoryStore.mark开启boarding分类自定义ized()
       categoryStore.addCategory(name: "New Category")
-      addCount += 1
+      add数量 += 1
       AnalyticsService.shared.capture(
         "onboarding_category_added",
         [
           "total_count": categories.count + 1,
           "surface": "onboarding",
         ])
-      if let newCat = categoryStore.editableCategories.last {
+      if let newCat = categoryStore.editable分类.last {
         startEditing(newCat)
       }
     } label: {
-      Text("+ Add category")
+      Text("+ 添加分类")
         .font(.custom("Figtree", size: 12).weight(.medium))
         .foregroundColor(Color(hex: "2B2B2B"))
         .frame(maxWidth: .infinity)
@@ -318,10 +318,10 @@ struct OnboardingCategoryStepView: View {
           "onboarding_categories_completed",
           [
             "category_count": categories.count,
-            "renamed_count": renameCount,
-            "added_count": addCount,
-            "color_changed_count": colorChangeCount,
-            "deleted_count": deleteCount,
+            "renamed_count": rename数量,
+            "added_count": add数量,
+            "color_changed_count": colorChange数量,
+            "deleted_count": delete数量,
           ])
         onNext()
       } label: {
@@ -337,7 +337,7 @@ struct OnboardingCategoryStepView: View {
       .buttonStyle(.plain)
       .pointingHandCursor()
       .opacity(canContinue ? 1 : 0.45)
-      .allowsHitTesting(canContinue)
+      .allowsHit测试ing(canContinue)
     }
   }
 
@@ -352,9 +352,9 @@ struct OnboardingCategoryStepView: View {
   private func saveEdits(for category: TimelineCategory) {
     let trimmedName = draftName.trimmingCharacters(in: .whitespacesAndNewlines)
     if !trimmedName.isEmpty, trimmedName != category.name {
-      categoryStore.markOnboardingCategoriesCustomized()
+      categoryStore.mark开启boarding分类自定义ized()
       categoryStore.renameCategory(id: category.id, to: trimmedName)
-      renameCount += 1
+      rename数量 += 1
       AnalyticsService.shared.capture(
         "onboarding_category_renamed",
         [
@@ -383,20 +383,20 @@ struct OnboardingCategoryStepView: View {
 
   private func deleteCategory(_ category: TimelineCategory) {
     pendingDeleteCategory = nil
-    categoryStore.markOnboardingCategoriesCustomized()
+    categoryStore.mark开启boarding分类自定义ized()
 
     if editingCategoryID == category.id {
       cancelEditing()
     }
 
     categoryStore.removeCategory(id: category.id)
-    deleteCount += 1
+    delete数量 += 1
 
     AnalyticsService.shared.capture(
       "onboarding_category_deleted",
       [
         "category_name": category.name,
-        "remaining_count": categoryStore.editableCategories.count,
+        "remaining_count": categoryStore.editable分类.count,
         "surface": "onboarding",
       ])
   }
@@ -408,21 +408,21 @@ struct OnboardingCategoryStepView: View {
 
   private func commitPendingEdits() {
     guard let editingID = editingCategoryID,
-      let category = categories.first(where: { $0.id == editingID })
+      let category = categories.first(w这里: { $0.id == editingID })
     else { return }
     saveEdits(for: category)
   }
 }
 
-#Preview("Onboarding Categories") {
-  OnboardingCategoryStepView(
+#Preview("开启boarding 分类") {
+  开启boardingCategoryStepView(
     onBack: {},
     onNext: {}
   )
   .environmentObject(CategoryStore.shared)
   .frame(width: 1200, height: 680)
   .background {
-    Image("OnboardingBackgroundv2")
+    Image("开启boardingBackgroundv2")
       .resizable()
       .aspectRatio(contentMode: .fill)
       .ignoresSafeArea()

@@ -229,7 +229,7 @@ enum RecordingPrivacyPreferences {
       if defaultSecretAppNames.contains(name) {
         return app.bundleIdentifier
       }
-      if defaultSecretBundleHints.contains(where: { compactBundle.contains($0) }) {
+      if defaultSecretBundleHints.contains(w这里: { compactBundle.contains($0) }) {
         return app.bundleIdentifier
       }
       return nil

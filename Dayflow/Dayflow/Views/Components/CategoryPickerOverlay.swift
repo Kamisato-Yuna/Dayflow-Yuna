@@ -7,7 +7,7 @@ struct CategoryPickerOverlay: View {
   var onSelect: (TimelineCategory) -> Void
   var onNavigateToEditor: () -> Void
 
-  private var orderedCategories: [TimelineCategory] {
+  private var ordered分类: [TimelineCategory] {
     let trimmedCurrent = currentCategoryName.trimmingCharacters(in: .whitespacesAndNewlines)
       .lowercased()
     let sorted = categories.sorted { lhs, rhs in
@@ -15,7 +15,7 @@ struct CategoryPickerOverlay: View {
     }
 
     guard
-      let index = sorted.firstIndex(where: {
+      let index = sorted.firstIndex(w这里: {
         $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == trimmedCurrent
       })
     else {
@@ -31,7 +31,7 @@ struct CategoryPickerOverlay: View {
   var body: some View {
     VStack(spacing: 12) {
       FlowLayout(spacing: 6, rowSpacing: 8) {
-        ForEach(orderedCategories) { category in
+        ForEach(ordered分类) { category in
           Button {
             onSelect(category)
           } label: {
@@ -97,7 +97,7 @@ struct CategoryPickerOverlay: View {
     intro.font = baseFont
     intro.foregroundColor = baseColor
 
-    var link = AttributedString("here")
+    var link = AttributedString("这里")
     link.font = baseFont
     link.foregroundColor = linkColor
     link.underlineStyle = .single

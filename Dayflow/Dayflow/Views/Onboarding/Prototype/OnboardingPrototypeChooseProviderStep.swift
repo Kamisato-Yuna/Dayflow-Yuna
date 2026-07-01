@@ -1,5 +1,5 @@
 //
-//  OnboardingPrototypeChooseProviderStep.swift
+//  开启boardingPrototypeChooseProviderStep.swift
 //  Dayflow
 //
 
@@ -7,12 +7,12 @@ import SwiftUI
 
 // MARK: - Choose Provider Step
 
-enum DayflowProOnboardingStep {
+enum DayflowPro开启boardingStep {
   case email
   case code
   case referralCode
   case freeMonthActive
-  case trialOffer
+  case trial关闭er
   case trialActive
 
   var analyticsName: String {
@@ -25,7 +25,7 @@ enum DayflowProOnboardingStep {
       return "referral_code"
     case .freeMonthActive:
       return "free_month_active"
-    case .trialOffer:
+    case .trial关闭er:
       return "trial_offer"
     case .trialActive:
       return "trial_active"
@@ -39,26 +39,26 @@ private struct DayflowProReferralFieldShake: GeometryEffect {
   var animatableData: CGFloat
 
   func effectValue(size: CGSize) -> ProjectionTransform {
-    let xOffset = travelDistance * sin(animatableData * .pi * shakes)
-    return ProjectionTransform(CGAffineTransform(translationX: xOffset, y: 0))
+    let x关闭set = travelDistance * sin(animatableData * .pi * shakes)
+    return ProjectionTransform(CGAffineTransform(translationX: x关闭set, y: 0))
   }
 }
 
-struct OnboardingPrototypeChooseProviderStep: View {
+struct 开启boardingPrototypeChooseProviderStep: View {
   let hasPaidAI: Bool
   let flowID: String
   let flowVariant: String
   let onSelect: (String) -> Void
 
   @ObservedObject private var authManager = DayflowAuthManager.shared
-  @State private var showAllOptions = false
+  @State private var show全部Options = false
   @State private var isShowingDayflowProSignIn = false
-  @State private var dayflowProStep: DayflowProOnboardingStep = .email
-  @State private var dayflowProEmail = ""
+  @State private var dayflowProStep: DayflowPro开启boardingStep = .email
+  @State private var dayflowPro邮箱 = ""
   @State private var dayflowProCode = ""
   @State private var dayflowProReferralCode = ""
   @State private var dayflowProReferralShakeTrigger: CGFloat = 0
-  @State private var dayflowProVerificationEmail = ""
+  @State private var dayflowProVerification邮箱 = ""
 
   private let layoutScale: CGFloat = 0.8
   private let textScale: CGFloat = 1.1
@@ -147,7 +147,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
   var body: some View {
     VStack(spacing: 0) {
       // Title
-      Text("Choose a way to run Dayflow")
+      Text("选择 Dayflow 运行方式")
         .font(.custom("InstrumentSerif-Regular", size: scaledText(40)))
         .tracking(-1.2 * layoutScale)
         .multilineTextAlignment(.center)
@@ -161,7 +161,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         dayflowProSignInPanel
           .padding(.horizontal, scaled(140))
           .transition(.opacity)
-      } else if showAllOptions {
+      } else if show全部Options {
         VStack(spacing: scaled(12)) {
           HStack(spacing: scaled(12)) {
             compactCard(for: "dayflow")
@@ -208,10 +208,10 @@ struct OnboardingPrototypeChooseProviderStep: View {
         // Toggle pill
         Button {
           withAnimation(.easeInOut(duration: 0.3)) {
-            showAllOptions.toggle()
+            show全部Options.toggle()
           }
         } label: {
-          Text(showAllOptions ? "See recommendations only" : "See all options")
+          Text(show全部Options ? "仅查看推荐" : "查看全部选项")
             .font(.custom("Figtree", size: scaledText(16)))
             .foregroundColor(Color(hex: "492304"))
             .padding(.horizontal, scaled(20))
@@ -279,15 +279,15 @@ struct OnboardingPrototypeChooseProviderStep: View {
 
       switch dayflowProStep {
       case .email:
-        dayflowProEmailForm
+        dayflowPro邮箱Form
       case .code:
         dayflowProCodeForm
       case .referralCode:
         dayflowProReferralCodeForm
       case .freeMonthActive:
         dayflowProRewardActiveForm
-      case .trialOffer:
-        dayflowProTrialOfferForm
+      case .trial关闭er:
+        dayflowProTrial关闭erForm
       case .trialActive:
         dayflowProTrialActiveForm
       }
@@ -318,15 +318,15 @@ struct OnboardingPrototypeChooseProviderStep: View {
     }
   }
 
-  private var dayflowProEmailForm: some View {
+  private var dayflowPro邮箱Form: some View {
     VStack(alignment: .leading, spacing: scaled(14)) {
       VStack(alignment: .leading, spacing: scaled(6)) {
-        Text("Email")
+        Text("邮箱")
           .font(.custom("Figtree", size: scaledText(13)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
 
-        dayflowProTextField("you@example.com", text: $dayflowProEmail)
+        dayflowProTextField("you@example.com", text: $dayflowPro邮箱)
           .onSubmit(sendDayflowProCode)
       }
 
@@ -344,7 +344,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
   private var dayflowProCodeForm: some View {
     VStack(alignment: .leading, spacing: scaled(14)) {
       VStack(alignment: .leading, spacing: scaled(6)) {
-        Text("Code sent to \(dayflowProVerificationTarget)")
+        Text("验证码已发送到 \(dayflowProVerificationTarget)")
           .font(.custom("Figtree", size: scaledText(13)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
@@ -362,7 +362,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
       HStack(spacing: scaled(10)) {
         dayflowProSecondaryButton(
           title: "Different email",
-          action: showDayflowProEmailStep
+          action: showDayflowPro邮箱Step
         )
 
         dayflowProSecondaryButton(
@@ -374,7 +374,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         Spacer()
 
         dayflowProPrimaryButton(
-          title: authManager.isBusy ? "Checking..." : "继续",
+          title: authManager.isBusy ? "检查中…" : "继续",
           enabled: canVerifyDayflowProCode,
           action: verifyDayflowProCode
         )
@@ -385,13 +385,13 @@ struct OnboardingPrototypeChooseProviderStep: View {
   private var dayflowProReferralCodeForm: some View {
     VStack(alignment: .leading, spacing: scaled(14)) {
       VStack(alignment: .leading, spacing: scaled(6)) {
-        Text("Do you have a referral code?")
+        Text("你有推荐码吗？")
           .font(.custom("Figtree", size: scaledText(13)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
 
         Text(
-          "If someone gave you a code, enter it here. Don't worry if you don't have a code, we'll gift you a free week of Dayflow Pro!"
+          "If someone gave you a code, enter it 这里. Don't worry if you don't have a code, we'll gift you a free week of Dayflow Pro!"
         )
         .font(.custom("Figtree", size: scaledText(13)))
         .foregroundColor(Color(hex: "89380E").opacity(0.75))
@@ -410,7 +410,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         dayflowProSecondaryButton(
           title: "I don't have a code",
           enabled: !authManager.isBusy,
-          action: showDayflowProTrialOffer
+          action: showDayflowProTrial关闭er
         )
       }
     }
@@ -427,7 +427,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
           .foregroundColor(Color(hex: "492304"))
           .multilineTextAlignment(.center)
 
-        Text("Your referral reward is active on this account.")
+        Text("该账号的推荐奖励已激活。")
           .font(.custom("Figtree", size: scaledText(13)))
           .foregroundColor(Color(hex: "89380E").opacity(0.75))
           .multilineTextAlignment(.center)
@@ -442,7 +442,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
     .frame(maxWidth: .infinity)
   }
 
-  private var dayflowProTrialOfferForm: some View {
+  private var dayflowProTrial关闭erForm: some View {
     VStack(alignment: .center, spacing: scaled(16)) {
       ReferralPassCard(message: "7 days free. No credit card required.")
 
@@ -507,12 +507,12 @@ struct OnboardingPrototypeChooseProviderStep: View {
   private var dayflowProReferralField: some View {
     VStack(alignment: .leading, spacing: scaled(6)) {
       HStack(spacing: scaled(8)) {
-        Text("Referral code")
+        Text("推荐码")
           .font(.custom("Figtree", size: scaledText(13)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
 
-        Text("Optional")
+        Text("可选")
           .font(.custom("Figtree", size: scaledText(12)))
           .foregroundColor(Color(hex: "89380E").opacity(0.62))
       }
@@ -533,7 +533,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         }
 
       if !dayflowProReferralCode.isEmpty && !isDayflowProReferralCodeValid {
-        Text("Enter the 6-character code from your invite.")
+        Text("请输入邀请码中的 6 位码。")
           .font(.custom("Figtree", size: scaledText(12)))
           .foregroundColor(Color(hex: "B42318"))
       }
@@ -550,7 +550,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
       return nil
     case .freeMonthActive:
       return "Your referral reward is ready."
-    case .trialOffer:
+    case .trial关闭er:
       return "No referral code? Start with a free trial."
     case .trialActive:
       return "Your trial is ready."
@@ -575,11 +575,11 @@ struct OnboardingPrototypeChooseProviderStep: View {
   }
 
   private var shouldHideSignedInStatus: Bool {
-    dayflowProStep == .referralCode || dayflowProStep == .trialOffer
+    dayflowProStep == .referralCode || dayflowProStep == .trial关闭er
   }
 
-  private func trackDayflowProStepViewed(_ step: DayflowProOnboardingStep) {
-    OnboardingPrototypeAnalytics.trackDayflowProStepViewed(
+  private func trackDayflowProStepViewed(_ step: DayflowPro开启boardingStep) {
+    开启boardingPrototypeAnalytics.trackDayflowProStepViewed(
       step: step,
       flowID: flowID,
       flowVariant: flowVariant,
@@ -591,9 +591,9 @@ struct OnboardingPrototypeChooseProviderStep: View {
     _ eventName: String,
     action: String,
     result: DayflowAuthActionResult,
-    step: DayflowProOnboardingStep? = nil
+    step: DayflowPro开启boardingStep? = nil
   ) {
-    OnboardingPrototypeAnalytics.trackDayflowProAPIOutcome(
+    开启boardingPrototypeAnalytics.trackDayflowProAPIOutcome(
       eventName,
       action: action,
       result: result,
@@ -604,18 +604,18 @@ struct OnboardingPrototypeChooseProviderStep: View {
     )
   }
 
-  private var trimmedDayflowProEmail: String {
-    dayflowProEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+  private var trimmedDayflowPro邮箱: String {
+    dayflowPro邮箱.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
   }
 
   private var dayflowProVerificationTarget: String {
-    dayflowProVerificationEmail.isEmpty ? trimmedDayflowProEmail : dayflowProVerificationEmail
+    dayflowProVerification邮箱.isEmpty ? trimmedDayflowPro邮箱 : dayflowProVerification邮箱
   }
 
   private var canSendDayflowProCode: Bool {
-    trimmedDayflowProEmail.contains("@")
-      && trimmedDayflowProEmail.contains(".")
-      && !trimmedDayflowProEmail.contains(" ")
+    trimmedDayflowPro邮箱.contains("@")
+      && trimmedDayflowPro邮箱.contains(".")
+      && !trimmedDayflowPro邮箱.contains(" ")
       && !authManager.isBusy
   }
 
@@ -715,20 +715,20 @@ struct OnboardingPrototypeChooseProviderStep: View {
   }
 
   private func startDayflowProSignIn() {
-    OnboardingPrototypeAnalytics.trackDayflowProSelected(
+    开启boardingPrototypeAnalytics.trackDayflowProSelected(
       flowID: flowID,
       flowVariant: flowVariant,
       hasPaidAI: hasPaidAI,
       selectionStage: "started_sign_in"
     )
-    dayflowProEmail = ""
+    dayflowPro邮箱 = ""
     dayflowProCode = ""
     dayflowProReferralCode = authManager.pendingReferralCode ?? ""
-    dayflowProVerificationEmail = ""
+    dayflowProVerification邮箱 = ""
     dayflowProStep = .email
 
     withAnimation(.easeInOut(duration: 0.25)) {
-      showAllOptions = false
+      show全部Options = false
       isShowingDayflowProSignIn = true
     }
 
@@ -741,7 +741,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
     guard canSendDayflowProCode else { return }
 
     Task {
-      let result = await authManager.sendCode(to: trimmedDayflowProEmail)
+      let result = await authManager.sendCode(to: trimmedDayflowPro邮箱)
       trackDayflowProAPIOutcome(
         "dayflow_pro_auth_code_requested",
         action: "auth_code_request",
@@ -750,7 +750,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
       )
       guard result.succeeded, authManager.canVerifyCode else { return }
 
-      dayflowProVerificationEmail = authManager.pendingEmail ?? trimmedDayflowProEmail
+      dayflowProVerification邮箱 = authManager.pending邮箱 ?? trimmedDayflowPro邮箱
       dayflowProCode = ""
       withAnimation(.easeInOut(duration: 0.25)) {
         dayflowProStep = .code
@@ -784,10 +784,10 @@ struct OnboardingPrototypeChooseProviderStep: View {
     }
   }
 
-  private func showDayflowProEmailStep() {
-    authManager.useDifferentEmail()
+  private func showDayflowPro邮箱Step() {
+    authManager.useDifferent邮箱()
     dayflowProCode = ""
-    dayflowProVerificationEmail = ""
+    dayflowProVerification邮箱 = ""
     withAnimation(.easeInOut(duration: 0.25)) {
       dayflowProStep = .email
     }
@@ -846,9 +846,9 @@ struct OnboardingPrototypeChooseProviderStep: View {
     }
   }
 
-  private func showDayflowProTrialOffer() {
+  private func showDayflowProTrial关闭er() {
     withAnimation(.easeInOut(duration: 0.25)) {
-      dayflowProStep = .trialOffer
+      dayflowProStep = .trial关闭er
     }
   }
 
@@ -871,7 +871,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         "dayflow_pro_trial_started",
         action: "trial_start",
         result: result,
-        step: .trialOffer
+        step: .trial关闭er
       )
       guard result.succeeded, authManager.errorText == nil else { return }
 
@@ -884,7 +884,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
   }
 
   private func continueWithDayflowPro() {
-    OnboardingPrototypeAnalytics.trackDayflowProSelected(
+    开启boardingPrototypeAnalytics.trackDayflowProSelected(
       flowID: flowID,
       flowVariant: flowVariant,
       hasPaidAI: hasPaidAI,

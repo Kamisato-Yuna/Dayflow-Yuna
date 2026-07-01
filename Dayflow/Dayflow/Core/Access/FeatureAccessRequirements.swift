@@ -6,26 +6,26 @@ enum FeatureAccessRequirements {
   static let dailyRequiredHours = 5
   static let chatRequiredHours = 10
 
-  static var dailyRequiredBatchCount: Int {
-    requiredBatchCount(forHours: dailyRequiredHours)
+  static var dailyRequiredBatch数量: Int {
+    requiredBatch数量(forHours: dailyRequiredHours)
   }
 
-  static var chatRequiredBatchCount: Int {
-    requiredBatchCount(forHours: chatRequiredHours)
+  static var chatRequiredBatch数量: Int {
+    requiredBatch数量(forHours: chatRequiredHours)
   }
 
-  static func completedBatchCount() -> Int {
+  static func completedBatch数量() -> Int {
     StorageManager.shared.countCompletedAnalysisBatchesForWeeklyAccess()
   }
 
-  static func hasRequiredBatches(_ completedBatchCount: Int, requiredBatchCount: Int) -> Bool {
-    completedBatchCount >= requiredBatchCount
+  static func hasRequiredBatches(_ completedBatch数量: Int, requiredBatch数量: Int) -> Bool {
+    completedBatch数量 >= requiredBatch数量
   }
 
-  static func progressText(completedBatchCount: Int, requiredHours: Int) -> String {
-    let cappedBatchCount = min(
-      max(completedBatchCount, 0), requiredBatchCount(forHours: requiredHours))
-    let minutes = cappedBatchCount * batchDurationMinutes
+  static func progressText(completedBatch数量: Int, requiredHours: Int) -> String {
+    let cappedBatch数量 = min(
+      max(completedBatch数量, 0), requiredBatch数量(forHours: requiredHours))
+    let minutes = cappedBatch数量 * batchDurationMinutes
     let hours = minutes / 60
     let remainingMinutes = minutes % 60
 
@@ -44,7 +44,7 @@ enum FeatureAccessRequirements {
     return "\(hours)h \(remainingMinutes)m / \(requiredHours)h"
   }
 
-  private static func requiredBatchCount(forHours hours: Int) -> Int {
+  private static func requiredBatch数量(forHours hours: Int) -> Int {
     (hours * 60) / batchDurationMinutes
   }
 }

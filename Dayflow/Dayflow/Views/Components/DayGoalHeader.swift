@@ -22,7 +22,7 @@ struct TargetCategoryProgress: Equatable, Identifiable {
 struct DayGoalHeader: View {
   let focusTargetDuration: TimeInterval
   let focusDuration: TimeInterval
-  let focusCategories: [TargetCategoryProgress]
+  let focus分类: [TargetCategoryProgress]
   let distractionLimitDuration: TimeInterval
   let distractedDuration: TimeInterval
   let showsDisabledState: Bool
@@ -33,8 +33,8 @@ struct DayGoalHeader: View {
 
   @State private var hasInitializedDisplayedProgress = false
   @State private var isAppActive = NSApplication.shared.isActive
-  @State private var displayedFocusDuration: TimeInterval = 0
-  @State private var displayedFocusCategories: [TargetCategoryProgress] = []
+  @State private var displayed专注Duration: TimeInterval = 0
+  @State private var displayed专注分类: [TargetCategoryProgress] = []
   @State private var displayedDistractedDuration: TimeInterval = 0
   @State private var focusAnimationTask: Task<Void, Never>?
   @State private var distractionImpactToken: CGFloat = 0
@@ -62,20 +62,20 @@ struct DayGoalHeader: View {
     return min(max(renderedDistractedDuration / distractionLimitDuration, 0), 1)
   }
 
-  private var isFocusPastTarget: Bool {
-    focusTargetDuration > 0 && renderedFocusDuration > focusTargetDuration
+  private var is专注PastTarget: Bool {
+    focusTargetDuration > 0 && rendered专注Duration > focusTargetDuration
   }
 
   private var isDistractionPastBudget: Bool {
     distractionLimitDuration > 0 && renderedDistractedDuration > distractionLimitDuration
   }
 
-  private var renderedFocusDuration: TimeInterval {
-    hasInitializedDisplayedProgress ? displayedFocusDuration : focusDuration
+  private var rendered专注Duration: TimeInterval {
+    hasInitializedDisplayedProgress ? displayed专注Duration : focusDuration
   }
 
-  private var renderedFocusCategories: [TargetCategoryProgress] {
-    hasInitializedDisplayedProgress ? displayedFocusCategories : focusCategories
+  private var rendered专注分类: [TargetCategoryProgress] {
+    hasInitializedDisplayedProgress ? displayed专注分类 : focus分类
   }
 
   private var renderedDistractedDuration: TimeInterval {
@@ -95,15 +95,15 @@ struct DayGoalHeader: View {
 
   var body: some View {
     GeometryReader { geometry in
-      let xOffset = max((geometry.size.width - 360) / 2, 0)
+      let x关闭set = max((geometry.size.width - 360) / 2, 0)
 
       ZStack(alignment: .topLeading) {
         if showsDisabledState {
           Design.disabledBackground
-          disabledContent(xOffset: xOffset)
+          disabledContent(x关闭set: x关闭set)
         } else {
           Design.panelBackground
-          activeContent(xOffset: xOffset)
+          activeContent(x关闭set: x关闭set)
         }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -138,7 +138,7 @@ struct DayGoalHeader: View {
     .onChange(of: focusDuration) {
       handleProgressInputsChanged()
     }
-    .onChange(of: focusCategories) {
+    .onChange(of: focus分类) {
       handleProgressInputsChanged()
     }
     .onChange(of: distractedDuration) {
@@ -156,41 +156,41 @@ struct DayGoalHeader: View {
   }
 
   @ViewBuilder
-  private func activeContent(xOffset: CGFloat) -> some View {
+  private func activeContent(x关闭set: CGFloat) -> some View {
     Text("Today’s targets")
       .font(.custom("Instrument Serif", size: 24))
       .foregroundColor(Design.title)
       .lineLimit(1)
       .fixedSize()
-      .offset(x: xOffset + 17, y: 18.96)
+      .offset(x: x关闭set + 17, y: 18.96)
 
     setGoalsButton
-      .offset(x: xOffset + 270.75, y: 12)
+      .offset(x: x关闭set + 270.75, y: 12)
 
     Text(statusText)
       .font(.custom("Figtree", size: 11))
       .foregroundColor(Design.subtitle)
       .lineLimit(1)
       .fixedSize()
-      .offset(x: xOffset + 17, y: 55.68)
+      .offset(x: x关闭set + 17, y: 55.68)
 
     focusLabels
-      .offset(x: xOffset, y: 88)
+      .offset(x: x关闭set, y: 88)
 
-    FocusTargetProgressBar(
-      categories: renderedFocusCategories,
+    专注TargetProgressBar(
+      categories: rendered专注分类,
       targetDuration: focusTargetDuration,
-      actualDuration: renderedFocusDuration
+      actualDuration: rendered专注Duration
     )
     .frame(width: 269, height: 14)
-    .offset(x: xOffset + 39, y: 106.04)
+    .offset(x: x关闭set + 39, y: 106.04)
 
     focusLegend
-      .offset(x: xOffset + 38, y: 120)
+      .offset(x: x关闭set + 38, y: 120)
 
     TargetIconBubble(kind: .focus)
       .frame(width: 36, height: 36)
-      .offset(x: xOffset + 11, y: 102)
+      .offset(x: x关闭set + 11, y: 102)
 
     distractionRow
       .modifier(
@@ -200,7 +200,7 @@ struct DayGoalHeader: View {
           animatableData: distractionImpactToken
         )
       )
-      .offset(x: xOffset, y: 158)
+      .offset(x: x关闭set, y: 158)
   }
 
   private var distractionRow: some View {
@@ -239,7 +239,7 @@ struct DayGoalHeader: View {
 
       Spacer(minLength: 12)
 
-      Text("Distraction budget")
+      Text("分心预算")
         .font(.custom("Figtree", size: 11))
         .foregroundColor(Design.label)
         .lineLimit(1)
@@ -251,65 +251,65 @@ struct DayGoalHeader: View {
   }
 
   @ViewBuilder
-  private func disabledContent(xOffset: CGFloat) -> some View {
+  private func disabledContent(x关闭set: CGFloat) -> some View {
     Text("Set today’s goals")
       .font(.custom("Instrument Serif", size: 24))
       .foregroundColor(Design.title)
       .lineLimit(1)
       .fixedSize()
-      .offset(x: xOffset + 17, y: 18.96)
+      .offset(x: x关闭set + 17, y: 18.96)
 
     setGoalsButton
-      .offset(x: xOffset + 268, y: 18.96)
+      .offset(x: x关闭set + 268, y: 18.96)
 
-    Text("Set your goals for today to activate the progress bars below.")
+    Text("设置今日目标，以下的进度条即会激活。")
       .font(.custom("Figtree", size: 11))
       .foregroundColor(Design.subtitle)
       .lineLimit(1)
       .fixedSize()
-      .offset(x: xOffset + 17, y: 61.98)
+      .offset(x: x关闭set + 17, y: 61.98)
 
     InactiveGoalTrack(
       width: 269,
       height: 12,
       fillWidth: 260.089,
-      fillOffsetX: 0,
-      fillOffsetY: 3
+      fill关闭setX: 0,
+      fill关闭setY: 3
     )
-    .offset(x: xOffset + 39, y: 98.04)
+    .offset(x: x关闭set + 39, y: 98.04)
 
     TargetLegendTail()
       .fill(Design.inactiveTail)
       .frame(width: 236.213, height: 14)
-      .offset(x: xOffset + 34.06, y: 112)
+      .offset(x: x关闭set + 34.06, y: 112)
 
     TargetIconBubble(kind: .focus, tint: Design.inactiveIcon)
       .frame(width: 36, height: 36)
-      .offset(x: xOffset + 11, y: 94)
+      .offset(x: x关闭set + 11, y: 94)
 
     InactiveGoalTrack(
       width: 259,
       height: 14,
       fillWidth: 245.979,
-      fillOffsetX: 8.71,
-      fillOffsetY: 4
+      fill关闭setX: 8.71,
+      fill关闭setY: 4
     )
-    .offset(x: xOffset + 57.25, y: 141.65)
+    .offset(x: x关闭set + 57.25, y: 141.65)
 
     TargetLegendTail()
       .fill(Design.inactiveTail)
       .frame(width: 236.213, height: 14)
       .scaleEffect(x: -1, y: 1)
-      .offset(x: xOffset + 80.04, y: 157.62)
+      .offset(x: x关闭set + 80.04, y: 157.62)
 
     TargetIconBubble(kind: .distraction, tint: Design.inactiveIcon)
       .frame(width: 36, height: 36)
-      .offset(x: xOffset + 305.25, y: 137.65)
+      .offset(x: x关闭set + 305.25, y: 137.65)
   }
 
   private var setGoalsButton: some View {
     Button(action: onSetGoals) {
-      Text("Set goals")
+      Text("设置目标")
         .font(.custom("Figtree", size: 12).weight(.medium))
         .foregroundColor(.white)
         .lineLimit(1)
@@ -338,13 +338,13 @@ struct DayGoalHeader: View {
     }
     .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
     .hoverScaleEffect(scale: 1.02)
-    .pointingHandCursorOnHover(reassertOnPressEnd: true)
-    .accessibilityLabel("Set goals")
+    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+    .accessibilityLabel("设置目标")
   }
 
   private var focusLabels: some View {
     ZStack(alignment: .topLeading) {
-      Text("Focus")
+      Text("专注")
         .font(.custom("Figtree", size: 11))
         .foregroundColor(Design.label)
         .lineLimit(1)
@@ -357,7 +357,7 @@ struct DayGoalHeader: View {
         accent: Design.focusText,
         gradientStart: Color(hex: "5B87FF"),
         gradientEnd: Color(hex: "003EE9"),
-        isProminent: isFocusPastTarget
+        isProminent: is专注PastTarget
       )
       .contentTransition(.numericText())
       .lineLimit(1)
@@ -373,7 +373,7 @@ struct DayGoalHeader: View {
         .frame(width: 232.277, height: 14)
 
       HStack(spacing: Design.focusLegendItemSpacing) {
-        ForEach(visibleFocusLegendCategories) { category in
+        ForEach(visible专注Legend分类) { category in
           TargetLegendItem(category: category)
         }
       }
@@ -384,23 +384,23 @@ struct DayGoalHeader: View {
     .frame(width: 232.277, height: 14)
   }
 
-  private var visibleFocusLegendCategories: [TargetCategoryProgress] {
-    var visibleCategories: [TargetCategoryProgress] = []
+  private var visible专注Legend分类: [TargetCategoryProgress] {
+    var visible分类: [TargetCategoryProgress] = []
     var usedWidth: CGFloat = 0
 
-    for category in focusCategories {
+    for category in focus分类 {
       let itemWidth = legendItemWidth(for: category)
       let nextWidth =
-        visibleCategories.isEmpty
+        visible分类.isEmpty
         ? itemWidth
         : usedWidth + Design.focusLegendItemSpacing + itemWidth
 
       guard nextWidth <= Design.focusLegendContentWidth else { break }
-      visibleCategories.append(category)
+      visible分类.append(category)
       usedWidth = nextWidth
     }
 
-    return visibleCategories
+    return visible分类
   }
 
   private func legendItemWidth(for category: TargetCategoryProgress) -> CGFloat {
@@ -412,7 +412,7 @@ struct DayGoalHeader: View {
   }
 
   private var focusSummaryValue: String {
-    formatCompactHours(renderedFocusDuration)
+    formatCompactHours(rendered专注Duration)
   }
 
   private var focusSummarySuffix: String {
@@ -472,8 +472,8 @@ struct DayGoalHeader: View {
 
   private func initializeDisplayedProgressIfNeeded() {
     guard !hasInitializedDisplayedProgress else { return }
-    displayedFocusDuration = focusDuration
-    displayedFocusCategories = focusCategories
+    displayed专注Duration = focusDuration
+    displayed专注分类 = focus分类
     displayedDistractedDuration = distractedDuration
     hasInitializedDisplayedProgress = true
   }
@@ -496,8 +496,8 @@ struct DayGoalHeader: View {
   private func setDisplayedProgressImmediately() {
     focusAnimationTask?.cancel()
     focusAnimationTask = nil
-    displayedFocusDuration = focusDuration
-    displayedFocusCategories = focusCategories
+    displayed专注Duration = focusDuration
+    displayed专注分类 = focus分类
     displayedDistractedDuration = distractedDuration
     distractionLoss = nil
   }
@@ -517,24 +517,24 @@ struct DayGoalHeader: View {
 
     let previousDistractedDuration = displayedDistractedDuration
 
-    animateFocusProgressToCurrentValues()
+    animate专注ProgressToCurrentValues()
     animateDistractionProgress(
       from: previousDistractedDuration,
       to: distractedDuration
     )
 
     withAnimation(.timingCurve(0.16, 1, 0.3, 1, duration: 0.18)) {
-      displayedFocusDuration = focusDuration
+      displayed专注Duration = focusDuration
     }
   }
 
-  private func animateFocusProgressToCurrentValues() {
+  private func animate专注ProgressToCurrentValues() {
     focusAnimationTask?.cancel()
 
     let previousByID = Dictionary(
-      uniqueKeysWithValues: displayedFocusCategories.map { ($0.id, $0) }
+      uniqueKeysWithValues: displayed专注分类.map { ($0.id, $0) }
     )
-    displayedFocusCategories = focusCategories.map { category in
+    displayed专注分类 = focus分类.map { category in
       TargetCategoryProgress(
         id: category.id,
         name: category.name,
@@ -544,14 +544,14 @@ struct DayGoalHeader: View {
     }
 
     focusAnimationTask = Task { @MainActor in
-      for (index, category) in focusCategories.enumerated() {
+      for (index, category) in focus分类.enumerated() {
         if Task.isCancelled { return }
         let delayMilliseconds = index == 0 ? 80 : 260
         try? await Task.sleep(nanoseconds: UInt64(delayMilliseconds) * 1_000_000)
         if Task.isCancelled { return }
 
         withAnimation(.timingCurve(0.18, 0.88, 0.2, 1, duration: 0.82)) {
-          displayedFocusCategories = displayedFocusCategories.map { current in
+          displayed专注分类 = displayed专注分类.map { current in
             current.id == category.id ? category : current
           }
         }
@@ -627,14 +627,14 @@ private struct GoalMetricSummaryText: View {
   }
 }
 
-private struct FocusTargetProgressBar: View {
+private struct 专注TargetProgressBar: View {
   let categories: [TargetCategoryProgress]
   let targetDuration: TimeInterval
   let actualDuration: TimeInterval
 
   private let leadingInset: CGFloat = 3
   private let segmentSpacing: CGFloat = 2.55
-  private let trailingGap: CGFloat = 3
+  private let trailing空档: CGFloat = 3
 
   private var isFulfilled: Bool {
     targetDuration > 0 && actualDuration >= targetDuration
@@ -643,7 +643,7 @@ private struct FocusTargetProgressBar: View {
   var body: some View {
     GeometryReader { geometry in
       let segments = visibleSegments
-      let fillFrameWidth = max(0, geometry.size.width - trailingGap)
+      let fillFrameWidth = max(0, geometry.size.width - trailing空档)
       let contentWidth = max(0, fillFrameWidth - leadingInset)
       let totalSpacing = segmentSpacing * CGFloat(max(segments.count - 1, 0))
       let availableSegmentWidth = max(0, contentWidth - totalSpacing)
@@ -664,7 +664,7 @@ private struct FocusTargetProgressBar: View {
 
         HStack(spacing: segmentSpacing) {
           ForEach(segments) { category in
-            FocusTargetProgressSegment(
+            专注TargetProgressSegment(
               color: category.color,
               isFulfilled: isFulfilled
             )
@@ -702,7 +702,7 @@ private struct FocusTargetProgressBar: View {
   }
 }
 
-private struct FocusTargetProgressSegment: View {
+private struct 专注TargetProgressSegment: View {
   let color: Color
   let isFulfilled: Bool
 
@@ -825,8 +825,8 @@ private struct GoalTrackerImpactShake: GeometryEffect {
   var animatableData: CGFloat
 
   func effectValue(size: CGSize) -> ProjectionTransform {
-    let xOffset = travelDistance * sin(animatableData * .pi * shakes)
-    return ProjectionTransform(CGAffineTransform(translationX: xOffset, y: 0))
+    let x关闭set = travelDistance * sin(animatableData * .pi * shakes)
+    return ProjectionTransform(CGAffineTransform(translationX: x关闭set, y: 0))
   }
 }
 
@@ -834,8 +834,8 @@ private struct InactiveGoalTrack: View {
   let width: CGFloat
   let height: CGFloat
   let fillWidth: CGFloat
-  let fillOffsetX: CGFloat
-  let fillOffsetY: CGFloat
+  let fill关闭setX: CGFloat
+  let fill关闭setY: CGFloat
 
   var body: some View {
     ZStack(alignment: .topLeading) {
@@ -846,7 +846,7 @@ private struct InactiveGoalTrack: View {
       Capsule()
         .fill(Color(hex: "F6F6F6"))
         .frame(width: fillWidth, height: 6)
-        .offset(x: fillOffsetX, y: fillOffsetY)
+        .offset(x: fill关闭setX, y: fill关闭setY)
     }
     .frame(width: width, height: height, alignment: .topLeading)
   }
@@ -890,7 +890,7 @@ private struct TargetIconBubble: View {
 
       switch kind {
       case .focus:
-        assetImage("DayGoalFocus")
+        assetImage("DayGoal专注")
           .frame(width: 25, height: 26)
 
       case .distraction:
@@ -937,7 +937,7 @@ private struct TargetLegendTail: Shape {
   DayGoalHeader(
     focusTargetDuration: 4.5 * 60 * 60,
     focusDuration: 2 * 60 * 60,
-    focusCategories: [
+    focus分类: [
       TargetCategoryProgress(
         id: "research",
         name: "Research",
@@ -976,7 +976,7 @@ private struct TargetLegendTail: Shape {
   DayGoalHeader(
     focusTargetDuration: 4.5 * 60 * 60,
     focusDuration: 0,
-    focusCategories: [],
+    focus分类: [],
     distractionLimitDuration: 2 * 60 * 60,
     distractedDuration: 0,
     showsDisabledState: true,

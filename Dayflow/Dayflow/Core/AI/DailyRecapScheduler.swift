@@ -20,38 +20,38 @@ final class DailyRecapScheduler: @unchecked Sendable {
 
   func start() {
     queue.async { [weak self] in
-      self?.startOnQueue()
+      self?.start开启Queue()
     }
   }
 
   func stop() {
     queue.async { [weak self] in
-      self?.stopOnQueue()
+      self?.stop开启Queue()
     }
   }
 
-  private func startOnQueue() {
-    stopOnQueue()
+  private func start开启Queue() {
+    stop开启Queue()
 
     let timer = DispatchSource.makeTimerSource(queue: queue)
     timer.schedule(deadline: .now() + checkInterval, repeating: checkInterval)
     timer.setEventHandler { [weak self] in
-      self?.triggerCheckOnQueue(reason: "interval")
+      self?.triggerCheck开启Queue(reason: "interval")
     }
     timer.resume()
     self.timer = timer
 
-    triggerCheckOnQueue(reason: "startup")
+    triggerCheck开启Queue(reason: "startup")
   }
 
-  private func stopOnQueue() {
+  private func stop开启Queue() {
     timer?.setEventHandler {}
     timer?.cancel()
     timer = nil
     isRunningCheck = false
   }
 
-  private func triggerCheckOnQueue(reason: String) {
+  private func triggerCheck开启Queue(reason: String) {
     guard !isRunningCheck else {
       return
     }
@@ -74,7 +74,7 @@ final class DailyRecapScheduler: @unchecked Sendable {
     }
 
     let now = Date()
-    let hour = Calendar.current.component(.hour, from: now)
+    let hour = 日历.current.component(.hour, from: now)
 
     guard hour >= 4 else {
       return
@@ -261,7 +261,7 @@ final class DailyRecapScheduler: @unchecked Sendable {
             "tasks_count": draft.tasks.count,
             "unfinished_count": draft.tasks.count,
             "blockers_count": draft.blockersBody
-              .split(whereSeparator: \.isNewline)
+              .split(w这里Separator: \.isNewline)
               .count,
           ],
           uniquingKeysWith: { _, new in new }
@@ -295,7 +295,7 @@ final class DailyRecapScheduler: @unchecked Sendable {
     minimumActivityMinutes: Int
   ) -> (dayString: String, startOfDay: Date, endOfDay: Date)? {
     let consumedSourceDays = DailyRecapSourceDayResolver.consumedSourceDays(
-      from: StorageManager.shared.fetchAllDailyStandups(excludingDay: targetDayString)
+      from: StorageManager.shared.fetch全部DailyStandups(excludingDay: targetDayString)
     )
     guard
       let candidate = DailyRecapSourceDayResolver.sourceDay(
@@ -445,7 +445,7 @@ final class DailyRecapScheduler: @unchecked Sendable {
 
   private static func humanReadableClockTime(unixTimestamp: Int) -> String {
     let date = Date(timeIntervalSince1970: TimeInterval(unixTimestamp))
-    let calendar = Calendar.current
+    let calendar = 日历.current
     let hour24 = calendar.component(.hour, from: date)
     let minute = calendar.component(.minute, from: date)
     let meridiem = hour24 >= 12 ? "pm" : "am"

@@ -9,10 +9,10 @@ extension ChatView {
       HStack(spacing: 8) {
         Spacer()
 
-        // Clear chat button (only show if there are messages)
+        // 清除 chat button (only show if t这里 are messages)
         if !chatService.messages.isEmpty {
           Button(action: { resetConversation() }) {
-            Text("Clear")
+            Text("清除")
               .font(.custom("Figtree", size: 12).weight(.semibold))
               .foregroundColor(Color(hex: "F96E00"))
               .padding(.horizontal, 10)
@@ -27,7 +27,7 @@ extension ChatView {
               )
           }
           .buttonStyle(.plain)
-          .help("Clear chat")
+          .help("清除 chat")
           .pointingHandCursor()
         }
 
@@ -39,24 +39,24 @@ extension ChatView {
               chatService.showDebugPanel ? Color(hex: "F96E00") : Color(hex: "999999"))
         }
         .buttonStyle(.plain)
-        .help("Toggle debug panel")
+        .help("切换调试面板")
         .pointingHandCursor()
 
         Button(
           action: {
-            showMemoryPanel.toggle()
-            if showMemoryPanel {
-              syncMemoryFromStoreIfNeeded()
+            show记忆Panel.toggle()
+            if show记忆Panel {
+              sync记忆FromStoreIfNeeded()
               AnalyticsService.shared.capture("chat_memory_panel_opened")
             }
           }
         ) {
-          Image(systemName: showMemoryPanel ? "brain.head.profile.fill" : "brain.head.profile")
+          Image(systemName: show记忆Panel ? "brain.head.profile.fill" : "brain.head.profile")
             .font(.system(size: 14))
-            .foregroundColor(showMemoryPanel ? Color(hex: "F96E00") : Color(hex: "999999"))
+            .foregroundColor(show记忆Panel ? Color(hex: "F96E00") : Color(hex: "999999"))
         }
         .buttonStyle(.plain)
-        .help("Toggle memory panel")
+        .help("切换记忆面板")
         .pointingHandCursor()
       }
       .padding(.trailing, 12)
@@ -153,7 +153,7 @@ extension ChatView {
     VStack(alignment: .leading, spacing: 0) {
       // Header
       HStack {
-        Text("Debug Log")
+        Text("调试日志")
           .font(.custom("Figtree", size: 12).weight(.bold))
           .foregroundColor(Color(hex: "666666"))
 
@@ -165,7 +165,7 @@ extension ChatView {
             .foregroundColor(Color(hex: "999999"))
         }
         .buttonStyle(.plain)
-        .help("Copy all")
+        .help("全部复制")
         .pointingHandCursor()
 
         Button(action: { chatService.clearDebugLog() }) {
@@ -174,7 +174,7 @@ extension ChatView {
             .foregroundColor(Color(hex: "999999"))
         }
         .buttonStyle(.plain)
-        .help("Clear log")
+        .help("清除 log")
         .pointingHandCursor()
       }
       .padding(.horizontal, 12)
@@ -203,16 +203,16 @@ extension ChatView {
     )
   }
 
-  // MARK: - Memory Panel
+  // MARK: - 记忆 Panel
 
   var memoryPanel: some View {
     VStack(alignment: .leading, spacing: 0) {
       HStack {
-        Text("Memory")
+        Text("记忆")
           .font(.custom("Figtree", size: 12).weight(.bold))
           .foregroundColor(Color(hex: "666666"))
         Spacer()
-        Text("\(memoryCharacterCount)/\(DashboardChatMemoryStore.maxCharacters)")
+        Text("\(memoryCharacter数量)/\(DashboardChat记忆Store.maxCharacters)")
           .font(.custom("Figtree", size: 11))
           .foregroundColor(Color(hex: "999999"))
       }
@@ -223,7 +223,7 @@ extension ChatView {
       Divider()
 
       VStack(alignment: .leading, spacing: 8) {
-        Text("Auto-updated from assistant replies. You can edit this manually.")
+        Text("会随助手回复自动更新，你也可以手动修改。")
           .font(.custom("Figtree", size: 11))
           .foregroundColor(Color(hex: "8A8A8A"))
 
@@ -237,39 +237,39 @@ extension ChatView {
               .stroke(Color(hex: "E7DDD1"), lineWidth: 1)
           )
           .onChange(of: memoryDraft) { _, newValue in
-            guard newValue.count > DashboardChatMemoryStore.maxCharacters else { return }
-            memoryDraft = String(newValue.prefix(DashboardChatMemoryStore.maxCharacters))
+            guard newValue.count > DashboardChat记忆Store.maxCharacters else { return }
+            memoryDraft = String(newValue.prefix(DashboardChat记忆Store.maxCharacters))
           }
 
         HStack {
-          Text("Last updated: \(memoryUpdatedLabel)")
+          Text("最后更新时间：\(memoryUpdatedLabel)")
             .font(.custom("Figtree", size: 10))
             .foregroundColor(Color(hex: "999999"))
           Spacer()
         }
 
         HStack(spacing: 8) {
-          Button("保存") { saveMemoryDraft() }
+          Button("保存") { save记忆Draft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
-            .foregroundColor(isMemoryDirty ? Color(hex: "F96E00") : Color(hex: "999999"))
-            .disabled(!isMemoryDirty)
+            .foregroundColor(is记忆Dirty ? Color(hex: "F96E00") : Color(hex: "999999"))
+            .disabled(!is记忆Dirty)
             .pointingHandCursor()
 
-          Button("Reload") { reloadMemoryDraft() }
+          Button("重新加载") { reload记忆Draft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
-            .foregroundColor(isMemoryDirty ? Color(hex: "555555") : Color(hex: "AAAAAA"))
-            .disabled(!isMemoryDirty)
+            .foregroundColor(is记忆Dirty ? Color(hex: "555555") : Color(hex: "AAAAAA"))
+            .disabled(!is记忆Dirty)
             .pointingHandCursor()
 
           Spacer()
 
-          Button("Clear") { clearMemoryDraft() }
+          Button("清除") { clear记忆Draft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
-            .foregroundColor(storedMemoryBlob.isEmpty ? Color(hex: "AAAAAA") : Color(hex: "C85A4B"))
-            .disabled(storedMemoryBlob.isEmpty)
+            .foregroundColor(stored记忆Blob.isEmpty ? Color(hex: "AAAAAA") : Color(hex: "C85A4B"))
+            .disabled(stored记忆Blob.isEmpty)
             .pointingHandCursor()
         }
       }
@@ -326,11 +326,11 @@ extension ChatView {
                 .font(.custom("InstrumentSerif-Regular", size: 30))
                 .foregroundColor(Color(hex: "2F2A24"))
 
-              Text("Ask questions, analyze your timeline, and generate charts/graphs.")
+              Text("提问、分析你的时间线并生成图表。")
                 .font(.custom("Figtree", size: 13).weight(.semibold))
                 .foregroundColor(Color(hex: "7D6B5B"))
 
-              Text("I remember your response preferences, so feel free to teach me your style.")
+              Text("我已记住你的偏好，你可以继续告诉我你的写作风格。")
                 .font(.custom("Figtree", size: 12))
                 .foregroundColor(Color(hex: "8A7765"))
             }
@@ -339,7 +339,7 @@ extension ChatView {
           }
 
           VStack(alignment: .leading, spacing: 10) {
-            Text("Try one of these")
+            Text("试试这些选项")
               .font(.custom("Figtree", size: 12).weight(.bold))
               .foregroundColor(Color(hex: "8A7765"))
 
@@ -380,13 +380,13 @@ extension ChatView {
     VStack(spacing: 16) {
       Spacer()
 
-      // Header: "Unlock Beta" with BETA badge
+      // Header: "Unlock Beta" with 测试版 badge
       HStack(alignment: .top, spacing: 4) {
         Text("Unlock Beta")
           .font(.custom("InstrumentSerif-Italic", size: 38))
           .foregroundColor(Color(hex: "593D2A"))
 
-        Text("BETA")
+        Text("测试版")
           .font(.custom("Figtree-Bold", size: 11))
           .foregroundColor(.white)
           .padding(.horizontal, 8)
@@ -409,7 +409,7 @@ extension ChatView {
         .multilineTextAlignment(.center)
         .frame(maxWidth: 600)
 
-        Text("Please send feedback if you see any bugs or weird behavior!")
+        Text("如果你看到异常或问题，请随时反馈！")
           .font(.custom("Figtree-SemiBold", size: 14))
           .foregroundColor(Color(hex: "593D2A"))
           .multilineTextAlignment(.center)
@@ -434,7 +434,7 @@ extension ChatView {
           .animation(.easeOut(duration: 0.2), value: hasChatMinimumAccess)
 
           if !hasChatMinimumAccess {
-            Text("10 hours of timeline data required")
+            Text("需要至少 10 小时的时间线数据")
               .font(.custom("Figtree-SemiBold", size: 15))
               .foregroundColor(Color(hex: "593D2A"))
 
@@ -569,10 +569,10 @@ extension ChatView {
       // Text input
       AppKitComposerTextField(
         text: $inputText,
-        isFocused: $isInputFocused,
-        focusToken: composerFocusToken,
+        is专注ed: $isInput专注ed,
+        focusToken: composer专注Token,
         placeholder: "Ask about your Dayflow data...",
-        onSubmit: submitCurrentInputIfAllowed
+        onSubmit: submitCurrentInputIf全部owed
       )
       .frame(height: 50, alignment: .leading)
 
@@ -592,7 +592,7 @@ extension ChatView {
             ProgressView()
               .scaleEffect(0.55)
               .tint(Color(hex: "C18043"))
-            Text("Answering")
+            Text("正在回答")
               .font(.custom("Figtree", size: 11).weight(.bold))
               .foregroundColor(Color(hex: "9B7753"))
           }
@@ -609,7 +609,7 @@ extension ChatView {
         }
 
         // Send button
-        Button(action: { submitCurrentInputIfAllowed() }) {
+        Button(action: { submitCurrentInputIf全部owed() }) {
           ZStack {
             if chatService.isProcessing {
               ProgressView()
@@ -666,7 +666,7 @@ extension ChatView {
     )
     .overlay(
       RoundedRectangle(cornerRadius: 16, style: .continuous)
-        .stroke(composerBorderColor, lineWidth: isInputFocused ? 1.2 : 1)
+        .stroke(composerBorderColor, lineWidth: isInput专注ed ? 1.2 : 1)
     )
     .overlay(
       RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -674,7 +674,7 @@ extension ChatView {
         .stroke(Color.white.opacity(0.65), lineWidth: 0.8)
     )
     .shadow(color: Color(hex: "D99A5A").opacity(0.14), radius: 14, x: 0, y: 6)
-    .animation(.easeOut(duration: 0.16), value: isInputFocused)
+    .animation(.easeOut(duration: 0.16), value: isInput专注ed)
     .padding(.horizontal, 16)
     .padding(.vertical, 12)
   }
@@ -725,7 +725,7 @@ extension ChatView {
 
   var followUpSuggestions: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Follow up")
+      Text("后续")
         .font(.custom("Figtree", size: 11).weight(.semibold))
         .foregroundColor(Color(hex: "999999"))
 
@@ -733,8 +733,8 @@ extension ChatView {
         ForEach(chatService.currentSuggestions, id: \.self) { suggestion in
           SuggestionChip(text: suggestion) {
             inputText = suggestion
-            isInputFocused = true
-            composerFocusToken += 1
+            isInput专注ed = true
+            composer专注Token += 1
           }
         }
       }

@@ -58,6 +58,18 @@ scan_file() {
         [[ -z "$token" ]] && continue
         str="$token"
 
+        trimmed="$(printf '%s' "$str" | sed -E 's/^[[:space:]]+//;s/[[:space:]]+$//')"
+
+        # Skip strings that are interpolation-only placeholders.
+        # Skip strings that are only punctuation/symbols.
+        if [[ "${trimmed:0:1}" == "\\" && "${trimmed: -1}" == ")" ]]; then
+          continue
+        fi
+
+        if [[ "$trimmed" =~ ^[[:punct:]]+$ ]]; then
+          continue
+        fi
+
         if [[ "$str" =~ [A-Za-z] ]]; then
           if [[ "$str" == *$'\xC0'* || "$str" == *$'\x80'* ]]; then
             continue

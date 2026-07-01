@@ -112,8 +112,8 @@ final class TimelineReviewScrubberNSView: NSView {
     CATransaction.commit()
   }
 
-  override func hitTest(_ point: NSPoint) -> NSView? {
-    let view = super.hitTest(point)
+  override func hit测试(_ point: NSPoint) -> NSView? {
+    let view = super.hit测试(point)
     return isInteractive ? view : nil
   }
 

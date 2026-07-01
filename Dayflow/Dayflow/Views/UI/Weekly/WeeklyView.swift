@@ -20,7 +20,7 @@ struct WeeklyView: View {
   init() {
     let initialWeekRange = WeeklyDateRange.containing(Date())
     let initialAccessProgress = WeeklyAccessProgressSnapshot(
-      completedBatchCount: StorageManager.shared.countCompletedAnalysisBatchesForWeeklyAccess()
+      completedBatch数量: StorageManager.shared.countCompletedAnalysisBatchesForWeeklyAccess()
     )
 
     _weekRange = State(initialValue: initialWeekRange)
@@ -69,7 +69,7 @@ struct WeeklyView: View {
     .animation(.easeInOut(duration: 0.22), value: isWeeklyAccessUnlocked)
     .onAppear {
       refreshWeeklyAccessState()
-      selectDefaultWeekOnEntry()
+      selectDefaultWeek开启Entry()
     }
     .onReceive(Timer.publish(every: 30, on: .main, in: .common).autoconnect()) { _ in
       refreshWeeklyAccessState()
@@ -126,18 +126,18 @@ struct WeeklyView: View {
 
               WeeklyExportableGraphic(
                 layout: layout,
-                title: "Focus heatmap",
+                title: "专注 heatmap",
                 headerTitle: dashboardSnapshot.heatmap.title,
                 downloadButtonOrigin: CGPoint(x: 44, y: 34),
                 fileName: exportFileName("focus-heatmap"),
-                exportWidth: WeeklyFocusHeatmapSection.exportWidth(for: dashboardSnapshot.heatmap),
+                exportWidth: Weekly专注HeatmapSection.exportWidth(for: dashboardSnapshot.heatmap),
                 displayHeight: WeeklyAdaptiveLayout.heatmapHeight,
                 exportHeight: WeeklyAdaptiveLayout.heatmapHeight,
                 watermarkPlacement: .bottomTrailing
               ) { width in
-                WeeklyFocusHeatmapSection(snapshot: dashboardSnapshot.heatmap, width: width)
+                Weekly专注HeatmapSection(snapshot: dashboardSnapshot.heatmap, width: width)
               } exportContent: { width in
-                WeeklyFocusHeatmapSection(
+                Weekly专注HeatmapSection(
                   snapshot: dashboardSnapshot.heatmap,
                   width: width,
                   usesScrollContainers: false
@@ -146,7 +146,7 @@ struct WeeklyView: View {
 
               WeeklyExportableGraphic(
                 layout: layout,
-                title: "Focus breakdown",
+                title: "专注 breakdown",
                 headerTitle: dashboardSnapshot.treemap.title,
                 downloadButtonOrigin: CGPoint(x: 40, y: 34),
                 fileName: exportFileName("focus-breakdown"),
@@ -159,7 +159,7 @@ struct WeeklyView: View {
 
               WeeklyExportableGraphic(
                 layout: layout,
-                title: "Weekly breakdown",
+                title: "周报分解",
                 downloadButtonOrigin: CGPoint(
                   x: layout.contentWidth * 72 / 1748,
                   y: layout.contentWidth * 64 / 1748
@@ -211,7 +211,7 @@ struct WeeklyView: View {
   ) -> some View {
     WeeklyExportableFixedGraphic(
       availableWidth: width,
-      title: "Weekly distribution",
+      title: "周报分布",
       downloadButtonOrigin: CGPoint(x: 18, y: 16),
       fileName: exportFileName("weekly-distribution"),
       designWidth: WeeklyAdaptiveLayout.donutCardWidth,
@@ -233,7 +233,7 @@ struct WeeklyView: View {
     WeeklyExportableFixedGraphic(
       availableWidth: width,
       title: "Context charts",
-      headerTitle: "Context shift and distractions comparison",
+      headerTitle: "上下文切换与分心对比",
       downloadButtonOrigin: CGPoint(x: 24, y: 16),
       fileName: exportFileName("context-charts"),
       designWidth: WeeklyAdaptiveLayout.designContentWidth,
@@ -261,7 +261,7 @@ struct WeeklyView: View {
 
   private func refreshWeeklyAccessState() {
     weeklyAccessProgress = WeeklyAccessProgressSnapshot(
-      completedBatchCount: StorageManager.shared.countCompletedAnalysisBatchesForWeeklyAccess()
+      completedBatch数量: StorageManager.shared.countCompletedAnalysisBatchesForWeeklyAccess()
     )
 
     guard weeklyAccessProgress.isComplete, !isManuallyLocked else { return }
@@ -269,16 +269,16 @@ struct WeeklyView: View {
     NotificationService.shared.cancelWeeklyUnlockNotification()
   }
 
-  private func selectDefaultWeekOnEntry() {
+  private func selectDefaultWeek开启Entry() {
     guard isWeeklyAccessUnlocked else { return }
 
-    let defaultRange = defaultWeekRangeOnEntry()
+    let defaultRange = defaultWeekRange开启Entry()
     guard defaultRange != weekRange else { return }
 
     weekRange = defaultRange
   }
 
-  private func defaultWeekRangeOnEntry() -> WeeklyDateRange {
+  private func defaultWeekRange开启Entry() -> WeeklyDateRange {
     var fallbackRangeWithData: WeeklyDateRange?
     var range = WeeklyDateRange.containing(Date())
 
@@ -361,7 +361,7 @@ struct WeeklyView: View {
     NotificationService.shared.cancelWeeklyUnlockNotification()
     notificationState = .idle
     weeklyAccessProgress = WeeklyAccessProgressSnapshot(
-      completedBatchCount: StorageManager.shared.countCompletedAnalysisBatchesForWeeklyAccess()
+      completedBatch数量: StorageManager.shared.countCompletedAnalysisBatchesForWeeklyAccess()
     )
 
     withAnimation(.easeInOut(duration: 0.22)) {
@@ -468,7 +468,7 @@ private struct WeeklyDataRequirementView: View {
             .font(.custom("InstrumentSerif-Regular", size: 24))
             .foregroundStyle(Color(hex: "333333"))
 
-          Text("Weekly insights need at least 15 hours of recorded activity for the selected week.")
+          Text("所选周需至少 15 小时录屏数据才能显示周报洞察。")
             .font(.custom("Figtree-Regular", size: 14))
             .foregroundStyle(Color(hex: "796E64"))
             .multilineTextAlignment(.center)
@@ -823,13 +823,13 @@ private struct WeeklyGraphicDownloadOverlay: View {
         .lineLimit(1)
         .fixedSize()
         .opacity(0)
-        .allowsHitTesting(false)
+        .allowsHit测试ing(false)
 
       WeeklyGraphicDownloadButton(title: title, action: action)
     }
     .offset(x: origin.x, y: origin.y)
     .opacity(isVisible ? 1 : 0)
-    .allowsHitTesting(isVisible)
+    .allowsHit测试ing(isVisible)
   }
 }
 
@@ -855,7 +855,7 @@ private struct WeeklyGraphicDownloadButton: View {
     .buttonStyle(.plain)
     .help("Download \(title) as a full-resolution PNG")
     .hoverScaleEffect(scale: 1.04)
-    .pointingHandCursorOnHover(reassertOnPressEnd: true)
+    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
   }
 }
 
@@ -894,7 +894,7 @@ private enum WeeklyGraphicExporter {
     savePanel.allowedContentTypes = [.png]
     savePanel.canCreateDirectories = true
 
-    guard savePanel.runModal() == .OK, let url = savePanel.url else { return }
+    guard savePanel.runModal() == .确定, let url = savePanel.url else { return }
 
     guard
       let destination = CGImageDestinationCreateWithURL(
@@ -977,7 +977,7 @@ private struct WeeklyExportWatermark: View {
 private struct WeeklyGeneratedWithDayflowText: View {
   var body: some View {
     HStack(spacing: 3) {
-      Text("Generated with")
+      Text("生成于")
         .font(.custom("Figtree-SemiBold", size: 10))
         .foregroundStyle(Color(hex: "786A61"))
 

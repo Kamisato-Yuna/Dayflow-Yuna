@@ -77,7 +77,7 @@ struct ProviderTogglePill: View {
   }
 }
 
-// MARK: - Debug Log Entry
+// MARK: - 调试日志 Entry
 
 struct DebugLogEntry: View {
   let entry: ChatDebugEntry
@@ -169,9 +169,9 @@ struct ChatFlowLayout: Layout {
   }
 }
 
-// MARK: - Thinking Indicator
+// MARK: - 思考中 Indicator
 
-struct ThinkingIndicator: View {
+struct 思考中Indicator: View {
   @State var dotScale: [CGFloat] = [1, 1, 1]
 
   var body: some View {
@@ -180,7 +180,7 @@ struct ThinkingIndicator: View {
         .font(.system(size: 12, weight: .medium))
         .foregroundColor(Color(hex: "F96E00"))
 
-      Text("Thinking")
+      Text("思考中")
         .font(.custom("Figtree", size: 12).weight(.semibold))
         .foregroundColor(Color(hex: "8B5E3C"))
 

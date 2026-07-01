@@ -20,16 +20,16 @@ private struct ScrollObserverView: NSViewRepresentable {
 
   private class ScrollObserverNSView: NSView {
     var onScroll: ((_ offset: CGFloat, _ delta: CGFloat) -> Void)?
-    private var lastOffset: CGFloat?
+    private var last关闭set: CGFloat?
     private var scrollViewObservation: NSObjectProtocol?
     private var isReady = false
 
     override func viewDidMoveToWindow() {
       super.viewDidMoveToWindow()
 
-      // Reset state when view is (re-)added to window
+      // 重置 state when view is (re-)added to window
       isReady = false
-      lastOffset = nil
+      last关闭set = nil
       setupScrollObserver()
 
       // Ignore initial layout bounds changes
@@ -73,16 +73,16 @@ private struct ScrollObserverView: NSViewRepresentable {
     }
 
     private func handleBoundsChange(scrollView: NSScrollView) {
-      let currentOffset = scrollView.contentView.bounds.origin.y
+      let current关闭set = scrollView.contentView.bounds.origin.y
 
-      if isReady, let last = lastOffset {
-        let delta = currentOffset - last
+      if isReady, let last = last关闭set {
+        let delta = current关闭set - last
         if abs(delta) > 0.5 {
-          onScroll?(currentOffset, delta)
+          onScroll?(current关闭set, delta)
         }
       }
 
-      lastOffset = currentOffset
+      last关闭set = current关闭set
     }
 
     deinit {
@@ -100,7 +100,7 @@ private struct ScrollTrackingModifier: ViewModifier {
   let onScrollStart: ((_ direction: String) -> Void)?
 
   @State private var isScrolling = false
-  @State private var scrollResetWork: DispatchWorkItem?
+  @State private var scroll重置Work: DispatchWorkItem?
 
   func body(content: Content) -> some View {
     content
@@ -108,7 +108,7 @@ private struct ScrollTrackingModifier: ViewModifier {
         ScrollObserverView { offset, delta in
           handleScroll(delta: delta)
         }
-        .allowsHitTesting(false)
+        .allowsHit测试ing(false)
       )
   }
 
@@ -122,12 +122,12 @@ private struct ScrollTrackingModifier: ViewModifier {
         isScrolling = true
       }
 
-      // Reset isScrolling after 0.6s of no scroll activity
-      scrollResetWork?.cancel()
+      // 重置 isScrolling after 0.6s of no scroll activity
+      scroll重置Work?.cancel()
       let resetWork = DispatchWorkItem {
         isScrolling = false
       }
-      scrollResetWork = resetWork
+      scroll重置Work = resetWork
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: resetWork)
     }
   }

@@ -134,7 +134,7 @@ extension GeminiDirectProvider {
       attempt += 1
     }
 
-    // Should never reach here, but just in case
+    // Should never reach 这里, but just in case
     throw lastError
       ?? NSError(
         domain: "GeminiError", code: 999,

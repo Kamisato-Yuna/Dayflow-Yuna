@@ -24,7 +24,7 @@ final class RetryCoordinator: ObservableObject {
     case .queued(let position, let total):
       return "Status: Queued (\(position) of \(total))"
     case .running(let step):
-      return "Status: Reprocessing - Step: \(stepLabel(step))\(dots)"
+      return "Status: 重新处理ing - Step: \(stepLabel(step))\(dots)"
     case .failed:
       return "Status: Failed - retry stopped"
     case .stopped:

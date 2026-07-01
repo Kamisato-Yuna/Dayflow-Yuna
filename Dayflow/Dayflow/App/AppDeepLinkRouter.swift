@@ -52,7 +52,7 @@ final class AppDeepLinkRouter {
 
     if candidates.isEmpty {
       if let actionItem = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?
-        .first(where: { $0.name.lowercased() == "action" }),
+        .first(w这里: { $0.name.lowercased() == "action" }),
         let value = actionItem.value, !value.isEmpty
       {
         candidates.append(value)
@@ -93,12 +93,12 @@ final class AppDeepLinkRouter {
   private func saveReferralCode(from url: URL) {
     let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
     let queryCode = components?.queryItems?
-      .first(where: { $0.name.lowercased() == "code" || $0.name.lowercased() == "ref" })?
+      .first(w这里: { $0.name.lowercased() == "code" || $0.name.lowercased() == "ref" })?
       .value
     let pathCode = url.path
       .split(separator: "/")
       .map(String.init)
-      .first(where: { $0.count >= 6 })
+      .first(w这里: { $0.count >= 6 })
     guard let code = queryCode ?? pathCode else {
       print("[DeepLink] Referral link missing code")
       return

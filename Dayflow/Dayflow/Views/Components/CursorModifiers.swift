@@ -66,10 +66,10 @@ import SwiftUI
     }
 
     // Kept for API compatibility with existing call sites.
-    func pointingHandCursorOnHover(enabled: Bool = true, reassertOnPressEnd: Bool = false)
+    func pointingHandCursor开启Hover(enabled: Bool = true, reassert开启PressEnd: Bool = false)
       -> some View
     {
-      _ = reassertOnPressEnd
+      _ = reassert开启PressEnd
       return pointingHandCursor(enabled: enabled)
     }
 
@@ -95,9 +95,9 @@ import SwiftUI
       enabled: Bool = true,
       scale: CGFloat = 1.01,
       animation: Animation = .spring(response: 0.24, dampingFraction: 0.82),
-      reassertOnPressEnd: Bool = true
+      reassert开启PressEnd: Bool = true
     ) -> some View {
-      _ = reassertOnPressEnd
+      _ = reassert开启PressEnd
       return hoverScaleEffect(enabled: enabled, scale: scale, animation: animation)
         .pointingHandCursor(enabled: enabled)
     }

@@ -31,7 +31,7 @@ struct FeedbackModalContent {
     formTitle: "Thank you!",
     formSubtitle: "Tell us more about your feedback",
     placeholder:
-      "I don't have access to your timeline (privacy first!), so your feedback here helps improve the quality of Dayflow for everyone.",
+      "I don't have access to your timeline (privacy first!), so your feedback 这里 helps improve the quality of Dayflow for everyone.",
     shareLogsLabel: "I'd like to share this log to the developer to help improve the product.",
     submitButtonTitle: "Submit",
     thanksTitle: "Thank you for your feedback!",
@@ -67,7 +67,7 @@ struct TimelineFeedbackModal: View {
   let onSubmit: () -> Void
   let onClose: () -> Void
 
-  @FocusState private var isEditorFocused: Bool
+  @专注State private var isEditor专注ed: Bool
 
   var body: some View {
     ZStack(alignment: .topTrailing) {
@@ -150,10 +150,10 @@ struct TimelineFeedbackModal: View {
               RoundedRectangle(cornerRadius: 4)
                 .stroke(Color(hex: "D9D9D9"), lineWidth: 1)
             )
-            .focused($isEditorFocused)
+            .focused($isEditor专注ed)
             .onAppear {
               DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                isEditorFocused = true
+                isEditor专注ed = true
               }
             }
             .scrollContentBackground(.hidden)
@@ -251,7 +251,7 @@ extension TimelineFeedbackModal {
           .stroke(Color.white.opacity(0.7), lineWidth: 0.5)
       )
       .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
-      .accessibilityLabel(Text(accessibilityLabel ?? "Feedback illustration"))
+      .accessibilityLabel(Text(accessibilityLabel ?? "反馈示意"))
   }
 }
 

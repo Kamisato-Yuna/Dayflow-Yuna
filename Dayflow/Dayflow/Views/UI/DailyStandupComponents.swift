@@ -35,7 +35,7 @@ struct DailyBulletCard: View {
   let scale: CGFloat
   @State private var draggedItemID: UUID? = nil
   @State private var pendingScrollTargetID: UUID? = nil
-  @FocusState private var focusedItemID: UUID?
+  @专注State private var focusedItemID: UUID?
   @State private var keyMonitor: Any? = nil
 
   private var listViewportHeight: CGFloat {
@@ -147,7 +147,7 @@ struct DailyBulletCard: View {
                   draggedItemID = itemID
                   return NSItemProvider(object: itemID.uuidString as NSString)
                 }
-                .pointingHandCursorOnHover(reassertOnPressEnd: true)
+                .pointingHandCursor开启Hover(reassert开启PressEnd: true)
 
               TextField("", text: bindingForItemText(id: itemID), axis: .vertical)
                 .font(.custom("Figtree-Regular", size: 14 * scale))
@@ -198,10 +198,10 @@ struct DailyBulletCard: View {
   private func bindingForItemText(id itemID: UUID) -> Binding<String> {
     Binding(
       get: {
-        items.first(where: { $0.id == itemID })?.text ?? ""
+        items.first(w这里: { $0.id == itemID })?.text ?? ""
       },
       set: { newValue in
-        guard let index = items.firstIndex(where: { $0.id == itemID }) else { return }
+        guard let index = items.firstIndex(w这里: { $0.id == itemID }) else { return }
         items[index].text = newValue
       }
     )
@@ -215,7 +215,7 @@ struct DailyBulletCard: View {
           .foregroundStyle(Color(hex: "999999"))
           .frame(width: 18 * scale, height: 18 * scale)
 
-        Text("Add item")
+        Text("添加项目")
           .font(.custom("Figtree-Regular", size: 13 * scale))
           .foregroundStyle(Color(hex: "999999"))
           .lineLimit(1)
@@ -223,12 +223,12 @@ struct DailyBulletCard: View {
       .padding(.vertical, 6 * scale)
     }
     .buttonStyle(.plain)
-    .pointingHandCursorOnHover(reassertOnPressEnd: true)
+    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
   }
 
   private func addItem(after itemID: UUID?) {
     let newItem = DailyBulletItem(text: "")
-    if let itemID, let index = items.firstIndex(where: { $0.id == itemID }) {
+    if let itemID, let index = items.firstIndex(w这里: { $0.id == itemID }) {
       items.insert(newItem, at: index + 1)
     } else {
       items.append(newItem)
@@ -244,7 +244,7 @@ struct DailyBulletCard: View {
       guard event.keyCode == 51 else { return event }
       let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
       guard flags.isEmpty else { return event }
-      return scheduleFocusedItemRemovalIfEmpty() ? nil : event
+      return schedule专注edItemRemovalIfEmpty() ? nil : event
     }
   }
 
@@ -255,9 +255,9 @@ struct DailyBulletCard: View {
     }
   }
 
-  private func scheduleFocusedItemRemovalIfEmpty() -> Bool {
-    guard let activeFocusedItemID = focusedItemID,
-      let index = items.firstIndex(where: { $0.id == activeFocusedItemID })
+  private func schedule专注edItemRemovalIfEmpty() -> Bool {
+    guard let active专注edItemID = focusedItemID,
+      let index = items.firstIndex(w这里: { $0.id == active专注edItemID })
     else {
       return false
     }
@@ -271,13 +271,13 @@ struct DailyBulletCard: View {
     }
 
     DispatchQueue.main.async {
-      removeItemIfStillEmpty(withID: activeFocusedItemID)
+      removeItemIfStillEmpty(withID: active专注edItemID)
     }
     return true
   }
 
   private func removeItemIfStillEmpty(withID itemID: UUID) {
-    guard let index = items.firstIndex(where: { $0.id == itemID }) else {
+    guard let index = items.firstIndex(w这里: { $0.id == itemID }) else {
       return
     }
 
@@ -360,16 +360,16 @@ struct DailyListItemDropDelegate: DropDelegate {
   func dropEntered(info: DropInfo) {
     guard let draggedID = draggedItemID,
       draggedID != targetItemID,
-      let fromIndex = items.firstIndex(where: { $0.id == draggedID }),
-      let toIndex = items.firstIndex(where: { $0.id == targetItemID })
+      let fromIndex = items.firstIndex(w这里: { $0.id == draggedID }),
+      let toIndex = items.firstIndex(w这里: { $0.id == targetItemID })
     else {
       return
     }
 
     withAnimation(.easeInOut(duration: 0.14)) {
       items.move(
-        fromOffsets: IndexSet(integer: fromIndex),
-        toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex
+        from关闭sets: IndexSet(integer: fromIndex),
+        to关闭set: toIndex > fromIndex ? toIndex + 1 : toIndex
       )
     }
   }
@@ -390,7 +390,7 @@ struct DailyListDropToEndDelegate: DropDelegate {
 
   func dropEntered(info: DropInfo) {
     guard let draggedID = draggedItemID,
-      let fromIndex = items.firstIndex(where: { $0.id == draggedID })
+      let fromIndex = items.firstIndex(w这里: { $0.id == draggedID })
     else {
       return
     }
@@ -399,7 +399,7 @@ struct DailyListDropToEndDelegate: DropDelegate {
     guard fromIndex != endIndex - 1 else { return }
 
     withAnimation(.easeInOut(duration: 0.14)) {
-      items.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: endIndex)
+      items.move(from关闭sets: IndexSet(integer: fromIndex), to关闭set: endIndex)
     }
   }
 

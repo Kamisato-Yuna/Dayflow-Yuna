@@ -3,7 +3,7 @@
 //  Dayflow
 //
 //  Shared UI components for provider selection cards
-//  Used in both OnboardingLLMSelectionView and SettingsView
+//  Used in both 开启boardingLLMSelectionView and SettingsView
 //
 
 import SwiftUI
@@ -78,12 +78,12 @@ struct FlexibleProviderCard: View {
     .modifier(CardShadowModifier(isSelected: isSelected))
     .animation(.spring(response: 0.3, dampingFraction: 0.9), value: isSelected)
     .contentShape(RoundedRectangle(cornerRadius: 4))
-    .allowsHitTesting(shouldAllowHitTesting)
+    .allowsHit测试ing(should全部owHit测试ing)
     .pointingHandCursor(enabled: shouldShowPointer)
     .onTapGesture { handleCardTap() }
   }
 
-  private var shouldAllowHitTesting: Bool {
+  private var should全部owHit测试ing: Bool {
     switch buttonMode {
     case .onboarding:
       return !isComingSoon
@@ -155,7 +155,7 @@ struct FlexibleProviderCard: View {
           Image(systemName: "checkmark.circle.fill")
             .font(.system(size: 12))
             .foregroundColor(.green)
-          Text(customStatusText ?? "Currently selected")
+          Text(customStatusText ?? "当前已选")
             .font(.custom("Figtree", size: 12))
             .fontWeight(.medium)
             .foregroundColor(.black.opacity(0.6))

@@ -16,12 +16,12 @@ struct WeeklyWorkflowSection: View {
   }
 
   static func exportWidth(for snapshot: WeeklyWorkflowSnapshot) -> CGFloat {
-    let columnCount = snapshot.rows.map { $0.cells.count }.max() ?? 0
-    guard columnCount > 0 else { return Design.sectionWidth }
+    let column数量 = snapshot.rows.map { $0.cells.count }.max() ?? 0
+    guard column数量 > 0 else { return Design.sectionWidth }
 
     let gridWidth =
-      (CGFloat(columnCount) * Design.cellWidth)
-      + (CGFloat(columnCount - 1) * Design.cellGap)
+      (CGFloat(column数量) * Design.cellWidth)
+      + (CGFloat(column数量 - 1) * Design.cell空档)
     let requiredWidth =
       Design.gridPadding.leading
       + Design.labelWidth
@@ -54,7 +54,7 @@ struct WeeklyWorkflowSection: View {
     static let labelToGridSpacing: CGFloat = 13
     static let cellWidth: CGFloat = 13
     static let cellHeight: CGFloat = 13
-    static let cellGap: CGFloat = 2
+    static let cell空档: CGFloat = 2
     static let cellCornerRadius: CGFloat = 2.5
     static let axisTopSpacing: CGFloat = 10
     static let axisLabelSpacing: CGFloat = 5
@@ -62,15 +62,15 @@ struct WeeklyWorkflowSection: View {
     static let axisLabelWidth: CGFloat = 34
   }
 
-  private var columnCount: Int {
+  private var column数量: Int {
     snapshot.rows.map { $0.cells.count }.max() ?? 0
   }
 
   private var gridWidth: CGFloat {
-    guard columnCount > 0 else { return 0 }
+    guard column数量 > 0 else { return 0 }
 
-    return (CGFloat(columnCount) * cellWidth)
-      + (CGFloat(columnCount - 1) * Design.cellGap)
+    return (CGFloat(column数量) * cellWidth)
+      + (CGFloat(column数量 - 1) * Design.cell空档)
   }
 
   private var cellWidth: CGFloat {
@@ -100,7 +100,7 @@ struct WeeklyWorkflowSection: View {
     .overlay(
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
         .stroke(Design.borderColor, lineWidth: 1)
-        .allowsHitTesting(false)
+        .allowsHit测试ing(false)
     )
     .frame(width: width, alignment: .topLeading)
   }
@@ -121,14 +121,14 @@ struct WeeklyWorkflowSection: View {
       ScrollView(.horizontal, showsIndicators: false) {
         gridAndAxis
       }
-      .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+      .scrollBounceBehavior(.based开启Size, axes: .horizontal)
     } else {
       gridAndAxis
     }
   }
 
   private var dayLabels: some View {
-    VStack(alignment: .trailing, spacing: Design.cellGap) {
+    VStack(alignment: .trailing, spacing: Design.cell空档) {
       ForEach(snapshot.rows) { row in
         Text(row.label)
           .font(.custom("Figtree-Regular", size: 11))
@@ -140,9 +140,9 @@ struct WeeklyWorkflowSection: View {
 
   private var gridAndAxis: some View {
     VStack(alignment: .leading, spacing: Design.axisTopSpacing) {
-      VStack(alignment: .leading, spacing: Design.cellGap) {
+      VStack(alignment: .leading, spacing: Design.cell空档) {
         ForEach(snapshot.rows) { row in
-          HStack(spacing: Design.cellGap) {
+          HStack(spacing: Design.cell空档) {
             ForEach(Array(row.cells.enumerated()), id: \.element.id) { index, cell in
               RoundedRectangle(cornerRadius: Design.cellCornerRadius, style: .continuous)
                 .fill(cellFill(for: cell))
@@ -165,7 +165,7 @@ struct WeeklyWorkflowSection: View {
               .font(.custom("Figtree-Regular", size: 10))
               .foregroundStyle(Color.black.opacity(0.78))
               .frame(width: Design.axisLabelWidth, alignment: axisAlignment(for: label))
-              .offset(x: axisOffset(for: label))
+              .offset(x: axis关闭set(for: label))
           }
         }
         .frame(width: gridWidth, height: Design.axisLabelHeight, alignment: .leading)
@@ -180,7 +180,7 @@ struct WeeklyWorkflowSection: View {
         footerContent
           .padding(Design.footerPadding)
       }
-      .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+      .scrollBounceBehavior(.based开启Size, axes: .horizontal)
       .frame(maxWidth: .infinity, alignment: .leading)
     } else {
       footerContent
@@ -193,12 +193,12 @@ struct WeeklyWorkflowSection: View {
     HStack(spacing: 8) {
       if snapshot.totals.isEmpty {
         Text(
-          "Week total  No captured activity during \(clockText(snapshot.startMinute))-\(clockText(snapshot.endMinute))"
+          "周总计  No captured activity during \(clockText(snapshot.startMinute))-\(clockText(snapshot.endMinute))"
         )
         .font(.custom("Figtree-Regular", size: 12))
         .foregroundStyle(Design.mutedTextColor)
       } else {
-        Text("Week total")
+        Text("周总计")
           .font(.custom("InstrumentSerif-Regular", size: 14))
           .foregroundStyle(Design.totalTitleColor)
 
@@ -234,12 +234,12 @@ struct WeeklyWorkflowSection: View {
     return Color(hex: colorHex).opacity(alpha)
   }
 
-  private func axisOffset(for label: WeeklyWorkflowTimeLabel) -> CGFloat {
+  private func axis关闭set(for label: WeeklyWorkflowTimeLabel) -> CGFloat {
     guard snapshot.endMinute > snapshot.startMinute else { return 0 }
 
     let progress = CGFloat(
       (label.minute - snapshot.startMinute) / (snapshot.endMinute - snapshot.startMinute))
-    let rawOffset = (progress * gridWidth) - (Design.axisLabelWidth / 2)
+    let raw关闭set = (progress * gridWidth) - (Design.axisLabelWidth / 2)
 
     if label.minute <= snapshot.startMinute {
       return 0
@@ -247,7 +247,7 @@ struct WeeklyWorkflowSection: View {
     if label.minute >= snapshot.endMinute {
       return max(0, gridWidth - Design.axisLabelWidth)
     }
-    return min(max(0, rawOffset), max(0, gridWidth - Design.axisLabelWidth))
+    return min(max(0, raw关闭set), max(0, gridWidth - Design.axisLabelWidth))
   }
 
   private func axisAlignment(for label: WeeklyWorkflowTimeLabel) -> Alignment {
@@ -415,7 +415,7 @@ extension WeeklyWorkflowRow {
     }
 
     for run in runs {
-      for index in run.range where cells.indices.contains(index) {
+      for index in run.range w这里 cells.indices.contains(index) {
         cells[index] = WeeklyWorkflowCell(
           id: "slot-\(index)",
           categoryName: "Preview",

@@ -6,10 +6,10 @@ extension ChatView {
   // MARK: - Actions
 
   func refreshChatAccessProgress() {
-    completedAccessBatchCount = FeatureAccessRequirements.completedBatchCount()
+    completedAccessBatch数量 = FeatureAccessRequirements.completedBatch数量()
   }
 
-  func submitCurrentInputIfAllowed() {
+  func submitCurrentInputIf全部owed() {
     guard canSubmitCurrentInput else { return }
     sendMessage(trimmedInputText)
   }
@@ -27,7 +27,7 @@ extension ChatView {
       conversationId = UUID()
     }
 
-    // Count only user messages for index
+    // 数量 only user messages for index
     let messageIndex = chatService.messages.filter { $0.role == .user }.count
 
     // Log question to PostHog (beta analytics)
@@ -171,12 +171,12 @@ extension ChatView {
   }
 
   func resetChatFeedbackState() {
-    for task in thankResetTasks.values {
+    for task in thank重置Tasks.values {
       task.cancel()
     }
-    thankResetTasks.removeAll()
-    chatVoteSelections.removeAll()
-    thankedMessageIDs.removeAll()
+    thank重置Tasks.remove全部()
+    chatVoteSelections.remove全部()
+    thankedMessageIDs.remove全部()
     chatFeedbackTarget = nil
     chatFeedbackMessage = ""
     chatFeedbackShareLogs = true
@@ -184,20 +184,20 @@ extension ChatView {
   }
 
   func showTransientThanks(for messageID: UUID) {
-    thankResetTasks[messageID]?.cancel()
+    thank重置Tasks[messageID]?.cancel()
 
     withAnimation(feedbackStateAnimation) {
       thankedMessageIDs.formUnion([messageID])
     }
 
-    thankResetTasks[messageID] = Task {
+    thank重置Tasks[messageID] = Task {
       try? await Task.sleep(nanoseconds: 1_600_000_000)
       guard !Task.isCancelled else { return }
       await MainActor.run {
         withAnimation(feedbackStateAnimation) {
           thankedMessageIDs.subtract([messageID])
         }
-        thankResetTasks[messageID] = nil
+        thank重置Tasks[messageID] = nil
       }
     }
   }
@@ -219,7 +219,7 @@ extension ChatView {
 
     guard includeSharedAnswerContext else { return props }
 
-    let messageIndex = chatService.messages.firstIndex(where: { $0.id == message.id }) ?? -1
+    let messageIndex = chatService.messages.firstIndex(w这里: { $0.id == message.id }) ?? -1
     props["conversation_id"] = conversationId?.uuidString ?? "unknown"
     props["message_id"] = message.id.uuidString
     props["message_index"] = messageIndex
@@ -230,46 +230,46 @@ extension ChatView {
     return props
   }
 
-  func loadMemoryFromStore(resetDraft: Bool) {
-    let latest = DashboardChatMemoryStore.load()
-    storedMemoryBlob = latest
-    memoryUpdatedAt = DashboardChatMemoryStore.lastUpdatedAt()
+  func load记忆FromStore(resetDraft: Bool) {
+    let latest = DashboardChat记忆Store.load()
+    stored记忆Blob = latest
+    memoryUpdatedAt = DashboardChat记忆Store.lastUpdatedAt()
     if resetDraft {
       memoryDraft = latest
     }
   }
 
-  func syncMemoryFromStoreIfNeeded() {
-    if isMemoryDirty {
-      storedMemoryBlob = DashboardChatMemoryStore.load()
-      memoryUpdatedAt = DashboardChatMemoryStore.lastUpdatedAt()
+  func sync记忆FromStoreIfNeeded() {
+    if is记忆Dirty {
+      stored记忆Blob = DashboardChat记忆Store.load()
+      memoryUpdatedAt = DashboardChat记忆Store.lastUpdatedAt()
       return
     }
-    loadMemoryFromStore(resetDraft: true)
+    load记忆FromStore(resetDraft: true)
   }
 
-  func saveMemoryDraft() {
-    let previousMemory = DashboardChatMemoryStore.load()
-    DashboardChatMemoryStore.save(memoryDraft)
-    let updatedMemory = DashboardChatMemoryStore.load()
-    ChatService.shared.didUpdateDashboardMemory(from: previousMemory, to: updatedMemory)
-    loadMemoryFromStore(resetDraft: true)
+  func save记忆Draft() {
+    let previous记忆 = DashboardChat记忆Store.load()
+    DashboardChat记忆Store.save(memoryDraft)
+    let updated记忆 = DashboardChat记忆Store.load()
+    ChatService.shared.didUpdateDashboard记忆(from: previous记忆, to: updated记忆)
+    load记忆FromStore(resetDraft: true)
     AnalyticsService.shared.capture(
       "chat_memory_manual_saved",
       [
-        "chars": storedMemoryBlob.count
+        "chars": stored记忆Blob.count
       ])
   }
 
-  func reloadMemoryDraft() {
-    loadMemoryFromStore(resetDraft: true)
+  func reload记忆Draft() {
+    load记忆FromStore(resetDraft: true)
   }
 
-  func clearMemoryDraft() {
-    let previousMemory = DashboardChatMemoryStore.load()
-    DashboardChatMemoryStore.clear()
-    ChatService.shared.didUpdateDashboardMemory(from: previousMemory, to: "")
-    loadMemoryFromStore(resetDraft: true)
+  func clear记忆Draft() {
+    let previous记忆 = DashboardChat记忆Store.load()
+    DashboardChat记忆Store.clear()
+    ChatService.shared.didUpdateDashboard记忆(from: previous记忆, to: "")
+    load记忆FromStore(resetDraft: true)
     AnalyticsService.shared.capture("chat_memory_cleared")
   }
 

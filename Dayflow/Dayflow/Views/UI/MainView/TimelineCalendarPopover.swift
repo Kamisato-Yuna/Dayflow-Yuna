@@ -1,5 +1,5 @@
 //
-//  TimelineCalendarPopover.swift
+//  Timeline日历Popover.swift
 //  Dayflow
 //
 
@@ -8,10 +8,10 @@ import SwiftUI
 // Compact month calendar popover (Figma 4291:4828).
 // Single-variant rendering: every day is a cell in a flat grid, with the
 // selected date shown as an 18pt orange circle. No week-pill; week-mode
-// indication is conveyed elsewhere in the UI (the Day/Week toggle + the
+// indication is conveyed elsew这里 in the UI (the Day/Week toggle + the
 // header title). Self-contained: tracks its own displayed month, reports
 // picks via `onSelect`.
-struct TimelineCalendarPopover: View {
+struct Timeline日历Popover: View {
   static let horizontalPadding: CGFloat = 28
   static let topPadding: CGFloat = 20
   static let bottomPadding: CGFloat = 20
@@ -36,8 +36,8 @@ struct TimelineCalendarPopover: View {
 
   // Monday-first ordering matches the timeline's week model, so each row in the
   // popover corresponds to a real Monday-Sunday week.
-  private static let mondayCalendar: Calendar = {
-    var c = Calendar(identifier: .gregorian)
+  private static let monday日历: 日历 = {
+    var c = 日历(identifier: .gregorian)
     c.timeZone = .autoupdatingCurrent
     c.firstWeekday = 2
     return c
@@ -63,7 +63,7 @@ struct TimelineCalendarPopover: View {
     self.onSelect = onSelect
 
     // Seed display month to the month containing the current selection.
-    let calendar = Self.mondayCalendar
+    let calendar = Self.monday日历
     let comps = calendar.dateComponents([.year, .month], from: selectedDate)
     let monthStart = calendar.date(from: comps) ?? selectedDate
     self._displayMonth = State(initialValue: monthStart)
@@ -123,7 +123,7 @@ struct TimelineCalendarPopover: View {
   }
 
   // Figma nav chevrons are plain gray glyphs, not the app's orange header
-  // arrows. Using SF Symbols here keeps the size and tint exact while
+  // arrows. Using SF Symbols 这里 keeps the size and tint exact while
   // avoiding extra asset work for a tiny 16pt icon.
   private func monthNavButton(
     systemName: String,
@@ -144,7 +144,7 @@ struct TimelineCalendarPopover: View {
   private var weekdayRow: some View {
     // `id: \.self` on ["S","M","T","W","T","F","S"] duplicates the "T" and
     // "S" IDs — SwiftUI logs "the ID T occurs multiple times" and the diff
-    // becomes undefined. Keying by index is correct here: labels are
+    // becomes undefined. Keying by index is correct 这里: labels are
     // position-bound, not identity-bound.
     let labels = weekdayLabels()
     return HStack(spacing: Self.columnSpacing) {
@@ -158,7 +158,7 @@ struct TimelineCalendarPopover: View {
   }
 
   // Fixed column widths keep weekday labels and dates perfectly aligned.
-  private func dateGrid(weeks: [[CalendarDay]]) -> some View {
+  private func dateGrid(weeks: [[日历Day]]) -> some View {
     return VStack(alignment: .leading, spacing: Self.rowSpacing) {
       ForEach(weeks.indices, id: \.self) { rowIndex in
         let week = weeks[rowIndex]
@@ -188,8 +188,8 @@ struct TimelineCalendarPopover: View {
     }
   }
 
-  private func dateCell(day: CalendarDay, isInSelectedWeek: Bool) -> some View {
-    let calendar = Self.mondayCalendar
+  private func dateCell(day: 日历Day, isInSelectedWeek: Bool) -> some View {
+    let calendar = Self.monday日历
     let isSelected = calendar.isDate(day.date, inSameDayAs: selectedDate)
     let showsSelectedDayCircle = isSelected && !highlightsSelectedWeek
     let isDisabled: Bool = {
@@ -232,7 +232,7 @@ struct TimelineCalendarPopover: View {
 
   // MARK: - Data & navigation
 
-  private struct CalendarDay: Identifiable {
+  private struct 日历Day: Identifiable {
     let date: Date
     let label: String
     let isCurrentMonth: Bool
@@ -241,7 +241,7 @@ struct TimelineCalendarPopover: View {
   }
 
   private func shiftMonth(by months: Int) {
-    let calendar = Self.mondayCalendar
+    let calendar = Self.monday日历
     if let newMonth = calendar.date(byAdding: .month, value: months, to: displayMonth) {
       displayMonth = newMonth
     }
@@ -249,7 +249,7 @@ struct TimelineCalendarPopover: View {
 
   // Locale weekday symbols, rotated so Monday appears first.
   private func weekdayLabels() -> [String] {
-    let calendar = Self.mondayCalendar
+    let calendar = Self.monday日历
     let symbols = calendar.veryShortWeekdaySymbols
     let offset = calendar.firstWeekday - 1
     guard offset >= 0, offset < symbols.count else { return symbols }
@@ -258,31 +258,31 @@ struct TimelineCalendarPopover: View {
 
   // Build the visible month grid with leading/trailing days as needed to fill
   // complete Monday-Sunday weeks.
-  private func daysToDisplay() -> [CalendarDay] {
-    let calendar = Self.mondayCalendar
+  private func daysToDisplay() -> [日历Day] {
+    let calendar = Self.monday日历
     let monthStart = displayMonth
     guard let monthRange = calendar.range(of: .day, in: .month, for: monthStart) else {
       return []
     }
 
     let firstWeekday = calendar.component(.weekday, from: monthStart)
-    let leadingCount = (firstWeekday - calendar.firstWeekday + 7) % 7
+    let leading数量 = (firstWeekday - calendar.firstWeekday + 7) % 7
 
-    var days: [CalendarDay] = []
+    var days: [日历Day] = []
 
     // Leading days from the previous month.
-    if leadingCount > 0,
+    if leading数量 > 0,
       let prevMonthStart = calendar.date(byAdding: .month, value: -1, to: monthStart),
       let prevMonthRange = calendar.range(of: .day, in: .month, for: prevMonthStart)
     {
       let prevLast = prevMonthRange.count
-      let startDay = prevLast - leadingCount + 1
-      for offset in 0..<leadingCount {
+      let startDay = prevLast - leading数量 + 1
+      for offset in 0..<leading数量 {
         if let date = calendar.date(
           byAdding: .day, value: startDay - 1 + offset, to: prevMonthStart)
         {
           days.append(
-            CalendarDay(
+            日历Day(
               date: date,
               label: "\(calendar.component(.day, from: date))",
               isCurrentMonth: false
@@ -296,7 +296,7 @@ struct TimelineCalendarPopover: View {
     for offset in 0..<monthRange.count {
       if let date = calendar.date(byAdding: .day, value: offset, to: monthStart) {
         days.append(
-          CalendarDay(
+          日历Day(
             date: date,
             label: "\(calendar.component(.day, from: date))",
             isCurrentMonth: true
@@ -313,7 +313,7 @@ struct TimelineCalendarPopover: View {
       for offset in 0..<trailingNeeded {
         if let date = calendar.date(byAdding: .day, value: offset, to: nextMonthStart) {
           days.append(
-            CalendarDay(
+            日历Day(
               date: date,
               label: "\(calendar.component(.day, from: date))",
               isCurrentMonth: false
@@ -326,20 +326,20 @@ struct TimelineCalendarPopover: View {
     return days
   }
 
-  private func weeksToDisplay() -> [[CalendarDay]] {
+  private func weeksToDisplay() -> [[日历Day]] {
     let days = daysToDisplay()
     return stride(from: 0, to: days.count, by: 7).map { start in
       Array(days[start..<min(start + 7, days.count)])
     }
   }
 
-  private func isWeekSelected(_ week: [CalendarDay]) -> Bool {
+  private func isWeekSelected(_ week: [日历Day]) -> Bool {
     guard let firstDay = week.first else { return false }
     return isDateInSelectedWeek(firstDay.date)
   }
 
   private func isDateInSelectedWeek(_ date: Date) -> Bool {
-    let calendar = Self.mondayCalendar
+    let calendar = Self.monday日历
     return calendar.isDate(date, equalTo: selectedDate, toGranularity: .weekOfYear)
   }
 }

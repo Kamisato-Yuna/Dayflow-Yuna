@@ -121,7 +121,7 @@ extension JournalHeroView {
       // Fade out toward the bottom to mirror the Figma glow
       RoundedRectangle(cornerRadius: 20, style: .continuous)
         .fill(JournalHeroTokens.entryFade)
-        .allowsHitTesting(false)
+        .allowsHit测试ing(false)
     }
     .padding(.horizontal, 6)
     .frame(maxWidth: .infinity, alignment: .leading)

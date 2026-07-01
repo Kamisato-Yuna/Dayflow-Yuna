@@ -1,12 +1,12 @@
 //
-//  OnboardingPrototypeFlow.swift
+//  开启boardingPrototypeFlow.swift
 //  Dayflow
 //
 
 import AVFoundation
 import SwiftUI
 
-enum OnboardingPrototypeStep: Int, CaseIterable, Identifiable {
+enum 开启boardingPrototypeStep: Int, CaseIterable, Identifiable {
   case introVideo
   case roleSelection
   case preferences
@@ -34,23 +34,23 @@ enum OnboardingPrototypeStep: Int, CaseIterable, Identifiable {
     "onboarding_\(analyticsName)"
   }
 
-  var next: OnboardingPrototypeStep? {
-    OnboardingPrototypeStep(rawValue: rawValue + 1)
+  var next: 开启boardingPrototypeStep? {
+    开启boardingPrototypeStep(rawValue: rawValue + 1)
   }
 }
 
-struct OnboardingPrototypeFlow: View {
+struct 开启boardingPrototypeFlow: View {
   private let flowVariant: String
   private let entryPoint: String
 
-  @State private var currentStep: OnboardingPrototypeStep
+  @State private var currentStep: 开启boardingPrototypeStep
   @State private var flowID = UUID().uuidString.lowercased()
   @State private var hasTrackedStart = false
   @State private var hasTrackedCompletion = false
   @State private var userHasPaidAI: Bool?
 
   init(
-    initialStep: OnboardingPrototypeStep = .introVideo,
+    initialStep: 开启boardingPrototypeStep = .introVideo,
     flowVariant: String = "prototype_v1",
     entryPoint: String = "preview"
   ) {
@@ -66,22 +66,22 @@ struct OnboardingPrototypeFlow: View {
 
       switch currentStep {
       case .introVideo:
-        OnboardingPrototypeVideoIntroStep(
-          videoName: "DayflowOnboarding",
+        开启boardingPrototypeVideoIntroStep(
+          videoName: "Dayflow开启boarding",
           onPlaybackStarted: {
-            OnboardingPrototypeAnalytics.trackVideoStarted(
+            开启boardingPrototypeAnalytics.trackVideoStarted(
               step: .introVideo,
               flowID: flowID,
               flowVariant: flowVariant,
-              assetName: "DayflowOnboarding.mp4"
+              assetName: "Dayflow开启boarding.mp4"
             )
           },
           onPlaybackCompleted: { reason in
-            OnboardingPrototypeAnalytics.trackVideoCompleted(
+            开启boardingPrototypeAnalytics.trackVideoCompleted(
               step: .introVideo,
               flowID: flowID,
               flowVariant: flowVariant,
-              assetName: "DayflowOnboarding.mp4",
+              assetName: "Dayflow开启boarding.mp4",
               completionReason: reason
             )
             advance(from: .introVideo, method: "video_\(reason)")
@@ -89,59 +89,59 @@ struct OnboardingPrototypeFlow: View {
         )
 
       case .roleSelection:
-        OnboardingPrototypeRoleSelectionStep(
+        开启boardingPrototypeRoleSelectionStep(
           onContinue: { selectedRole in
-            OnboardingPrototypeAnalytics.trackStepCompleted(
+            开启boardingPrototypeAnalytics.trackStepCompleted(
               step: .roleSelection,
               flowID: flowID,
               flowVariant: flowVariant,
               advanceMethod: "continue_button",
               extraProps: ["selected_role": selectedRole]
             )
-            if let nextStep = OnboardingPrototypeStep.roleSelection.next {
+            if let nextStep = 开启boardingPrototypeStep.roleSelection.next {
               currentStep = nextStep
             }
           }
         )
 
       case .preferences:
-        OnboardingPrototypePreferencesStep(
+        开启boardingPrototypePreferencesStep(
           onContinue: { hasPaidAI in
             userHasPaidAI = hasPaidAI
-            OnboardingPrototypeAnalytics.trackStepCompleted(
+            开启boardingPrototypeAnalytics.trackStepCompleted(
               step: .preferences,
               flowID: flowID,
               flowVariant: flowVariant,
               advanceMethod: hasPaidAI ? "yes_button" : "no_button",
               extraProps: ["has_paid_ai": hasPaidAI]
             )
-            if let nextStep = OnboardingPrototypeStep.preferences.next {
+            if let nextStep = 开启boardingPrototypeStep.preferences.next {
               currentStep = nextStep
             }
           }
         )
 
       case .chooseProvider:
-        OnboardingPrototypeChooseProviderStep(
+        开启boardingPrototypeChooseProviderStep(
           hasPaidAI: userHasPaidAI ?? false,
           flowID: flowID,
           flowVariant: flowVariant,
           onSelect: { provider in
-            OnboardingPrototypeAnalytics.trackStepCompleted(
+            开启boardingPrototypeAnalytics.trackStepCompleted(
               step: .chooseProvider,
               flowID: flowID,
               flowVariant: flowVariant,
               advanceMethod: "select_button",
               extraProps: ["selected_provider": provider]
             )
-            if let nextStep = OnboardingPrototypeStep.chooseProvider.next {
+            if let nextStep = 开启boardingPrototypeStep.chooseProvider.next {
               currentStep = nextStep
             }
           }
         )
 
       case .placeholder:
-        OnboardingPrototypePlaceholderStep(
+        开启boardingPrototypePlaceholderStep(
           onReplayVideo: {
             currentStep = .introVideo
           },
@@ -153,7 +153,7 @@ struct OnboardingPrototypeFlow: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background {
-      Image("OnboardingBackgroundv2")
+      Image("开启boardingBackgroundv2")
         .resizable()
         .aspectRatio(contentMode: .fill)
         .ignoresSafeArea()
@@ -162,11 +162,11 @@ struct OnboardingPrototypeFlow: View {
     .onAppear {
       guard !hasTrackedStart else { return }
       hasTrackedStart = true
-      OnboardingPrototypeAnalytics.trackFlowStarted(
+      开启boardingPrototypeAnalytics.trackFlowStarted(
         flowID: flowID,
         flowVariant: flowVariant,
         entryPoint: entryPoint,
-        stepCount: OnboardingPrototypeStep.allCases.count
+        step数量: 开启boardingPrototypeStep.allCases.count
       )
       trackStepViewed(currentStep)
     }
@@ -176,16 +176,16 @@ struct OnboardingPrototypeFlow: View {
     }
   }
 
-  private func trackStepViewed(_ step: OnboardingPrototypeStep) {
-    OnboardingPrototypeAnalytics.trackStepViewed(
+  private func trackStepViewed(_ step: 开启boardingPrototypeStep) {
+    开启boardingPrototypeAnalytics.trackStepViewed(
       step: step,
       flowID: flowID,
       flowVariant: flowVariant
     )
   }
 
-  private func advance(from step: OnboardingPrototypeStep, method: String) {
-    OnboardingPrototypeAnalytics.trackStepCompleted(
+  private func advance(from step: 开启boardingPrototypeStep, method: String) {
+    开启boardingPrototypeAnalytics.trackStepCompleted(
       step: step,
       flowID: flowID,
       flowVariant: flowVariant,
@@ -199,24 +199,24 @@ struct OnboardingPrototypeFlow: View {
 
     guard !hasTrackedCompletion else { return }
     hasTrackedCompletion = true
-    OnboardingPrototypeAnalytics.trackFlowCompleted(
+    开启boardingPrototypeAnalytics.trackFlowCompleted(
       flowID: flowID,
       flowVariant: flowVariant,
-      stepCount: OnboardingPrototypeStep.allCases.count
+      step数量: 开启boardingPrototypeStep.allCases.count
     )
   }
 }
 
 // MARK: - Placeholder Step
 
-private struct OnboardingPrototypePlaceholderStep: View {
+private struct 开启boardingPrototypePlaceholderStep: View {
   let onReplayVideo: () -> Void
   let onFinish: () -> Void
 
   var body: some View {
     VStack(spacing: 24) {
       VStack(spacing: 10) {
-        Text("Prototype checkpoint")
+        Text("原型检查点")
           .font(.custom("InstrumentSerif-Regular", size: 44))
           .foregroundColor(.black.opacity(0.9))
 
@@ -233,7 +233,7 @@ private struct OnboardingPrototypePlaceholderStep: View {
         DayflowSurfaceButton(
           action: onReplayVideo,
           content: {
-            Text("Replay video")
+            Text("重放视频")
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           },
@@ -250,7 +250,7 @@ private struct OnboardingPrototypePlaceholderStep: View {
         DayflowSurfaceButton(
           action: onFinish,
           content: {
-            Text("Finish prototype")
+            Text("完成原型")
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           },
@@ -270,7 +270,7 @@ private struct OnboardingPrototypePlaceholderStep: View {
   }
 }
 
-enum OnboardingPrototypeAnalytics {
+enum 开启boardingPrototypeAnalytics {
   private static let isPreviewRuntime =
     ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 
@@ -278,7 +278,7 @@ enum OnboardingPrototypeAnalytics {
     flowID: String,
     flowVariant: String,
     entryPoint: String,
-    stepCount: Int
+    step数量: Int
   ) {
     capture(
       "onboarding_started",
@@ -286,13 +286,13 @@ enum OnboardingPrototypeAnalytics {
         "flow_id": flowID,
         "flow_variant": flowVariant,
         "entry_point": entryPoint,
-        "step_count": stepCount,
+        "step_count": step数量,
       ]
     )
   }
 
   static func trackStepViewed(
-    step: OnboardingPrototypeStep,
+    step: 开启boardingPrototypeStep,
     flowID: String,
     flowVariant: String
   ) {
@@ -302,7 +302,7 @@ enum OnboardingPrototypeAnalytics {
   }
 
   static func trackStepCompleted(
-    step: OnboardingPrototypeStep,
+    step: 开启boardingPrototypeStep,
     flowID: String,
     flowVariant: String,
     advanceMethod: String,
@@ -315,7 +315,7 @@ enum OnboardingPrototypeAnalytics {
   }
 
   static func trackVideoStarted(
-    step: OnboardingPrototypeStep,
+    step: 开启boardingPrototypeStep,
     flowID: String,
     flowVariant: String,
     assetName: String
@@ -328,7 +328,7 @@ enum OnboardingPrototypeAnalytics {
   }
 
   static func trackVideoCompleted(
-    step: OnboardingPrototypeStep,
+    step: 开启boardingPrototypeStep,
     flowID: String,
     flowVariant: String,
     assetName: String,
@@ -343,14 +343,14 @@ enum OnboardingPrototypeAnalytics {
   static func trackFlowCompleted(
     flowID: String,
     flowVariant: String,
-    stepCount: Int
+    step数量: Int
   ) {
     capture(
       "onboarding_completed",
       [
         "flow_id": flowID,
         "flow_variant": flowVariant,
-        "step_count": stepCount,
+        "step_count": step数量,
       ]
     )
   }
@@ -374,7 +374,7 @@ enum OnboardingPrototypeAnalytics {
   }
 
   static func trackDayflowProStepViewed(
-    step: DayflowProOnboardingStep,
+    step: DayflowPro开启boardingStep,
     flowID: String,
     flowVariant: String,
     hasPaidAI: Bool
@@ -403,7 +403,7 @@ enum OnboardingPrototypeAnalytics {
     _ eventName: String,
     action: String,
     result: DayflowAuthActionResult,
-    step: DayflowProOnboardingStep,
+    step: DayflowPro开启boardingStep,
     flowID: String,
     flowVariant: String,
     hasPaidAI: Bool
@@ -424,7 +424,7 @@ enum OnboardingPrototypeAnalytics {
   }
 
   private static func stepProps(
-    step: OnboardingPrototypeStep,
+    step: 开启boardingPrototypeStep,
     flowID: String,
     flowVariant: String
   ) -> [String: Any] {
@@ -433,12 +433,12 @@ enum OnboardingPrototypeAnalytics {
       "flow_variant": flowVariant,
       "step": step.analyticsName,
       "step_index": step.rawValue + 1,
-      "step_count": OnboardingPrototypeStep.allCases.count,
+      "step_count": 开启boardingPrototypeStep.allCases.count,
     ]
   }
 
   private static func dayflowProProps(
-    step: DayflowProOnboardingStep?,
+    step: DayflowPro开启boardingStep?,
     flowID: String,
     flowVariant: String,
     hasPaidAI: Bool,
@@ -468,29 +468,29 @@ enum OnboardingPrototypeAnalytics {
   }
 }
 
-#Preview("Onboarding Prototype") {
-  OnboardingPrototypeFlow()
+#Preview("开启boarding Prototype") {
+  开启boardingPrototypeFlow()
     .frame(
       width: 900, height: 600
     )
 }
 
-#Preview("Onboarding Prototype Role Selection") {
-  OnboardingPrototypeFlow(initialStep: .roleSelection)
+#Preview("开启boarding Prototype Role Selection") {
+  开启boardingPrototypeFlow(initialStep: .roleSelection)
     .frame(width: 1200, height: 800)
 }
 
-#Preview("Onboarding Prototype Preferences") {
-  OnboardingPrototypeFlow(initialStep: .preferences)
+#Preview("开启boarding Prototype Preferences") {
+  开启boardingPrototypeFlow(initialStep: .preferences)
     .frame(width: 1200, height: 800)
 }
 
-#Preview("Onboarding Prototype Choose Provider") {
-  OnboardingPrototypeFlow(initialStep: .chooseProvider)
+#Preview("开启boarding Prototype Choose Provider") {
+  开启boardingPrototypeFlow(initialStep: .chooseProvider)
     .frame(width: 1200, height: 800)
 }
 
-#Preview("Onboarding Prototype Placeholder") {
-  OnboardingPrototypeFlow(initialStep: .placeholder)
+#Preview("开启boarding Prototype Placeholder") {
+  开启boardingPrototypeFlow(initialStep: .placeholder)
     .frame(width: 600, height: 400)
 }

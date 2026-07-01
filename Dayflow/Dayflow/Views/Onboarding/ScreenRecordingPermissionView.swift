@@ -1,5 +1,5 @@
 //
-//  ScreenRecordingPermissionView.swift
+//  ScreenRecording权限View.swift
 //  Dayflow
 //
 //  Screen recording permission request using idiomatic ScreenCaptureKit approach
@@ -10,15 +10,15 @@ import CoreGraphics
 import ScreenCaptureKit
 import SwiftUI
 
-struct ScreenRecordingPermissionView: View {
+struct ScreenRecording权限View: View {
   var onBack: () -> Void
   var onNext: () -> Void
 
-  @State private var permissionState: PermissionState = .notRequested
-  @State private var isCheckingPermission = false
+  @State private var permissionState: 权限State = .notRequested
+  @State private var isChecking权限 = false
   @State private var initiatedFlow = false
 
-  enum PermissionState {
+  enum 权限State {
     case notRequested
     case granted
     case needsAction  // requested or settings opened, awaiting quit & reopen / toggle
@@ -32,11 +32,11 @@ struct ScreenRecordingPermissionView: View {
       HStack(alignment: .top, spacing: 60) {
         // Left side — text and controls
         VStack(alignment: .leading, spacing: 10) {
-          Text("Last step!")
+          Text("最后一步！")
             .font(.custom("Figtree-Bold", size: 16))
             .foregroundColor(Color(hex: "F96E00"))
 
-          Text("Permission")
+          Text("权限")
             .font(.custom("InstrumentSerif-Regular", size: 28))
             .foregroundColor(.black)
 
@@ -84,7 +84,7 @@ struct ScreenRecordingPermissionView: View {
             case .notRequested:
               EmptyView()
             case .granted:
-              Text("✓ Permission granted! Click Next to continue.")
+              Text("✓ 权限 granted! Click Next to continue.")
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(.green)
             case .needsAction:
@@ -98,14 +98,14 @@ struct ScreenRecordingPermissionView: View {
           Group {
             switch permissionState {
             case .notRequested:
-              Button(action: requestPermission) {
+              Button(action: request权限) {
                 HStack(spacing: 6) {
-                  if isCheckingPermission {
+                  if isChecking权限 {
                     ProgressView()
                       .scaleEffect(0.7)
                       .progressViewStyle(CircularProgressViewStyle())
                   }
-                  Text(isCheckingPermission ? "Checking..." : "打开系统设置")
+                  Text(isChecking权限 ? "检查中…" : "打开系统设置")
                     .font(.custom("Figtree-SemiBold", size: 12))
                     .tracking(-0.48)
                     .foregroundColor(brownAccent)
@@ -131,7 +131,7 @@ struct ScreenRecordingPermissionView: View {
                 RoundedRectangle(cornerRadius: 6)
                   .stroke(Color(hex: "FFBC80"), lineWidth: 1)
               )
-              .disabled(isCheckingPermission)
+              .disabled(isChecking权限)
             case .needsAction:
               HStack {
                 Spacer(minLength: 0)
@@ -168,7 +168,7 @@ struct ScreenRecordingPermissionView: View {
                   )
 
                   Button(action: quitAndReopen) {
-                    Text("Quit & Reopen")
+                    Text("退出并重启")
                       .font(.custom("Figtree-SemiBold", size: 12))
                       .tracking(-0.48)
                       .foregroundColor(brownAccent)
@@ -195,7 +195,7 @@ struct ScreenRecordingPermissionView: View {
         Spacer()
 
         // Right side - image
-        if let image = NSImage(named: "ScreenRecordingPermissions") {
+        if let image = NSImage(named: "ScreenRecording权限s") {
           Image(nsImage: image)
             .resizable()
             .aspectRatio(contentMode: .fit)
@@ -261,7 +261,7 @@ struct ScreenRecordingPermissionView: View {
     // Re-check when app becomes active again (e.g., returning from System Settings)
     .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification))
     { _ in
-      // Only transition to granted here; avoid flipping notChecked to denied automatically
+      // 开启ly transition to granted 这里; avoid flipping notChecked to denied automatically
       if CGPreflightScreenCaptureAccess() {
         permissionState = .granted
         Task { @MainActor in AppDelegate.allowTermination = false }
@@ -272,9 +272,9 @@ struct ScreenRecordingPermissionView: View {
     }
   }
 
-  private func requestPermission() {
-    guard !isCheckingPermission else { return }
-    isCheckingPermission = true
+  private func request权限() {
+    guard !isChecking权限 else { return }
+    isChecking权限 = true
     initiatedFlow = true
 
     // This will prompt and register the app with TCC; may return false
@@ -288,7 +288,7 @@ struct ScreenRecordingPermissionView: View {
       AnalyticsService.shared.capture("screen_permission_denied")
       Task { @MainActor in AppDelegate.allowTermination = true }
     }
-    isCheckingPermission = false
+    isChecking权限 = false
   }
 
   private func openSystemSettings() {
@@ -299,7 +299,7 @@ struct ScreenRecordingPermissionView: View {
     {
       _ = NSWorkspace.shared.open(url)
     }
-    // Move to needsAction so we show Quit & Reopen guidance
+    // Move to needsAction so we show 退出并重启 guidance
     if permissionState != .granted { permissionState = .needsAction }
   }
 

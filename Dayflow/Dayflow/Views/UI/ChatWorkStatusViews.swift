@@ -30,7 +30,7 @@ struct WorkStatusCard: View {
         if status.hasDetails {
           Button(action: { showDetails.toggle() }) {
             HStack(spacing: 4) {
-              Text(showDetails ? "Hide details" : "Show details")
+              Text(showDetails ? "收起详情" : "查看详情")
               Image(systemName: showDetails ? "chevron.up" : "chevron.down")
                 .font(.system(size: 9, weight: .semibold))
             }
@@ -89,11 +89,11 @@ struct WorkStatusCard: View {
   var headerTitle: String {
     switch status.stage {
     case .thinking:
-      return "Thinking"
+      return "思考中"
     case .runningTools:
       return "Running tools"
     case .answering:
-      return "Answering"
+      return "正在回答"
     case .error:
       return "Something went wrong"
     }

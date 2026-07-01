@@ -4,7 +4,7 @@ import SwiftUI
 import UserNotifications
 
 extension DailyView {
-  var canFinishDailyProviderOnboarding: Bool {
+  var canFinishDailyProvider开启boarding: Bool {
     guard !(isRefreshingProviderAvailability && providerAvailability.isEmpty) else {
       return false
     }
@@ -32,7 +32,7 @@ extension DailyView {
       return selectedProviderAvailability.detail
     }
 
-    return "Regenerate standup highlights"
+    return "重生成站会亮点"
   }
   func dailyProviderButton(scale: CGFloat) -> some View {
     Button {
@@ -58,12 +58,12 @@ extension DailyView {
     }
     .buttonStyle(DailyCopyPressButtonStyle())
     .disabled(standupRegenerateState == .regenerating)
-    .pointingHandCursorOnHover(
+    .pointingHandCursor开启Hover(
       enabled: standupRegenerateState != .regenerating,
-      reassertOnPressEnd: true
+      reassert开启PressEnd: true
     )
-    .accessibilityLabel(Text("Choose daily recap provider"))
-    .help("Daily recap provider: \(dailyRecapProvider.selectionLabel)")
+    .accessibilityLabel(Text("选择每日复盘来源"))
+    .help("每日复盘来源: \(dailyRecapProvider.selectionLabel)")
     .popover(isPresented: $isShowingProviderPicker, arrowEdge: .bottom) {
       dailyProviderPicker(scale: scale)
         .padding(16)
@@ -76,11 +76,11 @@ extension DailyView {
     VStack(alignment: .leading, spacing: 12 * scale) {
       HStack(alignment: .firstTextBaseline) {
         VStack(alignment: .leading, spacing: 2 * scale) {
-          Text("Daily recap provider")
+          Text("每日复盘来源")
             .font(.custom("InstrumentSerif-Regular", size: 22 * scale))
             .foregroundStyle(Color(hex: "2E221B"))
 
-          Text("Choose how Daily generates this recap, or turn generation off.")
+          Text("选择 Daily 如何生成复盘，或关闭生成功能。")
             .font(.custom("Figtree-Regular", size: 12 * scale))
             .foregroundStyle(Color(hex: "8B6B59"))
         }
@@ -145,7 +145,7 @@ extension DailyView {
           }
           .buttonStyle(.plain)
           .disabled(!availability.isAvailable)
-          .pointingHandCursorOnHover(enabled: availability.isAvailable, reassertOnPressEnd: true)
+          .pointingHandCursor开启Hover(enabled: availability.isAvailable, reassert开启PressEnd: true)
         }
       }
     }
@@ -160,8 +160,8 @@ extension DailyView {
     dailyRecapProvider = provider
     DailyRecapGenerator.shared.persistSelectedProvider(provider)
     isShowingProviderPicker = false
-    standupRegenerateResetTask?.cancel()
-    standupRegenerateResetTask = nil
+    standupRegenerate重置Task?.cancel()
+    standupRegenerate重置Task = nil
     standupRegenerateState = .idle
     loadedStandupDraftDay = nil
     loadedStandupFallbackSourceDay = nil

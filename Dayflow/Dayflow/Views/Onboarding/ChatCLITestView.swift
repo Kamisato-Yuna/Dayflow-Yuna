@@ -2,31 +2,31 @@ import AppKit
 import Foundation
 import SwiftUI
 
-struct ChatCLITestView: View {
+struct ChatCLI测试View: View {
   let selectedTool: CLITool?
-  let onTestComplete: (Bool) -> Void
+  let on测试Complete: (Bool) -> Void
 
   let accentColor = Color(red: 0.25, green: 0.17, blue: 0)
   let successAccentColor = Color(red: 0.34, green: 1, blue: 0.45)
 
-  @State var isTesting = false
+  @State var is测试ing = false
   @State var success = false
   @State var resultMessage: String?
   @State var debugOutput: String?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
-      Text("We'll ask your CLI a simple question to verify it's working and signed in.")
+      Text("我们会给 CLI 发送一条简单的问题，确认它已可用且已登录。")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(SettingsStyle.secondary)
         .fixedSize(horizontal: false, vertical: true)
 
       SettingsPrimaryButton(
-        title: isTesting ? "Testing…" : "Test CLI",
+        title: is测试ing ? "测试ing…" : "测试 CLI",
         systemImage: "bolt.fill",
-        isLoading: isTesting,
+        isLoading: is测试ing,
         isDisabled: selectedTool == nil,
-        action: runTest
+        action: run测试
       )
 
       if selectedTool == nil {
@@ -36,7 +36,7 @@ struct ChatCLITestView: View {
       }
 
       if success {
-        SettingsStatusDot(state: .good, label: "Test successful.")
+        SettingsStatusDot(state: .good, label: "测试 successful.")
       } else if let msg = resultMessage {
         VStack(alignment: .leading, spacing: 8) {
           HStack(alignment: .center, spacing: 10) {
@@ -70,25 +70,25 @@ struct ChatCLITestView: View {
     }
   }
 
-  func runTest() {
-    guard !isTesting else { return }
+  func run测试() {
+    guard !is测试ing else { return }
     guard let tool = selectedTool else {
       resultMessage = "Pick ChatGPT or Claude first."
       return
     }
 
-    isTesting = true
+    is测试ing = true
     success = false
     resultMessage = nil
     debugOutput = nil
     let testStartedAt = Date()
 
-    captureChatCLITestStarted(for: tool)
+    captureChatCLI测试Started(for: tool)
 
     Task.detached {
       let outcome: Result<CLIResult, Error> = {
         do {
-          return .success(try performTest(for: tool))
+          return .success(try perform测试(for: tool))
         } catch {
           return .failure(error)
         }
@@ -96,7 +96,7 @@ struct ChatCLITestView: View {
 
       await MainActor.run {
         let durationMs = Int(Date().timeIntervalSince(testStartedAt) * 1000)
-        isTesting = false
+        is测试ing = false
         switch outcome {
         case .success(let cliResult):
           // Build debug output for troubleshooting
@@ -139,7 +139,7 @@ struct ChatCLITestView: View {
             let stderrTrimmed = cliResult.stderr.trimmingCharacters(in: .whitespacesAndNewlines)
             if let authError = detectAuthError(cliResult, for: tool) {
               resultMessage = authError
-              captureChatCLITestFailed(
+              captureChatCLI测试Failed(
                 for: tool,
                 durationMs: durationMs,
                 failureReason: "auth_error",
@@ -157,7 +157,7 @@ struct ChatCLITestView: View {
               } else {
                 resultMessage = "CLI error: \(stderrTrimmed.prefix(150))"
               }
-              captureChatCLITestFailed(
+              captureChatCLI测试Failed(
                 for: tool,
                 durationMs: durationMs,
                 failureReason: stderrTrimmed.isEmpty
@@ -165,7 +165,7 @@ struct ChatCLITestView: View {
                 exitCode: Int(cliResult.exitCode)
               )
             }
-            onTestComplete(false)
+            on测试Complete(false)
             return
           }
 
@@ -174,14 +174,14 @@ struct ChatCLITestView: View {
           success = passed
           if passed {
             resultMessage = "CLI is working!"
-            captureChatCLITestSucceeded(
+            captureChatCLI测试Succeeded(
               for: tool,
               durationMs: durationMs,
               exitCode: Int(cliResult.exitCode)
             )
           } else if cliResult.stdout.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             resultMessage = "CLI returned empty response. Make sure you're signed in."
-            captureChatCLITestFailed(
+            captureChatCLI测试Failed(
               for: tool,
               durationMs: durationMs,
               failureReason: "empty_response",
@@ -190,14 +190,14 @@ struct ChatCLITestView: View {
           } else {
             let preview = cliResult.stdout.prefix(100)
             resultMessage = "Got: \"\(preview)\" — expected '4'"
-            captureChatCLITestFailed(
+            captureChatCLI测试Failed(
               for: tool,
               durationMs: durationMs,
               failureReason: "unexpected_output",
               exitCode: Int(cliResult.exitCode)
             )
           }
-          onTestComplete(passed)
+          on测试Complete(passed)
         case .failure(let error):
           success = false
           resultMessage = error.localizedDescription
@@ -221,38 +221,38 @@ struct ChatCLITestView: View {
           }
 
           debugOutput = debugParts.joined(separator: "\n\n")
-          captureChatCLITestFailed(
+          captureChatCLI测试Failed(
             for: tool,
             durationMs: durationMs,
             failureReason: analyticsFailureReason(for: nsError),
             errorCode: nsError.code,
             errorDomain: nsError.domain
           )
-          onTestComplete(false)
+          on测试Complete(false)
         }
       }
     }
   }
 
-  func captureChatCLITestStarted(for tool: CLITool) {
+  func captureChatCLI测试Started(for tool: CLITool) {
     AnalyticsService.shared.capture(
       "chat_cli_test_started",
-      chatCLITestAnalyticsProperties(for: tool)
+      chatCLI测试AnalyticsProperties(for: tool)
     )
   }
 
-  func captureChatCLITestSucceeded(
+  func captureChatCLI测试Succeeded(
     for tool: CLITool,
     durationMs: Int,
     exitCode: Int
   ) {
-    var props = chatCLITestAnalyticsProperties(for: tool)
+    var props = chatCLI测试AnalyticsProperties(for: tool)
     props["duration_ms"] = durationMs
     props["exit_code"] = exitCode
     AnalyticsService.shared.capture("chat_cli_test_succeeded", props)
   }
 
-  func captureChatCLITestFailed(
+  func captureChatCLI测试Failed(
     for tool: CLITool,
     durationMs: Int,
     failureReason: String,
@@ -260,7 +260,7 @@ struct ChatCLITestView: View {
     errorCode: Int? = nil,
     errorDomain: String? = nil
   ) {
-    var props = chatCLITestAnalyticsProperties(for: tool)
+    var props = chatCLI测试AnalyticsProperties(for: tool)
     props["duration_ms"] = durationMs
     props["failure_reason"] = failureReason
     if let exitCode {
@@ -275,7 +275,7 @@ struct ChatCLITestView: View {
     AnalyticsService.shared.capture("chat_cli_test_failed", props)
   }
 
-  func chatCLITestAnalyticsProperties(for tool: CLITool) -> [String: Any] {
+  func chatCLI测试AnalyticsProperties(for tool: CLITool) -> [String: Any] {
     [
       "provider": "chatgpt_claude",
       "tool": tool.rawValue,
@@ -284,7 +284,7 @@ struct ChatCLITestView: View {
   }
 
   func analyticsFailureReason(for error: NSError) -> String {
-    if error.domain == "ChatCLITest" && error.code == 1 {
+    if error.domain == "ChatCLI测试" && error.code == 1 {
       return "cli_not_found"
     }
     return "execution_error"
@@ -296,10 +296,10 @@ struct ChatCLITestView: View {
     NSPasteboard.general.setString(debug, forType: .string)
   }
 
-  func performTest(for tool: CLITool) throws -> CLIResult {
+  func perform测试(for tool: CLITool) throws -> CLIResult {
     guard CLIDetector.isInstalled(tool) else {
       throw NSError(
-        domain: "ChatCLITest", code: 1,
+        domain: "ChatCLI测试", code: 1,
         userInfo: [
           NSLocalizedDescriptionKey:
             "\(tool.shortName) CLI not found. Install it and run '\(tool == .codex ? "codex auth" : "claude login")' in Terminal."
