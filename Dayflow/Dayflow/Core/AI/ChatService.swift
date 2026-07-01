@@ -714,7 +714,7 @@ final class ChatService: ObservableObject {
 
       Current date: \(currentDate)
       Current time: \(currentTime)
-      Day boundary: Days start at 4:00 AM (not midnight). "Yesterday" means the previous 4 AM–4 AM window.
+      Day boundary: Days start at 4:00 AM (not midnight). "昨天" means the previous 4 AM–4 AM window.
 
       ---
 

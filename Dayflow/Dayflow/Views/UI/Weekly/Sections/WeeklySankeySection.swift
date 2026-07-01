@@ -982,7 +982,7 @@ private enum WeeklySankeyModelFactory {
     return build(
       id: "figma-baseline",
       seedLabel: "Figma baseline",
-      sourceName: "Weekly",
+      sourceName: "周报",
       categories: categoryTemplates,
       apps: apps,
       links: links
@@ -1067,7 +1067,7 @@ private enum WeeklySankeyModelFactory {
     return build(
       id: "random-\(seed)",
       seedLabel: "Seed \(seed)",
-      sourceName: "Weekly",
+      sourceName: "周报",
       categories: categories,
       apps: apps,
       links: links

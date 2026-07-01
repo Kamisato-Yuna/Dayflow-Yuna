@@ -18,7 +18,7 @@ enum WeeklyAccessNotificationState: Equatable {
     case .denied:
       return "Open notification settings"
     case .failed:
-      return "Try again"
+      return "重试"
     }
   }
 
@@ -478,7 +478,7 @@ extension WeeklySankeySnapshot {
   fileprivate static let weeklyAccessPreview = WeeklySankeySnapshot(
     id: "weekly-access-preview",
     seedLabel: "Weekly preview",
-    sourceName: "Weekly",
+    sourceName: "周报",
     categories: [
       .init(id: "research", name: "Research", minutes: 430, colorHex: "93BCFF"),
       .init(id: "communication", name: "Communication", minutes: 360, colorHex: "6CDACD"),

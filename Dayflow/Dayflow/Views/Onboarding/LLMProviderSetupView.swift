@@ -41,7 +41,7 @@ struct LLMProviderSetupView: View {
                 .foregroundColor(.black.opacity(0.7))
                 .frame(width: 20, alignment: .center)
 
-              Text("Back")
+              Text("返回")
                 .font(.custom("Figtree", size: 15))
                 .fontWeight(.medium)
                 .foregroundColor(.black.opacity(0.7))
@@ -112,7 +112,7 @@ struct LLMProviderSetupView: View {
         return "Test Required"
       }
     }
-    return "Next"
+    return "下一步"
   }
 
   @ViewBuilder
@@ -143,7 +143,7 @@ struct LLMProviderSetupView: View {
         content: {
           HStack(spacing: 6) {
             Text(nextButtonText).font(.custom("Figtree", size: 14)).fontWeight(.semibold)
-            if nextButtonText == "Next" {
+            if nextButtonText == "下一步" {
               Image(systemName: "chevron.right").font(.system(size: 12, weight: .medium))
             }
           }

@@ -90,7 +90,7 @@ struct SettingsOtherTabView: View {
           }
 
         SettingsSecondaryButton(
-          title: viewModel.isOutputLanguageOverrideSaved ? "Saved" : "Save",
+          title: viewModel.isOutputLanguageOverrideSaved ? "Saved" : "保存",
           systemImage: viewModel.isOutputLanguageOverrideSaved
             ? "checkmark" : nil,
           isDisabled: viewModel.isOutputLanguageOverrideSaved,

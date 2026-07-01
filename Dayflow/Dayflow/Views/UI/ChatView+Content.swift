@@ -249,7 +249,7 @@ extension ChatView {
         }
 
         HStack(spacing: 8) {
-          Button("Save") { saveMemoryDraft() }
+          Button("保存") { saveMemoryDraft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
             .foregroundColor(isMemoryDirty ? Color(hex: "F96E00") : Color(hex: "999999"))

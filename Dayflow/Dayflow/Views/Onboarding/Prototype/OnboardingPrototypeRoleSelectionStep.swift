@@ -103,7 +103,7 @@ struct OnboardingPrototypeRoleSelectionStep: View {
           }
         },
         content: {
-          Text("Continue")
+          Text("继续")
             .font(.custom("Figtree", size: 14))
             .fontWeight(.semibold)
         },

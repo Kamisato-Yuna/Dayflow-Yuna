@@ -44,7 +44,7 @@ struct SettingsAccountSection: View {
 
   private var accountSection: some View {
     SettingsSection(
-      title: "Account",
+      title: "账号",
       subtitle: "Sign in once to keep Dayflow Pro and cloud features attached to this Mac."
     ) {
       VStack(alignment: .leading, spacing: 0) {
@@ -84,7 +84,7 @@ struct SettingsAccountSection: View {
 
   private var currentPlanSection: some View {
     SettingsSection(
-      title: "Account",
+      title: "账号",
       subtitle: "Manage your Dayflow account and subscription."
     ) {
       ActiveProCard(
@@ -294,7 +294,7 @@ private struct ActiveProCard: View {
 
   private var dateLabel: String {
     if formattedEntitlementDate(entitlement.currentPeriodEnd) == nil {
-      return "Status"
+      return "状态"
     }
 
     return isGifted ? "Access through" : "Renews"
@@ -595,7 +595,7 @@ private struct ReferralProgramCard: View {
         )
 
         ReferralMiniButton(
-          title: copiedReferralLink ? "Copied" : "Copy",
+          title: copiedReferralLink ? "已复制" : "复制",
           style: .copy,
           isDisabled: summary == nil,
           action: copyAction
@@ -900,7 +900,7 @@ private struct DayflowSignInSheet: View {
 
       HStack(spacing: 10) {
         SettingsPrimaryButton(
-          title: "Continue",
+          title: "继续",
           systemImage: "arrow.right",
           isLoading: authManager.isBusy,
           isDisabled: emailAddressTrimmed.isEmpty,
@@ -908,7 +908,7 @@ private struct DayflowSignInSheet: View {
         )
 
         SettingsSecondaryButton(
-          title: "Cancel",
+          title: "取消",
           isDisabled: authManager.isBusy,
           action: onDismiss
         )

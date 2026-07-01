@@ -591,7 +591,7 @@ struct WeekTimelineGridView: View {
         .font(.custom("Figtree", size: 10).weight(.medium))
         .foregroundColor(Color(hex: "888D95"))
     case .stopped:
-      Label("Resume", systemImage: "play.fill")
+      Label("继续", systemImage: "play.fill")
         .font(.custom("Figtree", size: 10).weight(.medium))
         .foregroundColor(Color(hex: "888D95"))
     }

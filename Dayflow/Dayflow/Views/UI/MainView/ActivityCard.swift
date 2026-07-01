@@ -113,7 +113,7 @@ struct ActivityCard: View {
         } else {
           if appState.isRecording {
             VStack(spacing: 6) {
-              Text("No cards yet")
+              Text("尚无卡片")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.gray.opacity(0.7))
               Text(
@@ -126,7 +126,7 @@ struct ActivityCard: View {
             }
           } else {
             VStack(spacing: 6) {
-              Text("Recording is off")
+              Text("录制已关闭")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.gray.opacity(0.7))
               Text("Dayflow recording is currently turned off, so cards aren’t being produced.")
@@ -398,7 +398,7 @@ struct ActivityCard: View {
           .scaleEffect(0.7)
           .frame(width: 16, height: 16)
 
-        Text("Processing")
+        Text("处理中")
           .font(.custom("Figtree", size: 13))
           .foregroundColor(Color(red: 0.4, green: 0.4, blue: 0.4))
           .lineLimit(1)
@@ -411,7 +411,7 @@ struct ActivityCard: View {
       // Retry button - orange pill
       Button(action: { handleRetry(for: activity) }) {
         HStack(alignment: .center, spacing: 4) {
-          Text("Retry")
+          Text("重试")
             .font(.custom("Figtree", size: 13).weight(.medium))
           Image(systemName: "arrow.clockwise")
             .font(.system(size: 13, weight: .medium))
@@ -482,7 +482,7 @@ struct ActivityCard: View {
               HStack(spacing: 8) {
                 ProgressView()
                   .scaleEffect(0.8)
-                Text("Preparing timelapse...")
+                Text("正在准备延时截图...")
                   .font(.custom("Figtree", size: 12).weight(.semibold))
                   .foregroundColor(.white)
               }

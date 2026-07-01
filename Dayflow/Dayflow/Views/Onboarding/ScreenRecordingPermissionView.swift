@@ -105,7 +105,7 @@ struct ScreenRecordingPermissionView: View {
                       .scaleEffect(0.7)
                       .progressViewStyle(CircularProgressViewStyle())
                   }
-                  Text(isCheckingPermission ? "Checking..." : "Open System Settings")
+                  Text(isCheckingPermission ? "Checking..." : "打开系统设置")
                     .font(.custom("Figtree-SemiBold", size: 12))
                     .tracking(-0.48)
                     .foregroundColor(brownAccent)
@@ -138,7 +138,7 @@ struct ScreenRecordingPermissionView: View {
 
                 HStack(spacing: 12) {
                   Button(action: openSystemSettings) {
-                    Text("Open System Settings")
+                    Text("打开系统设置")
                       .font(.custom("Figtree-SemiBold", size: 12))
                       .tracking(-0.48)
                       .foregroundColor(brownAccent)
@@ -216,7 +216,7 @@ struct ScreenRecordingPermissionView: View {
       HStack(spacing: 15) {
         DayflowSurfaceButton(
           action: onBack,
-          content: { Text("Back").font(.custom("Figtree-Medium", size: 12)).tracking(-0.48) },
+          content: { Text("返回").font(.custom("Figtree-Medium", size: 12)).tracking(-0.48) },
           background: .white,
           foreground: Color(hex: "B6B6B6"),
           borderColor: Color(hex: "B6B6B6"),
@@ -229,7 +229,7 @@ struct ScreenRecordingPermissionView: View {
           action: {
             if permissionState == .granted { onNext() }
           },
-          content: { Text("Next").font(.custom("Figtree-Medium", size: 12)).tracking(-0.48) },
+          content: { Text("下一步").font(.custom("Figtree-Medium", size: 12)).tracking(-0.48) },
           background: permissionState == .granted
             ? Color(hex: "402B00")
             : Color(hex: "402B00").opacity(0.3),

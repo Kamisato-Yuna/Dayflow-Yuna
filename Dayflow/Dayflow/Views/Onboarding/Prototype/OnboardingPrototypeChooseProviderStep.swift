@@ -263,7 +263,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
             dayflowProStep = .email
           }
         } label: {
-          Text("Back")
+          Text("返回")
             .font(.custom("Figtree", size: scaledText(13)))
             .fontWeight(.semibold)
             .foregroundColor(Color(hex: "492304"))
@@ -374,7 +374,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         Spacer()
 
         dayflowProPrimaryButton(
-          title: authManager.isBusy ? "Checking..." : "Continue",
+          title: authManager.isBusy ? "Checking..." : "继续",
           enabled: canVerifyDayflowProCode,
           action: verifyDayflowProCode
         )
@@ -1040,7 +1040,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         }
       },
       content: {
-        Text("Select")
+        Text("选择")
           .font(.custom("Figtree", size: scaledText(14)))
           .fontWeight(.semibold)
           .frame(maxWidth: .infinity)

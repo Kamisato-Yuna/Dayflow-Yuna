@@ -67,10 +67,10 @@ struct OnboardingCategoryStepView: View {
       isPresented: deleteAlertBinding,
       presenting: pendingDeleteCategory
     ) { category in
-      Button("Delete", role: .destructive) {
+      Button("删除", role: .destructive) {
         deleteCategory(category)
       }
-      Button("Cancel", role: .cancel) {
+      Button("取消", role: .cancel) {
         pendingDeleteCategory = nil
       }
     } message: { category in
@@ -296,7 +296,7 @@ struct OnboardingCategoryStepView: View {
 
       // Back button (outlined)
       Button(action: onBack) {
-        Text("Back")
+        Text("返回")
           .font(.custom("Figtree", size: 12).weight(.medium))
           .tracking(-0.48)
           .foregroundColor(Color(hex: "B6B6B6"))
@@ -325,7 +325,7 @@ struct OnboardingCategoryStepView: View {
           ])
         onNext()
       } label: {
-        Text("Next")
+        Text("下一步")
           .font(.custom("Figtree", size: 12).weight(.medium))
           .tracking(-0.48)
           .foregroundColor(.white)

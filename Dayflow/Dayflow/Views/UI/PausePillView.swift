@@ -187,7 +187,7 @@ struct PausePillView: View {
   private var primaryContent: some View {
     HStack(spacing: 4) {
       PillPauseIcon()
-      Text("Pause")
+      Text("暂停")
         .font(pillLabelFont)
         .foregroundColor(Color(hex: "786655"))
         .lineLimit(1)
@@ -211,7 +211,7 @@ struct PausePillView: View {
   private var resumeContent: some View {
     HStack(spacing: 4) {
       PillPlayIcon().offset(x: 0.5)
-      Text("Resume")
+      Text("继续")
         .font(pillLabelFont)
         .foregroundColor(.white)
         .lineLimit(1)

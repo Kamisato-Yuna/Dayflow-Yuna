@@ -83,7 +83,7 @@ struct JournalRemindersView: View {
 
         Spacer()
 
-        Button("Cancel", action: { onCancel?() })
+        Button("取消", action: { onCancel?() })
           .buttonStyle(
             JournalReminderPillButtonStyle(
               background: JournalReminderTokens.cancelFill,
@@ -93,7 +93,7 @@ struct JournalRemindersView: View {
           )
           .journalHoverable()
 
-        Button("Save", action: saveReminders)
+        Button("保存", action: saveReminders)
           .buttonStyle(
             JournalReminderPillButtonStyle(
               background: JournalReminderTokens.saveFill,

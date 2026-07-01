@@ -103,7 +103,7 @@ private struct PauseSection: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       // Header
-      Text("Pause Dayflow")
+      Text("暂停 Dayflow")
         .font(.system(size: 12, weight: .medium))
         .foregroundStyle(.secondary)
         .padding(.horizontal, 5)

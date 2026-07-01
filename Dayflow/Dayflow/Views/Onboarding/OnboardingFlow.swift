@@ -592,7 +592,7 @@ struct WelcomeView: View {
 
           DayflowSurfaceButton(
             action: onStart,
-            content: { Text("Start").font(.custom("Figtree", size: 16)).fontWeight(.semibold) },
+            content: { Text("开始").font(.custom("Figtree", size: 16)).fontWeight(.semibold) },
             background: Color(red: 0.25, green: 0.17, blue: 0),
             foreground: .white,
             borderColor: .clear,
@@ -717,7 +717,7 @@ struct OnboardingPrototypeDownloadReasonStep: View {
           onContinue(selectedInDisplayOrder, detail)
         },
         content: {
-          Text("Continue")
+          Text("继续")
             .font(.custom("Figtree", size: 14))
             .fontWeight(.semibold)
         },
@@ -927,7 +927,7 @@ struct OnboardingPrototypeReferralStep: View {
           onContinue(option, detail)
         },
         content: {
-          Text("Continue")
+          Text("继续")
             .font(.custom("Figtree", size: 14))
             .fontWeight(.semibold)
         },
@@ -982,7 +982,7 @@ struct CompletionView: View {
           onFinish()
         },
         content: {
-          Text("Launch Dayflow")
+          Text("启动 Dayflow")
             .font(.custom("Figtree", size: 16))
             .fontWeight(.semibold)
         },

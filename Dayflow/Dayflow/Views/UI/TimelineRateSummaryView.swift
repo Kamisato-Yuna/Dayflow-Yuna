@@ -138,11 +138,11 @@ struct TimelineRateSummaryView: View {
             .progressViewStyle(CircularProgressViewStyle(tint: .white))
             .transition(transition)
         } else if deleteButtonState == .confirming {
-          Text("Confirm")
+          Text("确认")
             .font(Font.custom("Figtree", size: 12).weight(.medium))
             .transition(transition)
         } else {
-          Text("Delete")
+          Text("删除")
             .font(Font.custom("Figtree", size: 12).weight(.medium))
             .transition(transition)
         }

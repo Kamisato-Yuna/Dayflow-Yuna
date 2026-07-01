@@ -1018,7 +1018,7 @@ struct ColorOrganizerRoot: View {
         .frame(maxWidth: .infinity, alignment: .leading)
 
       HStack(spacing: 16) {
-        SetupSecondaryButton(title: "Back") {
+        SetupSecondaryButton(title: "返回") {
           if supportsDetailsStage {
             withAnimation(.easeInOut(duration: 0.25)) {
               isDraggingColor = false
@@ -1029,7 +1029,7 @@ struct ColorOrganizerRoot: View {
           }
         }
 
-        SetupContinueButton(title: completionButtonTitle ?? "Next", isEnabled: !categories.isEmpty)
+        SetupContinueButton(title: completionButtonTitle ?? "下一步", isEnabled: !categories.isEmpty)
         {
           trackColorsCompletion()
           categoryStore.persist()
@@ -1094,7 +1094,7 @@ struct ColorOrganizerRoot: View {
 
         HStack(spacing: 16) {
           if supportsDetailsStage == false, let onBack {
-            SetupSecondaryButton(title: "Back") {
+            SetupSecondaryButton(title: "返回") {
               commitPendingEditsIfNeeded()
               onBack()
             }
@@ -1102,7 +1102,7 @@ struct ColorOrganizerRoot: View {
 
           addCategoryButton
           Spacer()
-          SetupContinueButton(title: "Next", isEnabled: !categories.isEmpty) {
+          SetupContinueButton(title: "下一步", isEnabled: !categories.isEmpty) {
             commitPendingEditsIfNeeded()
             trackDetailsCompletion()
             categoryStore.persist()

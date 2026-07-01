@@ -75,7 +75,7 @@ struct SettingsRecordingPrivacyTabView: View {
           .padding(.vertical, 20)
           .frame(maxWidth: .infinity, alignment: .center)
       } else if viewModel.filteredApplications.isEmpty {
-        Text("No apps match your search.")
+        Text("未找到匹配的应用。")
           .font(.custom("Figtree", size: 13))
           .foregroundColor(SettingsStyle.secondary)
           .padding(.vertical, 20)

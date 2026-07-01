@@ -30,7 +30,7 @@ extension DailyView {
               .font(.system(size: 12 * scale, weight: .semibold))
               .transition(transition)
           } else {
-            Image("Copy")
+            Image("复制")
               .resizable()
               .interpolation(.high)
               .renderingMode(.template)
@@ -42,12 +42,12 @@ extension DailyView {
         .frame(width: 16 * scale, height: 16 * scale)
 
         ZStack(alignment: .leading) {
-          Text("Copy standup update")
+          Text("复制站会更新")
             .font(.custom("Figtree-Medium", size: 14 * scale))
             .lineLimit(1)
             .opacity(standupCopyState == .copied ? 0 : 1)
 
-          Text("Copied")
+          Text("已复制")
             .font(.custom("Figtree-Medium", size: 14 * scale))
             .lineLimit(1)
             .opacity(standupCopyState == .copied ? 1 : 0)
@@ -78,7 +78,7 @@ extension DailyView {
     .animation(.easeInOut(duration: 0.22), value: standupCopyState)
     .pointingHandCursorOnHover(reassertOnPressEnd: true)
     .accessibilityLabel(
-      Text(standupCopyState == .copied ? "Copied standup update" : "Copy standup update"))
+      Text(standupCopyState == .copied ? "站会更新已复制" : "复制站会更新"))
   }
   func standupRegenerateButton(scale: CGFloat) -> some View {
     let transition = AnyTransition.opacity.combined(with: .scale(scale: 0.5))
@@ -729,14 +729,14 @@ extension DailyView {
     guard let sourceDay else { return "Recent highlights" }
 
     let label = standupDayLabelText(for: sourceDay.startOfDay)
-    if label == "Today" || label == "Yesterday" || label.hasPrefix("Last ") {
+    if label == "今天" || label == "昨天" || label.hasPrefix("Last ") {
       return "\(label)'s highlights"
     }
     return "Highlights from \(label)"
   }
   func standupTasksTitle(for targetDay: DailyStandupDayInfo) -> String {
     let label = standupDayLabelText(for: targetDay.startOfDay)
-    if label == "Today" || label == "Yesterday" {
+    if label == "今天" || label == "昨天" {
       return "\(label)'s tasks"
     }
     return "Tasks for \(label)"
@@ -747,7 +747,7 @@ extension DailyView {
     let timelineToday = timelineDisplayDate(from: Date())
 
     if calendar.isDate(displayDate, inSameDayAs: timelineToday) {
-      return "Today"
+      return "今天"
     }
 
     guard let timelineYesterday = calendar.date(byAdding: .day, value: -1, to: timelineToday)
@@ -756,7 +756,7 @@ extension DailyView {
     }
 
     if calendar.isDate(displayDate, inSameDayAs: timelineYesterday) {
-      return "Yesterday"
+      return "昨天"
     }
 
     let daysAgo = calendar.dateComponents([.day], from: displayDate, to: timelineToday).day ?? 99

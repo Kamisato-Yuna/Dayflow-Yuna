@@ -437,7 +437,7 @@ struct DaySummaryView: View {
         .stroke(Color.gray.opacity(0.2), lineWidth: 20)
         .frame(width: 140, height: 140)
 
-      Text("No activity data yet")
+      Text("暂无活动数据")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color.gray.opacity(0.6))
     }

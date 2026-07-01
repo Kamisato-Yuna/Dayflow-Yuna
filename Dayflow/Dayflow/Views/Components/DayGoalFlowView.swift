@@ -296,7 +296,7 @@ struct DayGoalFlowView: View {
       HStack(spacing: 10) {
         secondaryButton("Skip today", action: onSkip)
 
-        primaryButton("Confirm") {
+        primaryButton("确认") {
           var plan = draft
           plan.isSkipped = false
           let now = Int(Date().timeIntervalSince1970)

@@ -232,7 +232,7 @@ private struct WeeklyDonutEmptyState: View {
           .font(.custom("Figtree-Bold", size: 8))
           .foregroundStyle(Color(hex: "A5A5A5"))
 
-        Text("No activity")
+        Text("暂无活动")
           .font(.custom("InstrumentSerif-Regular", size: 16))
           .foregroundStyle(Color(hex: "777777"))
       }

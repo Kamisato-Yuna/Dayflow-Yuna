@@ -519,7 +519,7 @@ struct ChatChartBlockView: View {
 
     return Chart(spec.items) { item in
       BarMark(
-        xStart: .value("Start", item.start),
+        xStart: .value("开始", item.start),
         xEnd: .value("End", item.end),
         y: .value("Label", item.label)
       )

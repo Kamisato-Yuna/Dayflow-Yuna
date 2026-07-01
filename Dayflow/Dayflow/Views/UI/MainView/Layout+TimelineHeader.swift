@@ -469,7 +469,7 @@ extension MainView {
     Button(action: {
       navigateTimeline(to: timelineDisplayDate(from: Date()), method: "today")
     }) {
-      Text("Today")
+      Text("今天")
         .font(.custom("Figtree", size: 12).weight(.medium))
         .foregroundColor(Color(hex: "796E64"))
         .padding(.horizontal, 10)

@@ -132,7 +132,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
               } else {
                 Image(systemName: "arrow.clockwise").font(.system(size: 13, weight: .semibold))
               }
-              Text(isChecking ? "Checking…" : "Re-check")
+              Text(isChecking ? "Checking…" : "重新检测")
                 .font(.custom("Figtree", size: 14))
                 .fontWeight(.semibold)
             }
@@ -331,7 +331,7 @@ struct ChatCLIToolStatusRow: View {
     case .failed:
       return "Setup guide"
     default:
-      return "Install"
+      return "安装"
     }
   }
 }

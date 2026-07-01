@@ -73,7 +73,7 @@ struct HowItWorksView: View {
       HStack {
         DayflowSurfaceButton(
           action: onBack,
-          content: { Text("Back").font(.custom("Figtree", size: 14)).fontWeight(.semibold) },
+          content: { Text("返回").font(.custom("Figtree", size: 14)).fontWeight(.semibold) },
           background: .white,
           foreground: Color(red: 0.25, green: 0.17, blue: 0),
           borderColor: .clear,
@@ -113,7 +113,7 @@ struct HowItWorksView: View {
 
         DayflowSurfaceButton(
           action: onNext,
-          content: { Text("Next").font(.custom("Figtree", size: 14)).fontWeight(.semibold) },
+          content: { Text("下一步").font(.custom("Figtree", size: 14)).fontWeight(.semibold) },
           background: Color(red: 0.25, green: 0.17, blue: 0),
           foreground: .white,
           borderColor: .clear,

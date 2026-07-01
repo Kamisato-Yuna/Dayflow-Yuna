@@ -514,7 +514,7 @@ private struct IntentionsEditForm: View {
         .matchedGeometryEffect(id: "card_bg", in: namespace)
 
       HStack(spacing: 12) {
-        Button("Save", action: onSave)
+        Button("保存", action: onSave)
           .buttonStyle(JournalPillButtonStyle(horizontalPadding: 22, verticalPadding: 9))
       }
       .frame(height: 46)
@@ -858,13 +858,13 @@ private struct ReflectionEditorCard: View {
       Spacer(minLength: 0)
 
       HStack(spacing: 10) {
-        Button("Save", action: onSave)
+        Button("保存", action: onSave)
           .buttonStyle(JournalPillButtonStyle(horizontalPadding: 18, verticalPadding: 8))
           .disabled(isSaveDisabled)
           .opacity(isSaveDisabled ? 0.55 : 1)
           .animation(.easeInOut(duration: 0.2), value: isSaveDisabled)
 
-        Button("Skip", action: onSkip)
+        Button("跳过", action: onSkip)
           .buttonStyle(.plain)
           .foregroundStyle(JournalDayTokens.bodyText.opacity(0.6))
           .pointingHandCursor()
@@ -923,12 +923,12 @@ private struct ReflectionSavedCard: View {
               Color.red.opacity(0.8)
             ).multilineTextAlignment(.trailing)
             HStack(spacing: 12) {
-              Button("Dismiss") { onDismissError?() }
+              Button("忽略") { onDismissError?() }
                 .buttonStyle(.plain).font(.custom("Figtree-Regular", size: 13)).foregroundStyle(
                   JournalDayTokens.bodyText.opacity(0.6)
                 )
                 .pointingHandCursor()
-              Button("Try again", action: onSummarize)
+              Button("重试", action: onSummarize)
                 .buttonStyle(JournalPillButtonStyle(horizontalPadding: 18, verticalPadding: 8))
             }
           }

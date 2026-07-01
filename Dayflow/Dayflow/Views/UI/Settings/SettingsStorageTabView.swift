@@ -22,7 +22,7 @@ struct SettingsStorageTabView: View {
         message: Text(
           "Reducing the \(categoryName) limit to \(option.label) will immediately delete the oldest \(categoryName) data to stay under the new cap."
         ),
-        primaryButton: .destructive(Text("Confirm")) {
+        primaryButton: .destructive(Text("确认")) {
           viewModel.applyLimit(for: pending.category, index: pending.index)
         },
         secondaryButton: .cancel {
@@ -147,7 +147,7 @@ struct SettingsStorageTabView: View {
         Spacer(minLength: 12)
 
         HStack(spacing: 8) {
-          SettingsSecondaryButton(title: "Open", action: action)
+          SettingsSecondaryButton(title: "打开", action: action)
 
           Menu {
             ForEach(StorageSettingsViewModel.storageOptions) { candidate in

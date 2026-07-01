@@ -405,7 +405,7 @@ extension MainView {
     if showCategoryEditor {
       ColorOrganizerRoot(
         presentationStyle: .sheet,
-        onDismiss: { showCategoryEditor = false }, completionButtonTitle: "Save", showsTitles: true
+        onDismiss: { showCategoryEditor = false }, completionButtonTitle: "保存", showsTitles: true
       )
       .environmentObject(categoryStore)
       // Removed .contentShape(Rectangle()) and .onTapGesture to allow keyboard input
@@ -528,7 +528,7 @@ private struct ScreenRecordingPermissionNoticeView: View {
           HStack(spacing: 6) {
             Image(systemName: "gearshape")
               .font(.system(size: 12))
-            Text("Open System Settings")
+            Text("打开系统设置")
               .font(.custom("Figtree", size: 12))
               .fontWeight(.semibold)
           }

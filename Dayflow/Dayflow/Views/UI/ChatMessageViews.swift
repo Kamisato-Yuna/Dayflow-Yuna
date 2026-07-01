@@ -54,7 +54,7 @@ struct MessageBubble: View {
           .stroke(Color(hex: "E8E8E8"), lineWidth: 1)
       )
       .contextMenu {
-        Button("Copy") {
+        Button("复制") {
           copyAssistantMessageToPasteboard()
         }
       }
@@ -190,7 +190,7 @@ struct AssistantMessageFeedbackRow: View {
       }
 
       if showsThanks {
-        Text("Thanks")
+        Text("感谢")
           .font(.custom("Figtree", size: 11).weight(.semibold))
           .foregroundColor(Color(hex: "9A7C60"))
           .transition(thanksTransition)

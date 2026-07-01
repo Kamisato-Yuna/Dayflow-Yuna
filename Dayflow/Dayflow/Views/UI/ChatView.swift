@@ -119,7 +119,7 @@ struct ChatView: View {
       Button("Switch and Reset", role: .destructive) {
         confirmProviderSwitch()
       }
-      Button("Cancel", role: .cancel) {
+      Button("取消", role: .cancel) {
         pendingProviderSelection = nil
       }
     } message: {

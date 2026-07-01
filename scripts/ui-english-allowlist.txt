@@ -1,0 +1,29 @@
+# Chinese UI localization allowlist
+# Format: `<pattern>\t<reason>`
+# reason examples: brand, command, internal-key, test-fixture, log, url, model-name
+
+# Keep project/brand/product names and runtime identifiers
+Dayflow\tbrand
+Dayflow Pro\tbrand
+Gemini\tbrand
+Claude\tbrand
+ChatGPT\tbrand
+Ollama\tbrand
+LLM\tbrand
+LM Studio\tbrand
+Qwen3-VL\tmodel-name
+OpenAI-compatible\tmodel-name
+
+# Keep analytics and internal identifiers
+PostHog\tinternal-key
+Sentry\tinternal-key
+AppKit\tinternal-key
+SwiftUI\tinternal-key
+
+# Keep file/command related labels
+curl\tcommand
+codex\tcommand
+claude\tcommand
+git\tcommand
+URL\turl
+Base URL\turl

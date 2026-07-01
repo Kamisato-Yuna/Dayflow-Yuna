@@ -14,7 +14,7 @@ struct BugReportView: View {
   var body: some View {
     VStack(spacing: 36) {
       VStack(spacing: 16) {
-        Text("Thanks for using Dayflow")
+        Text("感谢使用 Dayflow")
           .font(.custom("InstrumentSerif-Regular", size: 40))
           .foregroundColor(.black.opacity(0.9))
 
@@ -112,7 +112,7 @@ struct BugReportView: View {
                 HStack(spacing: 10) {
                   Image(systemName: "doc.on.doc")
                     .font(.system(size: 16, weight: .semibold))
-                  Text(didCopyEmail ? "Copied!" : "Copy email")
+                  Text(didCopyEmail ? "已复制" : "Copy email")
                     .font(.custom("Figtree", size: 15).weight(.semibold))
                 }
               },
@@ -134,7 +134,7 @@ struct BugReportView: View {
                     .font(.system(size: 16, weight: .semibold))
                   Text(
                     didCopyDebugLogs
-                      ? "Copied!" : (isCopyingDebugLogs ? "Preparing..." : "Copy debug logs")
+                      ? "已复制" : (isCopyingDebugLogs ? "Preparing..." : "Copy debug logs")
                   )
                   .font(.custom("Figtree", size: 15).weight(.semibold))
                 }

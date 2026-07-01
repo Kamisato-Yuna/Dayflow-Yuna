@@ -115,11 +115,11 @@ struct SettingsProvidersTabView: View {
         SettingsMetadata(text: viewModel.chatCLIStatusLabel())
       }
     case "dayflow":
-      SettingsRow(label: "Status", showsDivider: false) {
+      SettingsRow(label: "状态", showsDivider: false) {
         SettingsMetadata(text: viewModel.statusText(for: "dayflow") ?? "Requires Dayflow Pro")
       }
     default:
-      SettingsRow(label: "Status", showsDivider: false) {
+      SettingsRow(label: "状态", showsDivider: false) {
         SettingsMetadata(text: "Coming soon")
       }
     }
@@ -244,7 +244,7 @@ struct SettingsProvidersTabView: View {
           }
         } else {
           if !isConfigured {
-            SettingsSecondaryButton(title: "Setup") {
+            SettingsSecondaryButton(title: "设置") {
               viewModel.beginProviderSetup(provider.id, role: .setupOnly)
             }
           }
@@ -719,7 +719,7 @@ struct LocalModelUpgradeSheet: View {
 
         HStack {
           Spacer()
-          SettingsSecondaryButton(title: "Close", action: onCancel)
+          SettingsSecondaryButton(title: "关闭", action: onCancel)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)

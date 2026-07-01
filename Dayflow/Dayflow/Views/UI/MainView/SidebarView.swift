@@ -47,20 +47,20 @@ enum SidebarIcon: CaseIterable {
   var displayName: String {
     switch self {
     case .timeline: return "Timeline"
-    case .daily: return "Daily"
-    case .weekly: return "Weekly"
-    case .chat: return "Chat"
-    case .journal: return "Journal"
+    case .daily: return "每日"
+    case .weekly: return "周报"
+    case .chat: return "对话"
+    case .journal: return "日志"
     case .bug: return "Report"
-    case .settings: return "Settings"
+    case .settings: return "设置"
     }
   }
 
   var analyticsTabName: String {
     switch self {
     case .timeline: return "timeline"
-    case .daily: return "daily"
-    case .weekly: return "weekly"
+    case .daily: return "每日"
+    case .weekly: return "每周"
     case .chat: return "dashboard"
     case .journal: return "journal"
     case .bug: return "bug_report"

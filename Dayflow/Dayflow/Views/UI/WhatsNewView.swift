@@ -168,7 +168,7 @@ struct WhatsNewView: View {
           }
           .buttonStyle(PlainButtonStyle())
           .pointingHandCursor()
-          .accessibilityLabel("Close")
+          .accessibilityLabel("关闭")
           .keyboardShortcut(.cancelAction)
         }
 

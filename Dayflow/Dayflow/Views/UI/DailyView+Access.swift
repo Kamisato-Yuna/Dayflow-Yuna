@@ -78,7 +78,7 @@ extension DailyView {
     }
 
     if notificationAuthorizationStatus == .denied {
-      return "Open System Settings"
+      return "打开系统设置"
     }
 
     return "Turn on notifications"

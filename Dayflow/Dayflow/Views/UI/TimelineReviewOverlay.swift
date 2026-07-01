@@ -249,7 +249,7 @@ struct TimelineReviewOverlay: View {
       Button {
         dismissOverlay()
       } label: {
-        Text("Close")
+        Text("关闭")
           .font(.custom("Figtree", size: 14).weight(.semibold))
           .foregroundColor(Color(hex: "333333"))
           .padding(.horizontal, 24)

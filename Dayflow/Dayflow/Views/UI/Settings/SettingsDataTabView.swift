@@ -189,7 +189,7 @@ struct SettingsDataTabView: View {
         }
       }
       .alert("Reprocess day?", isPresented: $viewModel.showReprocessDayConfirm) {
-        Button("Cancel", role: .cancel) {}
+        Button("取消", role: .cancel) {}
         Button("Reprocess", role: .destructive) { viewModel.reprocessSelectedDay() }
       } message: {
         Text(

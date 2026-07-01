@@ -37,7 +37,7 @@ class ProviderSetupState: ObservableObject {
   var currentStep: SetupStep {
     guard currentStepIndex < steps.count else {
       return SetupStep(
-        id: "fallback", title: "Setup", contentType: .information("Complete", "Setup is complete"))
+        id: "fallback", title: "设置", contentType: .information("Complete", "Setup is complete"))
     }
     return steps[currentStepIndex]
   }
