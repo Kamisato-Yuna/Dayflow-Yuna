@@ -5,9 +5,9 @@ import SwiftUI
 enum LocalLLMTestConstants {
   static let blankImageDataURL = LocalLLMTestImageFactory.blankImageDataURL(
     width: 1280, height: 720)
-  static let prompt = "What color is this image? Answer with a single word."
+  static let prompt = "这张图片是什么颜色？请用一个词回答。"
   static let slowMachineMessage =
-    "It took longer than 30 seconds, so your machine doesn't appear powerful enough to run this model locally."
+    "已超过 30 秒，说明你的机器可能不够强大，无法本地运行该模型。"
   static let maxLatency: TimeInterval = 30
 }
 
@@ -99,7 +99,7 @@ struct LocalLLMTestView: View {
     VStack(alignment: .leading, spacing: 14) {
       if showInputs {
         VStack(alignment: .leading, spacing: 6) {
-          Text("Base URL")
+          Text("基础 URL")
             .font(.custom("Figtree", size: 12))
             .fontWeight(.semibold)
             .foregroundColor(SettingsStyle.secondary)
@@ -108,7 +108,7 @@ struct LocalLLMTestView: View {
         }
 
         VStack(alignment: .leading, spacing: 6) {
-          Text("Model ID")
+          Text("模型 ID")
             .font(.custom("Figtree", size: 12))
             .fontWeight(.semibold)
             .foregroundColor(SettingsStyle.secondary)
@@ -120,7 +120,7 @@ struct LocalLLMTestView: View {
 
         if engine == .custom {
           VStack(alignment: .leading, spacing: 6) {
-            Text("API Key（可选）")
+            Text("API 密钥（可选）")
               .font(.custom("Figtree", size: 12))
               .fontWeight(.semibold)
               .foregroundColor(SettingsStyle.secondary)
@@ -137,7 +137,7 @@ struct LocalLLMTestView: View {
       }
 
       SettingsPrimaryButton(
-        title: isTesting ? "Testing…" : buttonLabel,
+        title: isTesting ? "测试中…" : buttonLabel,
         systemImage: "bolt.fill",
         isLoading: isTesting,
         action: runTest
@@ -149,7 +149,7 @@ struct LocalLLMTestView: View {
         VStack(alignment: .leading, spacing: 6) {
           SettingsStatusDot(state: .bad, label: msg)
           Text(
-            "如果这里卡住了，可以返回选择“Bring your own key”，仅需约 1 分钟即可完成设置。"
+            "如果这里卡住了，可以返回选择“自带密钥”，仅需约 1 分钟即可完成设置。"
           )
           .font(.custom("Figtree", size: 12))
           .foregroundColor(SettingsStyle.secondary)

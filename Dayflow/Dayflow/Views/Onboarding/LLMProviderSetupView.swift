@@ -326,8 +326,8 @@ struct LLMProviderSetupView: View {
       VStack(alignment: .leading, spacing: 24) {
         APIKeyInputView(
           apiKey: $setupState.apiKey,
-          title: "输入你的 API Key：",
-          subtitle: "请在下方粘贴 Gemini API Key",
+          title: "输入你的 API 密钥：",
+          subtitle: "请在下方粘贴 Gemini API 密钥",
           placeholder: "AQ...",
           onValidate: { key in
             key.components(separatedBy: .whitespacesAndNewlines).joined().count > 10
@@ -521,7 +521,7 @@ struct LLMProviderSetupView: View {
     case .apiKeyInstructions:
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("获取你的 Gemini API Key")
+          Text("获取你的 Gemini API 密钥")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
@@ -559,7 +559,7 @@ struct LLMProviderSetupView: View {
               .foregroundColor(.black.opacity(0.6))
               .frame(width: 20, alignment: .leading)
 
-            Text("点击右上角“获取 API key”")
+            Text("点击右上角“获取 API 密钥”")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.8))
           }
@@ -570,7 +570,7 @@ struct LLMProviderSetupView: View {
               .foregroundColor(.black.opacity(0.6))
               .frame(width: 20, alignment: .leading)
 
-            Text("创建新的 API Key 并复制")
+            Text("创建新的 API 密钥并复制")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.8))
           }

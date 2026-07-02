@@ -130,15 +130,15 @@ class ProviderSetupState: ObservableObject {
     default:  // gemini
       steps = [
         SetupStep(
-          id: "getkey", title: "获取 API key",
+          id: "getkey", title: "获取 API 密钥",
           contentType: .apiKeyInstructions),
         SetupStep(
-          id: "enterkey", title: "输入 API key",
+          id: "enterkey", title: "输入 API 密钥",
           contentType: .apiKeyInput),
         SetupStep(
           id: "verify", title: "测试连接",
           contentType: .information(
-            "测试连接", "点击下方按钮验证 Gemini API key 是否可用")),
+            "测试连接", "点击下方按钮验证 Gemini API 密钥是否可用")),
         SetupStep(
           id: "complete", title: "完成",
           contentType: .information(
@@ -228,7 +228,7 @@ class ProviderSetupState: ObservableObject {
       persistGeminiModelSelection(source: source)
     } else {
       geminiAPIKeySaveError =
-        "API key 保存到钥匙串失败，请解锁钥匙串后重试。"
+        "API 密钥保存到钥匙串失败，请解锁钥匙串后重试。"
     }
     return stored
   }

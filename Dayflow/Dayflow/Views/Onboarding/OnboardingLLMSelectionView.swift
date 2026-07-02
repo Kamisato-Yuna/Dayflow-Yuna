@@ -120,7 +120,7 @@ struct OnboardingLLMSelectionView: View {
       FlexibleProviderCard(
         id: "ollama",
         title: "本地 AI",
-        badgeText: "MOST PRIVATE",
+        badgeText: "最私有",
         badgeType: .green,
         icon: "desktopcomputer",
         features: [
@@ -157,14 +157,14 @@ struct OnboardingLLMSelectionView: View {
       FlexibleProviderCard(
         id: "gemini",
         title: "Gemini",
-        badgeText: cliDetected ? "NEW" : "RECOMMENDED",
+        badgeText: cliDetected ? "新增" : "推荐",
         badgeType: cliDetected ? .blue : .orange,
         icon: "gemini_asset",
         features: [
           ("通过 Google Gemini 模型使用更强 AI 能力", true),
           ("使用 Gemini 的免费额度（无需信用卡）", true),
           ("比本地模型更快更准确", true),
-          ("需要获取 API Key（约 2 次点击）", false),
+          ("需要获取 API 密钥（约 2 次点击）", false),
         ],
         isSelected: selectedProvider == "gemini",
         buttonMode: .onboarding(onProceed: {
@@ -192,7 +192,7 @@ struct OnboardingLLMSelectionView: View {
       FlexibleProviderCard(
         id: "chatgpt_claude",
         title: "ChatGPT 或 Claude",
-        badgeText: cliDetected ? "RECOMMENDED" : "NEW",
+        badgeText: cliDetected ? "推荐" : "新增",
         badgeType: cliDetected ? .orange : .blue,
         icon: "chatgpt_claude_asset",
         features: [

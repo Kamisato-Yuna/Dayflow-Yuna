@@ -147,7 +147,7 @@ struct OnboardingFlow: View {
             let providerID: String
             switch providerTitle {
             case "Dayflow Pro": providerID = "dayflow"
-            case "ChatGPT or Claude": providerID = "chatgpt_claude"
+            case "ChatGPT 或 Claude": providerID = "chatgpt_claude"
             case "Google Gemini": providerID = "gemini"
             case "Local AI": providerID = "ollama"
             default: providerID = "gemini"

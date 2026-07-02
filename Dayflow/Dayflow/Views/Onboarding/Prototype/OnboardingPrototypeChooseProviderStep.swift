@@ -94,7 +94,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
     case "chatgpt_claude":
       return (
         "chatgpt_claude_asset",
-        "ChatGPT or Claude",
+        "ChatGPT 或 Claude",
         [
           "智能性与稳定性更高",
           "每日额度占用低于 1%",
