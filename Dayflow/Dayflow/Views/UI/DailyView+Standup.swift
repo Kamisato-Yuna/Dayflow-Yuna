@@ -30,7 +30,7 @@ extension DailyView {
               .font(.system(size: 12 * scale, weight: .semibold))
               .transition(transition)
           } else {
-            Image("Copy")
+            Image("复制")
               .resizable()
               .interpolation(.high)
               .renderingMode(.template)
@@ -42,12 +42,12 @@ extension DailyView {
         .frame(width: 16 * scale, height: 16 * scale)
 
         ZStack(alignment: .leading) {
-          Text("Copy standup update")
+          Text("复制站会更新")
             .font(.custom("Figtree-Medium", size: 14 * scale))
             .lineLimit(1)
             .opacity(standupCopyState == .copied ? 0 : 1)
 
-          Text("Copied")
+          Text("已复制")
             .font(.custom("Figtree-Medium", size: 14 * scale))
             .lineLimit(1)
             .opacity(standupCopyState == .copied ? 1 : 0)
@@ -78,7 +78,7 @@ extension DailyView {
     .animation(.easeInOut(duration: 0.22), value: standupCopyState)
     .pointingHandCursorOnHover(reassertOnPressEnd: true)
     .accessibilityLabel(
-      Text(standupCopyState == .copied ? "Copied standup update" : "Copy standup update"))
+      Text(standupCopyState == .copied ? "站会更新已复制" : "复制站会更新"))
   }
   func standupRegenerateButton(scale: CGFloat) -> some View {
     let transition = AnyTransition.opacity.combined(with: .scale(scale: 0.5))
@@ -146,7 +146,7 @@ extension DailyView {
     .pointingHandCursorOnHover(
       enabled: canRegenerateStandup, reassertOnPressEnd: true
     )
-    .accessibilityLabel(Text("Regenerate standup highlights"))
+    .accessibilityLabel(Text("重新生成站会重点"))
     .help(regenerateButtonHelpText)
     .background {
       if standupRegenerateState == .regenerating {
@@ -531,7 +531,7 @@ extension DailyView {
     var lines: [String] = []
     lines.append(titles.highlights)
     if yesterdayItems.isEmpty {
-      lines.append("- None right now")
+      lines.append("- 目前没有")
     } else {
       yesterdayItems.forEach { lines.append("- \($0)") }
     }
@@ -539,7 +539,7 @@ extension DailyView {
 
     lines.append(titles.tasks)
     if todayItems.isEmpty {
-      lines.append("- None right now")
+      lines.append("- 目前没有")
     } else {
       todayItems.forEach { lines.append("- \($0)") }
     }
@@ -547,7 +547,7 @@ extension DailyView {
 
     lines.append(titles.blockers)
     if blockersItems.isEmpty {
-      lines.append("- None right now")
+      lines.append("- 目前没有")
     } else {
       blockersItems.forEach { lines.append("- \($0)") }
     }
@@ -685,17 +685,17 @@ extension DailyView {
   var regenerateButtonLabel: String {
     switch standupRegenerateState {
     case .regenerating:
-      return "Regenerating" + String(repeating: ".", count: standupRegeneratingDotsPhase)
+      return "正在重新生成" + String(repeating: ".", count: standupRegeneratingDotsPhase)
     case .idle, .regenerated, .noData:
-      return "Regenerate"
+      return "重新生成"
     }
   }
   var transientRegenerateButtonLabel: String? {
     switch standupRegenerateState {
     case .regenerated:
-      return "Regenerated"
+      return "已重新生成"
     case .noData:
-      return "No data"
+      return "无数据"
     case .idle, .regenerating:
       return nil
     }
@@ -719,27 +719,27 @@ extension DailyView {
     return DailyStandupSectionTitles(
       highlights: standupHighlightsTitle(for: sourceDay),
       tasks: standupTasksTitle(for: targetDay),
-      blockers: "Blockers"
+      blockers: "阻碍"
     )
   }
   func standupSectionHeading(for date: Date) -> String {
-    "Standup for \(dailyDateTitle(for: date))"
+    "\(dailyDateTitle(for: date)) 的站会更新"
   }
   func standupHighlightsTitle(for sourceDay: DailyStandupDayInfo?) -> String {
-    guard let sourceDay else { return "Recent highlights" }
+    guard let sourceDay else { return "最近重点" }
 
     let label = standupDayLabelText(for: sourceDay.startOfDay)
-    if label == "Today" || label == "Yesterday" || label.hasPrefix("Last ") {
-      return "\(label)'s highlights"
+    if label == "今天" || label == "昨天" || label.hasPrefix("上") {
+      return "\(label)重点"
     }
-    return "Highlights from \(label)"
+    return "\(label)的重点"
   }
   func standupTasksTitle(for targetDay: DailyStandupDayInfo) -> String {
     let label = standupDayLabelText(for: targetDay.startOfDay)
-    if label == "Today" || label == "Yesterday" {
-      return "\(label)'s tasks"
+    if label == "今天" || label == "昨天" {
+      return "\(label)任务"
     }
-    return "Tasks for \(label)"
+    return "\(label)任务"
   }
   func standupDayLabelText(for date: Date) -> String {
     let calendar = Calendar.current
@@ -747,7 +747,7 @@ extension DailyView {
     let timelineToday = timelineDisplayDate(from: Date())
 
     if calendar.isDate(displayDate, inSameDayAs: timelineToday) {
-      return "Today"
+      return "今天"
     }
 
     guard let timelineYesterday = calendar.date(byAdding: .day, value: -1, to: timelineToday)
@@ -756,12 +756,12 @@ extension DailyView {
     }
 
     if calendar.isDate(displayDate, inSameDayAs: timelineYesterday) {
-      return "Yesterday"
+      return "昨天"
     }
 
     let daysAgo = calendar.dateComponents([.day], from: displayDate, to: timelineToday).day ?? 99
     if (2...6).contains(daysAgo) {
-      return "Last \(dailyStandupWeekdayFormatter.string(from: displayDate))"
+      return "上\(dailyStandupWeekdayFormatter.string(from: displayDate))"
     }
 
     return dailyOtherDayDisplayFormatter.string(from: displayDate)

@@ -106,18 +106,18 @@ struct ActivityCard: View {
       VStack(spacing: 10) {
         Spacer()
         if hasAnyActivities {
-          Text("Select an activity to view details")
+          Text("选择一项活动查看详情")
             .font(.custom("Figtree", size: 15))
             .fontWeight(.regular)
             .foregroundColor(.gray.opacity(0.5))
         } else {
           if appState.isRecording {
             VStack(spacing: 6) {
-              Text("No cards yet")
+              Text("尚无卡片")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.gray.opacity(0.7))
               Text(
-                "Cards are generated about every 15 minutes. If Dayflow is on and no cards show up within 30 minutes, please report a bug."
+                "卡片大约每 15 分钟生成一次。如果 Dayflow 已开启但 30 分钟内仍没有卡片，请提交反馈。"
               )
               .font(.custom("Figtree", size: 13))
               .foregroundColor(.gray.opacity(0.6))
@@ -126,10 +126,10 @@ struct ActivityCard: View {
             }
           } else {
             VStack(spacing: 6) {
-              Text("Recording is off")
+              Text("录制已关闭")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.gray.opacity(0.7))
-              Text("Dayflow recording is currently turned off, so cards aren’t being produced.")
+              Text("Dayflow 录制当前已关闭，因此不会生成卡片。")
                 .font(.custom("Figtree", size: 13))
                 .foregroundColor(.gray.opacity(0.6))
                 .multilineTextAlignment(.center)
@@ -218,7 +218,7 @@ struct ActivityCard: View {
                 .buttonStyle(PlainButtonStyle())
                 .hoverScaleEffect(scale: 1.02)
                 .pointingHandCursorOnHover(reassertOnPressEnd: true)
-                .accessibilityLabel(Text("Change category"))
+                .accessibilityLabel(Text("更改分类"))
               }
             }
           }
@@ -286,7 +286,7 @@ struct ActivityCard: View {
   private func summaryContent(for activity: TimelineActivity) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       VStack(alignment: .leading, spacing: 3) {
-        Text("SUMMARY")
+        Text("摘要")
           .font(
             Font.custom("Figtree", size: 12)
               .weight(.semibold)
@@ -305,7 +305,7 @@ struct ActivityCard: View {
 
       if !activity.detailedSummary.isEmpty && activity.detailedSummary != activity.summary {
         VStack(alignment: .leading, spacing: 3) {
-          Text("DETAILED SUMMARY")
+          Text("详细摘要")
             .font(
               Font.custom("Figtree", size: 12)
                 .weight(.semibold)
@@ -398,7 +398,7 @@ struct ActivityCard: View {
           .scaleEffect(0.7)
           .frame(width: 16, height: 16)
 
-        Text("Processing")
+        Text("处理中")
           .font(.custom("Figtree", size: 13))
           .foregroundColor(Color(red: 0.4, green: 0.4, blue: 0.4))
           .lineLimit(1)
@@ -411,7 +411,7 @@ struct ActivityCard: View {
       // Retry button - orange pill
       Button(action: { handleRetry(for: activity) }) {
         HStack(alignment: .center, spacing: 4) {
-          Text("Retry")
+          Text("重试")
             .font(.custom("Figtree", size: 13).weight(.medium))
           Image(systemName: "arrow.clockwise")
             .font(.system(size: 13, weight: .medium))
@@ -482,7 +482,7 @@ struct ActivityCard: View {
               HStack(spacing: 8) {
                 ProgressView()
                   .scaleEffect(0.8)
-                Text("Preparing timelapse...")
+                Text("正在准备延时截图...")
                   .font(.custom("Figtree", size: 12).weight(.semibold))
                   .foregroundColor(.white)
               }
@@ -503,7 +503,7 @@ struct ActivityCard: View {
         .contentShape(Rectangle())
         .onTapGesture {
           guard let cardId = activity.recordId else {
-            slideshowError = "This activity cannot load a slideshow."
+            slideshowError = "这项活动无法加载延时截图。"
             return
           }
           openSlideshow(for: activity, cardId: cardId)
@@ -617,9 +617,9 @@ private enum ActivityCardTimelapseError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .timelineCardMissing:
-      return "Could not find this activity in storage."
+      return "无法在存储中找到这项活动。"
     case .noScreenshots:
-      return "No screenshots are available for this activity range."
+      return "这项活动的时间范围内没有可用截图。"
     }
   }
 }

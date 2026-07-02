@@ -16,7 +16,7 @@ struct CardsToReviewBadge: View {
       stackedCardsIcon
 
       // Label text
-      Text(count == 1 ? "card to review" : "cards to review")
+      Text("张卡片待复盘")
         .font(.custom("Figtree", size: 10).weight(.medium))
         .foregroundColor(.white)
     }

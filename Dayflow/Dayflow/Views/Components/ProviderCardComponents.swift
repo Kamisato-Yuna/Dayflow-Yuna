@@ -155,7 +155,7 @@ struct FlexibleProviderCard: View {
           Image(systemName: "checkmark.circle.fill")
             .font(.system(size: 12))
             .foregroundColor(.green)
-          Text(customStatusText ?? "Currently selected")
+          Text(customStatusText ?? "当前已选择")
             .font(.custom("Figtree", size: 12))
             .fontWeight(.medium)
             .foregroundColor(.black.opacity(0.6))
@@ -218,14 +218,14 @@ struct FlexibleProviderCard: View {
 
   private var buttonTitle: String {
     if isComingSoon {
-      return "Coming Soon"
+      return "即将推出"
     }
 
     switch buttonMode {
     case .onboarding:
-      return "Proceed"
+      return "继续"
     case .settings:
-      return isSelected ? "Edit Configuration" : "Switch"
+      return isSelected ? "编辑配置" : "切换"
     }
   }
 

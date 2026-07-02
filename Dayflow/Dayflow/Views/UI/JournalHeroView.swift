@@ -177,9 +177,9 @@ struct JournalHeroSummary {
 extension JournalHeroSummary {
   static var preview: JournalHeroSummary {
     .init(
-      headline: "Daily Journal",
+      headline: "每日日志",
       entry: .sampleEntry,
-      ctaTitle: "Reflect with Dayflow"
+      ctaTitle: "用 Dayflow 复盘"
     )
   }
 }

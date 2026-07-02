@@ -15,15 +15,15 @@ struct OnboardingPrototypePreferencesStep: View {
       Spacer()
 
       VStack(spacing: 24) {
-        Text("Do you have a paid ChatGPT or Claude account?")
+        Text("你有 ChatGPT 或 Claude 的付费账号吗？")
           .font(.custom("Figtree", size: 20))
           .foregroundColor(Color(hex: "89380E"))
           .multilineTextAlignment(.center)
 
         HStack(spacing: 8) {
-          ForEach(["Yes", "No"], id: \.self) { option in
+          ForEach(["是", "否"], id: \.self) { option in
             Button {
-              onContinue(option == "Yes")
+              onContinue(option == "是")
             } label: {
               Text(option)
                 .font(.custom("Figtree", size: 16))

@@ -9,9 +9,9 @@ enum TimelineMode: String, CaseIterable, Identifiable {
   var title: String {
     switch self {
     case .day:
-      return "Day"
+      return "日"
     case .week:
-      return "Week"
+      return "周"
     }
   }
 }

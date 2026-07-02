@@ -5,19 +5,19 @@ import UserNotifications
 
 let dailyTodayDisplayFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "'Today,' MMMM d"
+  formatter.dateFormat = "'今天，'M月d日"
   return formatter
 }()
 
 let dailyOtherDayDisplayFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "EEEE, MMMM d"
+  formatter.dateFormat = "EEEE，M月d日"
   return formatter
 }()
 
 let dailyStandupSectionDayFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "EEE, MMM d"
+  formatter.dateFormat = "M月d日 EEE"
   return formatter
 }()
 
@@ -31,7 +31,7 @@ enum DailyGridConfig {
   static let visibleStartMinute: Double = 9 * 60
   static let visibleEndMinute: Double = 21 * 60
   static let slotDurationMinutes: Double = 15
-  static let fallbackCategoryNames = ["Work", "Personal", "Distraction", "Idle"]
+  static let fallbackCategoryNames = ["工作", "个人", "分心", "空闲"]
   static let fallbackColorHexes = ["B984FF", "6AADFF", "FF5950", "A0AEC0"]
 }
 
@@ -125,11 +125,11 @@ struct DailyWorkflowStatChip: Identifiable, Sendable {
   let value: String
 
   static let placeholder: [DailyWorkflowStatChip] = [
-    DailyWorkflowStatChip(id: "context-switched", title: "Context switched", value: "0 times"),
-    DailyWorkflowStatChip(id: "interrupted", title: "Interrupted", value: "0 times"),
-    DailyWorkflowStatChip(id: "focused-for", title: "Focused for", value: "0m"),
-    DailyWorkflowStatChip(id: "distracted-for", title: "Distracted for", value: "0m"),
-    DailyWorkflowStatChip(id: "transitioning-time", title: "Transitioning time", value: "0m"),
+    DailyWorkflowStatChip(id: "context-switched", title: "上下文切换", value: "0 次"),
+    DailyWorkflowStatChip(id: "interrupted", title: "被打断", value: "0 次"),
+    DailyWorkflowStatChip(id: "focused-for", title: "专注时长", value: "0 分钟"),
+    DailyWorkflowStatChip(id: "distracted-for", title: "分心时长", value: "0 分钟"),
+    DailyWorkflowStatChip(id: "transitioning-time", title: "切换间隔", value: "0 分钟"),
   ]
 }
 struct DailyWorkflowTimelineWindow: Sendable {

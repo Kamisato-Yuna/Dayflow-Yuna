@@ -43,10 +43,10 @@ struct DailyView: View {
     [:]
 
   let betaNoticeCopy =
-    "Daily is a new way to visualize your day and turn it into a standup update fast."
+    "Daily 可以把你的一天可视化，并快速整理成站会更新。"
   let priorStandupHistoryLimit = 3
   static let maxDateTitleWidth: CGFloat = {
-    let referenceText = "Wednesday, September 30"
+    let referenceText = "星期三，9月30日"
     let font = NSFont(name: "InstrumentSerif-Regular", size: 26) ?? NSFont.systemFont(ofSize: 26)
     let width = referenceText.size(withAttributes: [.font: font]).width
     return ceil(width) + 6

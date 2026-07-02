@@ -16,13 +16,13 @@ struct ChatCLITestView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
-      Text("We'll ask your CLI a simple question to verify it's working and signed in.")
+      Text("我们会给命令行工具提一个简单问题，验证它是否可用并已登录。")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(SettingsStyle.secondary)
         .fixedSize(horizontal: false, vertical: true)
 
       SettingsPrimaryButton(
-        title: isTesting ? "Testing…" : "Test CLI",
+        title: isTesting ? "测试中…" : "测试命令行",
         systemImage: "bolt.fill",
         isLoading: isTesting,
         isDisabled: selectedTool == nil,
@@ -30,20 +30,20 @@ struct ChatCLITestView: View {
       )
 
       if selectedTool == nil {
-        Text("Select ChatGPT or Claude above before running the test.")
+        Text("请先在上方选择 ChatGPT 或 Claude。")
           .font(.custom("Figtree", size: 12))
           .foregroundColor(SettingsStyle.secondary)
       }
 
       if success {
-        SettingsStatusDot(state: .good, label: "Test successful.")
+        SettingsStatusDot(state: .good, label: "测试成功。")
       } else if let msg = resultMessage {
         VStack(alignment: .leading, spacing: 8) {
           HStack(alignment: .center, spacing: 10) {
             SettingsStatusDot(state: .bad, label: msg)
             if debugOutput != nil {
               SettingsLinkButton(
-                title: "Copy logs",
+                title: "复制日志",
                 systemImage: nil,
                 action: copyDebugLogs
               )
@@ -73,7 +73,7 @@ struct ChatCLITestView: View {
   func runTest() {
     guard !isTesting else { return }
     guard let tool = selectedTool else {
-      resultMessage = "Pick ChatGPT or Claude first."
+      resultMessage = "请先选择 ChatGPT 或 Claude。"
       return
     }
 
@@ -101,18 +101,18 @@ struct ChatCLITestView: View {
         case .success(let cliResult):
           // Build debug output for troubleshooting
           var debugParts: [String] = []
-          debugParts.append("Tool: \(tool.shortName)")
-          debugParts.append("Exit code: \(cliResult.exitCode)")
-          debugParts.append("Shell: \(LoginShellRunner.userLoginShell.path)")
+          debugParts.append("工具：\(tool.shortName)")
+          debugParts.append("退出码：\(cliResult.exitCode)")
+          debugParts.append("Shell：\(LoginShellRunner.userLoginShell.path)")
           if let shellCommand = cliResult.shellCommand {
-            debugParts.append("Command executed:\n\(shellCommand)")
+            debugParts.append("执行命令：\n\(shellCommand)")
           }
           if !cliResult.environmentOverrides.isEmpty {
             let environmentText = cliResult.environmentOverrides
               .sorted { $0.key < $1.key }
               .map { "\($0.key)=\(LoginShellRunner.shellEscape($0.value))" }
               .joined(separator: "\n")
-            debugParts.append("Environment overrides:\n\(environmentText)")
+            debugParts.append("环境变量覆盖：\n\(environmentText)")
           }
 
           // Show all installations found (helps debug multi-install issues)
@@ -121,15 +121,15 @@ struct ChatCLITestView: View {
           if whichResult.exitCode == 0 {
             let paths = whichResult.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
             if !paths.isEmpty {
-              debugParts.append("Installations found:\n\(paths)")
+              debugParts.append("发现安装路径：\n\(paths)")
             }
           }
 
           if !cliResult.stdout.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            debugParts.append("stdout:\n\(cliResult.stdout)")
+            debugParts.append("标准输出：\n\(cliResult.stdout)")
           }
           if !cliResult.stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            debugParts.append("stderr:\n\(cliResult.stderr)")
+            debugParts.append("标准错误：\n\(cliResult.stderr)")
           }
           debugOutput = debugParts.joined(separator: "\n\n")
 
@@ -149,13 +149,13 @@ struct ChatCLITestView: View {
               if stderrTrimmed.isEmpty {
                 if tool == .claude {
                   resultMessage =
-                    "Claude CLI returned an error. You may need to sign in — run 'claude login' in Terminal."
+                    "Claude CLI 返回错误。可能未登录，需在 Terminal 执行 'claude login'。"
                 } else {
                   resultMessage =
-                    "Codex CLI returned an error. You may need to sign in — run 'codex auth' in Terminal."
+                    "Codex CLI 返回错误。可能未登录，需在 Terminal 执行 'codex auth'。"
                 }
               } else {
-                resultMessage = "CLI error: \(stderrTrimmed.prefix(150))"
+                resultMessage = "CLI 错误：\(stderrTrimmed.prefix(150))"
               }
               captureChatCLITestFailed(
                 for: tool,
@@ -173,14 +173,14 @@ struct ChatCLITestView: View {
           let passed = parseForSuccess(cliResult, for: tool)
           success = passed
           if passed {
-            resultMessage = "CLI is working!"
+            resultMessage = "CLI 可正常工作！"
             captureChatCLITestSucceeded(
               for: tool,
               durationMs: durationMs,
               exitCode: Int(cliResult.exitCode)
             )
           } else if cliResult.stdout.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            resultMessage = "CLI returned empty response. Make sure you're signed in."
+            resultMessage = "CLI 返回空内容，请确认你已登录。"
             captureChatCLITestFailed(
               for: tool,
               durationMs: durationMs,
@@ -189,7 +189,7 @@ struct ChatCLITestView: View {
             )
           } else {
             let preview = cliResult.stdout.prefix(100)
-            resultMessage = "Got: \"\(preview)\" — expected '4'"
+            resultMessage = "返回：\"\(preview)\"，预期为“4”"
             captureChatCLITestFailed(
               for: tool,
               durationMs: durationMs,
@@ -206,18 +206,18 @@ struct ChatCLITestView: View {
           // Build debug output even for errors
           var debugParts: [String] = []
           debugParts.append("Tool: \(tool.shortName)")
-          debugParts.append("Error: \(error.localizedDescription)")
-          debugParts.append("Shell: \(LoginShellRunner.userLoginShell.path)")
+          debugParts.append("错误：\(error.localizedDescription)")
+          debugParts.append("Shell：\(LoginShellRunner.userLoginShell.path)")
 
           let cmdName = tool == .codex ? "codex" : "claude"
           let whichResult = LoginShellRunner.run("which -a \(cmdName)", timeout: 5)
           if whichResult.exitCode == 0 {
             let paths = whichResult.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
             if !paths.isEmpty {
-              debugParts.append("Installations found:\n\(paths)")
+              debugParts.append("发现安装路径：\n\(paths)")
             }
           } else {
-            debugParts.append("Installations found: none")
+            debugParts.append("未发现安装路径")
           }
 
           debugOutput = debugParts.joined(separator: "\n\n")
@@ -296,13 +296,13 @@ struct ChatCLITestView: View {
     NSPasteboard.general.setString(debug, forType: .string)
   }
 
-  func performTest(for tool: CLITool) throws -> CLIResult {
+  nonisolated func performTest(for tool: CLITool) throws -> CLIResult {
     guard CLIDetector.isInstalled(tool) else {
       throw NSError(
         domain: "ChatCLITest", code: 1,
         userInfo: [
           NSLocalizedDescriptionKey:
-            "\(tool.shortName) CLI not found. Install it and run '\(tool == .codex ? "codex auth" : "claude login")' in Terminal."
+            "未检测到 \(tool.shortName) CLI。请先安装后在终端执行 '\(tool == .codex ? "codex auth" : "claude login")'。"
         ])
     }
 
@@ -347,13 +347,13 @@ struct ChatCLITestView: View {
     }
   }
 
-  func parseForSuccess(_ result: CLIResult, for tool: CLITool) -> Bool {
+  nonisolated func parseForSuccess(_ result: CLIResult, for tool: CLITool) -> Bool {
     let combined = (result.stdout + " " + result.stderr)
     // Simple math test - check for "4" in the response
     return combined.contains("4")
   }
 
-  func detectAuthError(_ result: CLIResult, for tool: CLITool) -> String? {
+  nonisolated func detectAuthError(_ result: CLIResult, for tool: CLITool) -> String? {
     let combined = (result.stdout + " " + result.stderr).lowercased()
 
     // Check for common auth failure patterns
@@ -372,9 +372,9 @@ struct ChatCLITestView: View {
     // Return the correct message based on which tool we're actually testing
     switch tool {
     case .claude:
-      return "Claude CLI is not signed in. Run 'claude login' in Terminal to authenticate."
+      return "Claude CLI 未登录。请在 Terminal 执行 'claude login' 完成身份验证。"
     case .codex:
-      return "Codex CLI is not signed in. Run 'codex auth' in Terminal to authenticate."
+      return "Codex CLI 未登录。请在 Terminal 执行 'codex auth' 完成身份验证。"
     }
   }
 }
@@ -385,7 +385,7 @@ enum CLITool: String, CaseIterable {
 
   var displayName: String {
     switch self {
-    case .codex: return "ChatGPT (Codex CLI)"
+    case .codex: return "ChatGPT（Codex CLI）"
     case .claude: return "Claude Code"
     }
   }
@@ -400,9 +400,9 @@ enum CLITool: String, CaseIterable {
   var subtitle: String {
     switch self {
     case .codex:
-      return "OpenAI's ChatGPT desktop tooling with codex CLI"
+      return "OpenAI 的 ChatGPT 桌面工具（codex CLI）"
     case .claude:
-      return "Anthropic's Claude Code command-line helper"
+      return "Anthropic 的 Claude Code 命令行助手"
     }
   }
 
@@ -456,15 +456,15 @@ enum CLIDetectionState: Equatable {
   var statusLabel: String {
     switch self {
     case .unknown:
-      return "Not checked"
+      return "未检查"
     case .checking:
-      return "Checking…"
+      return "检查中…"
     case .installed:
-      return "Installed"
+      return "已安装"
     case .notFound:
-      return "Not installed"
+      return "未安装"
     case .failed:
-      return "Error"
+      return "错误"
     }
   }
 

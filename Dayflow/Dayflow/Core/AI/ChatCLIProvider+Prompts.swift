@@ -31,7 +31,7 @@ extension ChatCLIProvider {
       You are synthesizing a user's activity log into timeline cards. Each card represents one main thing they did.
 
       CORE PRINCIPLE:
-      Each card = one coherent activity. Time is a constraint (10-60 min), not a goal. 
+      Each card = one coherent activity. Time is a constraint (10-60 min), not a goal.
 
       CARD BOUNDARIES:
       - Minimum card length: 10 minutes

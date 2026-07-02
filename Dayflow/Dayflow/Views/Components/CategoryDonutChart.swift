@@ -149,16 +149,16 @@ struct CategoryDonutChart: View {
 
   private var centerContent: some View {
     VStack(spacing: 4) {
-      Text("TOTAL")
+      Text("总计")
         .font(.custom("Figtree", size: 8).weight(.bold))
         .foregroundColor(Color(red: 0.65, green: 0.65, blue: 0.65))  // #a5a5a5
 
       VStack(spacing: 0) {
         let total = formattedTotal
-        Text("\(total.hours) hours")
+        Text("\(total.hours) 小时")
           .font(.custom("InstrumentSerif-Regular", size: 16))
           .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))  // #333333
-        Text("\(total.minutes) minutes")
+        Text("\(total.minutes) 分钟")
           .font(.custom("InstrumentSerif-Regular", size: 16))
           .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
       }

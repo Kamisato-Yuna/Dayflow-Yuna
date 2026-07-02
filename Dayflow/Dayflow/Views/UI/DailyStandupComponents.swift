@@ -215,7 +215,7 @@ struct DailyBulletCard: View {
           .foregroundStyle(Color(hex: "999999"))
           .frame(width: 18 * scale, height: 18 * scale)
 
-        Text("Add item")
+        Text("添加条目")
           .font(.custom("Figtree-Regular", size: 13 * scale))
           .foregroundStyle(Color(hex: "999999"))
           .lineLimit(1)

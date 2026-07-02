@@ -84,46 +84,46 @@ struct OnboardingPrototypeChooseProviderStep: View {
         "dayflow_asset",
         "Dayflow Pro",
         [
-          "Zero setup - just sign in and go",
-          "Try it for free - no credit card necessary.",
-          "Sync across devices",
-          "Uses models with maximum intelligence for the best experience",
+          "零设置，登录即可使用",
+          "可免费试用，无需信用卡",
+          "支持跨设备同步",
+          "使用最强模型以获得最佳体验",
         ],
         []
       )
     case "chatgpt_claude":
       return (
         "chatgpt_claude_asset",
-        "ChatGPT or Claude",
+        "ChatGPT 或 Claude",
         [
-          "Superior intelligence and reliability",
-          "Uses less than 1% of your daily limit",
-          "Perfect for ChatGPT Plus or Claude Pro paid subscribers",
+          "智能性与稳定性更高",
+          "每日额度占用低于 1%",
+          "适合 ChatGPT Plus 或 Claude Pro 的付费用户",
         ],
-        ["Requires installing Codex or Claude CLI"]
+          ["需要安装 Codex 或 Claude CLI"]
       )
     case "gemini":
       return (
         "gemini_asset",
         "Google Gemini",
         [
-          "Uses Gemini's free tier (no subscription needed)",
-          "Faster and more accurate than local models",
-          "Much easier setup compared to local models",
+          "使用 Gemini 的免费额度（无需订阅）",
+          "比本地模型更快更准确",
+          "相较本地模型更容易设置",
         ],
-        ["Less advanced compared to ChatGPT and Claude"]
+        ["能力略低于 ChatGPT 与 Claude"]
       )
     case "local":
       return (
         "desktopcomputer",
         "Local AI",
         [
-          "100% private - nothing leaves your computer"
+          "100% 私有，数据不离开你的电脑"
         ],
         [
-          "Significantly less intelligence",
-          "Not recommended for those new to running local LLMs",
-          "Requires 16GB+ of RAM, 4GB free disk space, M1 or later chip preferred",
+          "智能水平明显偏弱",
+          "不建议新手首次使用本地 LLM",
+          "需 16GB+ 内存、4GB 可用磁盘空间，建议 M1 或更高芯片",
         ]
       )
     default:
@@ -134,20 +134,20 @@ struct OnboardingPrototypeChooseProviderStep: View {
   private func secondaryBadgeText(for providerID: String) -> String {
     switch providerID {
     case "chatgpt_claude":
-      return "USE EXISTING ACCOUNT"
+      return "使用现有账号"
     case "gemini":
-      return "FREE SETUP"
+      return "免费设置"
     case "local":
-      return "MOST PRIVATE"
+      return "最私密"
     default:
-      return "OPTION"
+      return "备选"
     }
   }
 
   var body: some View {
     VStack(spacing: 0) {
       // Title
-      Text("Choose a way to run Dayflow")
+      Text("选择 Dayflow 的运行方式")
         .font(.custom("InstrumentSerif-Regular", size: scaledText(40)))
         .tracking(-1.2 * layoutScale)
         .multilineTextAlignment(.center)
@@ -182,7 +182,8 @@ struct OnboardingPrototypeChooseProviderStep: View {
         HStack(spacing: scaled(20)) {
           tallCard(
             icon: first.icon, title: first.title,
-            badgeText: "RECOMMENDED", badgeType: .orange,
+            badgeText: "推荐",
+            badgeType: .orange,
             pros: first.pros, caveats: first.caveats,
             isHighlighted: true
           )
@@ -211,7 +212,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
             showAllOptions.toggle()
           }
         } label: {
-          Text(showAllOptions ? "See recommendations only" : "See all options")
+          Text(showAllOptions ? "仅看推荐" : "查看全部")
             .font(.custom("Figtree", size: scaledText(16)))
             .foregroundColor(Color(hex: "492304"))
             .padding(.horizontal, scaled(20))
@@ -242,7 +243,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         ProviderIconView(icon: "dayflow_asset", scale: layoutScale)
 
         VStack(alignment: .leading, spacing: scaled(4)) {
-          Text("Sign up / Sign in to Dayflow")
+          Text("注册 / 登录 Dayflow")
             .font(.custom("Figtree", size: scaledText(20)))
             .fontWeight(.semibold)
             .foregroundColor(Color(hex: "492304"))
@@ -263,7 +264,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
             dayflowProStep = .email
           }
         } label: {
-          Text("Back")
+          Text("返回")
             .font(.custom("Figtree", size: scaledText(13)))
             .fontWeight(.semibold)
             .foregroundColor(Color(hex: "492304"))
@@ -321,7 +322,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
   private var dayflowProEmailForm: some View {
     VStack(alignment: .leading, spacing: scaled(14)) {
       VStack(alignment: .leading, spacing: scaled(6)) {
-        Text("Email")
+        Text("邮箱")
           .font(.custom("Figtree", size: scaledText(13)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
@@ -333,7 +334,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
       HStack {
         Spacer()
         dayflowProPrimaryButton(
-          title: authManager.isBusy ? "Sending..." : "Send sign-in code",
+          title: authManager.isBusy ? "发送中..." : "发送验证码",
           enabled: canSendDayflowProCode,
           action: sendDayflowProCode
         )
@@ -344,7 +345,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
   private var dayflowProCodeForm: some View {
     VStack(alignment: .leading, spacing: scaled(14)) {
       VStack(alignment: .leading, spacing: scaled(6)) {
-        Text("Code sent to \(dayflowProVerificationTarget)")
+        Text("验证码已发送到 \(dayflowProVerificationTarget)")
           .font(.custom("Figtree", size: scaledText(13)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
@@ -361,12 +362,12 @@ struct OnboardingPrototypeChooseProviderStep: View {
 
       HStack(spacing: scaled(10)) {
         dayflowProSecondaryButton(
-          title: "Different email",
+          title: "更换邮箱",
           action: showDayflowProEmailStep
         )
 
         dayflowProSecondaryButton(
-          title: authManager.isBusy ? "Sending..." : "Resend code",
+          title: authManager.isBusy ? "发送中..." : "重新发送验证码",
           enabled: !authManager.isBusy,
           action: resendDayflowProCode
         )
@@ -374,7 +375,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         Spacer()
 
         dayflowProPrimaryButton(
-          title: authManager.isBusy ? "Checking..." : "Continue",
+          title: authManager.isBusy ? "核验中..." : "继续",
           enabled: canVerifyDayflowProCode,
           action: verifyDayflowProCode
         )
@@ -385,13 +386,13 @@ struct OnboardingPrototypeChooseProviderStep: View {
   private var dayflowProReferralCodeForm: some View {
     VStack(alignment: .leading, spacing: scaled(14)) {
       VStack(alignment: .leading, spacing: scaled(6)) {
-        Text("Do you have a referral code?")
+        Text("你有推荐码吗？")
           .font(.custom("Figtree", size: scaledText(13)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
 
         Text(
-          "If someone gave you a code, enter it here. Don't worry if you don't have a code, we'll gift you a free week of Dayflow Pro!"
+          "如果有人给了你推荐码，请在此填写；如果没有，我们会送你 1 周 Dayflow Pro 免费体验。"
         )
         .font(.custom("Figtree", size: scaledText(13)))
         .foregroundColor(Color(hex: "89380E").opacity(0.75))
@@ -402,13 +403,13 @@ struct OnboardingPrototypeChooseProviderStep: View {
 
       HStack(spacing: scaled(10)) {
         dayflowProPrimaryButton(
-          title: authManager.isBusy ? "Applying..." : "Apply code",
+          title: authManager.isBusy ? "提交中..." : "提交推荐码",
           enabled: canApplyDayflowProReferralCode,
           action: applyDayflowProReferralCode
         )
 
         dayflowProSecondaryButton(
-          title: "I don't have a code",
+          title: "我没有推荐码",
           enabled: !authManager.isBusy,
           action: showDayflowProTrialOffer
         )
@@ -418,23 +419,23 @@ struct OnboardingPrototypeChooseProviderStep: View {
 
   private var dayflowProRewardActiveForm: some View {
     VStack(alignment: .center, spacing: scaled(16)) {
-      ReferralPassCard(message: "Your free month of Dayflow Pro is ready.")
+      ReferralPassCard(message: "你的 Dayflow Pro 免费月已准备就绪。")
 
       VStack(spacing: scaled(6)) {
-        Text("Congrats, enjoy a free month of Dayflow Pro on us!")
+        Text("恭喜你获得 1 周 Dayflow Pro 免费体验！")
           .font(.custom("Figtree", size: scaledText(16)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
           .multilineTextAlignment(.center)
 
-        Text("Your referral reward is active on this account.")
+        Text("你的推荐奖励在该账号中已生效。")
           .font(.custom("Figtree", size: scaledText(13)))
           .foregroundColor(Color(hex: "89380E").opacity(0.75))
           .multilineTextAlignment(.center)
       }
 
       dayflowProPrimaryButton(
-        title: "Continue with Dayflow Pro",
+        title: "继续 Dayflow Pro",
         enabled: !authManager.isBusy,
         action: continueWithDayflowPro
       )
@@ -444,17 +445,17 @@ struct OnboardingPrototypeChooseProviderStep: View {
 
   private var dayflowProTrialOfferForm: some View {
     VStack(alignment: .center, spacing: scaled(16)) {
-      ReferralPassCard(message: "7 days free. No credit card required.")
+      ReferralPassCard(message: "7 天免费体验，无需信用卡。")
 
       VStack(spacing: scaled(6)) {
-        Text("Try Dayflow Pro free for 7 days.")
+        Text("免费体验 Dayflow Pro 7 天。")
           .font(.custom("Figtree", size: scaledText(16)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
           .multilineTextAlignment(.center)
 
         Text(
-          "We want you to be able to try Dayflow for free, no credit card and no strings attached!"
+          "我们希望你能先免费试用 Dayflow，无需信用卡，无隐藏条件。"
         )
         .font(.custom("Figtree", size: scaledText(13)))
         .foregroundColor(Color(hex: "89380E").opacity(0.75))
@@ -463,13 +464,13 @@ struct OnboardingPrototypeChooseProviderStep: View {
 
       HStack(spacing: scaled(10)) {
         dayflowProPrimaryButton(
-          title: authManager.isBusy ? "Starting..." : "Start free trial",
+          title: authManager.isBusy ? "开启中..." : "开始免费试用",
           enabled: !authManager.isBusy,
           action: startDayflowProTrial
         )
 
         dayflowProSecondaryButton(
-          title: "I have a code",
+          title: "我有推荐码",
           enabled: !authManager.isBusy,
           action: showDayflowProReferralCodeStep
         )
@@ -480,23 +481,23 @@ struct OnboardingPrototypeChooseProviderStep: View {
 
   private var dayflowProTrialActiveForm: some View {
     VStack(alignment: .center, spacing: scaled(16)) {
-      ReferralPassCard(message: "7 days free. No credit card required.")
+      ReferralPassCard(message: "7 天免费体验，无需信用卡。")
 
       VStack(spacing: scaled(6)) {
-        Text("Your Dayflow Pro trial is active.")
+        Text("你的 Dayflow Pro 试用已生效。")
           .font(.custom("Figtree", size: scaledText(16)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
           .multilineTextAlignment(.center)
 
-        Text("No credit card needed. You can set up billing later if Dayflow is useful.")
+        Text("无需信用卡；若 Dayflow 对你有帮助，可在后续再设置付费。")
           .font(.custom("Figtree", size: scaledText(13)))
           .foregroundColor(Color(hex: "89380E").opacity(0.75))
           .multilineTextAlignment(.center)
       }
 
       dayflowProPrimaryButton(
-        title: "Continue with Dayflow Pro",
+        title: "继续 Dayflow Pro",
         enabled: !authManager.isBusy,
         action: continueWithDayflowPro
       )
@@ -507,12 +508,12 @@ struct OnboardingPrototypeChooseProviderStep: View {
   private var dayflowProReferralField: some View {
     VStack(alignment: .leading, spacing: scaled(6)) {
       HStack(spacing: scaled(8)) {
-        Text("Referral code")
+        Text("推荐码")
           .font(.custom("Figtree", size: scaledText(13)))
           .fontWeight(.semibold)
           .foregroundColor(Color(hex: "492304"))
 
-        Text("Optional")
+          Text("可选")
           .font(.custom("Figtree", size: scaledText(12)))
           .foregroundColor(Color(hex: "89380E").opacity(0.62))
       }
@@ -533,7 +534,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         }
 
       if !dayflowProReferralCode.isEmpty && !isDayflowProReferralCodeValid {
-        Text("Enter the 6-character code from your invite.")
+        Text("请输入邀请里的 6 位推荐码。")
           .font(.custom("Figtree", size: scaledText(12)))
           .foregroundColor(Color(hex: "B42318"))
       }
@@ -545,15 +546,15 @@ struct OnboardingPrototypeChooseProviderStep: View {
     case .email:
       return nil
     case .code:
-      return "Enter the code we sent to finish signing up/in."
+      return "输入验证码以完成注册或登录。"
     case .referralCode:
       return nil
     case .freeMonthActive:
-      return "Your referral reward is ready."
+      return "你的推荐奖励已准备就绪。"
     case .trialOffer:
-      return "No referral code? Start with a free trial."
+      return "没有推荐码？先开始免费试用。"
     case .trialActive:
-      return "Your trial is ready."
+      return "你的试用已就绪。"
     }
   }
 
@@ -1040,7 +1041,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         }
       },
       content: {
-        Text("Select")
+        Text("选择")
           .font(.custom("Figtree", size: scaledText(14)))
           .fontWeight(.semibold)
           .frame(maxWidth: .infinity)

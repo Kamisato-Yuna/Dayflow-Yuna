@@ -25,7 +25,7 @@ struct TestConnectionView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       SettingsPrimaryButton(
-        title: isTesting ? "Testing…" : "Test connection",
+        title: isTesting ? "测试中…" : "测试连接",
         systemImage: "bolt.fill",
         isLoading: isTesting,
         action: testConnection
@@ -48,7 +48,7 @@ struct TestConnectionView: View {
         .components(separatedBy: .whitespacesAndNewlines).joined(),
       !apiKey.isEmpty
     else {
-      testResult = .failure("No API key found. Enter your API key first.")
+      testResult = .failure("未检测到 API 密钥，请先填写 API 密钥。")
       onTestComplete?(false)
       AnalyticsService.shared.capture(
         "connection_test_failed", ["provider": "gemini", "error_code": "no_api_key"])
@@ -63,14 +63,14 @@ struct TestConnectionView: View {
       do {
         let _ = try await GeminiAPIHelper.shared.testConnection(apiKey: apiKey)
         await MainActor.run {
-          testResult = .success("Connection successful.")
+          testResult = .success("连接成功。")
           isTesting = false
           onTestComplete?(true)
         }
         AnalyticsService.shared.capture("connection_test_succeeded", ["provider": "gemini"])
       } catch GeminiAPIHelper.APIError.rateLimited {
         await MainActor.run {
-          testResult = .success("API key works, but Gemini is rate limited right now.")
+          testResult = .success("API 密钥可用，但目前 Gemini 触发限流。")
           isTesting = false
           onTestComplete?(true)
         }

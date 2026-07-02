@@ -66,6 +66,119 @@ struct ChatCLIProcessRunner {
     }
   }
 
+  final class StreamingState: @unchecked Sendable {
+    private let queue = DispatchQueue(label: "ChatCLI.StreamState")
+    private let tool: ChatCLITool
+    private var accumulatedText = ""
+    private var lineBuffer = Data()
+    private var stderrBuffer = Data()
+    private var sawTextDelta = false
+    private var didYieldComplete = false
+
+    init(tool: ChatCLITool) {
+      self.tool = tool
+    }
+
+    func appendStdout(_ data: Data) -> [ChatStreamEvent] {
+      queue.sync {
+        lineBuffer.append(data)
+        return drainBufferedLines()
+      }
+    }
+
+    func appendStderr(_ data: Data) {
+      queue.sync {
+        stderrBuffer.append(data)
+      }
+    }
+
+    func partialSnapshot() -> (stdout: String, rawStdout: String, stderr: String) {
+      queue.sync {
+        (
+          accumulatedText,
+          String(data: lineBuffer, encoding: .utf8) ?? "",
+          String(data: stderrBuffer, encoding: .utf8) ?? ""
+        )
+      }
+    }
+
+    func finalEvents(remainingStdout: Data, remainingStderr: Data) -> [ChatStreamEvent] {
+      queue.sync {
+        var parsedEvents = drainBufferedLines()
+
+        if !remainingStdout.isEmpty {
+          lineBuffer.append(remainingStdout)
+          parsedEvents.append(contentsOf: drainBufferedLines())
+        }
+        if !remainingStderr.isEmpty {
+          stderrBuffer.append(remainingStderr)
+        }
+
+        if !lineBuffer.isEmpty,
+          let rawLine = String(data: lineBuffer, encoding: .utf8)
+        {
+          let trimmed = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
+          let line = ChatCLIProcessRunner.stripANSIEscapes(trimmed)
+          if !line.isEmpty, let event = ChatCLIProcessRunner.parseJSONLLine(tool: tool, line: line) {
+            appendEvent(event, to: &parsedEvents)
+          }
+          lineBuffer.removeAll(keepingCapacity: false)
+        }
+
+        return parsedEvents
+      }
+    }
+
+    func finalState() -> (stdout: String, didYieldComplete: Bool, stderr: String) {
+      queue.sync {
+        (
+          accumulatedText,
+          didYieldComplete,
+          String(data: stderrBuffer, encoding: .utf8) ?? ""
+        )
+      }
+    }
+
+    private func drainBufferedLines() -> [ChatStreamEvent] {
+      var parsedEvents: [ChatStreamEvent] = []
+
+      while let newlineRange = lineBuffer.range(of: Data([0x0A])) {
+        let lineData = lineBuffer.subdata(in: 0..<newlineRange.lowerBound)
+        lineBuffer.removeSubrange(0...newlineRange.lowerBound)
+
+        guard let rawLine = String(data: lineData, encoding: .utf8) else { continue }
+        let trimmed = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
+        let line = ChatCLIProcessRunner.stripANSIEscapes(trimmed)
+        guard !line.isEmpty else { continue }
+
+        if let event = ChatCLIProcessRunner.parseJSONLLine(tool: tool, line: line) {
+          appendEvent(event, to: &parsedEvents)
+        }
+      }
+
+      return parsedEvents
+    }
+
+    private func appendEvent(_ event: ChatStreamEvent, to parsedEvents: inout [ChatStreamEvent]) {
+      var shouldYield = true
+      if case .textDelta(let text) = event {
+        sawTextDelta = true
+        accumulatedText += text
+      } else if case .complete(let text) = event {
+        if sawTextDelta || didYieldComplete {
+          shouldYield = false
+        } else {
+          didYieldComplete = true
+          accumulatedText = text
+        }
+      }
+
+      if shouldYield {
+        parsedEvents.append(event)
+      }
+    }
+  }
+
   struct PseudoTerminal {
     let master: FileHandle
     let slaveFd: Int32
@@ -375,53 +488,13 @@ struct ChatCLIProcessRunner {
     let stderrHandle = stderrPipe.fileHandleForReading
     process.standardError = stderrPipe
 
-    let stateQueue = DispatchQueue(label: "ChatCLI.StreamState")
-    var accumulatedText = ""
-    var lineBuffer = Data()
-    var stderrBuffer = Data()
-    var sawTextDelta = false
-    var didYieldComplete = false
+    let streamingState = StreamingState(tool: tool)
 
     func cleanupStreamingResources() {
       stdoutHandle.readabilityHandler = nil
       stderrHandle.readabilityHandler = nil
       cleanupPty?()
       cleanupPty = nil
-    }
-
-    func drainBufferedLines() -> [ChatStreamEvent] {
-      var parsedEvents: [ChatStreamEvent] = []
-
-      while let newlineRange = lineBuffer.range(of: Data([0x0A])) {
-        let lineData = lineBuffer.subdata(in: 0..<newlineRange.lowerBound)
-        lineBuffer.removeSubrange(0...newlineRange.lowerBound)
-
-        guard let rawLine = String(data: lineData, encoding: .utf8) else { continue }
-        let trimmed = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
-        let line = stripANSIEscapes(trimmed)
-        guard !line.isEmpty else { continue }
-
-        if let event = parseJSONLLine(tool: tool, line: line) {
-          var shouldYield = true
-          if case .textDelta(let text) = event {
-            sawTextDelta = true
-            accumulatedText += text
-          } else if case .complete(let text) = event {
-            if sawTextDelta || didYieldComplete {
-              shouldYield = false
-            } else {
-              didYieldComplete = true
-              accumulatedText = text
-            }
-          }
-
-          if shouldYield {
-            parsedEvents.append(event)
-          }
-        }
-      }
-
-      return parsedEvents
     }
 
     stdoutHandle.readabilityHandler = { handle in
@@ -431,10 +504,7 @@ struct ChatCLIProcessRunner {
         return
       }
 
-      let parsedEvents = stateQueue.sync { () -> [ChatStreamEvent] in
-        lineBuffer.append(data)
-        return drainBufferedLines()
-      }
+      let parsedEvents = streamingState.appendStdout(data)
 
       for event in parsedEvents {
         continuation.yield(event)
@@ -448,9 +518,7 @@ struct ChatCLIProcessRunner {
         return
       }
 
-      stateQueue.sync {
-        stderrBuffer.append(data)
-      }
+      streamingState.appendStderr(data)
     }
 
     try process.run()
@@ -464,18 +532,16 @@ struct ChatCLIProcessRunner {
       process.waitUntilExit()
       semaphore.signal()
     }
-    let result = semaphore.wait(timeout: .now() + timeoutSeconds)
+    let result = await withCheckedContinuation { continuation in
+      DispatchQueue.global(qos: .utility).async {
+        continuation.resume(returning: semaphore.wait(timeout: .now() + timeoutSeconds))
+      }
+    }
     if result == .timedOut {
       process.terminate()
       cleanupStreamingResources()
       // Capture partial streaming output before throwing
-      let partial = stateQueue.sync {
-        (
-          accumulatedText,
-          String(data: lineBuffer, encoding: .utf8) ?? "",
-          String(data: stderrBuffer, encoding: .utf8) ?? ""
-        )
-      }
+      let partial = streamingState.partialSnapshot()
       throw NSError(
         domain: "ChatCLI", code: -3,
         userInfo: [
@@ -486,54 +552,14 @@ struct ChatCLIProcessRunner {
     }
 
     cleanupStreamingResources()
-    let finalEvents = stateQueue.sync { () -> [ChatStreamEvent] in
-      var parsedEvents = drainBufferedLines()
-      let remainingStdout = stdoutHandle.readDataToEndOfFile()
-      let remainingStderr = stderrHandle.readDataToEndOfFile()
+    let remainingStdout = stdoutHandle.readDataToEndOfFile()
+    let remainingStderr = stderrHandle.readDataToEndOfFile()
+    let finalEvents = streamingState.finalEvents(
+      remainingStdout: remainingStdout,
+      remainingStderr: remainingStderr
+    )
 
-      if !remainingStdout.isEmpty {
-        lineBuffer.append(remainingStdout)
-        parsedEvents.append(contentsOf: drainBufferedLines())
-      }
-      if !remainingStderr.isEmpty {
-        stderrBuffer.append(remainingStderr)
-      }
-
-      if !lineBuffer.isEmpty,
-        let rawLine = String(data: lineBuffer, encoding: .utf8)
-      {
-        let trimmed = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
-        let line = stripANSIEscapes(trimmed)
-        if !line.isEmpty, let event = parseJSONLLine(tool: tool, line: line) {
-          var shouldYield = true
-          if case .textDelta(let text) = event {
-            sawTextDelta = true
-            accumulatedText += text
-          } else if case .complete(let text) = event {
-            if sawTextDelta || didYieldComplete {
-              shouldYield = false
-            } else {
-              didYieldComplete = true
-              accumulatedText = text
-            }
-          }
-          if shouldYield {
-            parsedEvents.append(event)
-          }
-        }
-        lineBuffer.removeAll(keepingCapacity: false)
-      }
-
-      return parsedEvents
-    }
-
-    let finalState = stateQueue.sync {
-      (
-        accumulatedText,
-        didYieldComplete,
-        String(data: stderrBuffer, encoding: .utf8) ?? ""
-      )
-    }
+    let finalState = streamingState.finalState()
 
     if process.terminationStatus != 0,
       let fallback = codexFallbackContextIfNeeded(
@@ -585,7 +611,7 @@ struct ChatCLIProcessRunner {
     continuation.finish()
   }
 
-  func parseJSONLLine(tool: ChatCLITool, line: String) -> ChatStreamEvent? {
+  static func parseJSONLLine(tool: ChatCLITool, line: String) -> ChatStreamEvent? {
     guard let data = line.data(using: .utf8) else { return nil }
 
     switch tool {
@@ -596,7 +622,7 @@ struct ChatCLIProcessRunner {
     }
   }
 
-  func parseCodexEvent(_ data: Data) -> ChatStreamEvent? {
+  static func parseCodexEvent(_ data: Data) -> ChatStreamEvent? {
     guard let event = try? JSONDecoder().decode(CodexJSONLEvent.self, from: data) else {
       return nil
     }
@@ -633,7 +659,7 @@ struct ChatCLIProcessRunner {
     return nil
   }
 
-  func parseClaudeEvent(_ data: Data) -> ChatStreamEvent? {
+  static func parseClaudeEvent(_ data: Data) -> ChatStreamEvent? {
     guard let event = try? JSONDecoder().decode(ClaudeJSONLEvent.self, from: data) else {
       return nil
     }
@@ -660,7 +686,7 @@ struct ChatCLIProcessRunner {
     return nil
   }
 
-  func stripANSIEscapes(_ input: String) -> String {
+  static func stripANSIEscapes(_ input: String) -> String {
     var output = ""
     var index = input.startIndex
     while index < input.endIndex {
@@ -882,7 +908,7 @@ struct ChatCLIProcessRunner {
     var rawOut = String(data: stdoutBuffer, encoding: .utf8) ?? ""
     if tool == .claude {
       // Plain pipes are sufficient for Claude non-streaming mode and avoid PTY escape noise.
-      rawOut = stripANSIEscapes(rawOut)
+      rawOut = Self.stripANSIEscapes(rawOut)
     }
     let stderr = String(data: stderrBuffer, encoding: .utf8) ?? ""
 

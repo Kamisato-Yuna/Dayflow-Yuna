@@ -526,7 +526,7 @@ struct WeekTimelineGridView: View {
     .position(
       x: WeekTimelineConfig.timeColumnWidth
         + weekCardXPosition(for: columnIndex, dayWidth: dayWidth),
-      y: calculateYPosition(for: projection.start) + 1 + projectionHeight / 2
+      y: Self.calculateYPosition(for: projection.start) + 1 + projectionHeight / 2
     )
     .zIndex(3)
   }
@@ -580,18 +580,18 @@ struct WeekTimelineGridView: View {
       HStack(spacing: 6) {
         TimelineThinkingSpinner(config: spinnerConfig, visualScale: 0.4)
         if !compact {
-          Text("Next card...")
+          Text("下一张卡片...")
             .font(.custom("Figtree", size: 10).weight(.semibold))
             .foregroundColor(.white)
             .lineLimit(1)
         }
       }
     case .pausedTimed, .pausedIndefinite:
-      Label("Paused", systemImage: "pause.fill")
+      Label("已暂停", systemImage: "pause.fill")
         .font(.custom("Figtree", size: 10).weight(.medium))
         .foregroundColor(Color(hex: "888D95"))
     case .stopped:
-      Label("Resume", systemImage: "play.fill")
+      Label("继续", systemImage: "play.fill")
         .font(.custom("Figtree", size: 10).weight(.medium))
         .foregroundColor(Color(hex: "888D95"))
     }
@@ -670,11 +670,11 @@ struct WeekTimelineGridView: View {
               id: segment.activity.id,
               activity: segment.activity,
               columnIndex: dayLookup[day.dayString] ?? 0,
-              yPosition: calculateYPosition(for: segment.start) + 1,
+              yPosition: Self.calculateYPosition(for: segment.start) + 1,
               height: height,
               durationMinutes: durationMinutes,
               title: segment.activity.title,
-              hoverTimeLabel: formatRange(start: segment.start, end: segment.end),
+              hoverTimeLabel: Self.formatRange(start: segment.start, end: segment.end),
               categoryName: segment.activity.category,
               faviconPrimaryRaw: primaryRaw,
               faviconSecondaryRaw: secondaryRaw,
@@ -723,13 +723,15 @@ struct WeekTimelineGridView: View {
         return
       }
 
+      let committedPositioned = positioned
+
       await MainActor.run {
         let commitStart = CFAbsoluteTimeGetCurrent()
-        positionedActivities = positioned
+        positionedActivities = committedPositioned
         recordingProjection = projection
-        hasAnyActivities = !positioned.isEmpty
+        hasAnyActivities = !committedPositioned.isEmpty
         if let selectedActivity,
-          !positioned.contains(where: { $0.activity.id == selectedActivity.id })
+          !committedPositioned.contains(where: { $0.activity.id == selectedActivity.id })
         {
           self.selectedActivity = nil
         }
@@ -743,7 +745,7 @@ struct WeekTimelineGridView: View {
         let commitMs = Int((CFAbsoluteTimeGetCurrent() - commitStart) * 1000)
         let totalMs = Int((CFAbsoluteTimeGetCurrent() - overallStart) * 1000)
         timelinePerfLog(
-          "weekGrid.load.end trigger=\(trigger) week=\(requestedWeekID) selected=\(requestedSelectedDay) activities=\(activities.count) cards=\(positioned.count) fetch_ms=\(fetchMs) position_ms=\(positioningMs) projection_ms=\(projectionMs) commit_ms=\(commitMs) total_ms=\(totalMs)"
+          "weekGrid.load.end trigger=\(trigger) week=\(requestedWeekID) selected=\(requestedSelectedDay) activities=\(activities.count) cards=\(committedPositioned.count) fetch_ms=\(fetchMs) position_ms=\(positioningMs) projection_ms=\(projectionMs) commit_ms=\(commitMs) total_ms=\(totalMs)"
         )
       }
     }
@@ -785,7 +787,7 @@ struct WeekTimelineGridView: View {
       let statusFrame = CGRect(
         x: cardsLayerFrame.minX + CGFloat(todayIndex) * dayWidth
           + WeekTimelineConfig.cardLeadingGap,
-        y: cardsLayerFrame.minY + calculateYPosition(for: projection.start) + 1,
+        y: cardsLayerFrame.minY + Self.calculateYPosition(for: projection.start) + 1,
         width: cardWidth,
         height: recordingProjectionHeight(for: projection)
       )
@@ -844,7 +846,7 @@ struct WeekTimelineGridView: View {
 
     if weekRange.containsToday {
       return hourIndex(
-        forContentYPosition: calculateYPosition(for: Date()),
+        forContentYPosition: Self.calculateYPosition(for: Date()),
         leadingMinutes: WeekTimelineConfig.fallbackLeadingMinutes
       )
     }
@@ -870,13 +872,13 @@ struct WeekTimelineGridView: View {
       return activityYPosition
     }
 
-    let projectionYPosition = recordingProjection.map { calculateYPosition(for: $0.start) }
+    let projectionYPosition = recordingProjection.map { Self.calculateYPosition(for: $0.start) }
 
     return [activityYPosition, projectionYPosition].compactMap { $0 }.min()
   }
 
   private func earliestWeekContentYPosition() -> CGFloat? {
-    let projectionYPosition = recordingProjection.map { calculateYPosition(for: $0.start) }
+    let projectionYPosition = recordingProjection.map { Self.calculateYPosition(for: $0.start) }
     return [positionedActivities.map(\.yPosition).min(), projectionYPosition].compactMap { $0 }
       .min()
   }
@@ -928,7 +930,7 @@ struct WeekTimelineGridView: View {
     }
   }
 
-  private func calculateYPosition(for time: Date) -> CGFloat {
+  nonisolated private static func calculateYPosition(for time: Date) -> CGFloat {
     let calendar = Calendar.current
     let hour = calendar.component(.hour, from: time)
     let minute = calendar.component(.minute, from: time)
@@ -952,15 +954,10 @@ struct WeekTimelineGridView: View {
     return "\(adjustedHour):00 \(period)"
   }
 
-  private static let hoverTimeFormatter: DateFormatter = {
+  nonisolated private static func formatRange(start: Date, end: Date) -> String {
     let formatter = DateFormatter()
     formatter.dateFormat = "h:mm a"
     formatter.locale = Locale(identifier: "en_US_POSIX")
-    return formatter
-  }()
-
-  private func formatRange(start: Date, end: Date) -> String {
-    let formatter = Self.hoverTimeFormatter
     return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
   }
 
@@ -1264,11 +1261,11 @@ private struct WeekTimelineHoverPrototypeHarness: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Hover-expand prototype")
+        Text("悬停展开原型")
           .font(.custom("Figtree", size: 13).weight(.semibold))
           .foregroundColor(Color(hex: "333333"))
         Text(
-          "Hover a short card — the card grows to reveal the full title. No text shifts; only new lines appear below."
+          "悬停短卡片时，卡片会展开显示完整标题。已有文字不移动，只在下方显示新行。"
         )
         .font(.custom("Figtree", size: 11))
         .foregroundColor(Color(hex: "6B5548"))

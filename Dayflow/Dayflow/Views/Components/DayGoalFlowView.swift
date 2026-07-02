@@ -200,7 +200,7 @@ struct DayGoalFlowView: View {
 
   private var reviewScreen: some View {
     ZStack(alignment: .topLeading) {
-      Text("Yesterday’s review")
+      Text("昨天的回顾")
         .font(.custom("Instrument Serif", size: 36))
         .foregroundColor(Design.text)
         .tracking(-1.08)
@@ -210,8 +210,8 @@ struct DayGoalFlowView: View {
 
       GoalReviewCard(
         kind: .focus,
-        title: "Focus target: \(formatDuration(review.plan.focusTargetDuration))",
-        subtitle: "Time spent: \(formatDuration(review.focusDuration))",
+        title: "专注目标：\(formatDuration(review.plan.focusTargetDuration))",
+        subtitle: "已投入时间：\(formatDuration(review.focusDuration))",
         targetDuration: review.plan.focusTargetDuration,
         actualDuration: review.focusDuration,
         categories: review.focusCategories
@@ -221,8 +221,8 @@ struct DayGoalFlowView: View {
 
       GoalReviewCard(
         kind: .distraction,
-        title: "Distraction limit: \(formatDuration(review.plan.distractionLimitDuration))",
-        subtitle: "Time spent distracted: \(formatDuration(review.distractedDuration))",
+        title: "分心上限：\(formatDuration(review.plan.distractionLimitDuration))",
+        subtitle: "分心时间：\(formatDuration(review.distractedDuration))",
         targetDuration: review.plan.distractionLimitDuration,
         actualDuration: review.distractedDuration,
         categories: []
@@ -230,7 +230,7 @@ struct DayGoalFlowView: View {
       .frame(width: 388, height: 123)
       .position(x: 600, y: 491.5)
 
-      primaryButton("Set today’s goals") {
+      primaryButton("设置今日目标") {
         onSetupStarted()
         withAnimation(.spring(response: 0.28, dampingFraction: 0.86)) {
           screen = .setup
@@ -245,7 +245,7 @@ struct DayGoalFlowView: View {
     let distractionStats = setupStats(for: .distraction)
 
     return ZStack(alignment: .topLeading) {
-      Text("Where do you want to spend your time today?")
+      Text("今天你想把时间花在哪里？")
         .font(.custom("Instrument Serif", size: 24))
         .foregroundColor(.black)
         .multilineTextAlignment(.center)
@@ -263,11 +263,11 @@ struct DayGoalFlowView: View {
 
       GoalSetupPanel(
         kind: .focus,
-        title: "Focus goal",
+        title: "专注目标",
         durationMinutes: $draft.focusTargetMinutes,
-        leadingStatTitle: "Yesterday’s focus",
+        leadingStatTitle: "昨天专注",
         leadingStatMinutes: focusStats.yesterdayMinutes,
-        trailingStatTitle: "Last week’s Focus average",
+        trailingStatTitle: "上周专注平均",
         trailingStatMinutes: focusStats.lastWeekAverageMinutes,
         statScaleMaxMinutes: focusStats.scaleMaxMinutes,
         selectedCategories: resolvedSnapshots(for: .focus),
@@ -279,11 +279,11 @@ struct DayGoalFlowView: View {
 
       GoalSetupPanel(
         kind: .distraction,
-        title: "Distraction limit",
+        title: "分心上限",
         durationMinutes: $draft.distractionLimitMinutes,
-        leadingStatTitle: "Yesterday’s Distractions",
+        leadingStatTitle: "昨天分心",
         leadingStatMinutes: distractionStats.yesterdayMinutes,
-        trailingStatTitle: "Last week’s Distraction average",
+        trailingStatTitle: "上周分心平均",
         trailingStatMinutes: distractionStats.lastWeekAverageMinutes,
         statScaleMaxMinutes: distractionStats.scaleMaxMinutes,
         selectedCategories: resolvedSnapshots(for: .distraction),
@@ -294,9 +294,9 @@ struct DayGoalFlowView: View {
       .position(x: 804, y: 385.5)
 
       HStack(spacing: 10) {
-        secondaryButton("Skip today", action: onSkip)
+        secondaryButton("今天跳过", action: onSkip)
 
-        primaryButton("Confirm") {
+        primaryButton("确认") {
           var plan = draft
           plan.isSkipped = false
           let now = Int(Date().timeIntervalSince1970)
@@ -511,12 +511,12 @@ struct DayGoalFlowView: View {
     let minutes = totalMinutes % 60
 
     if hours > 0 && minutes > 0 {
-      return "\(hours) hours \(minutes) minutes"
+      return "\(hours)小时 \(minutes)分钟"
     }
     if hours > 0 {
-      return hours == 1 ? "1 hour" : "\(hours) hours"
+      return "\(hours)小时"
     }
-    return "\(minutes) minutes"
+    return "\(minutes)分钟"
   }
 
 }
@@ -529,7 +529,7 @@ private struct GoalCategoryPool: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Drag and drop to set the categories you want to track")
+      Text("拖放来设置你想追踪的分类")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "5E5E5E"))
 
@@ -550,7 +550,7 @@ private struct GoalCategoryPool: View {
           }
           .pointingHandCursor()
           .help(
-            "Drag into a goal panel, or click to cycle between Focus, Distraction, and untracked")
+            "拖入目标面板，或点击以在专注、分心和未追踪之间切换")
         }
       }
     }
@@ -665,7 +665,7 @@ private struct GoalSetupPanel: View {
 
   private var categoryBox: some View {
     VStack(alignment: .leading, spacing: 10) {
-      Text("Categories")
+      Text("分类")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "7A7A7A"))
 
@@ -766,12 +766,12 @@ private struct GoalSetupPanel: View {
     let hours = minutes / 60
     let mins = minutes % 60
     if hours > 0 && mins == 0 {
-      return "\(hours) hours"
+      return "\(hours)小时"
     }
     if hours > 0 {
-      return "\(hours)h \(mins)m"
+      return "\(hours)小时 \(mins)分钟"
     }
-    return "\(mins)m"
+    return "\(mins)分钟"
   }
 
   private func statBarWidth(minutes: Int) -> CGFloat {
@@ -807,7 +807,7 @@ private struct GoalDurationPicker: View {
       GoalNumberColumn(
         value: hoursBinding,
         range: 0...12,
-        label: "Hours",
+        label: "小时",
         step: 1,
         numberStackLeft: 5.25,
         numberStackTop: 12.89,
@@ -817,7 +817,7 @@ private struct GoalDurationPicker: View {
       GoalNumberColumn(
         value: minuteBinding,
         range: 0...55,
-        label: "Mins",
+        label: "分钟",
         step: 5,
         numberStackLeft: 5.25,
         numberStackTop: 11.89,
@@ -911,7 +911,7 @@ private struct GoalNumberColumn: View {
         applyScroll(deltaY, isPrecise: isPrecise)
       }
     )
-    .help("Drag or scroll to adjust \(label.lowercased())")
+    .help("拖动或滚动以调整\(label.lowercased())")
   }
 
   @ViewBuilder
@@ -946,7 +946,7 @@ private struct GoalNumberColumn: View {
   }
 
   private var labelWidth: CGFloat {
-    label == "Hours" ? 40 : 32
+    label == "小时" ? 40 : 32
   }
 
   private func formattedValue(_ value: Int) -> String {
@@ -1217,7 +1217,7 @@ private struct GoalReviewCard: View {
   }
 
   private var resultBadge: some View {
-    Text(succeeded ? "NAILED IT" : "MISSED")
+    Text(succeeded ? "已达成" : "未达成")
       .font(.custom("Figtree", size: 10).weight(.heavy))
       .foregroundColor(succeeded ? Color(hex: "4AB43F") : Color(hex: "FA8282"))
       .padding(.horizontal, 15)
@@ -1243,7 +1243,7 @@ private struct GoalCategoryBreakdown: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 7) {
       if categories.isEmpty {
-        Text("No focus categories tracked")
+        Text("未追踪专注分类")
           .font(.custom("Figtree", size: 12))
           .foregroundColor(Color(hex: "777777"))
           .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
@@ -1286,12 +1286,12 @@ private struct GoalCategoryBreakdown: View {
     let hours = totalMinutes / 60
     let minutes = totalMinutes % 60
     if hours > 0 && minutes > 0 {
-      return "\(hours)h \(minutes)m"
+      return "\(hours)小时 \(minutes)分钟"
     }
     if hours > 0 {
-      return "\(hours)h"
+      return "\(hours)小时"
     }
-    return "\(minutes)m"
+    return "\(minutes)分钟"
   }
 }
 

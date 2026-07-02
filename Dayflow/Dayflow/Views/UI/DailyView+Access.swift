@@ -70,31 +70,31 @@ extension DailyView {
   }
   var notificationPermissionButtonTitle: String {
     if isCheckingNotificationAuthorization || isRequestingNotificationPermission {
-      return "Checking..."
+      return "正在检查..."
     }
 
     if notificationAuthorizationStatus == .authorized {
-      return "Opening Daily..."
+      return "正在打开 Daily..."
     }
 
     if notificationAuthorizationStatus == .denied {
-      return "Open System Settings"
+      return "打开系统设置"
     }
 
-    return "Turn on notifications"
+    return "开启通知"
   }
   var notificationPermissionMessage: String {
     if notificationAuthorizationStatus == .denied {
       return
-        "Notifications are currently off for Dayflow. Enable them in System Settings to finish unlocking Daily."
+        "Dayflow 的通知当前已关闭。请在系统设置中开启通知以完成 Daily 解锁。"
     }
 
     if notificationAuthorizationStatus == .authorized {
-      return "Notifications are already enabled. We'll open Daily automatically."
+      return "通知已开启。我们会自动打开 Daily。"
     }
 
     return
-      "Turn them on to continue. If you come back from System Settings, we'll check automatically."
+      "开启通知即可继续。从系统设置回来后，我们会自动检查。"
   }
   func checkNotificationAuthorizationForUnlock() {
     guard !isCheckingNotificationAuthorization, !isRequestingNotificationPermission else {

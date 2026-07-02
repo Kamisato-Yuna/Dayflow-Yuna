@@ -36,10 +36,28 @@
 		C4C1D2BC2DB56806007D5A55 /* DayflowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DayflowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C4F0A0012E8D000100000001 /* Exceptions for "Dayflow" folder in "Dayflow" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C4C1D2A02DB56805007D5A55 /* Dayflow */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C4C1D2A32DB56805007D5A55 /* Dayflow */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C4F0A0012E8D000100000001 /* Exceptions for "Dayflow" folder in "Dayflow" target */,
+			);
 			path = Dayflow;
+			sourceTree = "<group>";
+		};
+		C4F0A0022E8D000100000001 /* DayflowUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DayflowUITests;
 			sourceTree = "<group>";
 		};
 		FEFD599FBA059B170B03FA5E /* DayflowTests */ = {
@@ -83,6 +101,7 @@
 			children = (
 				C4C1D2A32DB56805007D5A55 /* Dayflow */,
 				FEFD599FBA059B170B03FA5E /* DayflowTests */,
+				C4F0A0022E8D000100000001 /* DayflowUITests */,
 				C4C1D2A22DB56805007D5A55 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -161,6 +180,9 @@
 			);
 			dependencies = (
 				C4C1D2BE2DB56806007D5A55 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C4F0A0022E8D000100000001 /* DayflowUITests */,
 			);
 			name = DayflowUITests;
 			packageProductDependencies = (
@@ -412,7 +434,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 113;
 				DEVELOPMENT_ASSET_PATHS = "\"Dayflow/Preview Content\"";
-				DEVELOPMENT_TEAM = L75WYD8X4Y;
+				DEVELOPMENT_TEAM = 852H844JG2;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -446,7 +468,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 113;
 				DEVELOPMENT_ASSET_PATHS = "\"Dayflow/Preview Content\"";
-				DEVELOPMENT_TEAM = L75WYD8X4Y;
+				DEVELOPMENT_TEAM = 852H844JG2;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -473,7 +495,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 113;
-				DEVELOPMENT_TEAM = L75WYD8X4Y;
+				DEVELOPMENT_TEAM = 852H844JG2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
 				MARKETING_VERSION = 1.14.1;
@@ -491,7 +513,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 113;
-				DEVELOPMENT_TEAM = L75WYD8X4Y;
+				DEVELOPMENT_TEAM = 852H844JG2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
 				MARKETING_VERSION = 1.14.1;
@@ -508,7 +530,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 113;
-				DEVELOPMENT_TEAM = L75WYD8X4Y;
+				DEVELOPMENT_TEAM = 852H844JG2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.14.1;
 				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.AmiTimeUITests;
@@ -524,7 +546,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 113;
-				DEVELOPMENT_TEAM = L75WYD8X4Y;
+				DEVELOPMENT_TEAM = 852H844JG2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.14.1;
 				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.AmiTimeUITests;

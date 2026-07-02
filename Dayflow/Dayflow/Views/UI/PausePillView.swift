@@ -45,9 +45,9 @@ struct PausePillView: View {
 
   private static let chips: [(label: String, duration: PauseDuration, isInf: Bool)] = [
     ("∞", .indefinite, true),
-    ("1 Hour", .hour1, false),
-    ("30 Mins", .minutes30, false),
-    ("15 Mins", .minutes15, false),
+    ("1 小时", .hour1, false),
+    ("30 分钟", .minutes30, false),
+    ("15 分钟", .minutes15, false),
   ]
 
   private var formattedRemaining: String {
@@ -57,10 +57,10 @@ struct PausePillView: View {
 
   private var statusText: String {
     if pauseManager.isPausedIndefinitely {
-      return "Dayflow paused indefinitely"
+      return "Dayflow 已无限期暂停"
     }
 
-    return "Dayflow paused for \(formattedRemaining)"
+    return "Dayflow 已暂停 \(formattedRemaining)"
   }
 
   private var pillLabelFont: Font {
@@ -187,7 +187,7 @@ struct PausePillView: View {
   private var primaryContent: some View {
     HStack(spacing: 4) {
       PillPauseIcon()
-      Text("Pause")
+      Text("暂停")
         .font(pillLabelFont)
         .foregroundColor(Color(hex: "786655"))
         .lineLimit(1)
@@ -211,7 +211,7 @@ struct PausePillView: View {
   private var resumeContent: some View {
     HStack(spacing: 4) {
       PillPlayIcon().offset(x: 0.5)
-      Text("Resume")
+      Text("继续")
         .font(pillLabelFont)
         .foregroundColor(.white)
         .lineLimit(1)

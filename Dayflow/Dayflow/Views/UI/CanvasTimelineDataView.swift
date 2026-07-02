@@ -483,7 +483,7 @@ struct CanvasTimelineDataView: View {
         let isCompactProjection = projectionHeight < 24
         timelineStatusCard(
           height: projectionHeight,
-          yPosition: calculateYPosition(for: projection.start) + 1,
+          yPosition: Self.calculateYPosition(for: projection.start, pixelsPerMinute: pixelsPerMinute) + 1,
           gradient: recordingStatusGradient,
           gradientOpacity: 0.70,
           baseColor: Color(hex: "D9C6BA"),
@@ -500,7 +500,7 @@ struct CanvasTimelineDataView: View {
         let projectionHeight = recordingProjectionHeight(for: projection)
         timelineStatusCard(
           height: projectionHeight,
-          yPosition: calculateYPosition(for: projection.start) + 1,
+          yPosition: Self.calculateYPosition(for: projection.start, pixelsPerMinute: pixelsPerMinute) + 1,
           gradient: pausedStatusGradient,
           gradientOpacity: 1.0,
           baseColor: .clear,
@@ -516,7 +516,7 @@ struct CanvasTimelineDataView: View {
         let projectionHeight = recordingProjectionHeight(for: projection)
         timelineStatusCard(
           height: projectionHeight,
-          yPosition: calculateYPosition(for: projection.start) + 1,
+          yPosition: Self.calculateYPosition(for: projection.start, pixelsPerMinute: pixelsPerMinute) + 1,
           gradient: pausedStatusGradient,
           gradientOpacity: 1.0,
           baseColor: .clear,
@@ -614,7 +614,7 @@ struct CanvasTimelineDataView: View {
         config: timelineSpinnerConfig,
         visualScale: 0.5
       )
-      Text("Generating your next card")
+      Text("正在生成下一张卡片")
     }
     .font(
       Font.custom("Figtree", size: 12)
@@ -630,14 +630,14 @@ struct CanvasTimelineDataView: View {
   private var pausedStatusText: some View {
     statusText(
       iconName: "pause.fill",
-      message: "Dayflow is paused. Click 'Resume' to generate new activity cards."
+      message: "Dayflow 已暂停。点击“恢复”即可生成新的活动卡片。"
     )
   }
 
   private var stoppedStatusText: some View {
     statusText(
       iconName: "play.fill",
-      message: "Dayflow isn't recording. Click 'Resume' to generate new activity cards."
+      message: "Dayflow 未在录制。点击“恢复”即可生成新的活动卡片。"
     )
   }
 
@@ -704,7 +704,11 @@ struct CanvasTimelineDataView: View {
       let calendar = Calendar.current
 
       // Normalize to noon so time components do not leak into day jumps
-      let requestedSelectedDate = await MainActor.run { self.selectedDate }
+      let context = await MainActor.run {
+        (selectedDate: self.selectedDate, pixelsPerMinute: self.pixelsPerMinute)
+      }
+      let requestedSelectedDate = context.selectedDate
+      let activePixelsPerMinute = context.pixelsPerMinute
       var logicalDate = requestedSelectedDate
       logicalDate =
         calendar.date(bySettingHour: 12, minute: 0, second: 0, of: logicalDate) ?? logicalDate
@@ -718,7 +722,11 @@ struct CanvasTimelineDataView: View {
       guard !Task.isCancelled else { return }
 
       let timelineCards = self.storageManager.fetchTimelineCards(forDay: dayString)
-      let activities = self.processTimelineCards(timelineCards, for: timelineDate)
+      let activities = Self.processTimelineCards(
+        timelineCards,
+        for: timelineDate,
+        storageManager: self.storageManager
+      )
 
       // Check for cancellation before expensive processing
       guard !Task.isCancelled else { return }
@@ -726,18 +734,18 @@ struct CanvasTimelineDataView: View {
       // Mitigation transform: resolve visual overlaps by trimming larger cards
       // so that smaller cards "win". This is a display-only fix to handle
       // upstream card-generation overlap bugs without touching stored data.
-      let segments = self.resolveOverlapsForDisplay(activities)
-      let recordingProjection = self.computeRecordingProjectionWindow(
+      let segments = Self.resolveOverlapsForDisplay(activities)
+      let recordingProjection = Self.computeRecordingProjectionWindow(
         timelineDate: timelineDate,
         displaySegments: segments,
         now: Date()
       )
 
       let positioned = segments.map { seg -> CanvasPositionedActivity in
-        let y = self.calculateYPosition(for: seg.start)
+        let y = Self.calculateYPosition(for: seg.start, pixelsPerMinute: activePixelsPerMinute)
         // Card spacing: -2 total (1px top + 1px bottom)
         let durationMinutes = max(0, seg.end.timeIntervalSince(seg.start) / 60)
-        let rawHeight = CGFloat(durationMinutes) * pixelsPerMinute
+        let rawHeight = CGFloat(durationMinutes) * activePixelsPerMinute
         let height = max(10, rawHeight - 2)
         // Raw values for pattern matching, normalized for network fetch
         let primaryRaw = seg.activity.appSites?.primary
@@ -752,7 +760,7 @@ struct CanvasTimelineDataView: View {
           height: height,
           durationMinutes: durationMinutes,
           title: seg.activity.title,
-          timeLabel: self.formatRange(start: seg.start, end: seg.end),
+          timeLabel: Self.formatRange(start: seg.start, end: seg.end),
           categoryName: seg.activity.category,
           faviconPrimaryRaw: primaryRaw,
           faviconSecondaryRaw: secondaryRaw,
@@ -838,7 +846,8 @@ struct CanvasTimelineDataView: View {
     if let projection = recordingProjection {
       let statusFrame = CGRect(
         x: cardsLayerFrame.minX,
-        y: cardsLayerFrame.minY + calculateYPosition(for: projection.start) + 1,
+        y: cardsLayerFrame.minY
+          + Self.calculateYPosition(for: projection.start, pixelsPerMinute: pixelsPerMinute) + 1,
         width: cardsLayerFrame.width,
         height: recordingProjectionHeight(for: projection)
       )
@@ -854,7 +863,11 @@ struct CanvasTimelineDataView: View {
     }
   }
 
-  private func processTimelineCards(_ cards: [TimelineCard], for date: Date) -> [TimelineActivity] {
+  nonisolated private static func processTimelineCards(
+    _ cards: [TimelineCard],
+    for date: Date,
+    storageManager: StorageManager
+  ) -> [TimelineActivity] {
     let calendar = Calendar.current
     let baseDate = calendar.startOfDay(for: date)
 
@@ -962,7 +975,7 @@ struct CanvasTimelineDataView: View {
     var end: Date
   }
 
-  private func resolveOverlapsForDisplay(_ activities: [TimelineActivity]) -> [DisplaySegment] {
+  nonisolated private static func resolveOverlapsForDisplay(_ activities: [TimelineActivity]) -> [DisplaySegment] {
     // Start with raw segments mirroring activity times
     var segments = activities.map {
       DisplaySegment(activity: $0, start: $0.startTime, end: $0.endTime)
@@ -1056,7 +1069,7 @@ struct CanvasTimelineDataView: View {
     return max(10, rawHeight - 2)
   }
 
-  private func computeRecordingProjectionWindow(
+  nonisolated private static func computeRecordingProjectionWindow(
     timelineDate: Date,
     displaySegments: [DisplaySegment],
     now: Date
@@ -1068,8 +1081,6 @@ struct CanvasTimelineDataView: View {
     let dayEnd = dayInfo.endOfDay
     let cycleDuration: TimeInterval = 15 * 60
     let hardCap: TimeInterval = 40 * 60
-    guard cycleDuration > 0 else { return nil }
-
     let centeredStart = now.addingTimeInterval(-(cycleDuration / 2))
     var windowStart = max(dayStart, centeredStart)
     var windowEnd = windowStart.addingTimeInterval(cycleDuration)
@@ -1140,7 +1151,10 @@ struct CanvasTimelineDataView: View {
     refreshTimer = nil
   }
 
-  private func calculateYPosition(for time: Date) -> CGFloat {
+  nonisolated private static func calculateYPosition(
+    for time: Date,
+    pixelsPerMinute: CGFloat = TimelineScale.hourHeight / 60
+  ) -> CGFloat {
     let calendar = Calendar.current
     let hour = calendar.component(.hour, from: time)
     let minute = calendar.component(.minute, from: time)
@@ -1164,7 +1178,7 @@ struct CanvasTimelineDataView: View {
     return "\(adjustedHour):00 \(period)"
   }
 
-  private func formatRange(start: Date, end: Date) -> String {
+  nonisolated private static func formatRange(start: Date, end: Date) -> String {
     let s = cachedTimeFormatter.string(from: start)
     let e = cachedTimeFormatter.string(from: end)
     return "\(s) - \(e)"
@@ -1195,7 +1209,7 @@ extension CanvasTimelineDataView {
   @ViewBuilder
   private func nowAnchorView() -> some View {
     // Position anchor ABOVE current time for 80% down viewport positioning
-    let yNow = calculateYPosition(for: Date())
+    let yNow = Self.calculateYPosition(for: Date(), pixelsPerMinute: pixelsPerMinute)
 
     // Place anchor ~6 hours above current time
     // When scrolled to .top, this positions current time at ~80% down the viewport
@@ -1293,7 +1307,7 @@ struct CanvasActivityCard: View {
           .stroke(Color(red: 0.9, green: 0.9, blue: 0.9), lineWidth: 0.75)
       )
       .help(
-        "This card fell back to a lower-quality Gemini model due to rate limiting, so output quality may be lower."
+        "由于触发频率限制，这张卡片已回退到质量较低的 Gemini 模型，输出质量可能会降低。"
       )
   }
 

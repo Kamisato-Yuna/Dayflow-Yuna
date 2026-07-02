@@ -35,7 +35,7 @@ struct DayFocusSummarySection: View {
       header
 
       if isSelectionEmpty {
-        Text("Edit categories to calculate focus.")
+        Text("编辑分类以计算专注时间。")
           .font(.custom("Figtree", size: 11))
           .foregroundColor(Design.subtitleColor)
       }
@@ -52,7 +52,7 @@ struct DayFocusSummarySection: View {
         DayCategorySelectionEditor(
           categories: categories,
           selectedCategoryIDs: selectedCategoryIDs,
-          helperText: "Pick the categories that count towards Focus",
+          helperText: "选择计入专注的分类",
           onToggle: onToggleCategory,
           onDone: onDoneEditing
         )
@@ -65,7 +65,7 @@ struct DayFocusSummarySection: View {
 
   private var header: some View {
     HStack(alignment: .center, spacing: 6) {
-      Text("Your focus")
+      Text("你的专注")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundColor(Design.titleColor)
 
@@ -89,7 +89,7 @@ private struct TotalFocusCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       HStack(spacing: 6) {
-        Text("Total focus time")
+        Text("总专注时长")
           .font(.custom("InstrumentSerif-Regular", size: 16))
           .foregroundColor(Color(hex: "333333"))
 

@@ -65,7 +65,7 @@ enum WeeklyDashboardBuilder {
       let durationMinutes = max(Int((normalizedRange.end - normalizedRange.start).rounded()), 0)
       guard durationMinutes > 0 else { return nil }
 
-      let categoryName = displayName(card.category, fallback: "Uncategorized")
+      let categoryName = displayName(card.category, fallback: "未分类")
       let categoryKey = normalizedKey(categoryName)
       let category = categories[categoryKey]
       let app = appIdentity(for: card)
@@ -137,7 +137,7 @@ enum WeeklyDashboardBuilder {
         let representative = facts.sorted(by: factDurationSort).first
         return WeeklyCategoryAggregate(
           key: facts.first?.categoryKey ?? otherKey,
-          name: facts.first?.categoryName ?? "Work",
+          name: facts.first?.categoryName ?? "工作",
           minutes: minutes,
           count: facts.count,
           representative: representative
@@ -167,15 +167,15 @@ enum WeeklyDashboardBuilder {
           id: "next-step-\(fact.id)",
           label: fact.categoryName,
           detail:
-            "Pick up from \(shortTitle(fact.card.title)): \(cardNarrative(for: fact.card, maxLength: 120))"
+            "继续处理 \(shortTitle(fact.card.title))：\(cardNarrative(for: fact.card, maxLength: 120))"
         )
       }
 
     return WeeklySuggestionsSnapshot(
-      title: "1:1 suggestions",
-      topLevelUpdatesTitle: "Top level updates",
+      title: "1:1 建议",
+      topLevelUpdatesTitle: "顶层更新",
       topLevelUpdates: Array(topLevelUpdates),
-      nextStepsTitle: "Next steps",
+      nextStepsTitle: "下一步",
       nextSteps: Array(nextSteps)
     )
   }
@@ -373,11 +373,11 @@ enum WeeklyDashboardBuilder {
 
   private static func topLevelDetail(for aggregate: WeeklyCategoryAggregate) -> String {
     let duration = durationText(aggregate.minutes)
-    let sessionLabel = aggregate.count == 1 ? "session" : "sessions"
+    let sessionLabel = "时段"
     let summary =
       aggregate.representative.map { cardNarrative(for: $0.card, maxLength: 105) }
-      ?? "No summary available."
-    return "Spent \(duration) across \(aggregate.count) \(sessionLabel). \(summary)"
+      ?? "暂无摘要。"
+    return "本周共 \(aggregate.count) 个\(sessionLabel)，用时 \(duration)。\(summary)"
   }
 
   static func durationText(_ minutes: Int) -> String {
@@ -385,19 +385,19 @@ enum WeeklyDashboardBuilder {
     let remainingMinutes = minutes % 60
 
     if hours > 0, remainingMinutes > 0 {
-      return "\(hours)h \(remainingMinutes)m"
+      return "\(hours) 小时 \(remainingMinutes) 分钟"
     }
     if hours > 0 {
-      return "\(hours)h"
+      return "\(hours) 小时"
     }
-    return "\(minutes)m"
+    return "\(minutes) 分钟"
   }
 
   private static func cardNarrative(for card: TimelineCard, maxLength: Int) -> String {
     let title = shortTitle(card.title)
     let body = firstUsefulSentence(from: [card.detailedSummary, card.summary, card.title])
 
-    if body.localizedCaseInsensitiveContains(title) || title == "Untitled" {
+    if body.localizedCaseInsensitiveContains(title) || title == "Untitled" || title == "未命名" {
       return shortened(body, maxLength: maxLength)
     }
 
@@ -406,14 +406,14 @@ enum WeeklyDashboardBuilder {
 
   private static func shortTitle(_ title: String) -> String {
     let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
-    return shortened(trimmed.isEmpty ? "Untitled" : trimmed, maxLength: 54)
+    return shortened(trimmed.isEmpty ? "未命名" : trimmed, maxLength: 54)
   }
 
   private static func firstUsefulSentence(from values: [String]) -> String {
     let text =
       values
       .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-      .first { !$0.isEmpty } ?? "No summary available."
+      .first { !$0.isEmpty } ?? "暂无摘要。"
     let collapsed =
       text
       .replacingOccurrences(of: "\n", with: " ")

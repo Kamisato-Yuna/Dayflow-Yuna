@@ -71,7 +71,7 @@ struct WeeklyOverviewSection: View {
   private var topPanel: some View {
     VStack(alignment: .leading, spacing: Design.headerSpacing) {
       HStack(alignment: .bottom) {
-        Text("Time distribution")
+        Text("时间分布")
           .font(.custom("InstrumentSerif-Regular", size: 20))
           .foregroundStyle(Design.titleColor)
 
@@ -95,20 +95,20 @@ struct WeeklyOverviewSection: View {
   private var footerPanel: some View {
     HStack(spacing: 0) {
       WeeklyOverviewSummaryGroup(
-        title: "Context switch",
+        title: "上下文切换",
         metrics: [
-          .init(label: "Total", value: "\(snapshot.contextSwitchTotal) times"),
-          .init(label: "Average", value: "\(snapshot.contextSwitchAverage) times / day"),
+          .init(label: "总计", value: "\(snapshot.contextSwitchTotal) 次"),
+          .init(label: "平均", value: "\(snapshot.contextSwitchAverage) 次 / 天"),
         ]
       )
       .frame(width: Design.summaryDividerX, alignment: .leading)
 
       WeeklyOverviewSummaryGroup(
-        title: "Focus",
+        title: "专注",
         metrics: [
-          .init(label: "Total length", value: compactDurationText(snapshot.totalFocusMinutes)),
-          .init(label: "Longest duration", value: longestFocusText),
-          .init(label: "Primary focus", value: primaryFocusText),
+          .init(label: "总时长", value: compactDurationText(snapshot.totalFocusMinutes)),
+          .init(label: "最长时段", value: longestFocusText),
+          .init(label: "主要专注", value: primaryFocusText),
         ]
       )
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -156,14 +156,14 @@ struct WeeklyOverviewSection: View {
 
   private var longestFocusText: String {
     guard let longestFocus = snapshot.longestFocus else {
-      return "No focus yet"
+      return "暂无专注记录"
     }
     return "\(compactDurationText(longestFocus.minutes)), \(longestFocus.weekdayName)"
   }
 
   private var primaryFocusText: String {
     guard let primaryFocus = snapshot.primaryFocus else {
-      return "No focus yet"
+      return "暂无专注记录"
     }
     return "\(primaryFocus.name), \(compactDurationText(primaryFocus.minutes))"
   }
@@ -173,12 +173,12 @@ struct WeeklyOverviewSection: View {
     let remainingMinutes = minutes % 60
 
     if hours > 0 && remainingMinutes > 0 {
-      return "\(hours)hr \(remainingMinutes)m"
+      return "\(hours) 小时 \(remainingMinutes) 分钟"
     }
     if hours > 0 {
-      return "\(hours)hr"
+      return "\(hours) 小时"
     }
-    return "\(remainingMinutes)m"
+    return "\(remainingMinutes) 分钟"
   }
 }
 
@@ -314,19 +314,19 @@ private struct WeeklyOverviewTabStrip: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 12) {
-        Text("All")
+        Text("全部")
           .font(.custom("Figtree-Bold", size: 12))
           .foregroundStyle(Color(hex: "333333"))
 
-        Text("Longest focus period")
+        Text("最长专注时段")
           .font(.custom("Figtree-Medium", size: 12))
           .foregroundStyle(Color(hex: "333333"))
 
-        Text("Least context shifts")
+        Text("最少上下文切换")
           .font(.custom("Figtree-Medium", size: 12))
           .foregroundStyle(Color(hex: "333333"))
 
-        Text("Most context shifts")
+        Text("最多上下文切换")
           .font(.custom("Figtree-Medium", size: 12))
           .foregroundStyle(Color(hex: "333333"))
       }

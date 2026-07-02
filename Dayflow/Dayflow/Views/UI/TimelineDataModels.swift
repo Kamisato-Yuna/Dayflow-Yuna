@@ -96,7 +96,7 @@ struct DatePickerSheet: View {
 
   var body: some View {
     VStack(spacing: 20) {
-      Text("Select Date")
+      Text("选择日期")
         .font(.title2)
         .fontWeight(.semibold)
 
@@ -110,7 +110,7 @@ struct DatePickerSheet: View {
       .frame(width: 350)
 
       HStack(spacing: 12) {
-        Button("Cancel") {
+        Button("取消") {
           isPresented = false
         }
         .buttonStyle(.plain)
@@ -120,7 +120,7 @@ struct DatePickerSheet: View {
         .background(Color.gray.opacity(0.2))
         .cornerRadius(8)
 
-        Button("Select") {
+        Button("选择") {
           isPresented = false
         }
         .buttonStyle(.plain)

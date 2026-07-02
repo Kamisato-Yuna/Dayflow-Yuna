@@ -6,13 +6,15 @@ struct WeeklyDateRange: Equatable, Sendable {
 
   private static let titleStartFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "EEEE, MMMM d"
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
+    formatter.dateFormat = "M月d日 EEEE"
     return formatter
   }()
 
   private static let titleEndFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "EEEE, MMMM d"
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
+    formatter.dateFormat = "M月d日 EEEE"
     return formatter
   }()
 

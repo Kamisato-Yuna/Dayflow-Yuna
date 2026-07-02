@@ -1,14 +1,14 @@
-# Dayflow Assets
+# Dayflow 图片资源说明
 
-This directory contains images and GIFs used in the main README.
+本目录存放主 `README.md` 中使用的图片与 GIF 动图。
 
-## Files:
-- `hero-demo.gif` - Main demo showing timeline generation
-- `main-interface.png` - Screenshot of the timeline view
-- `debug-view.png` - Screenshot of debug interface
-- `architecture-diagram.png` - System architecture overview
+## 文件列表：
+- `hero-demo.gif`：主时间线生成效果演示
+- `main-interface.png`：时间线主界面截图
+- `debug-view.png`：调试界面截图
+- `architecture-diagram.png`：系统架构示意图
 
-## Usage in README:
+## 在 README 中的引用示例：
 ```markdown
-![Demo](docs/images/hero-demo.gif)
+![演示](docs/images/hero-demo.gif)
 ```

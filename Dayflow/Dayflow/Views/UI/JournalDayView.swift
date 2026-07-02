@@ -327,7 +327,7 @@ extension JournalDayView {
               .foregroundStyle(JournalDayTokens.reminderText)
               .frame(width: 16, height: 16)
 
-            Text("Set reminders")
+            Text("设置提醒")
               .font(.custom("Figtree-SemiBold", size: 12))
               .foregroundStyle(JournalDayTokens.reminderText)
           }
@@ -514,7 +514,7 @@ private struct IntentionsEditForm: View {
         .matchedGeometryEffect(id: "card_bg", in: namespace)
 
       HStack(spacing: 12) {
-        Button("Save", action: onSave)
+        Button("保存", action: onSave)
           .buttonStyle(JournalPillButtonStyle(horizontalPadding: 22, verticalPadding: 9))
       }
       .frame(height: 46)
@@ -564,7 +564,7 @@ private struct IntentionsEditForm: View {
 
   private var sectionIntentions: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text("Today's intentions")
+      Text("今日意图")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundStyle(JournalDayTokens.sectionHeader)
         .padding(.leading, titleLeading)
@@ -581,7 +581,7 @@ private struct IntentionsEditForm: View {
   private var sectionNotes: some View {
     VStack(alignment: .leading, spacing: 0) {
       HStack(spacing: 6) {
-        Text("Notes for today")
+        Text("今日备注")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .foregroundStyle(JournalDayTokens.sectionHeader)
           .padding(.leading, titleLeading)
@@ -589,7 +589,7 @@ private struct IntentionsEditForm: View {
 
       JournalTextEditor(
         text: $notes,
-        placeholder: "What mindset do you want to carry today?",
+        placeholder: "今天你想带着什么心态？",
         minLines: 3
       )
     }
@@ -598,7 +598,7 @@ private struct IntentionsEditForm: View {
   private var sectionGoals: some View {
     VStack(alignment: .leading, spacing: 0) {
       HStack(spacing: 6) {
-        Text("Long term goals")
+        Text("长期目标")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .foregroundStyle(JournalDayTokens.sectionHeader)
           .padding(.leading, titleLeading)
@@ -606,7 +606,7 @@ private struct IntentionsEditForm: View {
 
       JournalTextEditor(
         text: $goals,
-        placeholder: "What are you working towards?",
+        placeholder: "你正在朝什么方向努力？",
         minLines: 3
       )
     }
@@ -708,7 +708,7 @@ private struct JournalLeftCardView: View {
   var body: some View {
     ScrollView(.vertical, showsIndicators: false) {
       VStack(alignment: .leading, spacing: 18) {
-        section("Today's intentions") {
+        section("今日意图") {
           JournalDayBulletList(items: intentions)
         }
         section("Notes for the day") {
@@ -811,12 +811,12 @@ private struct ReflectionPromptCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Today's reflections")
+      Text("今日复盘")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundStyle(JournalDayTokens.sectionHeader.opacity(0.4))
 
       Text(
-        "Return near the end of your day to reflect on your intentions. Let Dayflow generate a narrative summary based on the activities on your Timeline."
+        "在一天快结束时回来复盘你的意图。让 Dayflow 根据时间线上的活动生成一段叙事总结。"
       )
       .font(.custom("Figtree-Regular", size: 15))
       .foregroundStyle(JournalDayTokens.bodyText.opacity(0.65))
@@ -827,7 +827,7 @@ private struct ReflectionPromptCard: View {
       if isEnabled {
         HStack {
           Spacer()
-          Button("Reflect on your day", action: onReflect)
+          Button("复盘今天", action: onReflect)
             .buttonStyle(JournalPillButtonStyle(horizontalPadding: 20, verticalPadding: 10))
         }
       }
@@ -843,13 +843,13 @@ private struct ReflectionEditorCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Your reflections")
+      Text("你的复盘")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
       JournalTextEditor(
         text: $text,
-        placeholder: "How was your day? What did you do? How do you feel?",
+        placeholder: "今天过得怎么样？你做了什么？感觉如何？",
         minLines: 6
       )
       .padding(.leading, -4)
@@ -858,13 +858,13 @@ private struct ReflectionEditorCard: View {
       Spacer(minLength: 0)
 
       HStack(spacing: 10) {
-        Button("Save", action: onSave)
+        Button("保存", action: onSave)
           .buttonStyle(JournalPillButtonStyle(horizontalPadding: 18, verticalPadding: 8))
           .disabled(isSaveDisabled)
           .opacity(isSaveDisabled ? 0.55 : 1)
           .animation(.easeInOut(duration: 0.2), value: isSaveDisabled)
 
-        Button("Skip", action: onSkip)
+        Button("跳过", action: onSkip)
           .buttonStyle(.plain)
           .foregroundStyle(JournalDayTokens.bodyText.opacity(0.6))
           .pointingHandCursor()
@@ -887,7 +887,7 @@ private struct ReflectionSavedCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Your reflections")
+      Text("你的复盘")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
@@ -901,7 +901,7 @@ private struct ReflectionSavedCard: View {
             .padding(.horizontal, 2)
         }
       } else {
-        Text("Return near the end of your day to reflect on your intentions.")
+        Text("在一天快结束时回来复盘你的意图。")
           .font(.custom("Figtree-Regular", size: 15))
           .foregroundStyle(JournalDayTokens.bodyText.opacity(0.65))
       }
@@ -913,7 +913,7 @@ private struct ReflectionSavedCard: View {
         if isLoading {
           HStack(spacing: 8) {
             ProgressView().scaleEffect(0.8)
-            Text("Generating summary...").font(.custom("Figtree-Regular", size: 14))
+            Text("正在生成总结...").font(.custom("Figtree-Regular", size: 14))
               .foregroundStyle(
                 JournalDayTokens.bodyText.opacity(0.7))
           }
@@ -923,20 +923,20 @@ private struct ReflectionSavedCard: View {
               Color.red.opacity(0.8)
             ).multilineTextAlignment(.trailing)
             HStack(spacing: 12) {
-              Button("Dismiss") { onDismissError?() }
+              Button("忽略") { onDismissError?() }
                 .buttonStyle(.plain).font(.custom("Figtree-Regular", size: 13)).foregroundStyle(
                   JournalDayTokens.bodyText.opacity(0.6)
                 )
                 .pointingHandCursor()
-              Button("Try again", action: onSummarize)
+              Button("重试", action: onSummarize)
                 .buttonStyle(JournalPillButtonStyle(horizontalPadding: 18, verticalPadding: 8))
             }
           }
         } else if canSummarize {
-          Button("Summarize with Dayflow", action: onSummarize)
+          Button("用 Dayflow 生成总结", action: onSummarize)
             .buttonStyle(JournalPillButtonStyle(horizontalPadding: 24, verticalPadding: 11))
         } else {
-          Text("Need at least 1 hour of timeline activity to summarize")
+          Text("至少需要 1 小时时间线活动才能生成总结")
             .font(.custom("Figtree-Regular", size: 13))
             .foregroundStyle(JournalDayTokens.bodyText.opacity(0.5))
         }
@@ -953,7 +953,7 @@ private struct SummaryCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 22) {
       VStack(alignment: .leading, spacing: 8) {
-        Text("Dayflow summary")
+        Text("Dayflow 总结")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .foregroundStyle(JournalDayTokens.sectionHeader)
 
@@ -961,14 +961,14 @@ private struct SummaryCard: View {
           WetInkText(text: summary, font: .custom("Figtree-Regular", size: 17))
             .fixedSize(horizontal: false, vertical: true)
         } else {
-          Text("Summarizing your day recorded on your timeline…")
+          Text("正在总结时间线记录的一天…")
             .font(.custom("Figtree-Regular", size: 15))
             .foregroundStyle(JournalDayTokens.bodyText.opacity(0.65))
         }
       }
 
       VStack(alignment: .leading, spacing: 8) {
-        Text("Your reflections")
+        Text("你的复盘")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .foregroundStyle(JournalDayTokens.sectionHeader)
 
@@ -978,7 +978,7 @@ private struct SummaryCard: View {
             .foregroundStyle(JournalDayTokens.bodyText)
             .fixedSize(horizontal: false, vertical: true)
         } else {
-          Text("Return near the end of your day to reflect on your intentions.")
+          Text("在一天快结束时回来复盘你的意图。")
             .font(.custom("Figtree-Regular", size: 15))
             .foregroundStyle(JournalDayTokens.bodyText.opacity(0.65))
         }
@@ -986,7 +986,7 @@ private struct SummaryCard: View {
 
       if let onRegenerate {
         Button(action: onRegenerate) {
-          Text("Regenerate summary")
+          Text("重新生成总结")
             .font(.custom("Figtree-Regular", size: 13))
             .foregroundStyle(JournalDayTokens.sectionHeader)
         }
@@ -1007,12 +1007,12 @@ private struct IntroView: View {
 
   var body: some View {
     VStack(spacing: 20) {
-      Text("Set daily intentions and track your progress")
+      Text("设定每日意图并追踪进展")
         .font(.custom("InstrumentSerif-Regular", size: 34))
         .foregroundStyle(JournalDayTokens.sectionHeader)
         .multilineTextAlignment(.center)
       Text(
-        "Dayflow helps you track your daily and longer term pursuits, gives you the space to reflect, and generates a summary of each day."
+        "Dayflow 帮你追踪每日和长期目标，留出复盘空间，并生成每天的总结。"
       )
       .font(.custom("Figtree-Regular", size: 16))
       .foregroundStyle(JournalDayTokens.bodyText)
@@ -1026,7 +1026,7 @@ private struct IntroView: View {
         .buttonStyle(JournalPillButtonStyle(horizontalPadding: 28, verticalPadding: 10))
         .padding(.top, 16)
       } else {
-        Text("No journal entry for this day")
+        Text("这一天没有日志")
           .font(.custom("Figtree-Regular", size: 14))
           .foregroundStyle(JournalDayTokens.bodyText.opacity(0.5))
           .padding(.top, 16)
@@ -1042,7 +1042,7 @@ private struct SummaryView: View {
 
   var body: some View {
     VStack(spacing: 20) {
-      Text("Summary from yesterday")
+      Text("昨天的总结")
         .font(.custom("InstrumentSerif-Regular", size: 30))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
@@ -1054,7 +1054,7 @@ private struct SummaryView: View {
       .frame(maxHeight: 300)
 
       Button(action: onTapCTA) {
-        Text("Set today's intentions")
+        Text("设定今日意图")
           .font(.custom("Figtree-SemiBold", size: 17))
       }
       .buttonStyle(JournalPillButtonStyle(horizontalPadding: 28, verticalPadding: 10))
@@ -1149,8 +1149,8 @@ enum JournalFlowState: CaseIterable {
 }
 
 enum JournalDayViewPeriod: String, CaseIterable, Identifiable {
-  case day = "Day"
-  case week = "Week"
+  case day = "日"
+  case week = "周"
   var id: String { rawValue }
 }
 

@@ -12,7 +12,7 @@ extension ChatView {
         // Clear chat button (only show if there are messages)
         if !chatService.messages.isEmpty {
           Button(action: { resetConversation() }) {
-            Text("Clear")
+            Text("清除")
               .font(.custom("Figtree", size: 12).weight(.semibold))
               .foregroundColor(Color(hex: "F96E00"))
               .padding(.horizontal, 10)
@@ -27,7 +27,7 @@ extension ChatView {
               )
           }
           .buttonStyle(.plain)
-          .help("Clear chat")
+          .help("清除对话")
           .pointingHandCursor()
         }
 
@@ -39,7 +39,7 @@ extension ChatView {
               chatService.showDebugPanel ? Color(hex: "F96E00") : Color(hex: "999999"))
         }
         .buttonStyle(.plain)
-        .help("Toggle debug panel")
+        .help("显示或隐藏调试面板")
         .pointingHandCursor()
 
         Button(
@@ -56,7 +56,7 @@ extension ChatView {
             .foregroundColor(showMemoryPanel ? Color(hex: "F96E00") : Color(hex: "999999"))
         }
         .buttonStyle(.plain)
-        .help("Toggle memory panel")
+        .help("显示或隐藏记忆面板")
         .pointingHandCursor()
       }
       .padding(.trailing, 12)
@@ -153,7 +153,7 @@ extension ChatView {
     VStack(alignment: .leading, spacing: 0) {
       // Header
       HStack {
-        Text("Debug Log")
+        Text("调试日志")
           .font(.custom("Figtree", size: 12).weight(.bold))
           .foregroundColor(Color(hex: "666666"))
 
@@ -165,7 +165,7 @@ extension ChatView {
             .foregroundColor(Color(hex: "999999"))
         }
         .buttonStyle(.plain)
-        .help("Copy all")
+        .help("复制全部")
         .pointingHandCursor()
 
         Button(action: { chatService.clearDebugLog() }) {
@@ -174,7 +174,7 @@ extension ChatView {
             .foregroundColor(Color(hex: "999999"))
         }
         .buttonStyle(.plain)
-        .help("Clear log")
+        .help("清除日志")
         .pointingHandCursor()
       }
       .padding(.horizontal, 12)
@@ -208,7 +208,7 @@ extension ChatView {
   var memoryPanel: some View {
     VStack(alignment: .leading, spacing: 0) {
       HStack {
-        Text("Memory")
+        Text("记忆")
           .font(.custom("Figtree", size: 12).weight(.bold))
           .foregroundColor(Color(hex: "666666"))
         Spacer()
@@ -223,7 +223,7 @@ extension ChatView {
       Divider()
 
       VStack(alignment: .leading, spacing: 8) {
-        Text("Auto-updated from assistant replies. You can edit this manually.")
+        Text("会根据助手回复自动更新，你也可以手动编辑。")
           .font(.custom("Figtree", size: 11))
           .foregroundColor(Color(hex: "8A8A8A"))
 
@@ -242,21 +242,21 @@ extension ChatView {
           }
 
         HStack {
-          Text("Last updated: \(memoryUpdatedLabel)")
+          Text("最后更新：\(memoryUpdatedLabel)")
             .font(.custom("Figtree", size: 10))
             .foregroundColor(Color(hex: "999999"))
           Spacer()
         }
 
         HStack(spacing: 8) {
-          Button("Save") { saveMemoryDraft() }
+          Button("保存") { saveMemoryDraft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
             .foregroundColor(isMemoryDirty ? Color(hex: "F96E00") : Color(hex: "999999"))
             .disabled(!isMemoryDirty)
             .pointingHandCursor()
 
-          Button("Reload") { reloadMemoryDraft() }
+          Button("重新载入") { reloadMemoryDraft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
             .foregroundColor(isMemoryDirty ? Color(hex: "555555") : Color(hex: "AAAAAA"))
@@ -265,7 +265,7 @@ extension ChatView {
 
           Spacer()
 
-          Button("Clear") { clearMemoryDraft() }
+          Button("清除") { clearMemoryDraft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
             .foregroundColor(storedMemoryBlob.isEmpty ? Color(hex: "AAAAAA") : Color(hex: "C85A4B"))
@@ -322,15 +322,15 @@ extension ChatView {
             .frame(width: 42, height: 42)
 
             VStack(alignment: .leading, spacing: 2) {
-              Text("Ask about your Dayflow data")
+              Text("询问你的 Dayflow 数据")
                 .font(.custom("InstrumentSerif-Regular", size: 30))
                 .foregroundColor(Color(hex: "2F2A24"))
 
-              Text("Ask questions, analyze your timeline, and generate charts/graphs.")
+              Text("提问、分析时间线，并生成图表。")
                 .font(.custom("Figtree", size: 13).weight(.semibold))
                 .foregroundColor(Color(hex: "7D6B5B"))
 
-              Text("I remember your response preferences, so feel free to teach me your style.")
+              Text("我会记住你的回复偏好，你可以随时教我你的风格。")
                 .font(.custom("Figtree", size: 12))
                 .foregroundColor(Color(hex: "8A7765"))
             }
@@ -339,7 +339,7 @@ extension ChatView {
           }
 
           VStack(alignment: .leading, spacing: 10) {
-            Text("Try one of these")
+            Text("试试这些问题")
               .font(.custom("Figtree", size: 12).weight(.bold))
               .foregroundColor(Color(hex: "8A7765"))
 
@@ -382,11 +382,11 @@ extension ChatView {
 
       // Header: "Unlock Beta" with BETA badge
       HStack(alignment: .top, spacing: 4) {
-        Text("Unlock Beta")
+        Text("解锁测试版")
           .font(.custom("InstrumentSerif-Italic", size: 38))
           .foregroundColor(Color(hex: "593D2A"))
 
-        Text("BETA")
+        Text("测试版")
           .font(.custom("Figtree-Bold", size: 11))
           .foregroundColor(.white)
           .padding(.horizontal, 8)
@@ -402,14 +402,14 @@ extension ChatView {
       // Feature description (below title)
       VStack(spacing: 6) {
         Text(
-          "Chat lets you ask questions about your Dayflow activity and get summaries, comparisons, and insights."
+          "对话功能可以回答关于 Dayflow 活动的问题，并生成总结、对比和洞察。"
         )
         .font(.custom("Figtree-Regular", size: 14))
         .foregroundColor(Color(hex: "593D2A").opacity(0.85))
         .multilineTextAlignment(.center)
         .frame(maxWidth: 600)
 
-        Text("Please send feedback if you see any bugs or weird behavior!")
+        Text("如果遇到问题或异常行为，请随时反馈！")
           .font(.custom("Figtree-SemiBold", size: 14))
           .foregroundColor(Color(hex: "593D2A"))
           .multilineTextAlignment(.center)
@@ -434,28 +434,28 @@ extension ChatView {
           .animation(.easeOut(duration: 0.2), value: hasChatMinimumAccess)
 
           if !hasChatMinimumAccess {
-            Text("10 hours of timeline data required")
+            Text("需要 10 小时时间线数据")
               .font(.custom("Figtree-SemiBold", size: 15))
               .foregroundColor(Color(hex: "593D2A"))
 
             Text(
-              "Chat unlocks after Dayflow has analyzed enough activity. \(chatAccessProgressText)"
+              "Dayflow 分析足够活动后会解锁对话功能。\(chatAccessProgressText)"
             )
             .font(.custom("Figtree-Regular", size: 13))
             .foregroundColor(Color(hex: "593D2A").opacity(0.8))
             .multilineTextAlignment(.center)
           } else if anyRuntimeAvailable {
-            Text("Gemini key or CLI runtime detected")
+            Text("已检测到 Gemini Key 或 CLI 运行方式")
               .font(.custom("Figtree-SemiBold", size: 15))
               .foregroundColor(Color(hex: "34C759"))
               .transition(.opacity.combined(with: .scale(scale: 0.95)))
           } else {
-            Text("Gemini API key or CLI required")
+            Text("需要 Gemini API Key 或 CLI")
               .font(.custom("Figtree-SemiBold", size: 15))
               .foregroundColor(Color(hex: "593D2A"))
 
             Text(
-              "Unlock chat by either adding a Gemini API key in Settings or installing Codex/Claude CLI."
+              "你可以在设置中添加 Gemini API Key，或安装 Codex/Claude CLI 来解锁对话。"
             )
             .font(.custom("Figtree-Regular", size: 13))
             .foregroundColor(Color(hex: "593D2A").opacity(0.8))
@@ -528,12 +528,12 @@ extension ChatView {
 
       // Privacy Note (at bottom)
       VStack(spacing: 4) {
-        Text("Privacy Note")
+        Text("隐私说明")
           .font(.custom("Figtree-SemiBold", size: 12))
           .foregroundColor(Color(hex: "593D2A").opacity(0.6))
 
         Text(
-          "During the beta, your questions are logged to help improve the product. Responses are not logged, so your privacy is maintained."
+          "测试版期间，你的问题会被记录以帮助改进产品。回复内容不会被记录，以保护你的隐私。"
         )
         .font(.custom("Figtree-Regular", size: 12))
         .foregroundColor(Color(hex: "593D2A").opacity(0.5))
@@ -552,14 +552,14 @@ extension ChatView {
 
   var chatUnlockButtonTitle: String {
     if !hasChatMinimumAccess {
-      return "Keep recording to unlock"
+      return "继续录制以解锁"
     }
 
     if !anyRuntimeAvailable {
-      return "Configure a runtime to continue"
+      return "配置运行方式后继续"
     }
 
-    return "Unlock Beta"
+    return "解锁测试版"
   }
 
   // MARK: - Input Area
@@ -571,7 +571,7 @@ extension ChatView {
         text: $inputText,
         isFocused: $isInputFocused,
         focusToken: composerFocusToken,
-        placeholder: "Ask about your Dayflow data...",
+        placeholder: "询问你的 Dayflow 数据…",
         onSubmit: submitCurrentInputIfAllowed
       )
       .frame(height: 50, alignment: .leading)
@@ -592,7 +592,7 @@ extension ChatView {
             ProgressView()
               .scaleEffect(0.55)
               .tint(Color(hex: "C18043"))
-            Text("Answering")
+            Text("正在回答")
               .font(.custom("Figtree", size: 11).weight(.bold))
               .foregroundColor(Color(hex: "9B7753"))
           }
@@ -725,7 +725,7 @@ extension ChatView {
 
   var followUpSuggestions: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Follow up")
+      Text("继续追问")
         .font(.custom("Figtree", size: 11).weight(.semibold))
         .foregroundColor(Color(hex: "999999"))
 

@@ -46,13 +46,13 @@ enum SidebarIcon: CaseIterable {
 
   var displayName: String {
     switch self {
-    case .timeline: return "Timeline"
-    case .daily: return "Daily"
-    case .weekly: return "Weekly"
-    case .chat: return "Chat"
-    case .journal: return "Journal"
-    case .bug: return "Report"
-    case .settings: return "Settings"
+    case .timeline: return "时间线"
+    case .daily: return "每日"
+    case .weekly: return "周报"
+    case .chat: return "对话"
+    case .journal: return "日志"
+    case .bug: return "反馈"
+    case .settings: return "设置"
     }
   }
 

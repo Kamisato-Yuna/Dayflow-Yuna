@@ -58,15 +58,15 @@ struct WeeklySankeySection: View {
 
       Spacer(minLength: 12)
 
-      controlButton("Timeline data", dataset: .timeline) {
+      controlButton("时间线数据", dataset: .timeline) {
         dataset = .timeline
       }
 
-      controlButton("Figma baseline", dataset: .figma) {
+      controlButton("设计基线", dataset: .figma) {
         dataset = .figma
       }
 
-      controlButton("Random stress", dataset: .random) {
+      controlButton("随机压力", dataset: .random) {
         dataset = .random
         randomSeed = nextRandomSeed()
       }
@@ -194,7 +194,7 @@ private struct WeeklySankeyCard: View {
           .onTapGesture { togglePinned(app.id) }
       }
 
-      Text("Weekly breakdown")
+      Text("周报细分")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Color(hex: "B46531"))
         .offset(
@@ -982,7 +982,7 @@ private enum WeeklySankeyModelFactory {
     return build(
       id: "figma-baseline",
       seedLabel: "Figma baseline",
-      sourceName: "Weekly",
+      sourceName: "周报",
       categories: categoryTemplates,
       apps: apps,
       links: links
@@ -1067,7 +1067,7 @@ private enum WeeklySankeyModelFactory {
     return build(
       id: "random-\(seed)",
       seedLabel: "Seed \(seed)",
-      sourceName: "Weekly",
+      sourceName: "周报",
       categories: categories,
       apps: apps,
       links: links

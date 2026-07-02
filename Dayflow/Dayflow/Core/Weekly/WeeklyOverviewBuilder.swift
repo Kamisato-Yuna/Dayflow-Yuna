@@ -15,11 +15,11 @@ struct WeeklyOverviewRow: Identifiable, Sendable {
   let segments: [WeeklyOverviewSegment]
 
   static let placeholder: [WeeklyOverviewRow] = [
-    WeeklyOverviewRow(id: "mon", label: "Mon", weekdayName: "Monday", segments: []),
-    WeeklyOverviewRow(id: "tue", label: "Tue", weekdayName: "Tuesday", segments: []),
-    WeeklyOverviewRow(id: "wed", label: "Wed", weekdayName: "Wednesday", segments: []),
-    WeeklyOverviewRow(id: "thu", label: "Thu", weekdayName: "Thursday", segments: []),
-    WeeklyOverviewRow(id: "fri", label: "Fri", weekdayName: "Friday", segments: []),
+    WeeklyOverviewRow(id: "mon", label: "一", weekdayName: "周一", segments: []),
+    WeeklyOverviewRow(id: "tue", label: "二", weekdayName: "周二", segments: []),
+    WeeklyOverviewRow(id: "wed", label: "三", weekdayName: "周三", segments: []),
+    WeeklyOverviewRow(id: "thu", label: "四", weekdayName: "周四", segments: []),
+    WeeklyOverviewRow(id: "fri", label: "五", weekdayName: "周五", segments: []),
   ]
 }
 
@@ -77,13 +77,13 @@ enum WeeklyOverviewBuilder {
   private static let visibleStartMinute = 9.0 * 60.0
   private static let visibleEndMinute = 18.0 * 60.0
   private static let weekdayTemplates: [(short: String, full: String)] = [
-    ("Mon", "Monday"),
-    ("Tue", "Tuesday"),
-    ("Wed", "Wednesday"),
-    ("Thu", "Thursday"),
-    ("Fri", "Friday"),
-    ("Sat", "Saturday"),
-    ("Sun", "Sunday"),
+    ("一", "周一"),
+    ("二", "周二"),
+    ("三", "周三"),
+    ("四", "周四"),
+    ("五", "周五"),
+    ("六", "周六"),
+    ("日", "周日"),
   ]
 
   static func build(
@@ -127,7 +127,7 @@ enum WeeklyOverviewBuilder {
     let categorySummaries = minutesByCategory.map { key, minutes in
       RawCategorySummary(
         key: key,
-        name: displayNameByCategory[key] ?? "Uncategorized",
+        name: displayNameByCategory[key] ?? "未分类",
         colorHex: colorHexByCategory[key] ?? fallbackColorHex(for: key),
         order: categoryLookup[key]?.order ?? Int.max,
         minutes: minutes,
@@ -374,7 +374,7 @@ enum WeeklyOverviewBuilder {
     }
 
     return visibleItems + [
-      WeeklyOverviewLegendItem(id: otherCategoryKey, name: "Other", colorHex: otherColorHex)
+      WeeklyOverviewLegendItem(id: otherCategoryKey, name: "其他", colorHex: otherColorHex)
     ]
   }
 
@@ -414,7 +414,7 @@ enum WeeklyOverviewBuilder {
     if let category = categories[key] {
       return category.name
     }
-    return trimmed.isEmpty ? "Uncategorized" : trimmed
+    return trimmed.isEmpty ? "未分类" : trimmed
   }
 
   private static func resolvedColorHex(
@@ -452,7 +452,7 @@ enum WeeklyOverviewBuilder {
 
   private static func displayName(for value: String) -> String {
     let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-    return trimmed.isEmpty ? "Uncategorized" : trimmed
+    return trimmed.isEmpty ? "未分类" : trimmed
   }
 
   private static func normalizedMinuteRange(start: Double, end: Double) -> (

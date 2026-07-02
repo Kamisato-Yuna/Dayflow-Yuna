@@ -12,8 +12,8 @@ struct SettingsRecordingPrivacyTabView: View {
 
   var body: some View {
     SettingsSection(
-      title: "Recording privacy",
-      subtitle: "Choose apps Dayflow should hide from screenshots."
+      title: "录制隐私",
+      subtitle: "选择 Dayflow 在截图中应隐藏的应用。"
     ) {
       VStack(alignment: .leading, spacing: 18) {
         searchField
@@ -35,7 +35,7 @@ struct SettingsRecordingPrivacyTabView: View {
         .font(.system(size: 13, weight: .semibold))
         .foregroundColor(SettingsStyle.meta)
 
-      TextField("Search installed apps", text: $viewModel.searchText)
+      TextField("搜索已安装应用", text: $viewModel.searchText)
         .textFieldStyle(.plain)
         .font(.custom("Figtree", size: 13))
         .foregroundColor(SettingsStyle.text)
@@ -55,7 +55,7 @@ struct SettingsRecordingPrivacyTabView: View {
   private var installedAppsGrid: some View {
     VStack(alignment: .leading, spacing: 12) {
       HStack(alignment: .firstTextBaseline) {
-        Text("Installed apps")
+        Text("已安装应用")
           .font(.custom("Figtree", size: 13))
           .fontWeight(.semibold)
           .foregroundColor(SettingsStyle.text)
@@ -63,9 +63,9 @@ struct SettingsRecordingPrivacyTabView: View {
         Spacer()
 
         if viewModel.isLoadingApplications {
-          SettingsMetadata(text: "Loading apps...")
+          SettingsMetadata(text: "正在加载应用...")
         } else {
-          SettingsMetadata(text: "\(viewModel.filteredApplications.count) shown")
+          SettingsMetadata(text: "显示 \(viewModel.filteredApplications.count) 个")
         }
       }
 
@@ -75,7 +75,7 @@ struct SettingsRecordingPrivacyTabView: View {
           .padding(.vertical, 20)
           .frame(maxWidth: .infinity, alignment: .center)
       } else if viewModel.filteredApplications.isEmpty {
-        Text("No apps match your search.")
+        Text("未找到匹配的应用。")
           .font(.custom("Figtree", size: 13))
           .foregroundColor(SettingsStyle.secondary)
           .padding(.vertical, 20)
@@ -118,17 +118,17 @@ struct SettingsRecordingPrivacyTabView: View {
         .frame(height: 1)
 
       HStack(alignment: .firstTextBaseline, spacing: 10) {
-        Text("Blocked apps")
+        Text("已屏蔽应用")
           .font(.custom("Figtree", size: 13))
           .fontWeight(.semibold)
           .foregroundColor(SettingsStyle.text)
 
-        SettingsMetadata(text: "\(viewModel.blockedApplications.count) blocked")
+        SettingsMetadata(text: "已屏蔽 \(viewModel.blockedApplications.count) 个")
 
         Spacer()
 
         SettingsSecondaryButton(
-          title: "Clear",
+          title: "清空",
           isDisabled: viewModel.blockedApplications.isEmpty,
           action: viewModel.clearBlockedApplications
         )
@@ -137,7 +137,7 @@ struct SettingsRecordingPrivacyTabView: View {
       ScrollView(.horizontal, showsIndicators: false) {
         HStack(spacing: 12) {
           if viewModel.blockedApplications.isEmpty {
-            Text("Drag apps here to hide them from recording")
+            Text("将应用拖到这里，即可在录制中隐藏")
               .font(.custom("Figtree", size: 13))
               .foregroundColor(SettingsStyle.meta)
               .frame(height: 58)

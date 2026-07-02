@@ -9,15 +9,15 @@ struct OnboardingPrototypeRoleSelectionStep: View {
   let onContinue: (String) -> Void
 
   private let roles = [
-    "Software Engineer", "Founder / Executive", "Designer", "Student", "Product Manager",
-    "Data Scientist", "Other",
+    "软件工程师", "创始人 / 高管", "设计师", "学生", "产品经理",
+    "数据科学家", "其他",
   ]
   @State private var selectedRole: String?
   @State private var otherText = ""
 
   private var resolvedRole: String? {
     guard let selectedRole else { return nil }
-    if selectedRole == "Other" {
+    if selectedRole == "其他" {
       return otherText.trimmingCharacters(in: .whitespaces).isEmpty
         ? nil : otherText.trimmingCharacters(in: .whitespaces)
     }
@@ -29,12 +29,12 @@ struct OnboardingPrototypeRoleSelectionStep: View {
       Spacer()
         .frame(height: 39)
 
-      Text("Help Dayflow understand your work patterns better.")
+      Text("帮 Dayflow 更准确地了解你的工作场景。")
         .font(.custom("InstrumentSerif-Regular", size: 40))
         .tracking(-1.2)
         .multilineTextAlignment(.center)
         .foregroundColor(Color(hex: "492304"))
-        .lineSpacing(40 * 0.2)
+          .lineSpacing(40 * 0.2)
         .frame(maxWidth: 708)
         .fixedSize(horizontal: false, vertical: true)
 
@@ -43,11 +43,11 @@ struct OnboardingPrototypeRoleSelectionStep: View {
 
       VStack(spacing: 24) {
         VStack(spacing: 4) {
-          Text("What do you do for work?")
+          Text("你是做什么工作的？")
             .font(.custom("Figtree", size: 20))
             .foregroundColor(Color(hex: "89380E"))
 
-          Text("This will help Dayflow generate categories that are most helpful to you.")
+            Text("这会帮助 Dayflow 生成更贴合你的分类。")
             .font(.custom("Figtree", size: 20))
             .foregroundColor(Color(hex: "89380E"))
         }
@@ -67,9 +67,9 @@ struct OnboardingPrototypeRoleSelectionStep: View {
         }
       }
 
-      if selectedRole == "Other" {
+      if selectedRole == "其他" {
         VStack(spacing: 16) {
-          Text("Please specify")
+          Text("请填写")
             .font(.custom("Figtree", size: 20))
             .foregroundColor(Color(hex: "89380E"))
 
@@ -103,7 +103,7 @@ struct OnboardingPrototypeRoleSelectionStep: View {
           }
         },
         content: {
-          Text("Continue")
+          Text("继续")
             .font(.custom("Figtree", size: 14))
             .fontWeight(.semibold)
         },

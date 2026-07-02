@@ -37,7 +37,7 @@ struct WeeklyDonutSection: View {
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
         .fill(Design.backgroundColor)
 
-      Text("Weekly distribution")
+      Text("周分布")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Design.titleColor)
         .padding(.top, 16)
@@ -154,7 +154,7 @@ private struct WeeklyDonutCenterContent: View {
 
   var body: some View {
     VStack(spacing: 4) {
-      Text("TOTAL")
+      Text("总计")
         .font(.custom("Figtree-Bold", size: 8))
         .foregroundStyle(Color(hex: "A5A5A5"))
 
@@ -171,11 +171,11 @@ private struct WeeklyDonutCenterContent: View {
   }
 
   private var hourLabel: String {
-    totalHours == 1 ? "hour" : "hours"
+    "小时"
   }
 
   private var minuteLabel: String {
-    remainingMinutes == 1 ? "minute" : "minutes"
+    "分钟"
   }
 }
 
@@ -228,11 +228,11 @@ private struct WeeklyDonutEmptyState: View {
         .frame(width: size - 20, height: size - 20)
 
       VStack(spacing: 4) {
-        Text("TOTAL")
+        Text("总计")
           .font(.custom("Figtree-Bold", size: 8))
           .foregroundStyle(Color(hex: "A5A5A5"))
 
-        Text("No activity")
+        Text("暂无活动")
           .font(.custom("InstrumentSerif-Regular", size: 16))
           .foregroundStyle(Color(hex: "777777"))
       }

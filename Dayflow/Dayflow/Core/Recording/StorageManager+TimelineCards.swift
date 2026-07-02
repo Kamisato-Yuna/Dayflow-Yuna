@@ -259,7 +259,7 @@ extension StorageManager {
           "Installed Dayflow!",
           summary,
           category,
-          "Setup",
+          "设置",
           "",  // detailed_summary - empty string (not NULL, as GRDB decode expects non-optional)
           metadataString,
         ])

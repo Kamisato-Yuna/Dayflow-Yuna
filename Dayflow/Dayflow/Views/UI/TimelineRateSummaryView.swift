@@ -56,13 +56,13 @@ struct ThumbRatingButtons: View {
     .contentShape(Rectangle())
     .hoverScaleEffect(enabled: isEnabled, scale: 1.02)
     .pointingHandCursorOnHover(enabled: isEnabled, reassertOnPressEnd: true)
-    .accessibilityLabel(direction == .up ? Text("Thumbs up") : Text("Thumbs down"))
+    .accessibilityLabel(direction == .up ? Text("赞") : Text("踩"))
   }
 }
 
 struct TimelineRateSummaryView: View {
 
-  var title: String = "Rate this summary"
+  var title: String = "评价这段摘要"
   var isEnabled: Bool = true
   var activityID: String? = nil
   var onRate: ((TimelineRatingDirection) -> Void)? = nil
@@ -138,11 +138,11 @@ struct TimelineRateSummaryView: View {
             .progressViewStyle(CircularProgressViewStyle(tint: .white))
             .transition(transition)
         } else if deleteButtonState == .confirming {
-          Text("Confirm")
+          Text("确认")
             .font(Font.custom("Figtree", size: 12).weight(.medium))
             .transition(transition)
         } else {
-          Text("Delete")
+          Text("删除")
             .font(Font.custom("Figtree", size: 12).weight(.medium))
             .transition(transition)
         }
@@ -178,8 +178,8 @@ struct TimelineRateSummaryView: View {
     .accessibilityLabel(
       Text(
         deleteButtonState == .confirming
-          ? "Confirm delete activity card"
-          : "Delete activity card"
+          ? "确认删除活动卡片"
+          : "删除活动卡片"
       )
     )
   }

@@ -42,11 +42,11 @@ enum WhatsNewWeeklyFeedback: String, CaseIterable, Identifiable {
   var title: String {
     switch self {
     case .valuable:
-      return "It feels valuable"
+      return "很有价值"
     case .usefulNeedsWork:
-      return "Useful, but needs work"
+      return "有用，但还需改进"
     case .notUsefulYet:
-      return "Not useful yet"
+      return "暂时还不实用"
     }
   }
 }
@@ -63,11 +63,11 @@ enum WhatsNewConfiguration {
   static var configuredRelease: ReleaseNote? {
     ReleaseNote(
       version: targetVersion,
-      title: "Dayflow Pro + New referral system - earn $20 when you refer your friends!",
+      title: "Dayflow Pro 与全新推荐系统：成功推荐朋友即可获得 20 美元 Dayflow 额度！",
       highlights: [
-        "Thank you to everyone who already signed up for Dayflow Pro!",
-        "We want Dayflow Pro to be an accessible option for everyone, but understand that not everyone can afford it. We set up a referral system so you can earn $20 of Dayflow credit for every friend you refer to Dayflow. You can find more details in Settings > Account.",
-        "Dayflow will remain open source. We believe in creating open, accessible software for everyone. Dayflow Pro is there for people who want the simplest setup and maximum intelligence.",
+        "感谢已经注册 Dayflow Pro 的每一位用户！",
+        "我们希望 Dayflow Pro 尽量让更多人用得起，也理解并不是每个人都能负担订阅。因此我们新增了推荐系统：每成功推荐一位朋友使用 Dayflow，你就能获得 20 美元 Dayflow 额度。详情可在“设置 > 账户”中查看。",
+        "Dayflow 会继续保持开源。我们相信应该为所有人打造开放、易用的软件；Dayflow Pro 则面向希望获得最简单配置和最强智能能力的用户。",
       ],
       previewIntro: nil,
       previewImageNames: [],
@@ -147,7 +147,7 @@ struct WhatsNewView: View {
       VStack(alignment: .leading, spacing: 18) {
         HStack(alignment: .top) {
           VStack(alignment: .leading, spacing: 6) {
-            Text("What's New in \(releaseNote.version) 🎉")
+            Text("\(releaseNote.version) 更新内容 🎉")
               .font(.custom("InstrumentSerif-Regular", size: 32))
               .foregroundColor(.black.opacity(0.9))
 
@@ -168,7 +168,7 @@ struct WhatsNewView: View {
           }
           .buttonStyle(PlainButtonStyle())
           .pointingHandCursor()
-          .accessibilityLabel("Close")
+          .accessibilityLabel("关闭")
           .keyboardShortcut(.cancelAction)
         }
 
@@ -266,14 +266,14 @@ struct WhatsNewView: View {
 
   private var surveySection: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("How do you feel about Weekly so far?")
+      Text("目前你觉得周报怎么样？")
         .font(.custom("Figtree", size: 15))
         .fontWeight(.semibold)
         .foregroundColor(.black.opacity(0.85))
         .fixedSize(horizontal: false, vertical: true)
 
       Text(
-        "A quick answer helps shape where Weekly goes next."
+        "简单回答一下，就能帮助我们决定周报接下来怎么改进。"
       )
       .font(.custom("Figtree", size: 13))
       .foregroundColor(.black.opacity(0.62))
@@ -286,14 +286,14 @@ struct WhatsNewView: View {
       }
 
       VStack(alignment: .leading, spacing: 8) {
-        Text("How can we improve Weekly?")
+        Text("我们可以怎样改进周报？")
           .font(.custom("Figtree", size: 15))
           .fontWeight(.semibold)
           .foregroundColor(.black.opacity(0.85))
 
         WhatsNewSurveyTextEditor(
           text: $weeklyImprovementText,
-          placeholder: "New visualizations, data, comparisons, breakdowns, anything missing..."
+          placeholder: "新的可视化、数据、对比、拆解，或任何缺失的内容…"
         )
         .frame(minHeight: 78)
         .background(
@@ -321,7 +321,7 @@ struct WhatsNewView: View {
             HStack(spacing: 8) {
               Image(systemName: "paperplane.fill")
                 .font(.system(size: 12, weight: .semibold))
-              Text(isSubmittingWeeklyFeedback ? "Saving..." : "Send feedback")
+              Text(isSubmittingWeeklyFeedback ? "保存中…" : "发送反馈")
                 .font(.custom("Figtree", size: 14))
                 .fontWeight(.semibold)
             }
@@ -339,7 +339,7 @@ struct WhatsNewView: View {
         .pointingHandCursor()
 
         if hasSubmittedWeeklyFeedback {
-          Label("Saved.", systemImage: "checkmark.circle.fill")
+          Label("已保存。", systemImage: "checkmark.circle.fill")
             .font(.custom("Figtree", size: 14))
             .foregroundColor(Color(red: 0.25, green: 0.17, blue: 0))
         }
@@ -542,7 +542,7 @@ struct WhatsNewView: View {
       surveyErrorText = nil
       return true
     } catch {
-      surveyErrorText = "Could not submit. Please try again."
+      surveyErrorText = "提交失败，请重试。"
       return false
     }
   }

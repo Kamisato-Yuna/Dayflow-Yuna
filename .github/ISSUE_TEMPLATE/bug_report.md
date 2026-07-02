@@ -1,29 +1,29 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: 问题反馈
+about: 用于提交缺陷报告，帮助我们持续改进
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-This is for reporting bugs/issues and not feature requests (Feature requests should go in Discussions, this helps me track bugs more effectively)
+这里用于提交 **Bug/问题**，不是功能建议（功能建议请到 Discussions 提交，便于更好地跟进缺陷修复）。
 
-  **Describe the bug**
-  A clear and concise description of what the bug is.
+  **问题描述**
+  请简要、清晰地说明发生了什么问题。
 
-  **To Reproduce** (it's ok if you're not sure how to replicate)
-  Steps to reproduce the behavior:
+  **复现步骤**（不确定如何复现也可以）
+  复现问题的步骤：
   1. Go to '...'
   2. Click on '....'
   3. Scroll down to '....'
-  4. See error
+  4. 看到异常
 
-  **Expected behavior**
-  A clear and concise description of what you expected to happen.
+  **预期行为**
+  请清晰说明你原本期望发生的结果。
 
-  **Screenshots**
-  If applicable, add screenshots to help explain your problem.
+  **截图**
+  如有需要，请附上截图，帮助说明问题。
 
-  **Additional context**
-  Add any other context about the problem here.
+  **补充说明**
+  这里补充其他与问题相关的信息（版本、系统环境、操作时机等）。

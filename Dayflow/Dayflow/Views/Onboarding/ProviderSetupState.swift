@@ -37,7 +37,7 @@ class ProviderSetupState: ObservableObject {
   var currentStep: SetupStep {
     guard currentStepIndex < steps.count else {
       return SetupStep(
-        id: "fallback", title: "Setup", contentType: .information("Complete", "Setup is complete"))
+        id: "fallback", title: "设置", contentType: .information("完成", "设置已完成"))
     }
     return steps[currentStepIndex]
   }
@@ -69,55 +69,55 @@ class ProviderSetupState: ObservableObject {
       steps = [
         SetupStep(
           id: "intro",
-          title: "Before you begin",
+          title: "开始前",
           contentType: .information(
-            "For experienced users",
-            "This path is recommended only if you're comfortable running LLMs locally and debugging technical issues. If terms like vLLM or API endpoint don't ring a bell, we recommend going back and picking ChatGPT, Claude, or Gemini. It's non-technical and takes about 30 seconds.\n\nFor local mode, Dayflow recommends Qwen3-VL 4B as the core vision-language model (Qwen2.5-VL 3B remains available if you need a smaller download)."
+            "适合有经验用户",
+            "仅建议你具备本地运行 LLM 和排查技术问题的经验再选择此路径。若你不熟悉 vLLM、API endpoint 等概念，建议返回选择 ChatGPT、Claude 或 Gemini。该路径偏技术化，大约需要 30 秒。\n\n本地模式下，Dayflow 推荐 Qwen3-VL 4B 作为核心视觉语言模型；如需更小下载体积，可继续使用 Qwen2.5-VL 3B。"
           )
         ),
-        SetupStep(id: "choose", title: "Choose engine", contentType: .localChoice),
-        SetupStep(id: "model", title: "Install model", contentType: .localModelInstall),
+        SetupStep(id: "choose", title: "选择引擎", contentType: .localChoice),
+        SetupStep(id: "model", title: "安装模型", contentType: .localModelInstall),
         SetupStep(
-          id: "test", title: "Test connection",
+          id: "test", title: "测试连接",
           contentType: .information(
-            "Test Connection",
-            "Click the button below to verify your local server responds to a simple chat completion."
+            "测试连接",
+            "点击下方按钮验证本地服务是否对简单对话请求有响应。"
           )),
         SetupStep(
-          id: "complete", title: "Complete",
+          id: "complete", title: "完成",
           contentType: .information(
-            "All set!", "Local AI is configured and ready to use with Dayflow.")),
+            "设置完成！", "本地 AI 已配置完成，可开始在 Dayflow 中使用。")),
       ]
     case "chatgpt_claude":
       preferredCLITool = ProviderSetupState.loadStoredPreferredCLITool()
       steps = [
         SetupStep(
           id: "intro",
-          title: "Before you begin",
+          title: "开始前",
           contentType: .information(
-            "Install Codex CLI (ChatGPT) or Claude Code",
-            "If you have a paid ChatGPT/Claude account, you can have Dayflow tap into your existing usage limits. Everything flows through your current account - no extra charges - and you can opt out of training for privacy. You only need one CLI installed and signed in on this Mac; we'll verify it automatically next."
+            "安装 Codex CLI（ChatGPT）或 Claude Code",
+            "如果你已有付费的 ChatGPT / Claude 账号，Dayflow 可复用当前账号额度，不会额外计费，并可设置不参与训练以保护隐私。你只需在本机安装并登录任一 CLI 即可，系统会在下一步自动校验。"
           )
         ),
         SetupStep(
           id: "detect",
-          title: "Check installations",
+          title: "检查安装",
           contentType: .cliDetection
         ),
         SetupStep(
           id: "test",
-          title: "Test connection",
+          title: "测试连接",
           contentType: .information(
-            "Test Connection",
-            "Run a quick test to verify your CLI is working and signed in."
+            "测试连接",
+            "执行快速测试，确认 CLI 可用且已登录。"
           )
         ),
         SetupStep(
           id: "complete",
-          title: "Complete",
+          title: "完成",
           contentType: .information(
-            "All set!",
-            "ChatGPT and Claude tooling is ready. You can fine-tune which assistant to use anytime from Settings → AI Provider."
+            "设置完成！",
+            "ChatGPT 与 Claude 工具链已就绪，你可在设置 → AI Provider 随时切换使用的助手。"
           )
         ),
       ]
@@ -130,19 +130,19 @@ class ProviderSetupState: ObservableObject {
     default:  // gemini
       steps = [
         SetupStep(
-          id: "getkey", title: "Get API key",
+          id: "getkey", title: "获取 API 密钥",
           contentType: .apiKeyInstructions),
         SetupStep(
-          id: "enterkey", title: "Enter API key",
+          id: "enterkey", title: "输入 API 密钥",
           contentType: .apiKeyInput),
         SetupStep(
-          id: "verify", title: "Test connection",
+          id: "verify", title: "测试连接",
           contentType: .information(
-            "Test Connection", "Click the button below to verify your API key works with Gemini")),
+            "测试连接", "点击下方按钮验证 Gemini API 密钥是否可用")),
         SetupStep(
-          id: "complete", title: "Complete",
+          id: "complete", title: "完成",
           contentType: .information(
-            "All set!", "Gemini is now configured and ready to use with Dayflow.")),
+            "设置完成！", "Gemini 已配置完成，可在 Dayflow 中使用。")),
       ]
     }
   }
@@ -228,7 +228,7 @@ class ProviderSetupState: ObservableObject {
       persistGeminiModelSelection(source: source)
     } else {
       geminiAPIKeySaveError =
-        "Couldn't save your API key to Keychain. Please unlock Keychain and try again."
+        "API 密钥保存到钥匙串失败，请解锁钥匙串后重试。"
     }
     return stored
   }
@@ -273,12 +273,12 @@ class ProviderSetupState: ObservableObject {
   @MainActor
   func runDebugCommand() {
     guard !debugCommandInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-      debugCommandOutput = "Enter a command to run."
+      debugCommandOutput = "请输入要执行的命令。"
       return
     }
     if isRunningDebugCommand { return }
     isRunningDebugCommand = true
-    debugCommandOutput = "Running..."
+    debugCommandOutput = "执行中..."
 
     let command = debugCommandInput
     Task.detached { [weak self] in

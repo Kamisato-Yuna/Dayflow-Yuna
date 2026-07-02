@@ -18,7 +18,7 @@ struct CLIDetector {
     if result.exitCode == 0 {
       let trimmed = result.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
       let firstLine = trimmed.components(separatedBy: .newlines).first ?? trimmed
-      let summary = firstLine.isEmpty ? "\(tool.shortName) detected" : firstLine
+      let summary = firstLine.isEmpty ? "\(tool.shortName) 已检测" : firstLine
       return CLIDetectionReport(
         state: .installed(version: summary), resolvedPath: tool.executableName,
         stdout: result.stdout, stderr: result.stderr)
@@ -32,7 +32,7 @@ struct CLIDetector {
     let message = result.stderr.trimmingCharacters(in: .whitespacesAndNewlines)
     if message.isEmpty {
       return CLIDetectionReport(
-        state: .failed(message: "Exit code \(result.exitCode)"), resolvedPath: tool.executableName,
+        state: .failed(message: "退出码 \(result.exitCode)"), resolvedPath: tool.executableName,
         stdout: result.stdout, stderr: result.stderr)
     }
     return CLIDetectionReport(
@@ -75,7 +75,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
       Text(
-        "Dayflow can talk to ChatGPT (via the Codex CLI) or Claude Code. You only need one installed and signed in on this Mac. After installing, run `codex auth` or `claude login` in Terminal to connect it to your account."
+        "Dayflow 可连接 ChatGPT（通过 Codex CLI）或 Claude Code。你只需在本机安装并登录其一。安装后，请在 Terminal 中执行 `codex auth` 或 `claude login` 来绑定账号。"
       )
       .font(.custom("Figtree", size: 14))
       .foregroundColor(.black.opacity(0.6))
@@ -94,13 +94,13 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
       }
 
       Text(
-        "Tip: Once both are installed, you can choose which provider Dayflow uses from Settings → AI Provider."
+        "提示：安装完成后，你可在“设置 → AI Provider”中选择偏好 provider。"
       )
       .font(.custom("Figtree", size: 12))
       .foregroundColor(.black.opacity(0.5))
 
       VStack(alignment: .leading, spacing: 10) {
-        Text("Choose which provider Dayflow should use")
+        Text("选择 Dayflow 使用的 provider")
           .font(.custom("Figtree", size: 13))
           .fontWeight(.semibold)
           .foregroundColor(.black.opacity(0.65))
@@ -127,12 +127,12 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
           },
           content: {
             HStack(spacing: 8) {
-              if isChecking {
-                ProgressView().scaleEffect(0.7)
-              } else {
-                Image(systemName: "arrow.clockwise").font(.system(size: 13, weight: .semibold))
-              }
-              Text(isChecking ? "Checking…" : "Re-check")
+            if isChecking {
+              ProgressView().scaleEffect(0.7)
+            } else {
+              Image(systemName: "arrow.clockwise").font(.system(size: 13, weight: .semibold))
+            }
+              Text(isChecking ? "检查中…" : "重新检测")
                 .font(.custom("Figtree", size: 14))
                 .fontWeight(.semibold)
             }
@@ -189,7 +189,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(enabled ? 0.85 : 0.4))
-          Text(enabled ? "Ready to use" : "Install to enable")
+          Text(enabled ? "可直接使用" : "安装后可用")
             .font(.custom("Figtree", size: 11))
             .foregroundColor(.black.opacity(enabled ? 0.5 : 0.35))
         }
@@ -276,10 +276,10 @@ struct ChatCLIToolStatusRow: View {
   @ViewBuilder
   var statusView: some View {
     switch status {
-    case .checking, .unknown:
-      HStack(spacing: 5) {
-        ProgressView().scaleEffect(0.5)
-        Text(status.statusLabel)
+      case .checking, .unknown:
+        HStack(spacing: 5) {
+          ProgressView().scaleEffect(0.5)
+          Text(status.statusLabel)
           .font(.custom("Figtree", size: 11))
           .foregroundColor(accentColor)
       }
@@ -296,11 +296,11 @@ struct ChatCLIToolStatusRow: View {
         .padding(.vertical, 5)
         .background(Color(red: 0.13, green: 0.7, blue: 0.23).opacity(0.17))
         .cornerRadius(999)
-    case .notFound:
-      Text(status.statusLabel)
-        .font(.custom("Figtree", size: 11))
-        .fontWeight(.semibold)
-        .foregroundColor(Color(hex: "E91515"))
+      case .notFound:
+        Text(status.statusLabel)
+          .font(.custom("Figtree", size: 11))
+          .fontWeight(.semibold)
+          .foregroundColor(Color(hex: "E91515"))
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
         .background(Color(hex: "FFD1D1"))
@@ -328,10 +328,10 @@ struct ChatCLIToolStatusRow: View {
 
   var installLabel: String {
     switch status {
-    case .failed:
-      return "Setup guide"
-    default:
-      return "Install"
+      case .failed:
+        return "安装指南"
+      default:
+        return "安装"
     }
   }
 }

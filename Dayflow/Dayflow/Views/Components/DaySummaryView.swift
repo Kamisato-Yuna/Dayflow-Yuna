@@ -410,7 +410,7 @@ struct DaySummaryView: View {
   private var daySoFarContent: some View {
     VStack(alignment: .leading, spacing: Design.donutSectionSpacing) {
       VStack(alignment: .leading, spacing: Design.headerSpacing) {
-        Text("Your day so far")
+        Text("今天到目前为止")
           .font(.custom("InstrumentSerif-Regular", size: 24))
           .foregroundColor(Design.titleColor)
       }
@@ -437,7 +437,7 @@ struct DaySummaryView: View {
         .stroke(Color.gray.opacity(0.2), lineWidth: 20)
         .frame(width: 140, height: 140)
 
-      Text("No activity data yet")
+      Text("暂无活动数据")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color.gray.opacity(0.6))
     }
@@ -845,13 +845,13 @@ struct DaySummaryView: View {
     let minutes = totalMinutes % 60
 
     if hours > 0 && minutes > 0 {
-      return "\(hours) Hours \(minutes) minutes"
+      return "\(hours)小时 \(minutes)分钟"
     } else if hours > 0 {
-      return "\(hours) Hours"
+      return "\(hours)小时"
     } else if minutes > 0 {
-      return "\(minutes) minutes"
+      return "\(minutes)分钟"
     } else {
-      return "0 minutes"
+      return "0分钟"
     }
   }
 
@@ -861,13 +861,13 @@ struct DaySummaryView: View {
     let minutes = totalMinutes % 60
 
     if hours > 0 && minutes > 0 {
-      return "\(hours) hours \(minutes) minutes"
+      return "\(hours)小时 \(minutes)分钟"
     } else if hours > 0 {
-      return "\(hours) hours"
+      return "\(hours)小时"
     } else if minutes > 0 {
-      return "\(minutes) minutes"
+      return "\(minutes)分钟"
     } else {
-      return "0 minutes"
+      return "0分钟"
     }
   }
 

@@ -240,7 +240,7 @@ struct DayflowApp: App {
       // Add custom menu items after the app info section
       CommandGroup(after: .appInfo) {
         Divider()
-        Button("Reset Onboarding") {
+        Button("重置新手引导") {
           // Reset the onboarding flag
           UserDefaults.standard.set(false, forKey: "didOnboard")
           // Reset the saved onboarding step to start from beginning
@@ -264,11 +264,11 @@ struct DayflowApp: App {
 
       // Add Sparkle's update menu item
       CommandGroup(after: .appInfo) {
-        Button("Check for Updates…") {
+        Button("检查更新…") {
           updaterManager.checkForUpdates(showUI: true)
         }
 
-        Button("View Release Notes") {
+        Button("查看更新说明") {
           // Activate the app and bring to foreground
           NSApp.activate(ignoringOtherApps: true)
 
@@ -294,7 +294,7 @@ struct DayflowApp: App {
       AppDelegate.pendingNotificationNavigationDestination = nil
 
       switch destination {
-      case .daily(let day) where day?.isEmpty == false:
+      case .daily(let day?) where !day.isEmpty:
         NotificationCenter.default.post(
           name: .navigateToDaily,
           object: nil,

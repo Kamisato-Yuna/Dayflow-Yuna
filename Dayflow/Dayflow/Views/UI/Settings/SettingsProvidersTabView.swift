@@ -41,22 +41,22 @@ struct SettingsProvidersTabView: View {
 
   private var currentConfigurationSection: some View {
     SettingsSection(
-      title: "Current configuration",
-      subtitle: "Active provider and runtime details."
+      title: "当前配置",
+      subtitle: "当前启用的提供商和运行方式详情。"
     ) {
       VStack(alignment: .leading, spacing: 0) {
         summaryRows
 
         HStack(spacing: 8) {
           SettingsSecondaryButton(
-            title: "Edit configuration",
+            title: "编辑配置",
             action: { viewModel.editProviderConfiguration(viewModel.primaryRoutingProviderId) }
           )
 
           if viewModel.currentProvider == "ollama" {
             SettingsSecondaryButton(
               title: viewModel.usingRecommendedLocalModel
-                ? "Manage local model" : "Upgrade local model",
+                ? "管理本地模型" : "升级本地模型",
               action: { viewModel.isShowingLocalModelUpgradeSheet = true }
             )
           }
@@ -68,59 +68,59 @@ struct SettingsProvidersTabView: View {
 
   @ViewBuilder
   private var summaryRows: some View {
-    SettingsRow(label: "Primary provider") {
+    SettingsRow(label: "主要提供商") {
       HStack(spacing: 8) {
         SettingsMetadata(
           text: viewModel.providerDisplayName(viewModel.primaryRoutingProviderId))
-        SettingsBadge(text: "PRIMARY", isAccent: true)
+        SettingsBadge(text: "主要", isAccent: true)
       }
     }
 
     if let backupProvider = viewModel.secondaryRoutingProviderId {
-      SettingsRow(label: "Secondary provider") {
+      SettingsRow(label: "备用提供商") {
         HStack(spacing: 8) {
           SettingsMetadata(text: viewModel.providerDisplayName(backupProvider))
-          SettingsBadge(text: "SECONDARY")
+          SettingsBadge(text: "备用")
         }
       }
     } else {
-      SettingsRow(label: "Secondary provider") {
-        SettingsMetadata(text: "Not configured")
+      SettingsRow(label: "备用提供商") {
+        SettingsMetadata(text: "未配置")
       }
     }
 
     switch viewModel.currentProvider {
     case "ollama":
-      SettingsRow(label: "Engine") { SettingsMetadata(text: viewModel.localEngine.displayName) }
-      SettingsRow(label: "Model") {
+      SettingsRow(label: "引擎") { SettingsMetadata(text: viewModel.localEngine.displayName) }
+      SettingsRow(label: "模型") {
         SettingsMetadata(
-          text: viewModel.localModelId.isEmpty ? "Not configured" : viewModel.localModelId)
+          text: viewModel.localModelId.isEmpty ? "未配置" : viewModel.localModelId)
       }
-      SettingsRow(label: "Endpoint") { SettingsMetadata(text: viewModel.localBaseURL) }
+      SettingsRow(label: "端点") { SettingsMetadata(text: viewModel.localBaseURL) }
       let hasKey = !viewModel.localAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-      SettingsRow(label: "API key", showsDivider: false) {
-        SettingsMetadata(text: hasKey ? "Stored in UserDefaults" : "Not set")
+      SettingsRow(label: "API Key", showsDivider: false) {
+        SettingsMetadata(text: hasKey ? "已存入 UserDefaults" : "未设置")
       }
     case "gemini":
-      SettingsRow(label: "Model preference") {
+      SettingsRow(label: "模型偏好") {
         SettingsMetadata(text: viewModel.selectedGeminiModel.displayName)
       }
-      SettingsRow(label: "API key", showsDivider: false) {
+      SettingsRow(label: "API Key", showsDivider: false) {
         SettingsMetadata(
           text: KeychainManager.shared.retrieve(for: "gemini") != nil
-            ? "Stored safely in Keychain" : "Not set")
+            ? "已安全存入 Keychain" : "未设置")
       }
     case "chatgpt_claude":
-      SettingsRow(label: "CLI preference") {
+      SettingsRow(label: "CLI 偏好") {
         SettingsMetadata(text: viewModel.chatCLIStatusLabel())
       }
     case "dayflow":
-      SettingsRow(label: "Status", showsDivider: false) {
-        SettingsMetadata(text: viewModel.statusText(for: "dayflow") ?? "Requires Dayflow Pro")
+      SettingsRow(label: "状态", showsDivider: false) {
+        SettingsMetadata(text: viewModel.statusText(for: "dayflow") ?? "需要 Dayflow Pro")
       }
     default:
-      SettingsRow(label: "Status", showsDivider: false) {
-        SettingsMetadata(text: "Coming soon")
+      SettingsRow(label: "状态", showsDivider: false) {
+        SettingsMetadata(text: "即将推出")
       }
     }
   }
@@ -129,8 +129,8 @@ struct SettingsProvidersTabView: View {
 
   private var connectionHealthSection: some View {
     SettingsSection(
-      title: "Connection health",
-      subtitle: "Run a quick test for the primary provider."
+      title: "连接状态",
+      subtitle: "快速测试主要提供商是否可用。"
     ) {
       VStack(alignment: .leading, spacing: 14) {
         Text(viewModel.connectionHealthLabel)
@@ -156,11 +156,11 @@ struct SettingsProvidersTabView: View {
             onTestComplete: { _ in }
           )
         case "dayflow":
-          Text("Hosted cards and transcription run through your Dayflow account.")
+          Text("托管卡片生成和转写会通过你的 Dayflow 账号运行。")
             .font(.custom("Figtree", size: 13))
             .foregroundColor(SettingsStyle.secondary)
         default:
-          Text("Dayflow Pro diagnostics coming soon")
+          Text("Dayflow Pro 诊断即将推出")
             .font(.custom("Figtree", size: 13))
             .foregroundColor(SettingsStyle.secondary)
         }
@@ -172,8 +172,8 @@ struct SettingsProvidersTabView: View {
 
   private var failoverRoutingSection: some View {
     SettingsSection(
-      title: "Failover routing",
-      subtitle: "Choose primary and secondary providers."
+      title: "故障转移路由",
+      subtitle: "选择主要和备用提供商。"
     ) {
       VStack(alignment: .leading, spacing: 0) {
         let providers = viewModel.routingProviders
@@ -206,13 +206,13 @@ struct SettingsProvidersTabView: View {
         Spacer()
 
         if isPrimary {
-          SettingsBadge(text: "PRIMARY", isAccent: true)
+          SettingsBadge(text: "主要", isAccent: true)
         } else if isSecondary {
-          SettingsBadge(text: "SECONDARY")
+          SettingsBadge(text: "备用")
         } else if isConfigured {
-          SettingsBadge(text: "CONFIGURED")
+          SettingsBadge(text: "已配置")
         } else {
-          SettingsBadge(text: "NOT SET")
+          SettingsBadge(text: "未设置")
         }
       }
 
@@ -223,48 +223,48 @@ struct SettingsProvidersTabView: View {
 
       HStack(spacing: 8) {
         if viewModel.shouldShowDayflowUpgradeAction(for: provider.id) {
-          SettingsPrimaryButton(title: "Upgrade account", systemImage: "sparkles") {
+          SettingsPrimaryButton(title: "升级账号", systemImage: "sparkles") {
             viewModel.openDayflowUpgradeAccount(from: provider.id)
           }
         } else if provider.id == "dayflow" {
           if !isPrimary {
-            SettingsSecondaryButton(title: "Set primary") {
+            SettingsSecondaryButton(title: "设为主要") {
               viewModel.setPrimaryOrSetup(provider.id)
             }
           }
 
           if !isSecondary {
-            SettingsSecondaryButton(title: "Set secondary", isDisabled: !canSetSecondary) {
+            SettingsSecondaryButton(title: "设为备用", isDisabled: !canSetSecondary) {
               viewModel.setSecondaryOrSetup(provider.id)
             }
           } else {
-            SettingsSecondaryButton(title: "Unset secondary") {
+            SettingsSecondaryButton(title: "取消备用") {
               viewModel.clearBackupProvider()
             }
           }
         } else {
           if !isConfigured {
-            SettingsSecondaryButton(title: "Setup") {
+            SettingsSecondaryButton(title: "设置") {
               viewModel.beginProviderSetup(provider.id, role: .setupOnly)
             }
           }
 
-          SettingsSecondaryButton(title: "Edit configuration") {
+          SettingsSecondaryButton(title: "编辑配置") {
             viewModel.editProviderConfiguration(provider.id)
           }
 
           if !isPrimary {
-            SettingsSecondaryButton(title: "Set primary") {
+            SettingsSecondaryButton(title: "设为主要") {
               viewModel.setPrimaryOrSetup(provider.id)
             }
           }
 
           if !isSecondary {
-            SettingsSecondaryButton(title: "Set secondary", isDisabled: !canSetSecondary) {
+            SettingsSecondaryButton(title: "设为备用", isDisabled: !canSetSecondary) {
               viewModel.setSecondaryOrSetup(provider.id)
             }
           } else {
-            SettingsSecondaryButton(title: "Unset secondary") {
+            SettingsSecondaryButton(title: "取消备用") {
               viewModel.clearBackupProvider()
             }
           }
@@ -283,11 +283,11 @@ struct SettingsProvidersTabView: View {
 
   private var geminiModelSection: some View {
     SettingsSection(
-      title: "Gemini model preference",
-      subtitle: "Choose which Gemini model Dayflow should prioritize."
+      title: "Gemini 模型偏好",
+      subtitle: "选择 Dayflow 优先使用的 Gemini 模型。"
     ) {
       VStack(alignment: .leading, spacing: 14) {
-        Picker("Gemini model", selection: $viewModel.selectedGeminiModel) {
+        Picker("Gemini 模型", selection: $viewModel.selectedGeminiModel) {
           ForEach(GeminiModel.allCases, id: \.self) { model in
             Text(model.displayName).tag(model)
           }
@@ -304,7 +304,7 @@ struct SettingsProvidersTabView: View {
           .foregroundColor(SettingsStyle.secondary)
 
         Text(
-          "Dayflow automatically downgrades if your chosen model is rate limited or unavailable."
+          "如果所选模型受到速率限制或暂时不可用，Dayflow 会自动降级。"
         )
         .font(.custom("Figtree", size: 11))
         .foregroundColor(SettingsStyle.meta)
@@ -319,28 +319,28 @@ struct SettingsProvidersTabView: View {
     switch viewModel.currentProvider {
     case "gemini":
       promptSection(
-        title: "Gemini prompt customization",
-        subtitle: "Override Dayflow's defaults to tailor card generation.",
+        title: "Gemini 提示词自定义",
+        subtitle: "覆盖 Dayflow 默认提示词，以调整卡片生成效果。",
         intro:
-          "Overrides apply only when their toggle is on. Unchecked sections fall back to Dayflow's defaults.",
+          "只有打开开关的部分会覆盖默认值；未勾选的部分会继续使用 Dayflow 默认提示词。",
         sections: [
           promptEditorConfig(
-            heading: "Card titles",
-            description: "Shape how card titles read and tweak the example list.",
+            heading: "卡片标题",
+            description: "调整卡片标题的表达方式和示例列表。",
             isEnabled: $viewModel.useCustomGeminiTitlePrompt,
             text: $viewModel.geminiTitlePromptText,
             defaultText: GeminiPromptDefaults.titleBlock
           ),
           promptEditorConfig(
-            heading: "Card summaries",
-            description: "Control tone and style for the summary field.",
+            heading: "卡片摘要",
+            description: "控制摘要字段的语气和风格。",
             isEnabled: $viewModel.useCustomGeminiSummaryPrompt,
             text: $viewModel.geminiSummaryPromptText,
             defaultText: GeminiPromptDefaults.summaryBlock
           ),
           promptEditorConfig(
-            heading: "Detailed summaries",
-            description: "Define the minute-by-minute breakdown format and examples.",
+            heading: "详细摘要",
+            description: "定义逐分钟拆解的格式和示例。",
             isEnabled: $viewModel.useCustomGeminiDetailedPrompt,
             text: $viewModel.geminiDetailedPromptText,
             defaultText: GeminiPromptDefaults.detailedSummaryBlock
@@ -350,20 +350,20 @@ struct SettingsProvidersTabView: View {
       )
     case "ollama":
       promptSection(
-        title: "Local prompt customization",
-        subtitle: "Adjust the prompts used for local timeline summaries.",
-        intro: "Customize the local model prompts for summary and title generation.",
+        title: "本地提示词自定义",
+        subtitle: "调整本地时间线摘要使用的提示词。",
+        intro: "自定义本地模型生成摘要和标题时使用的提示词。",
         sections: [
           promptEditorConfig(
-            heading: "Timeline summaries",
-            description: "Control how the local model writes its 2-3 sentence card summaries.",
+            heading: "时间线摘要",
+            description: "控制本地模型如何撰写 2-3 句卡片摘要。",
             isEnabled: $viewModel.useCustomOllamaSummaryPrompt,
             text: $viewModel.ollamaSummaryPromptText,
             defaultText: OllamaPromptDefaults.summaryBlock
           ),
           promptEditorConfig(
-            heading: "Card titles",
-            description: "Adjust the tone and examples for local title generation.",
+            heading: "卡片标题",
+            description: "调整本地标题生成的语气和示例。",
             isEnabled: $viewModel.useCustomOllamaTitlePrompt,
             text: $viewModel.ollamaTitlePromptText,
             defaultText: OllamaPromptDefaults.titleBlock
@@ -373,28 +373,28 @@ struct SettingsProvidersTabView: View {
       )
     case "chatgpt_claude":
       promptSection(
-        title: "ChatGPT / Claude prompt customization",
-        subtitle: "Override Dayflow's defaults to tailor card generation.",
+        title: "ChatGPT / Claude 提示词自定义",
+        subtitle: "覆盖 Dayflow 默认提示词，以调整卡片生成效果。",
         intro:
-          "Overrides apply only when their toggle is on. Unchecked sections fall back to Dayflow's defaults.",
+          "只有打开开关的部分会覆盖默认值；未勾选的部分会继续使用 Dayflow 默认提示词。",
         sections: [
           promptEditorConfig(
-            heading: "Card titles",
-            description: "Shape how card titles read and tweak the example list.",
+            heading: "卡片标题",
+            description: "调整卡片标题的表达方式和示例列表。",
             isEnabled: $viewModel.useCustomChatCLITitlePrompt,
             text: $viewModel.chatCLITitlePromptText,
             defaultText: ChatCLIPromptDefaults.titleBlock
           ),
           promptEditorConfig(
-            heading: "Card summaries",
-            description: "Control tone and style for the summary field.",
+            heading: "卡片摘要",
+            description: "控制摘要字段的语气和风格。",
             isEnabled: $viewModel.useCustomChatCLISummaryPrompt,
             text: $viewModel.chatCLISummaryPromptText,
             defaultText: ChatCLIPromptDefaults.summaryBlock
           ),
           promptEditorConfig(
-            heading: "Detailed summaries",
-            description: "Define the minute-by-minute breakdown format and examples.",
+            heading: "详细摘要",
+            description: "定义逐分钟拆解的格式和示例。",
             isEnabled: $viewModel.useCustomChatCLIDetailedPrompt,
             text: $viewModel.chatCLIDetailedPromptText,
             defaultText: ChatCLIPromptDefaults.detailedSummaryBlock
@@ -448,7 +448,7 @@ struct SettingsProvidersTabView: View {
         HStack {
           Spacer()
           SettingsSecondaryButton(
-            title: "Reset to Dayflow defaults",
+            title: "恢复 Dayflow 默认值",
             systemImage: "arrow.counterclockwise",
             action: onReset
           )
@@ -529,11 +529,11 @@ private struct LocalModelUpgradeBanner: View {
           .background(Color(red: 0.12, green: 0.09, blue: 0.02))
           .clipShape(RoundedRectangle(cornerRadius: 8))
         VStack(alignment: .leading, spacing: 4) {
-          Text("Upgrade to \(preset.displayName)")
+          Text("升级到 \(preset.displayName)")
             .font(.custom("Figtree", size: 16))
             .fontWeight(.semibold)
             .foregroundColor(.white)
-          Text("Upgrade to Qwen3VL for a big improvement in quality.")
+          Text("升级到 Qwen3VL，可显著提升质量。")
             .font(.custom("Figtree", size: 13))
             .foregroundColor(.white.opacity(0.8))
         }
@@ -541,7 +541,7 @@ private struct LocalModelUpgradeBanner: View {
       }
 
       VStack(alignment: .leading, spacing: 6) {
-        ForEach(preset.highlightBullets, id: \.self) { bullet in
+        ForEach(preset.settingsHighlightBullets, id: \.self) { bullet in
           HStack(alignment: .top, spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
               .font(.system(size: 12))
@@ -556,7 +556,7 @@ private struct LocalModelUpgradeBanner: View {
 
       HStack(spacing: 12) {
         Button(action: onKeepLegacy) {
-          Text("Keep Qwen2.5")
+          Text("保留 Qwen2.5")
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
             .foregroundColor(.white)
@@ -572,7 +572,7 @@ private struct LocalModelUpgradeBanner: View {
 
         Button(action: onUpgrade) {
           HStack(spacing: 6) {
-            Text("Upgrade now")
+            Text("立即升级")
               .font(.custom("Figtree", size: 13))
               .fontWeight(.semibold)
             Image(systemName: "arrow.right")
@@ -646,11 +646,11 @@ struct LocalModelUpgradeSheet: View {
       VStack(alignment: .leading, spacing: 24) {
         HStack {
           VStack(alignment: .leading, spacing: 6) {
-            Text("Upgrade to \(preset.displayName)")
+            Text("升级到 \(preset.displayName)")
               .font(.custom("Figtree", size: 22))
               .fontWeight(.semibold)
             Text(
-              "Follow the steps below, run a quick test, and Dayflow will switch you over automatically."
+              "按下面步骤操作并运行快速测试；成功后 Dayflow 会自动切换。"
             )
             .font(.custom("Figtree", size: 13))
             .foregroundColor(SettingsStyle.secondary)
@@ -666,7 +666,7 @@ struct LocalModelUpgradeSheet: View {
         }
 
         VStack(alignment: .leading, spacing: 6) {
-          ForEach(preset.highlightBullets, id: \.self) { bullet in
+          ForEach(preset.settingsHighlightBullets, id: \.self) { bullet in
             HStack(spacing: 8) {
               Image(systemName: "sparkle")
                 .font(.system(size: 12))
@@ -679,13 +679,13 @@ struct LocalModelUpgradeSheet: View {
         }
 
         VStack(alignment: .leading, spacing: 12) {
-          Text("Which local runtime are you using?")
+          Text("你正在使用哪种本地运行方式？")
             .font(.custom("Figtree", size: 14))
             .foregroundColor(SettingsStyle.secondary)
-          Picker("Engine", selection: $selectedEngine) {
+          Picker("引擎", selection: $selectedEngine) {
             Text("Ollama").tag(LocalEngine.ollama)
             Text("LM Studio").tag(LocalEngine.lmstudio)
-            Text("Custom").tag(LocalEngine.custom)
+            Text("自定义").tag(LocalEngine.custom)
           }
           .pickerStyle(.segmented)
           .frame(maxWidth: 420)
@@ -699,7 +699,7 @@ struct LocalModelUpgradeSheet: View {
           apiKey: $candidateAPIKey,
           engine: selectedEngine,
           showInputs: true,
-          buttonLabel: "Test upgrade",
+          buttonLabel: "测试升级",
           basePlaceholder: selectedEngine.defaultBaseURL,
           modelPlaceholder: preset.modelId(
             for: selectedEngine == .custom ? .ollama : selectedEngine),
@@ -712,14 +712,14 @@ struct LocalModelUpgradeSheet: View {
         )
 
         Text(
-          "Once the test succeeds, Dayflow updates your settings to \(preset.displayName) automatically."
+          "测试成功后，Dayflow 会自动把设置更新为 \(preset.displayName)。"
         )
         .font(.custom("Figtree", size: 12))
         .foregroundColor(SettingsStyle.secondary)
 
         HStack {
           Spacer()
-          SettingsSecondaryButton(title: "Close", action: onCancel)
+          SettingsSecondaryButton(title: "关闭", action: onCancel)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -737,7 +737,7 @@ struct LocalModelUpgradeSheet: View {
 
   @ViewBuilder
   private func instructionView(for engine: LocalEngine) -> some View {
-    let instruction = preset.instructions(for: engine == .custom ? .ollama : engine)
+    let instruction = preset.settingsInstructions(for: engine == .custom ? .ollama : engine)
     VStack(alignment: .leading, spacing: 12) {
       Text(instruction.title)
         .font(.custom("Figtree", size: 16))
@@ -795,5 +795,61 @@ struct LocalModelUpgradeSheet: View {
             .stroke(Color.black.opacity(0.1), lineWidth: 1)
         )
     )
+  }
+}
+
+private extension LocalModelPreset {
+  var settingsHighlightBullets: [String] {
+    switch self {
+    case .qwen3VL4B:
+      return [
+        "新的、更强的本地 VLM",
+        "复杂使用场景下拥有更长推理链",
+        "适配大多数 Apple Silicon 设备（约 5GB 显存）",
+      ]
+    case .qwen25VL3B:
+      return [
+        "Dayflow 本地模式的旧默认模型",
+        "显存占用更低，但感知能力较弱",
+      ]
+    }
+  }
+
+  func settingsInstructions(for engine: LocalEngine) -> LocalModelInstructionSet {
+    switch engine {
+    case .ollama, .custom:
+      return LocalModelInstructionSet(
+        title: "通过 Ollama 安装",
+        subtitle: "拉取模型前，请确认 Ollama 已升级到 0.12.10 或更新版本。",
+        bullets: [
+          "打开终端",
+          "运行下面的拉取命令（约 5GB 下载）",
+          "保持 Ollama 在后台运行",
+        ],
+        commandTitle: "运行此命令：",
+        commandSubtitle: "为 Ollama 下载 \(displayName)",
+        command: ollamaPullCommand,
+        buttonTitle: nil,
+        buttonURL: nil,
+        note: "需要继续使用 Qwen2.5？保留当前模型并跳过本次升级即可。"
+      )
+    case .lmstudio:
+      return LocalModelInstructionSet(
+        title: "在 LM Studio 中安装",
+        subtitle: "请确认 LM Studio 已升级到 0.3.31，并使用模型浏览器下载 GGUF 构建。",
+        bullets: [
+          "打开 LM Studio 并点击 Models 标签",
+          "搜索“\(modelId(for: .lmstudio))”",
+          "下载 Instruct 变体，然后启动 Local Server",
+        ],
+        commandTitle: nil,
+        commandSubtitle: nil,
+        command: nil,
+        buttonTitle: "在 LM Studio 中打开下载",
+        buttonURL: lmStudioDownloadURL,
+        note:
+          "提示：启用“Launch local server”，让 Dayflow 可以通过 \(LocalEngine.lmstudio.defaultBaseURL) 连接 LM Studio。"
+      )
+    }
   }
 }
