@@ -74,7 +74,7 @@ struct OnboardingCategoryStepView: View {
         pendingDeleteCategory = nil
       }
     } message: { category in
-      Text("“\(category.name)” 会从你的 onboarding 分类中移除。")
+      Text("“\(category.name)” 会从你的新手引导分类中移除。")
     }
   }
 
