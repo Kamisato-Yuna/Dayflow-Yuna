@@ -47,7 +47,7 @@ struct OnboardingLLMSelectionView: View {
 
       VStack(spacing: 0) {
         // Header
-        Text("Choose a way to run Dayflow")
+        Text("选择 Dayflow 的运行方式")
           .font(.custom("InstrumentSerif-Regular", size: titleSize))
           .multilineTextAlignment(.center)
           .foregroundColor(.black.opacity(0.9))
@@ -80,20 +80,20 @@ struct OnboardingLLMSelectionView: View {
         HStack(spacing: 0) {
           Group {
             if cliDetected {
-              Text("You have Codex/Claude CLI installed! ")
+              Text("你已安装 Codex/Claude CLI！")
                 .foregroundColor(.black.opacity(0.6))
-                + Text("We recommend using it for the best experience.")
+                + Text("建议你用它来获得最佳体验。")
                 .fontWeight(.semibold)
                 .foregroundColor(.black.opacity(0.8))
-                + Text(" You can switch at any time in the settings.")
+                + Text(" 你可随时在设置中切换。")
                 .foregroundColor(.black.opacity(0.6))
             } else {
-              Text("Not sure which to choose? ")
+              Text("不知道该选哪个？")
                 .foregroundColor(.black.opacity(0.6))
-                + Text("Bring your own keys is the easiest setup (30s).")
+                + Text("带自有密钥是最简单的设置方式（30 秒）。")
                 .fontWeight(.semibold)
                 .foregroundColor(.black.opacity(0.8))
-                + Text(" You can switch at any time in the settings.")
+                + Text(" 你可随时在设置中切换。")
                 .foregroundColor(.black.opacity(0.6))
             }
           }
@@ -119,17 +119,17 @@ struct OnboardingLLMSelectionView: View {
       // Run locally card
       FlexibleProviderCard(
         id: "ollama",
-        title: "Use local AI",
+        title: "本地 AI",
         badgeText: "MOST PRIVATE",
         badgeType: .green,
         icon: "desktopcomputer",
         features: [
-          ("100% private - everything's processed on your computer", true),
-          ("Works completely offline", true),
-          ("Significantly less intelligence", false),
-          ("Requires the most setup", false),
-          ("16GB+ of RAM recommended", false),
-          ("Can be battery-intensive", false),
+          ("100% 私有化，所有内容都在你的电脑上处理", true),
+          ("可完全离线运行", true),
+          ("智能性明显弱于在线模型", false),
+          ("需要更多设置步骤", false),
+          ("建议 16GB+ 内存", false),
+          ("可能更耗电", false),
         ],
         isSelected: selectedProvider == "ollama",
         buttonMode: .onboarding(onProceed: {
@@ -161,10 +161,10 @@ struct OnboardingLLMSelectionView: View {
         badgeType: cliDetected ? .blue : .orange,
         icon: "gemini_asset",
         features: [
-          ("Utilizes more intelligent AI via Google's Gemini models", true),
-          ("Uses Gemini's generous free tier (no credit card needed)", true),
-          ("Faster, more accurate than local models", true),
-          ("Requires getting an API key (takes 2 clicks)", false),
+          ("通过 Google Gemini 模型使用更强 AI 能力", true),
+          ("使用 Gemini 的免费额度（无需信用卡）", true),
+          ("比本地模型更快更准确", true),
+          ("需要获取 API Key（约 2 次点击）", false),
         ],
         isSelected: selectedProvider == "gemini",
         buttonMode: .onboarding(onProceed: {
@@ -191,16 +191,16 @@ struct OnboardingLLMSelectionView: View {
       // ChatGPT/Claude CLI card
       FlexibleProviderCard(
         id: "chatgpt_claude",
-        title: "ChatGPT or Claude",
+        title: "ChatGPT 或 Claude",
         badgeText: cliDetected ? "RECOMMENDED" : "NEW",
         badgeType: cliDetected ? .orange : .blue,
         icon: "chatgpt_claude_asset",
         features: [
-          ("Perfect for existing ChatGPT Plus or Claude Pro subscribers", true),
-          ("Superior intelligence and reliability", true),
-          ("Minimal impact - uses <1% of your daily limit", true),
-          ("Requires installing Codex or Claude CLI", false),
-          ("Requires a paid ChatGPT or Claude subscription", false),
+          ("适合现有 ChatGPT Plus 或 Claude Pro 订阅用户", true),
+          ("智能性与稳定性更强", true),
+          ("对每日额度影响极小（<1%）", true),
+          ("需要安装 Codex 或 Claude CLI", false),
+          ("需要有效的 ChatGPT 或 Claude 付费订阅", false),
         ],
         isSelected: selectedProvider == "chatgpt_claude",
         buttonMode: .onboarding(onProceed: {

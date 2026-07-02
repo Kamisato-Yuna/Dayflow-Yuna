@@ -12,9 +12,9 @@ struct LLMProviderSetupView: View {
   var headerTitle: String {
     switch activeProviderType {
     case "ollama":
-      return "Use local AI"
+      return "本地 AI"
     case "chatgpt_claude":
-      return "Connect ChatGPT or Claude"
+      return "连接 ChatGPT 或 Claude"
     default:
       return "Gemini"
     }
@@ -107,10 +107,10 @@ struct LLMProviderSetupView: View {
   }
 
   var nextButtonText: String {
-    if let title = setupState.currentStep.contentType.informationTitle {
-      if (title == "Testing" || title == "Test Connection") && !setupState.testSuccessful {
-        return "Test Required"
-      }
+    if (setupState.currentStep.id == "test" || setupState.currentStep.id == "verify")
+      && !setupState.testSuccessful
+    {
+      return "请先完成测试"
     }
     return "下一步"
   }
@@ -126,7 +126,7 @@ struct LLMProviderSetupView: View {
         content: {
           HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill").font(.system(size: 14))
-            Text("Complete Setup").font(.custom("Figtree", size: 14)).fontWeight(.semibold)
+            Text("完成设置").font(.custom("Figtree", size: 14)).fontWeight(.semibold)
           }
         },
         background: Color(red: 0.25, green: 0.17, blue: 0),
@@ -169,12 +169,12 @@ struct LLMProviderSetupView: View {
     case .localChoice:
       VStack(alignment: .leading, spacing: 20) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("Choose your local AI engine")
+          Text("选择本地 AI 引擎")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
           Text(
-            "For local use, LM Studio is the most reliable; Ollama has a known thinking bug in onboarding (can't turn thinking off) and performance is unreliable."
+            "对于本地使用，LM Studio 最可靠；Ollama 在 onboarding 中已知会遇到无法关闭“思考模式”的问题，并且性能不稳定。"
           )
           .font(.custom("Figtree", size: 14))
           .foregroundColor(.black.opacity(0.6))
@@ -202,7 +202,7 @@ struct LLMProviderSetupView: View {
                 }
               }
               .frame(width: 18, height: 18)
-              Text("Download LM Studio")
+              Text("下载 LM Studio")
                 .font(.custom("Figtree", size: 14))
                 .fontWeight(.semibold)
             },
@@ -214,7 +214,7 @@ struct LLMProviderSetupView: View {
           )
         }
         Text(
-          "Already have a local server? Make sure it’s OpenAI-compatible. You can set a custom base URL in the next step."
+          "你已经有本地服务了吗？请确认其兼容 OpenAI API。下一步可设置自定义 Base URL。"
         )
         .font(.custom("Figtree", size: 13))
         .foregroundColor(.black.opacity(0.6))
@@ -225,22 +225,22 @@ struct LLMProviderSetupView: View {
       }
     case .localModelInstall:
       VStack(alignment: .leading, spacing: 16) {
-        Text("Install Qwen3-VL 4B")
+        Text("安装 Qwen3-VL 4B")
           .font(.custom("Figtree", size: 24))
           .fontWeight(.semibold)
           .foregroundColor(.black.opacity(0.9))
         if setupState.localEngine == .ollama {
-          Text("After installing Ollama, run this in your terminal to download the model (≈5GB):")
+          Text("安装并启动 Ollama 后，在终端运行以下命令下载模型（约 5GB）：")
             .font(.custom("Figtree", size: 14))
             .foregroundColor(.black.opacity(0.6))
           TerminalCommandView(
-            title: "Run this command:",
-            subtitle: "Downloads Qwen3 Vision 4B for Ollama",
+            title: "执行以下命令：",
+            subtitle: "用于为 Ollama 下载 Qwen3-VL 4B",
             command: "ollama pull qwen3-vl:4b"
           )
         } else if setupState.localEngine == .lmstudio {
           VStack(alignment: .leading, spacing: 16) {
-            Text("After installing LM Studio, download the recommended model:")
+            Text("安装 LM Studio 后，下载推荐模型：")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.6))
 
@@ -249,7 +249,7 @@ struct LLMProviderSetupView: View {
               content: {
                 HStack(spacing: 8) {
                   Image(systemName: "arrow.down.circle.fill").font(.system(size: 14))
-                  Text("Download Qwen3-VL 4B in LM Studio").font(.custom("Figtree", size: 14))
+                  Text("在 LM Studio 中下载 Qwen3-VL 4B").font(.custom("Figtree", size: 14))
                     .fontWeight(.semibold)
                 }
               },
@@ -263,12 +263,12 @@ struct LLMProviderSetupView: View {
             )
 
             VStack(alignment: .leading, spacing: 6) {
-              Text("This will open LM Studio and prompt you to download the model (≈3GB).")
+              Text("此操作会打开 LM Studio，并提示你下载该模型（约 3GB）。")
                 .font(.custom("Figtree", size: 13))
                 .foregroundColor(.black.opacity(0.65))
 
               Text(
-                "Once downloaded, turn on 'Local Server' in LM Studio (default http://localhost:1234)"
+                "下载完成后，在 LM Studio 开启“Local Server”（默认地址 http://localhost:1234）"
               )
               .font(.custom("Figtree", size: 13))
               .foregroundColor(.black.opacity(0.65))
@@ -277,14 +277,14 @@ struct LLMProviderSetupView: View {
 
             // Fallback manual instructions
             VStack(alignment: .leading, spacing: 4) {
-              Text("Manual setup:")
+              Text("手动设置：")
                 .font(.custom("Figtree", size: 12))
                 .fontWeight(.semibold)
                 .foregroundColor(.black.opacity(0.5))
-              Text("1. Open LM Studio → Models tab")
+              Text("1. 打开 LM Studio 的 Models 标签页")
                 .font(.custom("Figtree", size: 12))
                 .foregroundColor(.black.opacity(0.45))
-              Text("2. Search for 'Qwen3-VL-4B' and install the Instruct variant")
+              Text("2. 搜索“Qwen3-VL-4B”，安装 Instruct 版本")
                 .font(.custom("Figtree", size: 12))
                 .foregroundColor(.black.opacity(0.45))
             }
@@ -292,12 +292,12 @@ struct LLMProviderSetupView: View {
           }
         } else {
           VStack(alignment: .leading, spacing: 8) {
-            Text("Use any OpenAI-compatible VLM")
+            Text("使用任意 OpenAI 兼容 VLM")
               .font(.custom("Figtree", size: 16))
               .fontWeight(.semibold)
               .foregroundColor(.black.opacity(0.85))
             Text(
-              "Make sure your server exposes the OpenAI Chat Completions API and has Qwen3-VL 4B (or Qwen2.5-VL 3B if you need the legacy model) installed."
+              "请确认你的服务端暴露了 OpenAI Chat Completions API，并安装了 Qwen3-VL 4B（若需要旧版模型可选 Qwen2.5-VL 3B）。"
             )
             .font(.custom("Figtree", size: 14))
             .foregroundColor(.black.opacity(0.75))
@@ -311,8 +311,8 @@ struct LLMProviderSetupView: View {
     case .terminalCommand(let command):
       VStack(alignment: .leading, spacing: 24) {
         TerminalCommandView(
-          title: "Terminal command:",
-          subtitle: "Copy the code below and try running it in your terminal",
+          title: "终端命令：",
+          subtitle: "复制以下命令并在终端执行",
           command: command
         )
 
@@ -326,8 +326,8 @@ struct LLMProviderSetupView: View {
       VStack(alignment: .leading, spacing: 24) {
         APIKeyInputView(
           apiKey: $setupState.apiKey,
-          title: "Enter your API key:",
-          subtitle: "Paste your Gemini API key below",
+          title: "输入你的 API Key：",
+          subtitle: "请在下方粘贴 Gemini API Key",
           placeholder: "AQ...",
           onValidate: { key in
             key.components(separatedBy: .whitespacesAndNewlines).joined().count > 10
@@ -361,13 +361,13 @@ struct LLMProviderSetupView: View {
 
         VStack(alignment: .leading, spacing: 12) {
           Text(
-            "Choose your Gemini model. We recommend 3.5 Flash, with 3.1 Flash-Lite available as a fallback."
+            "请选择 Gemini 模型。推荐 3.5 Flash，3.1 Flash-Lite 可作为备用。"
           )
           .font(.custom("Figtree", size: 16))
           .fontWeight(.semibold)
           .foregroundColor(.black.opacity(0.85))
 
-          Picker("Gemini model", selection: $setupState.geminiModel) {
+          Picker("Gemini 模型", selection: $setupState.geminiModel) {
             ForEach(GeminiModel.allCases, id: \.self) { model in
               Text(model.shortLabel).tag(model)
             }
@@ -391,20 +391,20 @@ struct LLMProviderSetupView: View {
     case .modelDownload(let command):
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("Download the AI model")
+          Text("下载 AI 模型")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
 
-          Text("This model enables Dayflow to understand what's on your screen")
+          Text("该模型可帮助 Dayflow 理解你当前屏幕内容")
             .font(.custom("Figtree", size: 14))
             .foregroundColor(.black.opacity(0.6))
         }
 
         TerminalCommandView(
-          title: "Run this command:",
+          title: "执行以下命令：",
           subtitle:
-            "This will download the \(LocalModelPreset.qwen3VL4B.displayName) model (about 5GB)",
+            "此命令将下载 \(LocalModelPreset.qwen3VL4B.displayName)（约 5GB）",
           command: command
         )
 
@@ -430,10 +430,8 @@ struct LLMProviderSetupView: View {
               .lineLimit(nil)
             // Additional guidance for the local intro step only
             if step.id == "intro" && providerType == "ollama" {
-              (Text("Advanced users can pick any ") + Text("vision-capable").fontWeight(.bold)
-                + Text(
-                  " LLM, but we strongly recommend using Qwen3-VL 4B based on our internal benchmarks."
-                ))
+              (Text("高级用户可任意选择") + Text("具备视觉能力").fontWeight(.bold)
+                + Text("的 LLM，但基于内部测试更推荐使用 Qwen3-VL 4B。"))
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(.black.opacity(0.6))
                 .fixedSize(horizontal: false, vertical: true)
@@ -445,7 +443,7 @@ struct LLMProviderSetupView: View {
         // Content area scrolls if needed; Next stays visible below
         ScrollView(.vertical, showsIndicators: true) {
           VStack(alignment: .leading, spacing: 16) {
-            if title == "Testing" || title == "Test Connection" {
+            if step.id == "test" || step.id == "verify" {
               if providerType == "gemini" {
                 TestConnectionView(
                   onTestComplete: { success in
@@ -464,12 +462,12 @@ struct LLMProviderSetupView: View {
               } else {
                 // Engine selection: LM Studio or Custom
                 VStack(alignment: .leading, spacing: 12) {
-                  Text("Which tool are you using?")
+                  Text("你正在使用哪种工具？")
                     .font(.custom("Figtree", size: 14))
                     .foregroundColor(.black.opacity(0.65))
-                  Picker("Engine", selection: $setupState.localEngine) {
+                  Picker("引擎", selection: $setupState.localEngine) {
                     Text("LM Studio").tag(LocalEngine.lmstudio)
-                    Text("Custom model").tag(LocalEngine.custom)
+                    Text("自定义模型").tag(LocalEngine.custom)
                   }
                   .pickerStyle(.segmented)
                   .frame(maxWidth: 380)
@@ -523,13 +521,13 @@ struct LLMProviderSetupView: View {
     case .apiKeyInstructions:
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("Get your Gemini API key")
+          Text("获取你的 Gemini API Key")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
 
           Text(
-            "allows you to run Dayflow for free. All you need is a Google account - no credit card required."
+            "你可使用该方式免费使用 Dayflow。你只需一个 Google 账号，无需提供信用卡。"
           )
           .font(.custom("Figtree", size: 14))
           .foregroundColor(.black.opacity(0.6))
@@ -543,7 +541,7 @@ struct LLMProviderSetupView: View {
               .frame(width: 20, alignment: .leading)
 
             Group {
-              Text("Visit Google AI Studio ")
+              Text("打开 Google AI Studio")
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(.black.opacity(0.8))
                 + Text("(aistudio.google.com)")
@@ -561,7 +559,7 @@ struct LLMProviderSetupView: View {
               .foregroundColor(.black.opacity(0.6))
               .frame(width: 20, alignment: .leading)
 
-            Text("Click \"Get API key\" in the top right")
+            Text("点击右上角“获取 API key”")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.8))
           }
@@ -572,7 +570,7 @@ struct LLMProviderSetupView: View {
               .foregroundColor(.black.opacity(0.6))
               .frame(width: 20, alignment: .leading)
 
-            Text("Create a new API key and copy it")
+            Text("创建新的 API Key 并复制")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.8))
           }
@@ -586,7 +584,7 @@ struct LLMProviderSetupView: View {
             content: {
               HStack(spacing: 8) {
                 Image(systemName: "safari").font(.system(size: 14))
-                Text("Open Google AI Studio").font(.custom("Figtree", size: 14)).fontWeight(
+                Text("打开 Google AI Studio").font(.custom("Figtree", size: 14)).fontWeight(
                   .semibold)
               }
             },
@@ -616,8 +614,8 @@ struct LLMProviderSetupView: View {
   func handleContinue() {
     // Persist local config immediately after a successful local test when user advances
     if activeProviderType == "ollama" {
-      if case .information(let title, _) = setupState.currentStep.contentType,
-        title == "Testing" || title == "Test Connection",
+      if case .information = setupState.currentStep.contentType,
+        (setupState.currentStep.id == "verify" || setupState.currentStep.id == "test"),
         setupState.testSuccessful
       {
         persistLocalSettings()

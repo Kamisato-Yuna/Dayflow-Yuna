@@ -215,13 +215,13 @@ private struct OnboardingPrototypePlaceholderStep: View {
 
   var body: some View {
     VStack(spacing: 24) {
-      VStack(spacing: 10) {
-        Text("Prototype checkpoint")
-          .font(.custom("InstrumentSerif-Regular", size: 44))
-          .foregroundColor(.black.opacity(0.9))
+        VStack(spacing: 10) {
+          Text("原型验收点")
+            .font(.custom("InstrumentSerif-Regular", size: 44))
+            .foregroundColor(.black.opacity(0.9))
 
         Text(
-          "The intro video, role-selection screen, and preferences screen are now wired up. We can keep replacing the remaining placeholders step by step without touching production onboarding yet."
+          "已接入介绍视频、职业选择页和偏好选择页。你可以在不影响正式引导流程的情况下，逐步替换剩余占位页面。"
         )
         .font(.custom("Figtree", size: 17))
         .foregroundColor(.black.opacity(0.65))
@@ -233,7 +233,7 @@ private struct OnboardingPrototypePlaceholderStep: View {
         DayflowSurfaceButton(
           action: onReplayVideo,
           content: {
-            Text("Replay video")
+            Text("重放演示视频")
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           },
@@ -250,7 +250,7 @@ private struct OnboardingPrototypePlaceholderStep: View {
         DayflowSurfaceButton(
           action: onFinish,
           content: {
-            Text("Finish prototype")
+            Text("完成原型")
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           },

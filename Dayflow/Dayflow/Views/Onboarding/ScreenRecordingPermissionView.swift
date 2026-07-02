@@ -32,15 +32,15 @@ struct ScreenRecordingPermissionView: View {
       HStack(alignment: .top, spacing: 60) {
         // Left side — text and controls
         VStack(alignment: .leading, spacing: 10) {
-          Text("Last step!")
+          Text("最后一步！")
             .font(.custom("Figtree-Bold", size: 16))
             .foregroundColor(Color(hex: "F96E00"))
 
-          Text("Permission")
+          Text("权限")
             .font(.custom("InstrumentSerif-Regular", size: 28))
             .foregroundColor(.black)
 
-          Text("Dayflow can help understand your day.")
+          Text("Dayflow 可以帮助你理解当日工作。")
             .font(.custom("Figtree-Medium", size: 14))
             .foregroundColor(Color(hex: "5B5B5B"))
             .fixedSize(horizontal: false, vertical: true)
@@ -51,19 +51,19 @@ struct ScreenRecordingPermissionView: View {
               Image(systemName: "shield.fill")
                 .font(.system(size: 14))
                 .foregroundColor(privacyTextColor)
-              Text("Dayflow is built to be private and secure.")
+              Text("Dayflow 设计注重隐私与安全。")
                 .font(.custom("Figtree-Bold", size: 14))
                 .foregroundColor(privacyTextColor)
                 .fixedSize(horizontal: false, vertical: true)
             }
 
             Text(
-              "Dayflow stores all recordings locally on your Mac, and can process everything privately on your device using local AI models."
+              "Dayflow 将所有录屏保存在你的 Mac 本地，并可使用本地 AI 模型完成私有化处理。"
             )
             .font(.custom("Figtree-Medium", size: 14))
             .foregroundColor(privacyTextColor)
 
-            Text("You are always in control — you can pause or turn off Dayflow whenever you like.")
+            Text("你始终掌握控制权，随时可暂停或关闭 Dayflow。")
               .font(.custom("Figtree-Medium", size: 14))
               .foregroundColor(privacyTextColor)
           }
@@ -84,11 +84,11 @@ struct ScreenRecordingPermissionView: View {
             case .notRequested:
               EmptyView()
             case .granted:
-              Text("✓ Permission granted! Click Next to continue.")
+              Text("✓ 已获得权限，可继续下一步。")
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(.green)
             case .needsAction:
-              Text("Turn on Screen Recording for Dayflow, then quit and reopen the app to finish.")
+              Text("请为 Dayflow 开启录屏权限，随后退出并重新打开应用完成设置。")
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(.orange)
             }
@@ -105,7 +105,7 @@ struct ScreenRecordingPermissionView: View {
                       .scaleEffect(0.7)
                       .progressViewStyle(CircularProgressViewStyle())
                   }
-                  Text(isCheckingPermission ? "Checking..." : "打开系统设置")
+                  Text(isCheckingPermission ? "检查中..." : "打开系统设置")
                     .font(.custom("Figtree-SemiBold", size: 12))
                     .tracking(-0.48)
                     .foregroundColor(brownAccent)
@@ -168,7 +168,7 @@ struct ScreenRecordingPermissionView: View {
                   )
 
                   Button(action: quitAndReopen) {
-                    Text("Quit & Reopen")
+                    Text("退出并重开")
                       .font(.custom("Figtree-SemiBold", size: 12))
                       .tracking(-0.48)
                       .foregroundColor(brownAccent)

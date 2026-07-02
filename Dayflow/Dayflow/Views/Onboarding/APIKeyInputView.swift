@@ -90,7 +90,7 @@ struct APIKeyInputView: View {
 
         // Validation message
         if validationState == .invalid {
-          Text("API key should be more than 10 characters")
+          Text("API Key 长度至少为 10 个字符以上")
             .font(.custom("Figtree", size: 12))
             .foregroundColor(Color(hex: "E91515"))
             .transition(.opacity)
@@ -99,14 +99,12 @@ struct APIKeyInputView: View {
       .animation(.easeOut(duration: 0.2), value: validationState)
 
       // Help text
-      HStack(spacing: 4) {
+        HStack(spacing: 4) {
         Image(systemName: "lock.shield.fill")
           .font(.system(size: 12))
           .foregroundColor(Color(red: 0.34, green: 1, blue: 0.45).opacity(0.7))
 
-        Text(
-          "Your API key is encrypted and stored in your macOS Keychain - never uploaded anywhere"
-        )
+        Text("你的 API Key 会经过加密后存储在 macOS Keychain，不会上传到任何地方")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(.black.opacity(0.5))
       }

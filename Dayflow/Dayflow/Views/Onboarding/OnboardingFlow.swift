@@ -687,11 +687,11 @@ struct OnboardingPrototypeDownloadReasonStep: View {
 
       VStack(spacing: 22) {
         VStack(spacing: 4) {
-          Text("What are you hoping to get out of Dayflow?")
+          Text("你希望从 Dayflow 中获得什么？")
             .font(.custom("Figtree", size: 20))
             .foregroundColor(Color(hex: "89380E"))
 
-          Text("This helps personalize the experience for you.")
+          Text("这能帮助我们把体验更贴合你的工作习惯。")
             .font(.custom("Figtree", size: 16))
             .foregroundColor(Color(hex: "89380E").opacity(0.78))
         }
@@ -784,7 +784,7 @@ struct OnboardingPrototypeDownloadReasonStep: View {
   }
 
   private var otherField: some View {
-    TextField("Tell me more", text: $otherText)
+    TextField("告诉我更多", text: $otherText)
       .font(.custom("Figtree", size: 16))
       .foregroundColor(Color(hex: "492304"))
       .textFieldStyle(.plain)
@@ -835,20 +835,20 @@ enum DownloadReasonOption: CaseIterable, Identifiable, Hashable {
 
   var displayName: String {
     switch self {
-    case .automaticLog:
-      return "To keep an automatic log of what I worked on"
-    case .proofOfWork:
-      return "To have something to show for my work (standups, reviews, clients)"
-    case .cutDistractions:
-      return "To find and cut distractions"
-    case .productiveFocused:
-      return "To be more productive or focused"
-    case .automatedManualTracking:
-      return "I was already tracking this manually and wanted it automated"
-    case .openSourcePrivate:
-      return "I wanted a tracker that's open source and keeps my data private"
-    case .other:
-      return "Other"
+      case .automaticLog:
+      return "自动记录我做过的每件事"
+      case .proofOfWork:
+      return "在周报/会议/复盘中有可展示的产出"
+      case .cutDistractions:
+      return "识别并减少干扰"
+      case .productiveFocused:
+      return "提升效率和专注度"
+      case .automatedManualTracking:
+      return "我以前手动记录，想自动化"
+      case .openSourcePrivate:
+      return "我想要开源且尊重数据隐私的追踪工具"
+      case .other:
+      return "其他"
     }
   }
 
@@ -895,7 +895,7 @@ struct OnboardingPrototypeReferralStep: View {
       Spacer()
         .frame(height: 39)
 
-      Text("One quick question")
+      Text("回答一个快速问题")
         .font(.custom("InstrumentSerif-Regular", size: 40))
         .tracking(-1.2)
         .multilineTextAlignment(.center)
@@ -909,7 +909,7 @@ struct OnboardingPrototypeReferralStep: View {
 
       VStack(spacing: 20) {
         ReferralSurveyView(
-          prompt: "Where did you first hear about Dayflow?",
+        prompt: "你是从哪里第一次听到 Dayflow 的？",
           showSubmitButton: false,
           selectedReferral: $selectedReferral,
           customReferral: $referralDetail
@@ -964,12 +964,12 @@ struct CompletionView: View {
 
       // Title section
       VStack(spacing: 8) {
-        Text("You are ready to go!")
+        Text("你已准备就绪")
           .font(.custom("InstrumentSerif-Regular", size: 36))
           .foregroundColor(.black.opacity(0.9))
 
         Text(
-          "To get useful insights, let Dayflow run in the background for an hour or two to gather enough context, then check back in."
+          "想要拿到有用的分析，请让 Dayflow 在后台运行一到两小时来收集上下文后再回来查看。"
         )
         .font(.custom("Figtree", size: 15))
         .foregroundColor(.black.opacity(0.6))

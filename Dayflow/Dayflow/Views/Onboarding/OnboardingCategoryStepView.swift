@@ -63,7 +63,7 @@ struct OnboardingCategoryStepView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .alert(
-      "Delete category?",
+      "确认删除分类？",
       isPresented: deleteAlertBinding,
       presenting: pendingDeleteCategory
     ) { category in
@@ -74,7 +74,7 @@ struct OnboardingCategoryStepView: View {
         pendingDeleteCategory = nil
       }
     } message: { category in
-      Text("“\(category.name)” will be removed from your onboarding categories.")
+      Text("“\(category.name)” 会从你的 onboarding 分类中移除。")
     }
   }
 
@@ -82,25 +82,25 @@ struct OnboardingCategoryStepView: View {
 
   private var instructionsColumn: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text("Help Dayflow understand your workflow")
+      Text("帮助 Dayflow 理解你的工作流")
         .font(.custom("InstrumentSerif-Regular", size: 28))
         .foregroundColor(.black)
         .fixedSize(horizontal: false, vertical: true)
         .padding(.bottom, 24)
 
-      Text("Dayflow will organize your activities based on the categories you provide.")
+      Text("Dayflow 会根据你提供的分类整理活动。")
         .font(.custom("Figtree", size: 14).weight(.medium))
         .foregroundColor(Color(hex: "5B5B5B"))
         .fixedSize(horizontal: false, vertical: true)
 
       Text(
-        "Here are options tailored to your work to help you get started. Provide more personalized descriptions to help Dayflow better understand your actions."
+        "以下是为你的工作准备的默认分类。填写更贴合你的内容有助于 Dayflow 更准确地理解你的行为。"
       )
       .font(.custom("Figtree", size: 14).weight(.medium))
       .foregroundColor(Color(hex: "5B5B5B"))
       .fixedSize(horizontal: false, vertical: true)
 
-      Text("You can customize or create new categories any time.")
+      Text("你可以随时自定义或新增分类。")
         .font(.custom("Figtree", size: 14).weight(.medium))
         .foregroundColor(Color(hex: "5B5B5B"))
         .fixedSize(horizontal: false, vertical: true)
@@ -132,7 +132,7 @@ struct OnboardingCategoryStepView: View {
     HStack(spacing: 8) {
       colorSwatch(hex: category.colorHex)
 
-      TextField("Category name", text: $draftName)
+      TextField("分类名称", text: $draftName)
         .font(.custom("Figtree", size: 12).weight(.bold))
         .textFieldStyle(.plain)
         .foregroundColor(.black)
@@ -156,7 +156,7 @@ struct OnboardingCategoryStepView: View {
           Image("CategoriesDelete")
             .resizable()
             .frame(width: 16, height: 16)
-            .accessibilityLabel("Delete category")
+            .accessibilityLabel("删除分类")
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -213,7 +213,7 @@ struct OnboardingCategoryStepView: View {
             Image("CategoriesDelete")
               .resizable()
               .frame(width: 16, height: 16)
-              .accessibilityLabel("Delete category")
+            .accessibilityLabel("删除分类")
           }
           .buttonStyle(.plain)
           .pointingHandCursor()
@@ -256,7 +256,7 @@ struct OnboardingCategoryStepView: View {
     Button {
       commitPendingEdits()
       categoryStore.markOnboardingCategoriesCustomized()
-      categoryStore.addCategory(name: "New Category")
+      categoryStore.addCategory(name: "新分类")
       addCount += 1
       AnalyticsService.shared.capture(
         "onboarding_category_added",
@@ -268,7 +268,7 @@ struct OnboardingCategoryStepView: View {
         startEditing(newCat)
       }
     } label: {
-      Text("+ Add category")
+      Text("+ 添加分类")
         .font(.custom("Figtree", size: 12).weight(.medium))
         .foregroundColor(Color(hex: "2B2B2B"))
         .frame(maxWidth: .infinity)

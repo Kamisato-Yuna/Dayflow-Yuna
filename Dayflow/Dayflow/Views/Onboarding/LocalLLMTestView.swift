@@ -69,7 +69,7 @@ struct LocalLLMTestView: View {
     apiKey: Binding<String> = .constant(""),
     engine: LocalEngine,
     showInputs: Bool = true,
-    buttonLabel: String = "Test Local API",
+    buttonLabel: String = "测试本地 API",
     basePlaceholder: String? = nil,
     modelPlaceholder: String? = nil,
     onTestComplete: @escaping (Bool) -> Void
@@ -120,7 +120,7 @@ struct LocalLLMTestView: View {
 
         if engine == .custom {
           VStack(alignment: .leading, spacing: 6) {
-            Text("API key (optional)")
+            Text("API Key（可选）")
               .font(.custom("Figtree", size: 12))
               .fontWeight(.semibold)
               .foregroundColor(SettingsStyle.secondary)
@@ -128,7 +128,7 @@ struct LocalLLMTestView: View {
               .textFieldStyle(.roundedBorder)
               .disableAutocorrection(true)
             Text(
-              "Stored locally in UserDefaults and sent as a Bearer token for custom endpoints (LiteLLM, OpenRouter, etc.)"
+              "在本地存储于 UserDefaults，并以 Bearer token 方式发送到自定义端点（LiteLLM、OpenRouter 等）。"
             )
             .font(.custom("Figtree", size: 11))
             .foregroundColor(SettingsStyle.meta)
@@ -144,12 +144,12 @@ struct LocalLLMTestView: View {
       )
 
       if success {
-        SettingsStatusDot(state: .good, label: "Test successful.")
+        SettingsStatusDot(state: .good, label: "测试成功。")
       } else if let msg = resultMessage {
         VStack(alignment: .leading, spacing: 6) {
           SettingsStatusDot(state: .bad, label: msg)
           Text(
-            "If you get stuck here, you can go back and choose the ‘Bring your own key’ option — it only takes a minute to set up."
+            "如果这里卡住了，可以返回选择“Bring your own key”，仅需约 1 分钟即可完成设置。"
           )
           .font(.custom("Figtree", size: 12))
           .foregroundColor(SettingsStyle.secondary)
@@ -165,7 +165,7 @@ struct LocalLLMTestView: View {
     resultMessage = nil
 
     guard let url = LocalEndpointUtilities.chatCompletionsURL(baseURL: baseURL) else {
-      resultMessage = "Invalid base URL"
+      resultMessage = "接口地址无效"
       isTesting = false
       onTestComplete(false)
       return
@@ -218,7 +218,7 @@ struct LocalLLMTestView: View {
           return
         }
         guard let http = response as? HTTPURLResponse, let data = data else {
-          self.resultMessage = "No response"
+          self.resultMessage = "未收到响应"
           self.isTesting = false
           self.onTestComplete(false)
           return
