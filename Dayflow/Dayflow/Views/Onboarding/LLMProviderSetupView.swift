@@ -7,6 +7,12 @@ struct LLMProviderSetupView: View {
   let onBack: () -> Void
   let onComplete: () -> Void
 
+  private enum LocalizedCopy {
+    static let localVisionModelDescription = "可使用任意兼容 OpenAI 的视觉语言模型"
+    static let openGoogleAIStudio = "打开 Google AI Studio"
+    static let googleAIStudioDomain = "(aistudio.google.com)"
+  }
+
   var activeProviderType: String { providerType }
 
   var headerTitle: String {
@@ -291,8 +297,8 @@ struct LLMProviderSetupView: View {
             .padding(.top, 8)
           }
         } else {
-          VStack(alignment: .leading, spacing: 8) {
-            Text("可使用任意兼容 OpenAI 的视觉语言模型")
+            VStack(alignment: .leading, spacing: 8) {
+            Text(LocalizedCopy.localVisionModelDescription)
               .font(.custom("Figtree", size: 16))
               .fontWeight(.semibold)
               .foregroundColor(.black.opacity(0.85))
@@ -541,10 +547,10 @@ struct LLMProviderSetupView: View {
               .frame(width: 20, alignment: .leading)
 
             Group {
-              Text("打开 Google AI Studio")
+              Text(LocalizedCopy.openGoogleAIStudio)
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(.black.opacity(0.8))
-                + Text("(aistudio.google.com)")
+                + Text(LocalizedCopy.googleAIStudioDomain)
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(Color(red: 1, green: 0.42, blue: 0.02))
                 .underline()
@@ -584,7 +590,7 @@ struct LLMProviderSetupView: View {
             content: {
               HStack(spacing: 8) {
                 Image(systemName: "safari").font(.system(size: 14))
-                Text("打开 Google AI Studio").font(.custom("Figtree", size: 14)).fontWeight(
+                Text(LocalizedCopy.openGoogleAIStudio).font(.custom("Figtree", size: 14)).fontWeight(
                   .semibold)
               }
             },
