@@ -355,74 +355,6 @@ enum OnboardingPrototypeAnalytics {
     )
   }
 
-  static func trackDayflowProSelected(
-    flowID: String,
-    flowVariant: String,
-    hasPaidAI: Bool,
-    selectionStage: String
-  ) {
-    capture(
-      "dayflow_pro_selected",
-      dayflowProProps(
-        step: nil,
-        flowID: flowID,
-        flowVariant: flowVariant,
-        hasPaidAI: hasPaidAI,
-        extraProps: ["selection_stage": selectionStage]
-      )
-    )
-  }
-
-  static func trackDayflowProStepViewed(
-    step: DayflowProOnboardingStep,
-    flowID: String,
-    flowVariant: String,
-    hasPaidAI: Bool
-  ) {
-    screen(
-      "dayflow_pro_\(step.analyticsName)",
-      dayflowProProps(
-        step: step,
-        flowID: flowID,
-        flowVariant: flowVariant,
-        hasPaidAI: hasPaidAI
-      )
-    )
-    capture(
-      "dayflow_pro_onboarding_step_viewed",
-      dayflowProProps(
-        step: step,
-        flowID: flowID,
-        flowVariant: flowVariant,
-        hasPaidAI: hasPaidAI
-      )
-    )
-  }
-
-  static func trackDayflowProAPIOutcome(
-    _ eventName: String,
-    action: String,
-    result: DayflowAuthActionResult,
-    step: DayflowProOnboardingStep,
-    flowID: String,
-    flowVariant: String,
-    hasPaidAI: Bool
-  ) {
-    capture(
-      eventName,
-      dayflowProProps(
-        step: step,
-        flowID: flowID,
-        flowVariant: flowVariant,
-        hasPaidAI: hasPaidAI,
-        extraProps: result.analyticsProps.merging(
-          ["action": action],
-          uniquingKeysWith: { _, new in new }
-        )
-      )
-    )
-  }
-
   private static func stepProps(
     step: OnboardingPrototypeStep,
     flowID: String,
@@ -435,26 +367,6 @@ enum OnboardingPrototypeAnalytics {
       "step_index": step.rawValue + 1,
       "step_count": OnboardingPrototypeStep.allCases.count,
     ]
-  }
-
-  private static func dayflowProProps(
-    step: DayflowProOnboardingStep?,
-    flowID: String,
-    flowVariant: String,
-    hasPaidAI: Bool,
-    extraProps: [String: Any] = [:]
-  ) -> [String: Any] {
-    var props: [String: Any] = [
-      "flow_id": flowID,
-      "flow_variant": flowVariant,
-      "surface": "onboarding_dayflow_pro",
-      "has_paid_ai": hasPaidAI,
-    ]
-    if let step {
-      props["dayflow_pro_step"] = step.analyticsName
-    }
-    extraProps.forEach { props[$0.key] = $0.value }
-    return props
   }
 
   private static func capture(_ name: String, _ props: [String: Any]) {

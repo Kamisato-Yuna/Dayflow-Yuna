@@ -143,19 +143,15 @@ struct OnboardingFlow: View {
           flowID: flowID,
           flowVariant: "production_onboarding",
           onSelect: { providerTitle in
-            // Map display title → internal provider ID
+            // Map display title to internal provider ID.
             let providerID: String
             switch providerTitle {
-            case "Dayflow Pro": providerID = "dayflow"
             case "ChatGPT 或 Claude": providerID = "chatgpt_claude"
             case "Google Gemini": providerID = "gemini"
             case "Local AI": providerID = "ollama"
             default: providerID = "gemini"
             }
             selectedProvider = providerID
-            if providerID == "dayflow" {
-              LLMProviderType.dayflowBackend().persist()
-            }
 
             var props: [String: Any] = ["provider": providerID]
             if providerID == "ollama" {
@@ -191,10 +187,7 @@ struct OnboardingFlow: View {
       case .categories:
         OnboardingCategoryStepView(
           onBack: {
-            // Go back to llmSetup, or llmSelection if they picked dayflow
-            let backStep: OnboardingStep =
-              (selectedProvider == "dayflow") ? .llmSelection : .llmSetup
-            setStep(backStep)
+            setStep(.llmSetup)
           },
           onNext: {
             advance()
@@ -339,8 +332,7 @@ struct OnboardingFlow: View {
       savedStepRawValue = step.rawValue
     case .llmSelection:
       markStepCompleted(step, extraProps: extraProps)
-      let nextStep: OnboardingStep = (selectedProvider == "dayflow") ? .categories : .llmSetup
-      setStep(nextStep)
+      setStep(.llmSetup)
     case .llmSetup:
       markStepCompleted(step)
       setStep(.categories)
