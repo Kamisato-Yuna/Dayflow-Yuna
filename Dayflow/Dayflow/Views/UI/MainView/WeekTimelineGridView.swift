@@ -580,14 +580,14 @@ struct WeekTimelineGridView: View {
       HStack(spacing: 6) {
         TimelineThinkingSpinner(config: spinnerConfig, visualScale: 0.4)
         if !compact {
-          Text("Next card...")
+          Text("下一张卡片...")
             .font(.custom("Figtree", size: 10).weight(.semibold))
             .foregroundColor(.white)
             .lineLimit(1)
         }
       }
     case .pausedTimed, .pausedIndefinite:
-      Label("Paused", systemImage: "pause.fill")
+      Label("已暂停", systemImage: "pause.fill")
         .font(.custom("Figtree", size: 10).weight(.medium))
         .foregroundColor(Color(hex: "888D95"))
     case .stopped:
@@ -1261,11 +1261,11 @@ private struct WeekTimelineHoverPrototypeHarness: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Hover-expand prototype")
+        Text("悬停展开原型")
           .font(.custom("Figtree", size: 13).weight(.semibold))
           .foregroundColor(Color(hex: "333333"))
         Text(
-          "Hover a short card — the card grows to reveal the full title. No text shifts; only new lines appear below."
+          "悬停短卡片时，卡片会展开显示完整标题。已有文字不移动，只在下方显示新行。"
         )
         .font(.custom("Figtree", size: 11))
         .foregroundColor(Color(hex: "6B5548"))

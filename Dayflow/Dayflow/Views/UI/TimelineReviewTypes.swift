@@ -52,9 +52,9 @@ enum TimelineReviewRating: String, CaseIterable, Identifiable {
 
   var title: String {
     switch self {
-    case .distracted: return "Distracted"
-    case .neutral: return "Neutral"
-    case .focused: return "Focused"
+    case .distracted: return "分心"
+    case .neutral: return "一般"
+    case .focused: return "专注"
     }
   }
 

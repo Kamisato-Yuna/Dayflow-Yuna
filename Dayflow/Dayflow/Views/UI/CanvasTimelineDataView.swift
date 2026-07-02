@@ -614,7 +614,7 @@ struct CanvasTimelineDataView: View {
         config: timelineSpinnerConfig,
         visualScale: 0.5
       )
-      Text("Generating your next card")
+      Text("正在生成下一张卡片")
     }
     .font(
       Font.custom("Figtree", size: 12)
@@ -630,14 +630,14 @@ struct CanvasTimelineDataView: View {
   private var pausedStatusText: some View {
     statusText(
       iconName: "pause.fill",
-      message: "Dayflow is paused. Click 'Resume' to generate new activity cards."
+      message: "Dayflow 已暂停。点击“恢复”即可生成新的活动卡片。"
     )
   }
 
   private var stoppedStatusText: some View {
     statusText(
       iconName: "play.fill",
-      message: "Dayflow isn't recording. Click 'Resume' to generate new activity cards."
+      message: "Dayflow 未在录制。点击“恢复”即可生成新的活动卡片。"
     )
   }
 
@@ -1307,7 +1307,7 @@ struct CanvasActivityCard: View {
           .stroke(Color(red: 0.9, green: 0.9, blue: 0.9), lineWidth: 0.75)
       )
       .help(
-        "This card fell back to a lower-quality Gemini model due to rate limiting, so output quality may be lower."
+        "由于触发频率限制，这张卡片已回退到质量较低的 Gemini 模型，输出质量可能会降低。"
       )
   }
 

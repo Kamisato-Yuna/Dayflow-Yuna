@@ -46,7 +46,7 @@ struct ScreenshotSlideshowModal: View {
           }
           if let startTime, let endTime {
             Text(
-              "\(Self.timeFormatter.string(from: startTime)) to \(Self.timeFormatter.string(from: endTime))"
+              "\(Self.timeFormatter.string(from: startTime)) 至 \(Self.timeFormatter.string(from: endTime))"
             )
             .font(.caption)
             .foregroundColor(Color(red: 0.4, green: 0.4, blue: 0.4))

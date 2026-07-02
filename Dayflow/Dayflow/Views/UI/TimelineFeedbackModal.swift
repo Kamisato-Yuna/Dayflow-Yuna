@@ -26,19 +26,19 @@ struct FeedbackModalContent {
   let illustrationAccessibilityLabel: String?
 
   static let timeline = FeedbackModalContent(
-    accessibilityLabel: "Timeline feedback form",
-    accessibilityHint: "Share more context after rating this summary.",
-    formTitle: "Thank you!",
-    formSubtitle: "Tell us more about your feedback",
+    accessibilityLabel: "时间线反馈表单",
+    accessibilityHint: "评价这段摘要后，可以补充更多背景。",
+    formTitle: "谢谢！",
+    formSubtitle: "告诉我们更多反馈",
     placeholder:
-      "I don't have access to your timeline (privacy first!), so your feedback here helps improve the quality of Dayflow for everyone.",
-    shareLogsLabel: "I'd like to share this log to the developer to help improve the product.",
-    submitButtonTitle: "Submit",
-    thanksTitle: "Thank you for your feedback!",
+      "我无法访问你的时间线（隐私优先！），所以这里的反馈能帮助我们提升每个人的 Dayflow 体验。",
+    shareLogsLabel: "我愿意把这份日志分享给开发者，帮助改进产品。",
+    submitButtonTitle: "提交",
+    thanksTitle: "感谢你的反馈！",
     thanksBody:
-      "If you find that your activities are summarized inaccurately, try editing the descriptions of your categories to improve Dayflow's accuracy.",
+      "如果你发现活动摘要不准确，可以尝试编辑分类描述，以提升 Dayflow 的准确性。",
     illustrationImageName: "CategoryEditUI",
-    illustrationAccessibilityLabel: "Illustration showing how to edit categories"
+    illustrationAccessibilityLabel: "展示如何编辑分类的插图"
   )
 
   static let chat = FeedbackModalContent(
@@ -251,7 +251,7 @@ extension TimelineFeedbackModal {
           .stroke(Color.white.opacity(0.7), lineWidth: 0.5)
       )
       .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
-      .accessibilityLabel(Text(accessibilityLabel ?? "Feedback illustration"))
+      .accessibilityLabel(Text(accessibilityLabel ?? "反馈插图"))
   }
 }
 

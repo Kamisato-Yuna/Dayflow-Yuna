@@ -23,13 +23,13 @@ struct StatusMenuView: View {
 
       MenuDivider()
 
-      MenuRow(title: "Open Dayflow", assetImage: "DayflowLogo", action: openDayflow)
-      MenuRow(title: "Open Recordings", action: openRecordingsFolder)
-      MenuRow(title: "Check for Updates", action: checkForUpdates)
+      MenuRow(title: "打开 Dayflow", assetImage: "DayflowLogo", action: openDayflow)
+      MenuRow(title: "打开录制文件", action: openRecordingsFolder)
+      MenuRow(title: "检查更新", action: checkForUpdates)
 
       MenuDivider()
 
-      MenuRow(title: "Quit Completely", systemImage: "power", accent: .red, action: quitDayflow)
+      MenuRow(title: "完全退出", systemImage: "power", accent: .red, action: quitDayflow)
     }
     .padding(.vertical, 9)
     .padding(.horizontal, 9)
@@ -120,9 +120,9 @@ private struct DurationPicker: View {
   let onSelect: (PauseDuration) -> Void
 
   private let options: [(label: String, duration: PauseDuration)] = [
-    ("15 Min", .minutes15),
-    ("30 Min", .minutes30),
-    ("1 Hour", .hour1),
+    ("15 分钟", .minutes15),
+    ("30 分钟", .minutes30),
+    ("1 小时", .hour1),
     ("∞", .indefinite),
   ]
 
@@ -201,7 +201,7 @@ private struct PausedSection: View {
 
       // Resume button
       MenuRow(
-        title: "Resume Dayflow",
+        title: "恢复 Dayflow",
         systemImage: "play.circle",
         accent: .accentColor,
         action: onResume
@@ -217,7 +217,7 @@ private struct CountdownBadge: View {
 
   var body: some View {
     HStack(spacing: 0) {
-      Text("Dayflow paused for ")
+      Text("Dayflow 已暂停 ")
         .font(.system(size: 11, weight: .medium))
       Text(remainingTime)
         .font(.system(size: 11, weight: .bold).monospacedDigit())

@@ -216,7 +216,7 @@ struct TimelineReviewOverlay: View {
 
   private var reviewBottomContent: some View {
     VStack(spacing: 14) {
-      Text("Swipe on each card on your Timeline to review your day.")
+      Text("滑动时间线中的每张卡片，回顾你的一天。")
         .font(.custom("Figtree", size: 14).weight(.medium))
         .foregroundColor(Color(hex: "98806D"))
         .lineLimit(1)
@@ -233,11 +233,11 @@ struct TimelineReviewOverlay: View {
     let summary = ratingSummary
     return VStack(spacing: 30) {
       VStack(spacing: 12) {
-        Text("All caught up!")
+        Text("全部完成！")
           .font(.custom("InstrumentSerif-Regular", size: 40))
           .foregroundColor(Color(hex: "333333"))
         Text(
-          "You've reviewed all your activities so far.\nThe Timeline right panel will be updated with your rating."
+          "你已回顾目前所有活动。\n时间线右侧面板会根据你的评价更新。"
         )
         .font(.custom("Figtree", size: 16).weight(.medium))
         .foregroundColor(Color(hex: "333333"))
@@ -276,10 +276,10 @@ struct TimelineReviewOverlay: View {
 
   private var emptyState: some View {
     VStack(spacing: 12) {
-      Text("Nothing to review yet")
+      Text("暂时没有可回顾的内容")
         .font(.custom("InstrumentSerif-Regular", size: 28))
         .foregroundColor(Color(hex: "333333"))
-      Text("Come back after a few timeline cards appear.")
+      Text("等时间线出现几张卡片后再回来看看。")
         .font(.custom("Figtree", size: 14).weight(.medium))
         .foregroundColor(Color(hex: "707070"))
     }

@@ -500,12 +500,12 @@ private struct ScreenRecordingPermissionNoticeView: View {
           .padding(.top, 2)
 
         VStack(alignment: .leading, spacing: 3) {
-          Text("Screen recording access needed")
+          Text("需要屏幕录制权限")
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.86))
 
-          Text("Dayflow cannot update your timeline until access is restored.")
+          Text("恢复权限前，Dayflow 无法更新时间线。")
             .font(.custom("Figtree", size: 12))
             .foregroundColor(.black.opacity(0.62))
             .fixedSize(horizontal: false, vertical: true)
