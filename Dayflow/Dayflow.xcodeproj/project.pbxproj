@@ -55,6 +55,11 @@
 			path = Dayflow;
 			sourceTree = "<group>";
 		};
+		C4F0A0022E8D000100000001 /* DayflowUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DayflowUITests;
+			sourceTree = "<group>";
+		};
 		FEFD599FBA059B170B03FA5E /* DayflowTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = DayflowTests;
@@ -96,6 +101,7 @@
 			children = (
 				C4C1D2A32DB56805007D5A55 /* Dayflow */,
 				FEFD599FBA059B170B03FA5E /* DayflowTests */,
+				C4F0A0022E8D000100000001 /* DayflowUITests */,
 				C4C1D2A22DB56805007D5A55 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -174,6 +180,9 @@
 			);
 			dependencies = (
 				C4C1D2BE2DB56806007D5A55 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C4F0A0022E8D000100000001 /* DayflowUITests */,
 			);
 			name = DayflowUITests;
 			packageProductDependencies = (
