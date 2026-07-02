@@ -73,7 +73,8 @@ final class StorageSettingsViewModel: ObservableObject {
       let recordingsSize = StorageSettingsViewModel.directorySize(at: recordingsURL)
       let timelapseSize = TimelapseStorageManager.shared.currentUsageBytes()
 
-      await MainActor.run {
+      await MainActor.run { [weak self] in
+        guard !Task.isCancelled else { return }
         guard let self else { return }
         self.storagePermissionGranted = permission
         self.recordingsUsageBytes = recordingsSize

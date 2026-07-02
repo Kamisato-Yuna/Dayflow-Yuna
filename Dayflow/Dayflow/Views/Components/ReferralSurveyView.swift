@@ -13,8 +13,8 @@ struct ReferralSurveyView: View {
   @State private var randomizedOptions = ReferralOption.randomizedConcreteOptions()
   @State private var hasSubmitted = false
 
-  @Binding private var selectedReferral: ReferralOption?
-  @Binding private var customReferral: String
+  private let externalSelectedReferral: Binding<ReferralOption?>?
+  private let externalCustomReferral: Binding<String>?
 
   init(
     prompt: String,
@@ -31,13 +31,8 @@ struct ReferralSurveyView: View {
     self.showSubmitButton = showSubmitButton
     self.onSubmit = onSubmit
 
-    if let selectedReferral = selectedReferral, let customReferral = customReferral {
-      _selectedReferral = selectedReferral
-      _customReferral = customReferral
-    } else {
-      _selectedReferral = _internalSelectedReferral.projectedValue
-      _customReferral = _internalCustomReferral.projectedValue
-    }
+    externalSelectedReferral = selectedReferral
+    externalCustomReferral = customReferral
   }
 
   var body: some View {
@@ -99,6 +94,36 @@ struct ReferralSurveyView: View {
     .onChange(of: customReferral) {
       hasSubmitted = false
     }
+  }
+
+  private var selectedReferral: ReferralOption? {
+    get {
+      externalSelectedReferral?.wrappedValue ?? internalSelectedReferral
+    }
+    nonmutating set {
+      if let externalSelectedReferral {
+        externalSelectedReferral.wrappedValue = newValue
+      } else {
+        internalSelectedReferral = newValue
+      }
+    }
+  }
+
+  private var customReferral: String {
+    get {
+      externalCustomReferral?.wrappedValue ?? internalCustomReferral
+    }
+    nonmutating set {
+      if let externalCustomReferral {
+        externalCustomReferral.wrappedValue = newValue
+      } else {
+        internalCustomReferral = newValue
+      }
+    }
+  }
+
+  private var customReferralBinding: Binding<String> {
+    externalCustomReferral ?? $internalCustomReferral
   }
 
   private var referralRows: [[ReferralOption]] {
@@ -164,7 +189,7 @@ struct ReferralSurveyView: View {
   }
 
   private var detailField: some View {
-    TextField(currentDetailPlaceholder, text: $customReferral)
+    TextField(currentDetailPlaceholder, text: customReferralBinding)
       .textFieldStyle(RoundedBorderTextFieldStyle())
       .font(.custom("Figtree", size: 13))
       .opacity(selectedReferral?.requiresDetail == true ? 1 : 0)

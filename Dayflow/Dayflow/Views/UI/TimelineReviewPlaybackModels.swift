@@ -147,7 +147,10 @@ final class TimelineReviewLegacyPlayerModel: ObservableObject {
     // Callbacks from AVPlayer directly to main thread triggers the native property update cleanly
     timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) {
       [weak self] time in
-      self?.timelineState.currentTime = CMTimeGetSeconds(time)
+      let currentTime = CMTimeGetSeconds(time)
+      Task { @MainActor [weak self] in
+        self?.timelineState.currentTime = currentTime
+      }
     }
   }
 

@@ -302,6 +302,9 @@ final class NotificationService: NSObject, ObservableObject {
       trigger: UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
     )
 
+    let alertSetting = Self.notificationSettingName(settings.alertSetting)
+    let soundSetting = Self.notificationSettingName(settings.soundSetting)
+
     return await withCheckedContinuation { continuation in
       center.add(request) { error in
         if let error {
@@ -313,8 +316,8 @@ final class NotificationService: NSObject, ObservableObject {
         print(
           "[NotificationService] Scheduled weekly unlock notification "
             + "identifier=\(identifier) seconds=\(Int(interval.rounded())) "
-            + "alert_setting=\(Self.notificationSettingName(settings.alertSetting)) "
-            + "sound_setting=\(Self.notificationSettingName(settings.soundSetting))"
+            + "alert_setting=\(alertSetting) "
+            + "sound_setting=\(soundSetting)"
         )
         continuation.resume(returning: .scheduled)
       }

@@ -296,7 +296,7 @@ struct ChatCLITestView: View {
     NSPasteboard.general.setString(debug, forType: .string)
   }
 
-  func performTest(for tool: CLITool) throws -> CLIResult {
+  nonisolated func performTest(for tool: CLITool) throws -> CLIResult {
     guard CLIDetector.isInstalled(tool) else {
       throw NSError(
         domain: "ChatCLITest", code: 1,
@@ -347,13 +347,13 @@ struct ChatCLITestView: View {
     }
   }
 
-  func parseForSuccess(_ result: CLIResult, for tool: CLITool) -> Bool {
+  nonisolated func parseForSuccess(_ result: CLIResult, for tool: CLITool) -> Bool {
     let combined = (result.stdout + " " + result.stderr)
     // Simple math test - check for "4" in the response
     return combined.contains("4")
   }
 
-  func detectAuthError(_ result: CLIResult, for tool: CLITool) -> String? {
+  nonisolated func detectAuthError(_ result: CLIResult, for tool: CLITool) -> String? {
     let combined = (result.stdout + " " + result.stderr).lowercased()
 
     // Check for common auth failure patterns

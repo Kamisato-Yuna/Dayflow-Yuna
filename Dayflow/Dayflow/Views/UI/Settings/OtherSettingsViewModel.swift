@@ -128,14 +128,16 @@ final class OtherSettingsViewModel: ObservableObject {
 
       let divider = "\n\n---\n\n"
       let exportText = sections.joined(separator: divider)
+      let exportedDayCount = dayCount
+      let exportedActivityCount = totalActivities
 
       await MainActor.run {
         self.presentSavePanelAndWrite(
           exportText: exportText,
           startDate: start,
           endDate: end,
-          dayCount: dayCount,
-          activityCount: totalActivities
+          dayCount: exportedDayCount,
+          activityCount: exportedActivityCount
         )
       }
     }

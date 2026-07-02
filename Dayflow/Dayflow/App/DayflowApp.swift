@@ -294,7 +294,7 @@ struct DayflowApp: App {
       AppDelegate.pendingNotificationNavigationDestination = nil
 
       switch destination {
-      case .daily(let day) where day?.isEmpty == false:
+      case .daily(let day?) where !day.isEmpty:
         NotificationCenter.default.post(
           name: .navigateToDaily,
           object: nil,

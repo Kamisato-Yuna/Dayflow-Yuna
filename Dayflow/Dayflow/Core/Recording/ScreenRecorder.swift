@@ -574,7 +574,7 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
 
       self.q.async { [weak self] in
         guard let self else { return }
-        Task { @MainActor in
+        Task { @MainActor [self] in
           if AppState.shared.isRecording {
             self.q.async { [weak self] in
               self?.transition(to: .paused, context: "system sleep")
@@ -615,7 +615,7 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
 
       self.q.async { [weak self] in
         guard let self else { return }
-        Task { @MainActor in
+        Task { @MainActor [self] in
           if AppState.shared.isRecording {
             self.q.async { [weak self] in
               self?.transition(to: .paused, context: "screen locked")
@@ -656,7 +656,7 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
 
       self.q.async { [weak self] in
         guard let self else { return }
-        Task { @MainActor in
+        Task { @MainActor [self] in
           if AppState.shared.isRecording {
             self.q.async { [weak self] in
               self?.transition(to: .paused, context: "screensaver started")
