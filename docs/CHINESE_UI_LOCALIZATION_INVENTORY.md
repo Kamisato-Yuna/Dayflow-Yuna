@@ -91,3 +91,31 @@
 - 扫描结果：
   - `bash scripts/audit-ui-english.sh`：通过，无未分类英文。
 - 剩余无法确认项：无。
+
+## T10 构建、测试与人工验收（2026-07-02）
+
+- 目标：完成中文化后的整体验证，确认扫描、构建和现有自动化测试状态。
+- CodeGraph：已在 `.codegraph/` 存在时优先使用 CodeGraph 理解验收面，覆盖 `DayflowApp`、Onboarding、Status Menu、Main Timeline、Settings、Daily、Weekly、Chat、Journal、Accessibility 相关 Swift 入口；本任务未修改 Swift 源码。
+- 自检结果：
+  - `git diff -- '*.swift'`：无输出，Swift 源码无改动。
+  - 污染扫描：`rg -n '开启boarding|w这里|is专注ed|hit测试|allowsHit测试ing|自定义ize|color分类|日历\.current|Local引擎|权限Notice|ScreenRecording权限|思考中From|item数量|remove全部|firstIndex\(w这里|first\(w这里' Dayflow/Dayflow` 无输出。
+  - `bash scripts/audit-ui-english.sh Dayflow/Dayflow`：通过，无未分类英文命中。
+- 自动验证：
+  - `xcodebuild test -project Dayflow/Dayflow.xcodeproj -scheme Dayflow -destination 'platform=macOS' -derivedDataPath build/test-derived`：通过，`** TEST SUCCEEDED **`。
+  - 测试覆盖：`WeeklyDashboardBuilderTests`、`ProvidersSettingsViewModelTests`、`TimeParsingTests`、`DayGoalPlanTests`、`DayflowUITests`、`DayflowUITestsLaunchTests` 均通过；UI launch/performance 测试可启动 `teleportlabs.com.Dayflow`。
+  - `xcodebuild -project Dayflow/Dayflow.xcodeproj -scheme Dayflow -configuration Debug -derivedDataPath build/local-derived CODE_SIGN_IDENTITY='' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build`：通过，`** BUILD SUCCEEDED **`。
+  - 普通权限下首次 `xcodebuild test/build` 均在 Xcode/CoreSimulator 初始化阶段失败，报 `Operation not permitted` 写入 `~/Library/Logs/CoreSimulator`；提升权限后同一命令通过。
+- 人工验证矩阵：
+  - Onboarding：无法验证（本轮未进行交互式 fresh onboarding 全路径点击；自动 UI launch test 覆盖启动）。
+  - Status Menu：无法验证（未进行菜单栏交互验收）。
+  - Main Timeline：无法验证（未进行真实数据/日期切换/视频播放交互验收）。
+  - Settings：无法验证（未逐 tab 交互验收）。
+  - Daily：无法验证（未进行 locked/provider/standup/通知权限交互验收）。
+  - Weekly：无法验证（未进行 dashboard 图表与导出交互验收）。
+  - Chat：无法验证（未进行发送、answering、debug、memory、copy/clear 交互验收）。
+  - Journal：无法验证（未进行 access/onboarding/intention/reflection/reminders 通知交互验收）。
+  - Accessibility：无法验证（未进行 VoiceOver/hover help 人工验收）。
+- 剩余英文命中及处理理由：扫描脚本无未分类英文；保留项由 T09 allowlist 处理（API、provider id、模型名、SKU、倍率显示等）。
+- Swift 标识符污染：未发现；本任务没有 Swift diff。
+- 未解决问题：
+  - T10 文档要求的人工验证矩阵尚未在真实交互环境中逐项点击确认；当前只能确认自动化测试、launch test 和 Debug build 通过。
