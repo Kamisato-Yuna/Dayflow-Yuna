@@ -13,7 +13,7 @@ struct HowItWorksView: View {
   @State private var cardOpacities: [Double] = [0, 0, 0]
   @State private var buttonsOpacity: Double = 0
 
-  private let fullText = "How Dayflow Works"
+  private let fullText = "Dayflow 工作原理"
 
   // Navigation callbacks
   var onBack: () -> Void
@@ -22,18 +22,18 @@ struct HowItWorksView: View {
   private let cards: [(icon: String, title: String, body: String)] = [
     (
       "OnboardingHow",
-      "Install and Forget",
-      "Dayflow takes periodic screen captures to understand what you're working on, all stored privately on your device. You can toggle this whenever you like."
+      "安装后即可使用",
+      "Dayflow 会定期截图以理解你正在进行的工作，所有内容均私有保存于你的设备。你可随时在偏好设置中关闭此功能。"
     ),
     (
       "OnboardingSecurity",
-      "Privacy by Default",
-      "Dayflow can run entirely on local AI models, which means your data never leaves your computer. You can also find the source code below - please consider giving it a star on Github!"
+      "默认隐私保护",
+      "Dayflow 可完全基于本地 AI 运行，这意味着你的数据不会离开你的设备。下方可查看源代码，欢迎给我们点 Star。"
     ),
     (
       "OnboardingUnderstanding",
-      "Understand your Day",
-      "Knows the difference between YouTube tutorials and YouTube rabbit holes. Dayflow actually gets what you're working on."
+      "洞察你的工作",
+      "它能分辨“教程”和“分心内容”，帮助你更准确地理解自己当下正在做的事情。"
     ),
   ]
 
@@ -97,7 +97,7 @@ struct HowItWorksView: View {
               Image("GithubIcon").resizable().aspectRatio(contentMode: .fit).frame(
                 width: 20, height: 20
               ).colorInvert()
-              Text("Star Dayflow on GitHub").font(.custom("Figtree", size: 14)).fontWeight(.medium)
+              Text("在 GitHub 上给 Dayflow 点赞").font(.custom("Figtree", size: 14)).fontWeight(.medium)
             }
           },
           background: Color(red: 0.25, green: 0.17, blue: 0),

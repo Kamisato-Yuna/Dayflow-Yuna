@@ -32,7 +32,7 @@ struct CLIDetector {
     let message = result.stderr.trimmingCharacters(in: .whitespacesAndNewlines)
     if message.isEmpty {
       return CLIDetectionReport(
-        state: .failed(message: "Exit code \(result.exitCode)"), resolvedPath: tool.executableName,
+        state: .failed(message: "退出码 \(result.exitCode)"), resolvedPath: tool.executableName,
         stdout: result.stdout, stderr: result.stderr)
     }
     return CLIDetectionReport(

@@ -101,18 +101,18 @@ struct ChatCLITestView: View {
         case .success(let cliResult):
           // Build debug output for troubleshooting
           var debugParts: [String] = []
-          debugParts.append("Tool: \(tool.shortName)")
-          debugParts.append("Exit code: \(cliResult.exitCode)")
-          debugParts.append("Shell: \(LoginShellRunner.userLoginShell.path)")
+          debugParts.append("工具：\(tool.shortName)")
+          debugParts.append("退出码：\(cliResult.exitCode)")
+          debugParts.append("Shell：\(LoginShellRunner.userLoginShell.path)")
           if let shellCommand = cliResult.shellCommand {
-            debugParts.append("Command executed:\n\(shellCommand)")
+            debugParts.append("执行命令：\n\(shellCommand)")
           }
           if !cliResult.environmentOverrides.isEmpty {
             let environmentText = cliResult.environmentOverrides
               .sorted { $0.key < $1.key }
               .map { "\($0.key)=\(LoginShellRunner.shellEscape($0.value))" }
               .joined(separator: "\n")
-            debugParts.append("Environment overrides:\n\(environmentText)")
+            debugParts.append("环境变量覆盖：\n\(environmentText)")
           }
 
           // Show all installations found (helps debug multi-install issues)
@@ -121,15 +121,15 @@ struct ChatCLITestView: View {
           if whichResult.exitCode == 0 {
             let paths = whichResult.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
             if !paths.isEmpty {
-              debugParts.append("Installations found:\n\(paths)")
+              debugParts.append("发现安装路径：\n\(paths)")
             }
           }
 
           if !cliResult.stdout.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            debugParts.append("stdout:\n\(cliResult.stdout)")
+            debugParts.append("标准输出：\n\(cliResult.stdout)")
           }
           if !cliResult.stderr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            debugParts.append("stderr:\n\(cliResult.stderr)")
+            debugParts.append("标准错误：\n\(cliResult.stderr)")
           }
           debugOutput = debugParts.joined(separator: "\n\n")
 
@@ -206,18 +206,18 @@ struct ChatCLITestView: View {
           // Build debug output even for errors
           var debugParts: [String] = []
           debugParts.append("Tool: \(tool.shortName)")
-          debugParts.append("Error: \(error.localizedDescription)")
-          debugParts.append("Shell: \(LoginShellRunner.userLoginShell.path)")
+          debugParts.append("错误：\(error.localizedDescription)")
+          debugParts.append("Shell：\(LoginShellRunner.userLoginShell.path)")
 
           let cmdName = tool == .codex ? "codex" : "claude"
           let whichResult = LoginShellRunner.run("which -a \(cmdName)", timeout: 5)
           if whichResult.exitCode == 0 {
             let paths = whichResult.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
             if !paths.isEmpty {
-              debugParts.append("Installations found:\n\(paths)")
+              debugParts.append("发现安装路径：\n\(paths)")
             }
           } else {
-            debugParts.append("Installations found: none")
+            debugParts.append("未发现安装路径")
           }
 
           debugOutput = debugParts.joined(separator: "\n\n")

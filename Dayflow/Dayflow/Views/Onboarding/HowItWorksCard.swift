@@ -58,23 +58,23 @@ struct HowItWorksCard_Previews: PreviewProvider {
     VStack(spacing: 20) {
       HowItWorksCard(
         iconImage: "OnboardingHow",
-        title: "Install and Forget",
+        title: "安装后即可使用",
         description:
-          "Dayflow takes periodic screen captures to understand what you're working on - all stored privately on your device."
+          "Dayflow 会定期截图以理解你正在进行的工作，所有内容均私有保存于你的设备。"
       )
 
       HowItWorksCard(
         iconImage: "OnboardingSecurity",
-        title: "AI-Powered Insights",
+        title: "洞察你的工作",
         description:
-          "Local AI analyzes your activities to create a timeline of your day without sending data to the cloud."
+          "Dayflow 结合本地 AI 分析你的活动并生成当日时间线，全程不上传到云端。"
       )
 
       HowItWorksCard(
         iconImage: "OnboardingUnderstanding",
-        title: "Review Your Day",
+        title: "回看今日",
         description:
-          "See where your time went with beautiful visualizations and actionable insights about your productivity."
+          "用清晰可视化和可执行的洞察，快速查看你的时间去向与效率表现。"
       )
     }
     .padding(40)

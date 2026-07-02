@@ -17,7 +17,7 @@ struct OnboardingPrototypeRoleSelectionStep: View {
 
   private var resolvedRole: String? {
     guard let selectedRole else { return nil }
-    if selectedRole == "Other" {
+    if selectedRole == "其他" {
       return otherText.trimmingCharacters(in: .whitespaces).isEmpty
         ? nil : otherText.trimmingCharacters(in: .whitespaces)
     }
@@ -67,7 +67,7 @@ struct OnboardingPrototypeRoleSelectionStep: View {
         }
       }
 
-      if selectedRole == "Other" {
+      if selectedRole == "其他" {
         VStack(spacing: 16) {
           Text("请填写")
             .font(.custom("Figtree", size: 20))
