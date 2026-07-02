@@ -95,12 +95,12 @@ final class StorageSettingsViewModel: ObservableObject {
   func storageFooterText() -> String {
     let recordingsText =
       recordingsLimitBytes == Int64.max
-      ? "Unlimited" : usageFormatter.string(fromByteCount: recordingsLimitBytes)
+      ? "不限制" : usageFormatter.string(fromByteCount: recordingsLimitBytes)
     let timelapsesText =
       timelapsesLimitBytes == Int64.max
-      ? "Unlimited" : usageFormatter.string(fromByteCount: timelapsesLimitBytes)
+      ? "不限制" : usageFormatter.string(fromByteCount: timelapsesLimitBytes)
     return
-      "Recording cap: \(recordingsText) • Timelapse cap: \(timelapsesText). Lowering a cap immediately deletes the oldest files for that type. Timeline card text stays preserved. Please avoid deleting files manually so you do not remove Dayflow's database."
+      "录制文件上限：\(recordingsText) • 延时视频上限：\(timelapsesText)。降低上限会立即删除该类型最旧的文件；时间线卡片文字会保留。请避免手动删除文件，以免移除 Dayflow 数据库。"
   }
 
   func handleLimitSelection(for category: StorageCategory, index: Int) {
@@ -220,7 +220,7 @@ final class StorageSettingsViewModel: ObservableObject {
     StorageLimitOption(id: 3, label: "5 GB", bytes: 5_000_000_000),
     StorageLimitOption(id: 4, label: "10 GB", bytes: 10_000_000_000),
     StorageLimitOption(id: 5, label: "20 GB", bytes: 20_000_000_000),
-    StorageLimitOption(id: 6, label: "Unlimited", bytes: nil),
+    StorageLimitOption(id: 6, label: "不限制", bytes: nil),
   ]
 }
 
@@ -249,8 +249,8 @@ enum StorageCategory {
 
   var displayName: String {
     switch self {
-    case .recordings: return "Recordings"
-    case .timelapses: return "Timelapses"
+    case .recordings: return "录制文件"
+    case .timelapses: return "延时视频"
     }
   }
 }

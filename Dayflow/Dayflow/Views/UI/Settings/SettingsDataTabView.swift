@@ -25,16 +25,16 @@ struct SettingsDataTabView: View {
       > timelineDisplayDate(from: viewModel.exportEndDate)
 
     return SettingsSection(
-      title: "Export your data",
-      subtitle: "Move your timeline into tools you already use."
+      title: "导出数据",
+      subtitle: "把你的时间线带到常用工具中。"
     ) {
       VStack(alignment: .leading, spacing: 14) {
         HStack(alignment: .center, spacing: 10) {
           datePill(
-            label: "From",
+            label: "开始",
             date: viewModel.exportStartDate,
             isExpanded: activeExportDatePicker == .start,
-            accessibilityLabel: "Export start date",
+            accessibilityLabel: "导出开始日期",
             onTap: {
               withAnimation(.easeOut(duration: 0.2)) {
                 activeExportDatePicker = activeExportDatePicker == .start ? nil : .start
@@ -48,10 +48,10 @@ struct SettingsDataTabView: View {
             .foregroundColor(SettingsStyle.meta)
 
           datePill(
-            label: "To",
+            label: "结束",
             date: viewModel.exportEndDate,
             isExpanded: activeExportDatePicker == .end,
-            accessibilityLabel: "Export end date",
+            accessibilityLabel: "导出结束日期",
             onTap: {
               withAnimation(.easeOut(duration: 0.2)) {
                 activeExportDatePicker = activeExportDatePicker == .end ? nil : .end
@@ -74,7 +74,7 @@ struct SettingsDataTabView: View {
         }
 
         Text(
-          "Use Markdown exports to archive in Notion, share with teammates, or paste into ChatGPT / Claude / Gemini for deeper analysis."
+          "导出 Markdown 后，可以归档到 Notion、分享给队友，或粘贴到 ChatGPT / Claude / Gemini 做进一步分析。"
         )
         .font(.custom("Figtree", size: 12))
         .foregroundColor(SettingsStyle.secondary)
@@ -82,7 +82,7 @@ struct SettingsDataTabView: View {
 
         HStack(spacing: 12) {
           SettingsPrimaryButton(
-            title: viewModel.isExportingTimelineRange ? "Exporting…" : "Export as Markdown",
+            title: viewModel.isExportingTimelineRange ? "导出中…" : "导出为 Markdown",
             systemImage: viewModel.isExportingTimelineRange ? nil : "square.and.arrow.down",
             isLoading: viewModel.isExportingTimelineRange,
             isDisabled: rangeInvalid,
@@ -90,7 +90,7 @@ struct SettingsDataTabView: View {
           )
 
           if rangeInvalid {
-            Text("Start must be on or before end.")
+            Text("开始日期必须早于或等于结束日期。")
               .font(.custom("Figtree", size: 12))
               .foregroundColor(SettingsStyle.destructive)
           }
@@ -118,15 +118,15 @@ struct SettingsDataTabView: View {
     let dayString = DateFormatter.yyyyMMdd.string(from: normalizedDate)
 
     return SettingsSection(
-      title: "Reprocess day",
-      subtitle: "Re-run analysis for every batch on one timeline day."
+      title: "重新处理某天",
+      subtitle: "对某个时间线日期的所有批次重新运行分析。"
     ) {
       VStack(alignment: .leading, spacing: 14) {
         datePill(
-          label: "Day",
+          label: "日期",
           date: viewModel.reprocessDayDate,
           isExpanded: isReprocessDatePickerExpanded,
-          accessibilityLabel: "Reprocess day",
+          accessibilityLabel: "重新处理日期",
           disabled: viewModel.isReprocessingDay,
           onTap: {
             withAnimation(.easeOut(duration: 0.2)) {
@@ -155,13 +155,13 @@ struct SettingsDataTabView: View {
 
         VStack(alignment: .leading, spacing: 4) {
           Text(
-            "Clears existing cards and observations for that day, then runs analysis again from the original recordings."
+            "清除当天已有的卡片和观察记录，然后基于原始录制重新运行分析。"
           )
           .font(.custom("Figtree", size: 12))
           .foregroundColor(SettingsStyle.secondary)
           .fixedSize(horizontal: false, vertical: true)
 
-          Text("Heads up: this can consume a large number of API calls.")
+          Text("注意：这可能消耗大量 API 调用。")
             .font(.custom("Figtree", size: 12))
             .fontWeight(.semibold)
             .foregroundColor(SettingsStyle.text)
@@ -169,7 +169,7 @@ struct SettingsDataTabView: View {
 
         HStack(spacing: 12) {
           SettingsPrimaryButton(
-            title: viewModel.isReprocessingDay ? "Reprocessing…" : "Reprocess day",
+            title: viewModel.isReprocessingDay ? "重新处理中…" : "重新处理当天",
             systemImage: viewModel.isReprocessingDay ? nil : "arrow.clockwise",
             isLoading: viewModel.isReprocessingDay,
             action: { viewModel.showReprocessDayConfirm = true }
@@ -188,12 +188,12 @@ struct SettingsDataTabView: View {
             .foregroundColor(SettingsStyle.destructive)
         }
       }
-      .alert("Reprocess day?", isPresented: $viewModel.showReprocessDayConfirm) {
+      .alert("重新处理当天？", isPresented: $viewModel.showReprocessDayConfirm) {
         Button("取消", role: .cancel) {}
-        Button("Reprocess", role: .destructive) { viewModel.reprocessSelectedDay() }
+        Button("重新处理", role: .destructive) { viewModel.reprocessSelectedDay() }
       } message: {
         Text(
-          "This will delete existing timeline cards for \(dayString) and re-run analysis. It can consume many API calls."
+          "这会删除 \(dayString) 的现有时间线卡片并重新运行分析，可能消耗大量 API 调用。"
         )
       }
     }
@@ -280,7 +280,8 @@ struct SettingsDataTabView: View {
 
   private static let dateLabelFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.setLocalizedDateFormatFromTemplate("MMM d, yyyy")
+    formatter.locale = Locale(identifier: "zh_Hans")
+    formatter.setLocalizedDateFormatFromTemplate("yyyyMMMd")
     return formatter
   }()
 }
@@ -438,7 +439,8 @@ private struct DayflowCalendarGrid: View {
 
   private var monthYearString: String {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MMMM yyyy"
+    formatter.locale = Locale(identifier: "zh_Hans")
+    formatter.dateFormat = "yyyy年M月"
     return formatter.string(from: displayedMonth)
   }
 

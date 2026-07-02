@@ -93,7 +93,7 @@ final class OtherSettingsViewModel: ObservableObject {
     let end = timelineDisplayDate(from: exportEndDate)
 
     guard start <= end else {
-      exportErrorMessage = "Start date must be on or before end date."
+      exportErrorMessage = "开始日期必须早于或等于结束日期。"
       exportStatusMessage = nil
       return
     }
@@ -151,7 +151,7 @@ final class OtherSettingsViewModel: ObservableObject {
 
     isReprocessingDay = true
     reprocessErrorMessage = nil
-    reprocessStatusMessage = "Starting reprocess for \(dayString)…"
+    reprocessStatusMessage = "正在开始重新处理 \(dayString)…"
 
     AnalysisManager.shared.reprocessDay(
       dayString,
@@ -166,7 +166,7 @@ final class OtherSettingsViewModel: ObservableObject {
           switch result {
           case .success:
             if self.reprocessStatusMessage == nil {
-              self.reprocessStatusMessage = "Reprocess completed."
+              self.reprocessStatusMessage = "重新处理已完成。"
             }
           case .failure(let error):
             self.reprocessErrorMessage = error.localizedDescription
@@ -188,10 +188,10 @@ final class OtherSettingsViewModel: ObservableObject {
     dayFormatter.dateFormat = "yyyy-MM-dd"
 
     let savePanel = NSSavePanel()
-    savePanel.title = "Export timeline"
-    savePanel.prompt = "Export"
+    savePanel.title = "导出时间线"
+    savePanel.prompt = "导出"
     savePanel.nameFieldStringValue =
-      "Dayflow timeline \(dayFormatter.string(from: startDate)) to \(dayFormatter.string(from: endDate)).md"
+      "Dayflow 时间线 \(dayFormatter.string(from: startDate)) 至 \(dayFormatter.string(from: endDate)).md"
     savePanel.allowedContentTypes = [.text, .plainText]
     savePanel.canCreateDirectories = true
 
@@ -201,7 +201,7 @@ final class OtherSettingsViewModel: ObservableObject {
 
     guard response == .OK, let url = savePanel.url else {
       exportStatusMessage = nil
-      exportErrorMessage = "Export canceled"
+      exportErrorMessage = "已取消导出"
       return
     }
 
@@ -209,7 +209,7 @@ final class OtherSettingsViewModel: ObservableObject {
       try exportText.write(to: url, atomically: true, encoding: .utf8)
       exportErrorMessage = nil
       exportStatusMessage =
-        "Saved \(activityCount) activit\(activityCount == 1 ? "y" : "ies") across \(dayCount) day\(dayCount == 1 ? "" : "s") to \(url.lastPathComponent)"
+        "已将 \(dayCount) 天内的 \(activityCount) 条活动保存到 \(url.lastPathComponent)"
 
       AnalyticsService.shared.capture(
         "timeline_exported",
@@ -223,7 +223,7 @@ final class OtherSettingsViewModel: ObservableObject {
         ])
     } catch {
       exportStatusMessage = nil
-      exportErrorMessage = "Couldn't save file: \(error.localizedDescription)"
+      exportErrorMessage = "无法保存文件：\(error.localizedDescription)"
     }
   }
 }

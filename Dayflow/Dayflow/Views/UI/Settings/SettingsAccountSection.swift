@@ -45,11 +45,11 @@ struct SettingsAccountSection: View {
   private var accountSection: some View {
     SettingsSection(
       title: "账号",
-      subtitle: "Sign in once to keep Dayflow Pro and cloud features attached to this Mac."
+      subtitle: "登录后，Dayflow Pro 和云端功能会绑定到这台 Mac。"
     ) {
       VStack(alignment: .leading, spacing: 0) {
         SettingsRow(
-          label: "Dayflow account",
+          label: "Dayflow 账号",
           subtitle: authManager.isSignedIn
             ? authManager.displayIdentity
             : nil,
@@ -58,19 +58,19 @@ struct SettingsAccountSection: View {
           HStack(spacing: 8) {
             SettingsStatusDot(
               state: authManager.isSignedIn ? .good : .warn,
-              label: authManager.isSignedIn ? "Signed in" : "Signed out"
+              label: authManager.isSignedIn ? "已登录" : "未登录"
             )
 
             if authManager.isSignedIn {
               SettingsSecondaryButton(
-                title: "Sign out",
+                title: "退出登录",
                 systemImage: "rectangle.portrait.and.arrow.right",
                 isDisabled: authManager.isBusy,
                 action: { Task { await authManager.signOut() } }
               )
             } else {
               SettingsPrimaryButton(
-                title: "Sign in",
+                title: "登录",
                 systemImage: "person.crop.circle",
                 isLoading: authManager.isBusy && authManager.hasLoadedStoredSession == false,
                 action: { isAuthSheetPresented = true }
@@ -85,7 +85,7 @@ struct SettingsAccountSection: View {
   private var currentPlanSection: some View {
     SettingsSection(
       title: "账号",
-      subtitle: "Manage your Dayflow account and subscription."
+      subtitle: "管理你的 Dayflow 账号和订阅。"
     ) {
       ActiveProCard(
         entitlement: authManager.entitlements,
@@ -99,16 +99,16 @@ struct SettingsAccountSection: View {
 
   private var upgradeSection: some View {
     SettingsSection(
-      title: "Upgrade to Dayflow Pro",
-      subtitle: "Pick a plan, then finish securely in Stripe Checkout."
+      title: "升级到 Dayflow Pro",
+      subtitle: "选择套餐后，通过 Stripe Checkout 安全完成付款。"
     ) {
       VStack(alignment: .leading, spacing: 16) {
         HStack(alignment: .top, spacing: 12) {
           BillingPlanCard(
-            title: "Monthly",
+            title: "月付",
             price: "$20",
-            cadence: "/mo",
-            note: "Flexible monthly billing.",
+            cadence: "/月",
+            note: "灵活按月计费。",
             badge: nil,
             isSelected: selectedBillingInterval == .monthly
           ) {
@@ -118,11 +118,11 @@ struct SettingsAccountSection: View {
           }
 
           BillingPlanCard(
-            title: "Yearly",
+            title: "年付",
             price: "$15",
-            cadence: "/mo",
-            note: "Billed yearly.",
-            badge: "2 months free",
+            cadence: "/月",
+            note: "按年计费。",
+            badge: "赠送 2 个月",
             isSelected: selectedBillingInterval == .yearly
           ) {
             withAnimation(.easeOut(duration: 0.16)) {
@@ -136,19 +136,19 @@ struct SettingsAccountSection: View {
 
         HStack(alignment: .center, spacing: 12) {
           SettingsPrimaryButton(
-            title: authManager.isSignedIn ? "Start 14-day trial" : "Sign in to upgrade",
+            title: authManager.isSignedIn ? "开始 14 天试用" : "登录后升级",
             systemImage: authManager.isSignedIn ? "creditcard" : "person.crop.circle",
             isLoading: authManager.isBusy,
             action: upgradeAction
           )
 
           VStack(alignment: .leading, spacing: 4) {
-            Text("Cancel any time. No-questions-asked refunds.")
+            Text("可随时取消，退款无障碍。")
               .font(.custom("Figtree", size: 12))
               .foregroundColor(SettingsStyle.secondary)
               .fixedSize(horizontal: false, vertical: true)
 
-            SettingsLinkButton(title: "Privacy policy", systemImage: "lock") {
+            SettingsLinkButton(title: "隐私政策", systemImage: "lock") {
               openPrivacyPolicy()
             }
           }
@@ -276,20 +276,20 @@ private struct ActiveProCard: View {
   }
 
   private var title: String {
-    isGifted ? "Gifted Pro" : "Dayflow Pro"
+    isGifted ? "赠送的 Pro" : "Dayflow Pro"
   }
 
   private var badge: String {
-    isGifted ? "Gifted" : "Active"
+    isGifted ? "赠送" : "已启用"
   }
 
   private var description: String {
     if isGifted {
       return
-        "You have complimentary Dayflow Pro access. There is no billing to manage for this account."
+        "你拥有赠送的 Dayflow Pro 权限，此账号无需管理账单。"
     }
 
-    return "Your Pro access is active on this Mac and attached to your Dayflow account."
+    return "这台 Mac 已启用 Pro 权限，并绑定到你的 Dayflow 账号。"
   }
 
   private var dateLabel: String {
@@ -297,11 +297,11 @@ private struct ActiveProCard: View {
       return "状态"
     }
 
-    return isGifted ? "Access through" : "Renews"
+    return isGifted ? "可用至" : "续订日期"
   }
 
   private var dateValue: String {
-    formattedEntitlementDate(entitlement.currentPeriodEnd) ?? "Active"
+    formattedEntitlementDate(entitlement.currentPeriodEnd) ?? "已启用"
   }
 
   var body: some View {
@@ -327,12 +327,12 @@ private struct ActiveProCard: View {
 
         Spacer(minLength: 16)
 
-        SettingsStatusDot(state: .good, label: "Active")
+        SettingsStatusDot(state: .good, label: "已启用")
           .padding(.top, 4)
       }
 
       HStack(alignment: .top, spacing: 12) {
-        ActiveProInfoTile(label: "Signed in as", value: email)
+        ActiveProInfoTile(label: "登录账号", value: email)
         ActiveProInfoTile(label: dateLabel, value: dateValue)
       }
 
@@ -347,7 +347,7 @@ private struct ActiveProCard: View {
 
         HStack(spacing: 8) {
           SettingsSecondaryButton(
-            title: "Sign out",
+            title: "退出登录",
             systemImage: "rectangle.portrait.and.arrow.right",
             isDisabled: isBusy,
             action: signOutAction
@@ -355,7 +355,7 @@ private struct ActiveProCard: View {
 
           if !isGifted {
             SettingsPrimaryButton(
-              title: "Manage billing",
+              title: "管理账单",
               systemImage: "creditcard",
               isLoading: isBusy,
               action: manageBillingAction
@@ -471,12 +471,12 @@ private struct ReferralProgramCard: View {
 
   private var header: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Refer and earn rewards")
+      Text("邀请好友，获得奖励")
         .font(.custom("Figtree", size: 16))
         .fontWeight(.bold)
         .foregroundColor(Color(hex: "333333"))
 
-      Text("Give a month of Dayflow Pro and earn $20 in credits for each person you refer!")
+      Text("送出 1 个月 Dayflow Pro；每成功邀请 1 人，你可获得 $20 抵扣金。")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "333333"))
     }
@@ -557,13 +557,13 @@ private struct ReferralProgramCard: View {
   private var signInReferralPrompt: some View {
     HStack(alignment: .center, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Sign in to get your invite link")
+        Text("登录后获取你的邀请链接")
           .font(.custom("Figtree", size: 12))
           .fontWeight(.bold)
           .foregroundColor(Color(hex: "333333"))
 
         Text(
-          "Referral credits are tied to your Dayflow account so we can credit you when friends join."
+          "推荐奖励会绑定到你的 Dayflow 账号，好友加入后我们才能为你发放奖励。"
         )
         .font(.custom("Figtree", size: 11))
         .foregroundColor(Color(hex: "72706D"))
@@ -573,7 +573,7 @@ private struct ReferralProgramCard: View {
       Spacer(minLength: 12)
 
       ReferralMiniButton(
-        title: "Sign in",
+        title: "登录",
         style: .send,
         isDisabled: isBusy,
         action: signInAction
@@ -583,14 +583,14 @@ private struct ReferralProgramCard: View {
 
   private var inviteLinkControl: some View {
     VStack(alignment: .leading, spacing: 5) {
-      Text("Your invite link")
+      Text("你的邀请链接")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "333333"))
 
       HStack(spacing: 8) {
         ReferralFieldText(
           icon: "link",
-          text: summary?.inviteURL ?? "Loading invite link...",
+          text: summary?.inviteURL ?? "正在加载邀请链接...",
           color: Color(hex: "333333")
         )
 
@@ -606,7 +606,7 @@ private struct ReferralProgramCard: View {
 
   private var sendInviteControl: some View {
     VStack(alignment: .leading, spacing: 5) {
-      Text("Send invites")
+      Text("发送邀请")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(Color(hex: "333333"))
 
@@ -614,7 +614,7 @@ private struct ReferralProgramCard: View {
         ReferralEmailField(email: $inviteEmail, isDisabled: isBusy)
 
         ReferralMiniButton(
-          title: "Send",
+          title: "发送",
           style: .send,
           isDisabled: isBusy || inviteEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
           action: sendInviteAction
@@ -625,7 +625,7 @@ private struct ReferralProgramCard: View {
 
   private var howItWorks: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("How it works")
+      Text("奖励规则")
         .font(.custom("Figtree", size: 12))
         .fontWeight(.bold)
         .foregroundColor(Color(hex: "333333"))
@@ -633,16 +633,17 @@ private struct ReferralProgramCard: View {
       VStack(alignment: .leading, spacing: 4) {
         ReferralStepRow(
           icon: .system("point.3.connected.trianglepath.dotted"),
-          content: Text("Share your invite link")
+          content: Text("分享你的邀请链接")
         )
         ReferralStepRow(
           icon: .menuBarMark,
-          content: Text("They sign up and get a ") + Text("free month of Dayflow Pro!").bold()
+          content: Text("对方注册后可获得 ") + Text("1 个月免费 Dayflow Pro！").bold()
         )
         ReferralStepRow(
           icon: .system("sparkles"),
-          content: Text("You earn ") + Text("1 month of Dayflow Pro (stackable!)").bold()
-            + Text(", when they use Dayflow for a week.")
+          content: Text("当对方连续使用 Dayflow 一周后，你将获得 ")
+            + Text("1 个月 Dayflow Pro（可叠加）").bold()
+            + Text("。")
         )
       }
     }
@@ -671,7 +672,7 @@ private struct ReferralProgramCard: View {
               Spacer()
 
               SettingsBadge(
-                text: invite.status.uppercased(),
+                text: inviteStatusBadgeText(invite),
                 isAccent: invite.unlockedAt != nil
               )
             }
@@ -685,7 +686,7 @@ private struct ReferralProgramCard: View {
           }
         }
       } else {
-        EmptyReferralState(text: "No invites yet.")
+        EmptyReferralState(text: "还没有邀请记录。")
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -693,7 +694,7 @@ private struct ReferralProgramCard: View {
 
   private var applyCodePanel: some View {
     VStack(alignment: .leading, spacing: 18) {
-      Text("Redeem a referral code")
+      Text("兑换推荐码")
         .font(.custom("Figtree", size: 12))
         .fontWeight(.bold)
         .foregroundColor(Color(hex: "333333"))
@@ -702,7 +703,7 @@ private struct ReferralProgramCard: View {
         ReferralCodeField(code: $applyReferralCode, isDisabled: isBusy)
 
         ReferralMiniButton(
-          title: "Apply",
+          title: "兑换",
           style: .send,
           isDisabled: isBusy || applyReferralCode.count != 6,
           action: applyCodeAction
@@ -715,22 +716,32 @@ private struct ReferralProgramCard: View {
   private func tabTitle(for tab: ReferralTab) -> String {
     switch tab {
     case .refer:
-      return "Refer"
+      return "邀请"
     case .past:
-      return "Past referrals (\(summary?.invites.count ?? 0))"
+      return "历史邀请（\(summary?.invites.count ?? 0)）"
     case .apply:
-      return "Apply referral"
+      return "兑换推荐码"
     }
   }
 
   private func inviteStatusText(_ invite: DayflowReferralInvite) -> String {
     if invite.unlockedAt != nil {
-      return "Reward earned"
+      return "奖励已获得"
     }
     if invite.claimedAt != nil {
-      return "\(String(format: "%.1f", invite.usageHours)) / 40 hours recorded"
+      return "已记录 \(String(format: "%.1f", invite.usageHours)) / 40 小时"
     }
-    return "Invite sent"
+    return "邀请已发送"
+  }
+
+  private func inviteStatusBadgeText(_ invite: DayflowReferralInvite) -> String {
+    if invite.unlockedAt != nil {
+      return "已奖励"
+    }
+    if invite.claimedAt != nil {
+      return "进行中"
+    }
+    return "已发送"
   }
 }
 
@@ -792,10 +803,10 @@ private struct BillingPlanCard: View {
 
 private struct ProFeatureList: View {
   private let features = [
-    "Zero setup cloud AI for timeline generation",
-    "Daily and weekly reports without provider setup",
-    "Priority support",
-    "Processed securely and never used to train AI models",
+    "免配置云端 AI 生成时间线",
+    "无需配置提供商即可生成每日复盘和周报",
+    "优先支持",
+    "安全处理，绝不会用于训练 AI 模型",
   ]
 
   var body: some View {
@@ -874,14 +885,14 @@ private struct DayflowSignInSheet: View {
 
   private var header: some View {
     VStack(alignment: .leading, spacing: 5) {
-      Text(step == .email ? "Sign in to Dayflow" : "Check your email")
+      Text(step == .email ? "登录 Dayflow" : "检查你的邮箱")
         .font(.custom("InstrumentSerif-Regular", size: 30))
         .foregroundColor(SettingsStyle.text)
 
       Text(
         step == .email
-          ? "Enter your email and Dayflow will send a 6 digit code."
-          : "Enter the code sent to \(verificationEmail ?? authManager.pendingEmail ?? emailAddressTrimmed)."
+          ? "输入邮箱，Dayflow 会发送 6 位验证码。"
+          : "输入发送到 \(verificationEmail ?? authManager.pendingEmail ?? emailAddressTrimmed) 的验证码。"
       )
       .font(.custom("Figtree", size: 13))
       .foregroundColor(SettingsStyle.secondary)
@@ -948,7 +959,7 @@ private struct DayflowSignInSheet: View {
 
       HStack(spacing: 10) {
         SettingsPrimaryButton(
-          title: "Verify",
+          title: "验证",
           systemImage: "checkmark",
           isLoading: authManager.isBusy,
           isDisabled: verificationCodeTrimmed.count != 6,
@@ -956,7 +967,7 @@ private struct DayflowSignInSheet: View {
         )
 
         SettingsSecondaryButton(
-          title: "Resend",
+          title: "重新发送",
           isDisabled: authManager.isBusy,
           action: {
             Task {
@@ -970,7 +981,7 @@ private struct DayflowSignInSheet: View {
         )
 
         SettingsSecondaryButton(
-          title: "Change email",
+          title: "更换邮箱",
           isDisabled: authManager.isBusy,
           action: {
             authManager.useDifferentEmail()

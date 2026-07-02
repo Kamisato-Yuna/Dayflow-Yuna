@@ -12,15 +12,15 @@ struct SettingsStorageTabView: View {
       guard let pending = viewModel.pendingLimit,
         StorageSettingsViewModel.storageOptions.indices.contains(pending.index)
       else {
-        return Alert(title: Text("Adjust storage limit"), dismissButton: .default(Text("OK")))
+        return Alert(title: Text("调整存储上限"), dismissButton: .default(Text("好")))
       }
 
       let option = StorageSettingsViewModel.storageOptions[pending.index]
       let categoryName = pending.category.displayName
       return Alert(
-        title: Text("Lower \(categoryName) limit?"),
+        title: Text("降低\(categoryName)上限？"),
         message: Text(
-          "Reducing the \(categoryName) limit to \(option.label) will immediately delete the oldest \(categoryName) data to stay under the new cap."
+          "将\(categoryName)上限降到 \(option.label) 会立即删除最旧的\(categoryName)数据，以保持在新上限内。"
         ),
         primaryButton: .destructive(Text("确认")) {
           viewModel.applyLimit(for: pending.category, index: pending.index)
@@ -41,21 +41,21 @@ struct SettingsStorageTabView: View {
     let isRecording = permissionGranted && recordingEnabled
     let recorderStatus: SettingsStatusDot.State =
       isRecording ? .good : (permissionGranted ? .idle : .bad)
-    let recorderLabel = isRecording ? "Active" : (permissionGranted ? "Idle" : "Blocked")
+    let recorderLabel = isRecording ? "录制中" : (permissionGranted ? "空闲" : "已阻止")
 
     return SettingsSection(
-      title: "Recording status",
-      subtitle: "Ensure Dayflow can capture your screen."
+      title: "录制状态",
+      subtitle: "确认 Dayflow 可以捕获你的屏幕。"
     ) {
       VStack(alignment: .leading, spacing: 0) {
-        SettingsRow(label: "Screen recording permission") {
+        SettingsRow(label: "屏幕录制权限") {
           SettingsStatusDot(
             state: permissionGranted ? .good : .bad,
-            label: permissionGranted ? "Granted" : "Missing"
+            label: permissionGranted ? "已授权" : "缺失"
           )
         }
 
-        SettingsRow(label: "Recorder", showsDivider: false) {
+        SettingsRow(label: "录制器", showsDivider: false) {
           SettingsStatusDot(
             state: recorderStatus,
             label: recorderLabel
@@ -64,13 +64,13 @@ struct SettingsStorageTabView: View {
 
         HStack(spacing: 14) {
           SettingsPrimaryButton(
-            title: viewModel.isRefreshingStorage ? "Checking…" : "Run status check",
+            title: viewModel.isRefreshingStorage ? "检查中…" : "运行状态检查",
             isLoading: viewModel.isRefreshingStorage,
             action: viewModel.runStorageStatusCheck
           )
 
           if let last = viewModel.lastStorageCheck {
-            SettingsMetadata(text: "Last checked \(relativeDate(last))")
+            SettingsMetadata(text: "上次检查：\(relativeDate(last))")
           }
         }
         .padding(.top, 18)
@@ -82,13 +82,13 @@ struct SettingsStorageTabView: View {
 
   private var diskUsageSection: some View {
     SettingsSection(
-      title: "Disk usage",
-      subtitle: "Open folders or adjust per-type storage caps."
+      title: "磁盘用量",
+      subtitle: "打开文件夹，或按类型调整存储上限。"
     ) {
       VStack(alignment: .leading, spacing: 0) {
         usageRow(
           category: .recordings,
-          label: "Recordings",
+          label: "录制文件",
           size: viewModel.recordingsUsageBytes,
           limitIndex: viewModel.recordingsLimitIndex,
           limitBytes: viewModel.recordingsLimitBytes,
@@ -96,7 +96,7 @@ struct SettingsStorageTabView: View {
         )
         usageRow(
           category: .timelapses,
-          label: "Timelapses",
+          label: "延时视频",
           size: viewModel.timelapseUsageBytes,
           limitIndex: viewModel.timelapsesLimitIndex,
           limitBytes: viewModel.timelapsesLimitBytes,
@@ -195,6 +195,7 @@ struct SettingsStorageTabView: View {
 
   private func relativeDate(_ date: Date) -> String {
     let formatter = RelativeDateTimeFormatter()
+    formatter.locale = Locale(identifier: "zh_Hans")
     formatter.unitsStyle = .abbreviated
     return formatter.localizedString(for: date, relativeTo: Date())
   }

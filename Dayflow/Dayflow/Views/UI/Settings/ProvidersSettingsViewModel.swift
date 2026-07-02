@@ -223,7 +223,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
     LocalModelPreferences.syncPreset(for: engine, modelId: modelId)
     LocalModelPreferences.markUpgradeDismissed(true)
     refreshUpgradeBannerState()
-    upgradeStatusMessage = "Upgraded to \(LocalModelPreset.recommended.displayName)"
+    upgradeStatusMessage = "已升级到 \(LocalModelPreset.recommended.displayName)"
     AnalyticsService.shared.capture(
       "local_model_upgraded",
       [
@@ -549,7 +549,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
   }
 
   var backupProviderDisplayName: String {
-    guard let backupProvider = secondaryRoutingProviderId else { return "Not configured" }
+    guard let backupProvider = secondaryRoutingProviderId else { return "未配置" }
     return providerDisplayName(backupProvider)
   }
 
@@ -572,14 +572,14 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   private func openAccountForDayflowPro(_ providerId: String) {
     guard canonicalProviderId(for: providerId) == "dayflow" else { return }
-    upgradeStatusMessage = "Dayflow Pro is required for hosted cards and transcription."
+    upgradeStatusMessage = "托管卡片生成和转写需要 Dayflow Pro。"
     openAccountForDayflowProvider(providerId)
   }
 
   private func openAccountForDayflowProvider(_ providerId: String) {
     guard canonicalProviderId(for: providerId) == "dayflow" else { return }
     if isDayflowProActive {
-      upgradeStatusMessage = "Manage Dayflow Pro from Account."
+      upgradeStatusMessage = "请在“账号”中管理 Dayflow Pro。"
     }
     NotificationCenter.default.post(name: .openAccountSettings, object: nil)
     AnalyticsService.shared.capture(
@@ -722,7 +722,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
       CompactProviderInfo(
         id: "dayflow",
         title: "Dayflow Pro",
-        summary: "Hosted cards & transcription • no API keys • requires Pro",
+        summary: "托管卡片与转写 • 无需 API Key • 需要 Pro",
         badgeText: "PRO",
         badgeType: .blue,
         icon: "sparkles"
@@ -730,32 +730,32 @@ final class ProvidersSettingsViewModel: ObservableObject {
       CompactProviderInfo(
         id: "claude",
         title: "Claude",
-        summary: "Uses Claude Code through your existing Claude plan",
-        badgeText: "NEW",
+        summary: "通过你现有的 Claude 方案使用 Claude Code",
+        badgeText: "新",
         badgeType: .blue,
         icon: "ClaudeLogo"
       ),
       CompactProviderInfo(
         id: "chatgpt",
         title: "ChatGPT",
-        summary: "Uses Codex CLI through your existing ChatGPT plan",
-        badgeText: "NEW",
+        summary: "通过你现有的 ChatGPT 方案使用 Codex CLI",
+        badgeText: "新",
         badgeType: .blue,
         icon: "ChatGPTLogo"
       ),
       CompactProviderInfo(
         id: "gemini",
         title: "Gemini",
-        summary: "Gemini free tier • fast & accurate",
-        badgeText: "RECOMMENDED",
+        summary: "Gemini 免费额度 • 快速且准确",
+        badgeText: "推荐",
         badgeType: .orange,
         icon: "gemini_asset"
       ),
       CompactProviderInfo(
         id: "ollama",
-        title: "Local",
-        summary: "Private & offline • 16GB+ RAM • less intelligent",
-        badgeText: "MOST PRIVATE",
+        title: "本地",
+        summary: "私密且可离线 • 建议 16GB+ 内存 • 智能程度较低",
+        badgeText: "最私密",
         badgeType: .green,
         icon: "desktopcomputer"
       ),
@@ -772,7 +772,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
       switch localEngine {
       case .ollama: engineName = "Ollama"
       case .lmstudio: engineName = "LM Studio"
-      case .custom: engineName = "Custom"
+      case .custom: engineName = "自定义"
       }
       let displayModel = localModelId.isEmpty ? "qwen2.5vl:3b" : localModelId
       let truncatedModel =
@@ -789,7 +789,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
       }
       return chatCLIStatusLabel()
     case "dayflow":
-      return isDayflowProActive ? "Dayflow Pro active" : "Requires Dayflow Pro"
+      return isDayflowProActive ? "Dayflow Pro 已启用" : "需要 Dayflow Pro"
     default:
       return nil
     }
@@ -812,22 +812,22 @@ final class ProvidersSettingsViewModel: ObservableObject {
     case "gemini":
       return "Gemini API"
     case "ollama":
-      return "Local API"
+      return "本地 API"
     case "chatgpt_claude":
       if let tool = preferredCLITool {
         return "\(tool.shortName) CLI"
       }
       return "ChatGPT / Claude CLI"
     case "dayflow":
-      return "Dayflow Backend"
+      return "Dayflow 后端"
     default:
-      return "Diagnostics"
+      return "诊断"
     }
   }
 
   func providerDisplayName(_ id: String) -> String {
     switch id {
-    case "ollama": return "Local"
+    case "ollama": return "本地"
     case "gemini": return "Gemini"
     case "chatgpt": return "ChatGPT"
     case "claude": return "Claude"
@@ -835,7 +835,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
       if let preferredCLITool {
         return preferredCLITool == .codex ? "ChatGPT" : "Claude"
       }
-      return "ChatGPT or Claude"
+      return "ChatGPT 或 Claude"
     case "dayflow": return "Dayflow Pro"
     default: return id.capitalized
     }
@@ -1048,7 +1048,7 @@ struct CompactProviderInfo: Identifiable {
 
   var providerTableName: String {
     switch id {
-    case "ollama": return "Local"
+    case "ollama": return "本地"
     case "gemini": return "Gemini"
     case "chatgpt": return "ChatGPT"
     case "claude": return "Claude"

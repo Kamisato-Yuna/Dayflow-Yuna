@@ -22,11 +22,11 @@ struct SettingsView: View {
     var title: String {
       switch self {
       case .account: return "账号"
-      case .storage: return "Storage"
-      case .privacy: return "Privacy"
-      case .providers: return "Providers"
-      case .data: return "Export"
-      case .other: return "Other"
+      case .storage: return "存储"
+      case .privacy: return "隐私"
+      case .providers: return "AI 提供商"
+      case .data: return "数据"
+      case .other: return "其他"
       }
     }
   }
