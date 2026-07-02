@@ -363,14 +363,14 @@ extension ChatView {
     case .codex:
       return "Codex"
     case .none:
-      return "selected provider"
+      return "所选提供商"
     }
   }
 
   var providerToggleHelpText: String {
     if selectedProviderAvailable {
-      return "Choose chat provider"
+      return "选择对话提供商"
     }
-    return "Configure Gemini key or install Codex/Claude CLI"
+    return "配置 Gemini Key 或安装 Codex/Claude CLI"
   }
 }

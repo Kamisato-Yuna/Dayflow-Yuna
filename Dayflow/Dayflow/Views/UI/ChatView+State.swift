@@ -35,12 +35,12 @@ extension ChatView {
 
   var welcomePrompts: [WelcomePrompt] {
     [
-      WelcomePrompt(icon: "doc.text", text: "Generate standup notes for yesterday"),
-      WelcomePrompt(icon: "checkmark.seal", text: "What did I get done last week?"),
+      WelcomePrompt(icon: "doc.text", text: "生成昨天的站会更新"),
+      WelcomePrompt(icon: "checkmark.seal", text: "我上周完成了什么？"),
       WelcomePrompt(
-        icon: "exclamationmark.bubble", text: "When was I most focused this week"),
+        icon: "exclamationmark.bubble", text: "这周什么时候最专注？"),
       WelcomePrompt(
-        icon: "sparkles", text: "Compare this week to last week"),
+        icon: "sparkles", text: "对比这周和上周"),
     ]
   }
 
@@ -97,7 +97,7 @@ extension ChatView {
   }
 
   var memoryUpdatedLabel: String {
-    guard let memoryUpdatedAt else { return "Not saved yet" }
+    guard let memoryUpdatedAt else { return "尚未保存" }
     return chatViewMemoryUpdatedFormatter.string(from: memoryUpdatedAt)
   }
 }

@@ -180,7 +180,7 @@ struct ThinkingIndicator: View {
         .font(.system(size: 12, weight: .medium))
         .foregroundColor(Color(hex: "F96E00"))
 
-      Text("Thinking")
+      Text("思考中")
         .font(.custom("Figtree", size: 12).weight(.semibold))
         .foregroundColor(Color(hex: "8B5E3C"))
 

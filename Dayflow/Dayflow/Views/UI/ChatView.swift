@@ -17,7 +17,7 @@ let chatViewDebugTimestampFormatter: DateFormatter = {
 
 let chatViewMemoryUpdatedFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "MMM d, h:mm a"
+  formatter.dateFormat = "M月d日 HH:mm"
   return formatter
 }()
 
@@ -115,15 +115,15 @@ struct ChatView: View {
     .onChange(of: chatService.messages.count) { _, _ in
       syncMemoryFromStoreIfNeeded()
     }
-    .alert("Switch provider?", isPresented: $showToolSwitchConfirm) {
-      Button("Switch and Reset", role: .destructive) {
+    .alert("切换提供商？", isPresented: $showToolSwitchConfirm) {
+      Button("切换并重置", role: .destructive) {
         confirmProviderSwitch()
       }
       Button("取消", role: .cancel) {
         pendingProviderSelection = nil
       }
     } message: {
-      Text("Switching to \(pendingProviderLabel) will clear this chat's context.")
+      Text("切换到 \(pendingProviderLabel) 会清除此对话的上下文。")
     }
     .environment(\.colorScheme, .light)
   }

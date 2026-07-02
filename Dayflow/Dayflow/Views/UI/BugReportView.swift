@@ -19,7 +19,7 @@ struct BugReportView: View {
           .foregroundColor(.black.opacity(0.9))
 
         Text(
-          "Email works great if you want to drop a quick note, Discord if you want to join the community, and if you’d prefer to chat, find some time on my calendar - I’d love to dig into why Dayflow is or isn’t working well for you."
+          "如果你想快速留言，可以发邮件；如果想加入社区，可以来 Discord；如果更想直接聊聊，也可以在我的日历里约个时间。我很想了解 Dayflow 哪些地方好用，哪些地方还不够好。"
         )
         .font(.custom("Figtree", size: 16))
         .foregroundColor(.black.opacity(0.65))
@@ -29,7 +29,7 @@ struct BugReportView: View {
       }
       VStack(spacing: 24) {
         VStack(spacing: 12) {
-          Text("Reach out")
+          Text("联系我们")
             .font(.custom("Figtree", size: 14).weight(.medium))
             .foregroundColor(.black.opacity(0.55))
             .textCase(.uppercase)
@@ -42,7 +42,7 @@ struct BugReportView: View {
                 HStack(spacing: 12) {
                   Image(systemName: "envelope.fill")
                     .font(.system(size: 18, weight: .semibold))
-                  Text("Email")
+                  Text("发邮件")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
@@ -64,7 +64,7 @@ struct BugReportView: View {
                     .renderingMode(.original)
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 22, height: 18)
-                  Text("Join Discord")
+                  Text("加入社区")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
@@ -83,7 +83,7 @@ struct BugReportView: View {
                 HStack(spacing: 12) {
                   Image(systemName: "calendar.badge.clock")
                     .font(.system(size: 18, weight: .semibold))
-                  Text("Calendar")
+                  Text("预约时间")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
@@ -99,7 +99,7 @@ struct BugReportView: View {
         }
 
         VStack(spacing: 12) {
-          Text("Quick utilities")
+          Text("快捷工具")
             .font(.custom("Figtree", size: 14).weight(.medium))
             .foregroundColor(.black.opacity(0.55))
             .textCase(.uppercase)
@@ -112,7 +112,7 @@ struct BugReportView: View {
                 HStack(spacing: 10) {
                   Image(systemName: "doc.on.doc")
                     .font(.system(size: 16, weight: .semibold))
-                  Text(didCopyEmail ? "已复制" : "Copy email")
+                  Text(didCopyEmail ? "已复制" : "复制邮箱")
                     .font(.custom("Figtree", size: 15).weight(.semibold))
                 }
               },
@@ -134,7 +134,7 @@ struct BugReportView: View {
                     .font(.system(size: 16, weight: .semibold))
                   Text(
                     didCopyDebugLogs
-                      ? "已复制" : (isCopyingDebugLogs ? "Preparing..." : "Copy debug logs")
+                      ? "已复制" : (isCopyingDebugLogs ? "准备中…" : "复制调试日志")
                   )
                   .font(.custom("Figtree", size: 15).weight(.semibold))
                 }
@@ -165,7 +165,7 @@ struct BugReportView: View {
     components.scheme = "mailto"
     components.path = emailAddress
     components.queryItems = [
-      URLQueryItem(name: "subject", value: "Dayflow feedback")
+      URLQueryItem(name: "subject", value: "Dayflow 反馈")
     ]
 
     guard let url = components.url else { return }
