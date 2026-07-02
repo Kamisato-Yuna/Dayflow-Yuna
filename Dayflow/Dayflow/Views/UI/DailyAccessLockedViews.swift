@@ -30,7 +30,7 @@ struct DailyAccessIntroView: View {
         .frame(maxWidth: 480)
         .padding(.horizontal, 24)
 
-      Text("Daily unlocks after 5 hours of analyzed timeline data. \(progressText)")
+      Text("分析满 5 小时的时间线数据后即可解锁 Daily。\(progressText)")
         .font(.custom("Figtree-SemiBold", size: 13))
         .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12).opacity(0.76))
         .multilineTextAlignment(.center)
@@ -118,13 +118,13 @@ struct DailyProviderOnboardingView: View {
 
       VStack(spacing: 12) {
         VStack(spacing: 6) {
-          Text("Pick your Daily provider")
+          Text("选择你的 Daily 提供商")
             .font(.custom("InstrumentSerif-Regular", size: 24))
             .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
             .multilineTextAlignment(.center)
 
           Text(
-            "Choose how Daily generates your recap, or turn generation off. You can change this later."
+            "选择 Daily 如何生成你的复盘，或关闭生成功能。之后也可以随时更改。"
           )
           .font(.custom("Figtree-Regular", size: 13))
           .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12).opacity(0.8))
@@ -199,7 +199,7 @@ struct DailyProviderOnboardingView: View {
         DayflowSurfaceButton(
           action: onContinue,
           content: {
-            Text("Continue to Daily")
+            Text("继续使用 Daily")
               .font(.custom("Figtree", size: 14))
               .fontWeight(.semibold)
           },
@@ -246,7 +246,7 @@ private struct DailyAccessHeaderView: View {
         .font(.custom("InstrumentSerif-Italic", size: 38))
         .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
 
-      Text("BETA")
+      Text("测试版")
         .font(.custom("Figtree-Bold", size: 11))
         .foregroundColor(.white)
         .padding(.horizontal, 8)
@@ -309,7 +309,7 @@ private struct DailyAnimatedRequestAccessButton: View {
           .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
 
         ZStack {
-          Text("Unlock Daily")
+          Text("解锁 Daily")
             .font(.custom("Figtree", size: 15))
             .fontWeight(.semibold)
             .foregroundColor(.white)
@@ -319,7 +319,7 @@ private struct DailyAnimatedRequestAccessButton: View {
           HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
               .font(.system(size: 14, weight: .semibold))
-            Text("Daily Unlocked")
+            Text("Daily 已解锁")
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           }
@@ -352,12 +352,12 @@ private struct DailyNotificationPermissionPanelView: View {
 
   var body: some View {
     VStack(spacing: 16) {
-      Text("Turn on notifications to unlock Daily")
+      Text("开启通知以解锁 Daily")
         .font(.custom("InstrumentSerif-Regular", size: 30))
         .foregroundColor(Color(red: 0.85, green: 0.45, blue: 0.25))
         .multilineTextAlignment(.center)
 
-      Text("Dayflow uses notifications to tell you when your recap is ready.")
+      Text("Dayflow 会通过通知告诉你复盘何时准备好。")
         .font(.custom("Figtree-SemiBold", size: 16))
         .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.10))
         .multilineTextAlignment(.center)
@@ -391,7 +391,7 @@ private struct DailyNotificationPermissionPanelView: View {
         DayflowSurfaceButton(
           action: onRecheckPermissions,
           content: {
-            Text("Recheck permissions")
+            Text("重新检查权限")
               .font(.custom("Figtree", size: 14))
               .fontWeight(.semibold)
           },

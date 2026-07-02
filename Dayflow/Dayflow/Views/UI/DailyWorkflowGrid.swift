@@ -52,7 +52,7 @@ struct DailyWorkflowGrid: View {
         ? labelColumnWidth(
           for: [
             DailyWorkflowGridRow(
-              id: "d", name: "Distractions", colorHex: "FF5950",
+              id: "d", name: "分心", colorHex: "FF5950",
               slotOccupancies: [], slotCardInfos: [])
           ], layoutScale: layoutScale) : 0
       let effectiveLabelWidth =
@@ -83,7 +83,7 @@ struct DailyWorkflowGrid: View {
                 .frame(width: effectiveLabelWidth, height: cellSize, alignment: .trailing)
             }
             if showDistractions {
-              Text("Distractions")
+              Text("分心")
                 .font(.custom("Figtree-Regular", size: categoryLabelFontSize))
                 .foregroundStyle(Color.black.opacity(0.9))
                 .frame(
@@ -445,12 +445,12 @@ struct DailyModeToggle: View {
   var body: some View {
     HStack(spacing: 0) {
       segment(
-        text: "Highlights",
+        text: "重点",
         isActive: activeMode == .highlights,
         isLeading: true
       )
       segment(
-        text: "Details",
+        text: "详情",
         isActive: activeMode == .details,
         isLeading: false
       )

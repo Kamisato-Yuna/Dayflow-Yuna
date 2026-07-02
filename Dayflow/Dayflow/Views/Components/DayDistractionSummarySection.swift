@@ -36,7 +36,7 @@ struct DayDistractionSummarySection: View {
       header
 
       if isSelectionEmpty {
-        Text("Edit categories to calculate distractions.")
+        Text("编辑分类以计算分心时间。")
           .font(.custom("Figtree", size: 11))
           .foregroundColor(Design.subtitleColor)
       }
@@ -56,7 +56,7 @@ struct DayDistractionSummarySection: View {
         DayCategorySelectionEditor(
           categories: categories,
           selectedCategoryIDs: selectedCategoryIDs,
-          helperText: "Pick the categories that count towards Distractions",
+          helperText: "选择计入分心的分类",
           onToggle: onToggleCategory,
           onDone: onDoneEditing
         )
@@ -69,7 +69,7 @@ struct DayDistractionSummarySection: View {
 
   private var header: some View {
     HStack(alignment: .center, spacing: 6) {
-      Text("Distractions so far")
+      Text("目前分心情况")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundColor(Design.titleColor)
 

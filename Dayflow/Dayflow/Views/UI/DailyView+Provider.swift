@@ -32,7 +32,7 @@ extension DailyView {
       return selectedProviderAvailability.detail
     }
 
-    return "Regenerate standup highlights"
+    return "重新生成站会重点"
   }
   func dailyProviderButton(scale: CGFloat) -> some View {
     Button {
@@ -62,8 +62,8 @@ extension DailyView {
       enabled: standupRegenerateState != .regenerating,
       reassertOnPressEnd: true
     )
-    .accessibilityLabel(Text("Choose daily recap provider"))
-    .help("Daily recap provider: \(dailyRecapProvider.selectionLabel)")
+    .accessibilityLabel(Text("选择每日复盘提供商"))
+    .help("每日复盘提供商：\(dailyRecapProvider.selectionLabel)")
     .popover(isPresented: $isShowingProviderPicker, arrowEdge: .bottom) {
       dailyProviderPicker(scale: scale)
         .padding(16)
@@ -76,11 +76,11 @@ extension DailyView {
     VStack(alignment: .leading, spacing: 12 * scale) {
       HStack(alignment: .firstTextBaseline) {
         VStack(alignment: .leading, spacing: 2 * scale) {
-          Text("Daily recap provider")
+          Text("每日复盘提供商")
             .font(.custom("InstrumentSerif-Regular", size: 22 * scale))
             .foregroundStyle(Color(hex: "2E221B"))
 
-          Text("Choose how Daily generates this recap, or turn generation off.")
+          Text("选择 Daily 如何生成这份复盘，或关闭生成功能。")
             .font(.custom("Figtree-Regular", size: 12 * scale))
             .foregroundStyle(Color(hex: "8B6B59"))
         }

@@ -49,7 +49,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
     endMinute = normalized.end
 
     let trimmed = card.category.trimmingCharacters(in: .whitespacesAndNewlines)
-    let displayName = trimmed.isEmpty ? "Uncategorized" : trimmed
+    let displayName = trimmed.isEmpty ? "未分类" : trimmed
     let key = normalizedCategoryKey(displayName)
     guard key != systemCategoryKey else { continue }
     let colorHex = colorMap[key] ?? fallbackColorHex(for: key)
@@ -224,7 +224,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
 
     let displayName =
       resolvedNameByCategory[key] ?? nameMap[key]
-      ?? (key.isEmpty ? "Uncategorized" : key.capitalized)
+      ?? (key.isEmpty ? "未分类" : key.capitalized)
     let colorHex = resolvedColorByCategory[key] ?? colorMap[key] ?? fallbackColorHex(for: key)
 
     return DailyWorkflowGridRow(
@@ -238,7 +238,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
 
   let totals = selectedKeys.compactMap { key -> DailyWorkflowTotalItem? in
     guard let minutes = durationByCategory[key], minutes > 0 else { return nil }
-    let name = resolvedNameByCategory[key] ?? nameMap[key] ?? "Uncategorized"
+    let name = resolvedNameByCategory[key] ?? nameMap[key] ?? "未分类"
     let colorHex = resolvedColorByCategory[key] ?? colorMap[key] ?? fallbackColorHex(for: key)
     return DailyWorkflowTotalItem(id: key, name: name, minutes: minutes, colorHex: colorHex)
   }
@@ -246,27 +246,27 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
   let stats = [
     DailyWorkflowStatChip(
       id: "context-switched",
-      title: "Context switched",
+      title: "上下文切换",
       value: formatCount(contextSwitches)
     ),
     DailyWorkflowStatChip(
       id: "interrupted",
-      title: "Interrupted",
+      title: "被打断",
       value: formatCount(interruptions)
     ),
     DailyWorkflowStatChip(
       id: "focused-for",
-      title: "Focused for",
+      title: "专注时长",
       value: formatDurationValue(focusedMinutes)
     ),
     DailyWorkflowStatChip(
       id: "distracted-for",
-      title: "Distracted for",
+      title: "分心时长",
       value: formatDurationValue(distractedMinutes)
     ),
     DailyWorkflowStatChip(
       id: "transitioning-time",
-      title: "Transitioning time",
+      title: "切换间隔",
       value: formatDurationValue(transitionMinutes)
     ),
   ]
@@ -482,13 +482,13 @@ func fallbackColorHex(for key: String) -> String {
 
 func formatAxisHourLabel(fromAbsoluteHour hour: Int) -> String {
   let normalized = ((hour % 24) + 24) % 24
-  let period = normalized >= 12 ? "pm" : "am"
+  let period = normalized >= 12 ? "下午" : "上午"
   let display = normalized % 12 == 0 ? 12 : normalized % 12
-  return "\(display)\(period)"
+  return "\(period)\(display)点"
 }
 
 func formatCount(_ count: Int) -> String {
-  "\(count) \(count == 1 ? "time" : "times")"
+  "\(count) 次"
 }
 
 func formatDurationValue(_ minutes: Double) -> String {
@@ -496,7 +496,7 @@ func formatDurationValue(_ minutes: Double) -> String {
   let hours = rounded / 60
   let mins = rounded % 60
 
-  if hours > 0 && mins > 0 { return "\(hours)h \(mins)m" }
-  if hours > 0 { return "\(hours)h" }
-  return "\(mins)m"
+  if hours > 0 && mins > 0 { return "\(hours)小时 \(mins)分钟" }
+  if hours > 0 { return "\(hours)小时" }
+  return "\(mins)分钟"
 }

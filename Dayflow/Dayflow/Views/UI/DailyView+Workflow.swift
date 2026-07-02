@@ -118,12 +118,12 @@ extension DailyView {
   func workflowSection(scale: CGFloat, isViewingToday: Bool) -> some View {
     let headingText: String
     if isViewingToday {
-      headingText = "Today so far. Come back tomorrow for the full day view."
+      headingText = "今天到目前为止。明天回来查看完整日视图。"
     } else if isYesterdaySelection(selectedDate) {
-      headingText = "Your workflow yesterday"
+      headingText = "你昨天的工作流"
     } else {
       let displayDate = timelineDisplayDate(from: selectedDate)
-      headingText = "Your workflow on \(dailyStandupSectionDayFormatter.string(from: displayDate))"
+      headingText = "\(dailyStandupSectionDayFormatter.string(from: displayDate)) 的工作流"
     }
 
     return VStack(alignment: .leading, spacing: 8 * scale) {
@@ -246,8 +246,8 @@ extension DailyView {
       if workflowTotals.isEmpty {
         let emptyDescription =
           isViewingToday
-          ? "\(totalTitle)  No captured activity yet."
-          : "\(totalTitle)  No captured activity during 9am-9pm"
+          ? "\(totalTitle)  还没有捕获到活动。"
+          : "\(totalTitle)  9:00-21:00 期间没有捕获到活动。"
         Text(emptyDescription)
           .font(.custom("Figtree-Regular", size: 12 * scale))
           .foregroundStyle(Color(hex: "7F7062"))
@@ -398,14 +398,14 @@ extension DailyView {
   }
   func workflowTotalsTitle(for date: Date) -> String {
     if isTodaySelection(date) {
-      return "Today's total so far"
+      return "今天目前合计"
     }
     if isYesterdaySelection(date) {
-      return "Yesterday's total"
+      return "昨天合计"
     }
 
     let displayDate = timelineDisplayDate(from: date)
-    return "Total for \(dailyStandupSectionDayFormatter.string(from: displayDate))"
+    return "\(dailyStandupSectionDayFormatter.string(from: displayDate)) 合计"
   }
   func formatDuration(minutes: Double) -> String {
     formatDurationValue(minutes)

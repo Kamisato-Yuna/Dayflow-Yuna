@@ -93,7 +93,7 @@ struct JournalWeeklyView: View {
               .foregroundStyle(Color.white)
           }
 
-          Text("Set reminders")
+          Text("设置提醒")
             .font(.custom("Figtree-SemiBold", size: 13))
             .foregroundStyle(JournalWeeklyTokens.accentText)
         }
@@ -330,7 +330,7 @@ struct JournalWeeklySummary {
   var days: [JournalWeeklyDay]
 
   static let placeholder = JournalWeeklySummary(
-    title: "Week in review",
+    title: "本周回顾",
     dateRange: "October 19 – 25",
     description:
       "Made progress on the redesign project, shared updates with the leads by the end of the week. Looked at design references and shopped for groceries and necessities.",
@@ -436,8 +436,8 @@ struct JournalWeeklyIcon: Identifiable {
 }
 
 enum JournalWeeklyViewPeriod: String, CaseIterable, Identifiable {
-  case day = "Day"
-  case week = "Week"
+  case day = "日"
+  case week = "周"
 
   var id: String { rawValue }
 }

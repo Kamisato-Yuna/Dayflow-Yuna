@@ -86,8 +86,8 @@ final class NotificationService: NSObject, ObservableObject {
     for weekday in weekdays {
       scheduleNotification(
         identifier: "journal.intentions.weekday.\(weekday)",
-        title: "Set your intentions",
-        body: "Take a moment to plan your day with Dayflow.",
+        title: "设定今天的意图",
+        body: "花一点时间用 Dayflow 规划今天。",
         hour: intentionHour,
         minute: intentionMinute,
         weekday: weekday
@@ -101,8 +101,8 @@ final class NotificationService: NSObject, ObservableObject {
     for weekday in weekdays {
       scheduleNotification(
         identifier: "journal.reflections.weekday.\(weekday)",
-        title: "Time to reflect",
-        body: "How did your day go? Capture your thoughts.",
+        title: "该复盘了",
+        body: "今天过得怎么样？记录一下你的想法。",
         hour: reflectionHour,
         minute: reflectionMinute,
         weekday: weekday
@@ -231,8 +231,8 @@ final class NotificationService: NSObject, ObservableObject {
     print("[NotificationService] removed pending notification identifier=\(identifier)")
 
     let content = UNMutableNotificationContent()
-    content.title = "Your daily recap for yesterday is ready"
-    content.body = "Tap to open it in Daily view."
+    content.title = "昨天的每日复盘已准备好"
+    content.body = "点按即可在每日复盘中打开。"
     content.sound = .default
     content.categoryIdentifier = "daily_recap"
     content.userInfo = ["day": day]
@@ -291,8 +291,8 @@ final class NotificationService: NSObject, ObservableObject {
     center.removePendingNotificationRequests(withIdentifiers: [identifier])
 
     let content = UNMutableNotificationContent()
-    content.title = "Weekly view is ready"
-    content.body = "Tap to open your weekly review."
+    content.title = "周报已准备好"
+    content.body = "点按即可打开你的周报。"
     content.sound = .default
     content.categoryIdentifier = "weekly_unlock"
 

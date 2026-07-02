@@ -85,11 +85,11 @@ struct DayGoalHeader: View {
   private var statusText: String {
     switch recordingControlMode {
     case .active:
-      return "Tracking progress from your focus and distraction categories."
+      return "正在根据你的专注和分心分类追踪进度。"
     case .pausedTimed, .pausedIndefinite:
-      return "Dayflow is paused. Resume to continue tracking your progress."
+      return "Dayflow 已暂停。恢复后将继续追踪你的进度。"
     case .stopped:
-      return "Start Dayflow to continue tracking your progress."
+      return "启动 Dayflow 以继续追踪你的进度。"
     }
   }
 
@@ -157,7 +157,7 @@ struct DayGoalHeader: View {
 
   @ViewBuilder
   private func activeContent(xOffset: CGFloat) -> some View {
-    Text("Today’s targets")
+    Text("今日目标")
       .font(.custom("Instrument Serif", size: 24))
       .foregroundColor(Design.title)
       .lineLimit(1)
@@ -239,7 +239,7 @@ struct DayGoalHeader: View {
 
       Spacer(minLength: 12)
 
-      Text("Distraction budget")
+      Text("分心预算")
         .font(.custom("Figtree", size: 11))
         .foregroundColor(Design.label)
         .lineLimit(1)
@@ -252,7 +252,7 @@ struct DayGoalHeader: View {
 
   @ViewBuilder
   private func disabledContent(xOffset: CGFloat) -> some View {
-    Text("Set today’s goals")
+    Text("设置今日目标")
       .font(.custom("Instrument Serif", size: 24))
       .foregroundColor(Design.title)
       .lineLimit(1)
@@ -262,7 +262,7 @@ struct DayGoalHeader: View {
     setGoalsButton
       .offset(x: xOffset + 268, y: 18.96)
 
-    Text("Set your goals for today to activate the progress bars below.")
+    Text("设置今天的目标以启用下方进度条。")
       .font(.custom("Figtree", size: 11))
       .foregroundColor(Design.subtitle)
       .lineLimit(1)
@@ -309,7 +309,7 @@ struct DayGoalHeader: View {
 
   private var setGoalsButton: some View {
     Button(action: onSetGoals) {
-      Text("Set goals")
+      Text("设置目标")
         .font(.custom("Figtree", size: 12).weight(.medium))
         .foregroundColor(.white)
         .lineLimit(1)
@@ -339,12 +339,12 @@ struct DayGoalHeader: View {
     .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
     .hoverScaleEffect(scale: 1.02)
     .pointingHandCursorOnHover(reassertOnPressEnd: true)
-    .accessibilityLabel("Set goals")
+    .accessibilityLabel("设置目标")
   }
 
   private var focusLabels: some View {
     ZStack(alignment: .topLeading) {
-      Text("Focus")
+      Text("专注")
         .font(.custom("Figtree", size: 11))
         .foregroundColor(Design.label)
         .lineLimit(1)
@@ -429,7 +429,7 @@ struct DayGoalHeader: View {
 
   private var distractionSummarySuffix: String {
     if isDistractionPastBudget {
-      return "/ \(formatLimitDuration(distractionLimitDuration)) used"
+      return "/ 已用 \(formatLimitDuration(distractionLimitDuration))"
     }
     return "/ \(formatLimitDuration(distractionLimitDuration))"
   }
@@ -445,15 +445,15 @@ struct DayGoalHeader: View {
   private func formatUsedDuration(_ duration: TimeInterval) -> String {
     let totalMinutes = Int(duration / 60)
     if totalMinutes < 60 {
-      return "\(totalMinutes) mins"
+      return "\(totalMinutes)分钟"
     }
 
     let hours = totalMinutes / 60
     let minutes = totalMinutes % 60
     if minutes == 0 {
-      return hours == 1 ? "1 hour" : "\(hours) hours"
+      return "\(hours)小时"
     }
-    return "\(hours)h \(minutes)m"
+    return "\(hours)小时 \(minutes)分钟"
   }
 
   private func formatLimitDuration(_ duration: TimeInterval) -> String {
@@ -462,12 +462,12 @@ struct DayGoalHeader: View {
     let minutes = totalMinutes % 60
 
     if hours > 0 && minutes == 0 {
-      return hours == 1 ? "1 hour" : "\(hours) hours"
+      return "\(hours)小时"
     }
     if hours > 0 {
-      return "\(hours)h \(minutes)m"
+      return "\(hours)小时 \(minutes)分钟"
     }
-    return "\(totalMinutes) mins"
+    return "\(totalMinutes)分钟"
   }
 
   private func initializeDisplayedProgressIfNeeded() {

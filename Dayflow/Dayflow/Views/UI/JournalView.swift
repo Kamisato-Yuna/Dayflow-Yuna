@@ -64,12 +64,12 @@ struct JournalView: View {
 
       // Header: "Dayflow Journal" with BETA badge
       HStack(alignment: .top, spacing: 4) {
-        Text("Dayflow Journal")
+        Text("Dayflow 日志")
           .font(.custom("InstrumentSerif-Italic", size: 38))
           .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
 
         // BETA badge
-        Text("BETA")
+        Text("测试版")
           .font(.custom("Figtree-Bold", size: 11))
           .foregroundColor(.white)
           .padding(.horizontal, 8)
@@ -124,7 +124,7 @@ struct JournalView: View {
       // Overlay content: title, text field, button (anchored to bottom)
       VStack(spacing: 16) {
         // Title
-        Text("Enter access code")
+        Text("输入访问码")
           .font(.custom("Figtree-SemiBold", size: 20))
           .foregroundColor(Color(red: 0.85, green: 0.45, blue: 0.25))
 
@@ -146,7 +146,7 @@ struct JournalView: View {
 
         // Submit button
         Button(action: validateCode) {
-          Text("Get early access")
+          Text("获取抢先体验")
             .font(.custom("Figtree-SemiBold", size: 15))
             .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
             .padding(.horizontal, 28)
@@ -229,14 +229,14 @@ private struct JournalOnboardingView: View {
       Spacer()
 
       // Title
-      Text("Set your intentions today")
+      Text("设定今天的意图")
         .font(.custom("InstrumentSerif-Regular", size: 42))
         .foregroundColor(Color(red: 0.85, green: 0.45, blue: 0.15))
         .multilineTextAlignment(.center)
 
       // Description
       Text(
-        "Dayflow helps you track your daily and longer term goals, gives you the space to reflect, and generates a summary of each day."
+        "Dayflow 帮你追踪每日和长期目标，留出复盘空间，并生成每天的总结。"
       )
       .font(.custom("Figtree-Regular", size: 16))
       .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.10).opacity(0.8))
@@ -248,7 +248,7 @@ private struct JournalOnboardingView: View {
 
       // Start onboarding button
       Button(action: onStartOnboarding) {
-        Text("Start onboarding")
+        Text("开始引导")
           .font(.custom("Figtree-SemiBold", size: 16))
           .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
           .padding(.horizontal, 32)

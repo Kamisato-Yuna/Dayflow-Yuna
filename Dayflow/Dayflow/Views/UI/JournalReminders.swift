@@ -25,11 +25,11 @@ struct JournalRemindersView: View {
   var body: some View {
     VStack(spacing: 24) {
       VStack(spacing: 6) {
-        Text("Set reminders")
+        Text("设置提醒")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .kerning(-0.22)
           .foregroundColor(JournalReminderTokens.primaryText)
-        Text("Set recurring notifications to remind yourself to set your intentions and reflect.")
+        Text("设置重复通知，提醒自己设定意图并进行复盘。")
           .font(.custom("Figtree-Regular", size: 12))
           .kerning(-0.12)
           .foregroundColor(JournalReminderTokens.primaryText.opacity(0.9))
@@ -39,7 +39,7 @@ struct JournalRemindersView: View {
 
       VStack(spacing: 20) {
         timeRow(
-          label: "Set intentions at",
+          label: "设定意图时间",
           hour: $intentionHour,
           minute: $intentionMinute,
           period: $intentionPeriod,
@@ -49,7 +49,7 @@ struct JournalRemindersView: View {
         )
 
         timeRow(
-          label: "Write reflections at",
+          label: "写复盘时间",
           hour: $reflectionHour,
           minute: $reflectionMinute,
           period: $reflectionPeriod,
@@ -71,7 +71,7 @@ struct JournalRemindersView: View {
 
       HStack(spacing: 12) {
         // Test button (fires notification in 3 seconds)
-        Button("Test", action: sendTestNotification)
+        Button("测试", action: sendTestNotification)
           .buttonStyle(
             JournalReminderPillButtonStyle(
               background: JournalReminderTokens.inputBackground,
@@ -209,8 +209,8 @@ struct JournalRemindersView: View {
 
       // Schedule a test notification in 3 seconds
       let content = UNMutableNotificationContent()
-      content.title = "Test: Set your intentions"
-      content.body = "This is a test notification from Dayflow."
+      content.title = "测试：设定今天的意图"
+      content.body = "这是一条来自 Dayflow 的测试通知。"
       content.sound = .default
       content.categoryIdentifier = "journal_reminder"
 
@@ -272,7 +272,7 @@ struct JournalRemindersView: View {
 
   private var repeatOnRow: some View {
     HStack(alignment: .center, spacing: 8) {
-      Text("Repeat on")
+      Text("重复日期")
         .font(.custom("Figtree-Regular", size: 14))
         .kerning(-0.14)
         .foregroundColor(JournalReminderTokens.primaryText)
@@ -508,18 +508,20 @@ extension JournalRemindersView {
 
     var shortLabel: String {
       switch self {
-      case .sunday, .saturday:
-        return "S"
+      case .sunday:
+        return "日"
       case .monday:
-        return "M"
+        return "一"
       case .tuesday:
-        return "T"
+        return "二"
       case .wednesday:
-        return "W"
+        return "三"
       case .thursday:
-        return "T"
+        return "四"
       case .friday:
-        return "F"
+        return "五"
+      case .saturday:
+        return "六"
       }
     }
   }
