@@ -106,6 +106,11 @@ enum LLMProviderType: Codable {
     if let savedData = defaults.data(forKey: providerDefaultsKey),
       let decoded = try? JSONDecoder().decode(LLMProviderType.self, from: savedData)
     {
+      if case .dayflowBackend = decoded {
+        let migrated = migratedDayflowProvider()
+        migrated.persist(to: defaults)
+        return migrated
+      }
       return decoded
     }
 
@@ -151,7 +156,7 @@ enum LLMProviderType: Codable {
     case "gemini":
       return .geminiDirect
     case "dayflow":
-      return .dayflowBackend()
+      return migratedDayflowProvider()
     case "ollama":
       let endpoint = defaults.string(forKey: localBaseURLDefaultsKey)?
         .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -174,6 +179,10 @@ enum LLMProviderType: Codable {
     default:
       return nil
     }
+  }
+
+  private static func migratedDayflowProvider() -> LLMProviderType {
+    .geminiDirect
   }
 }
 

@@ -144,7 +144,6 @@ final class ProvidersSettingsViewModel: ObservableObject {
   }
 
   func handleOnAppear() {
-    DayflowAuthManager.shared.loadStoredSessionIfNeeded()
     loadCurrentProvider()
     loadBackupProvider()
     reloadLocalProviderSettings()
@@ -256,7 +255,8 @@ final class ProvidersSettingsViewModel: ObservableObject {
       selectedGeminiModel = preference.primary
       savedGeminiModel = preference.primary
     case .dayflowBackend:
-      currentProvider = "dayflow"
+      LLMProviderType.geminiDirect.persist()
+      currentProvider = "gemini"
     case .ollamaLocal:
       currentProvider = "ollama"
     case .chatGPTClaude:
@@ -306,10 +306,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   func beginProviderSetup(_ providerId: String, role: ProviderRoutingRole) {
     guard providerCatalog.contains(where: { $0.id == providerId }) else { return }
-    guard canUseProviderForRouting(providerId) else {
-      openAccountForDayflowPro(providerId)
-      return
-    }
+    guard canUseProviderForRouting(providerId) else { return }
 
     pendingSetupRole = role
     pendingSetupDisplayProviderId = providerId
@@ -318,15 +315,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   func editProviderConfiguration(_ providerId: String) {
     guard providerCatalog.contains(where: { $0.id == providerId }) else { return }
-    if canonicalProviderId(for: providerId) == "dayflow" {
-      openAccountForDayflowProvider(providerId)
-      return
-    }
-
-    guard canUseProviderForRouting(providerId) else {
-      openAccountForDayflowPro(providerId)
-      return
-    }
+    guard canUseProviderForRouting(providerId) else { return }
 
     pendingSetupRole = .setupOnly
     pendingSetupDisplayProviderId = providerId
@@ -361,10 +350,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
   }
 
   func setPrimaryOrSetup(_ providerId: String) {
-    guard canUseProviderForRouting(providerId) else {
-      openAccountForDayflowPro(providerId)
-      return
-    }
+    guard canUseProviderForRouting(providerId) else { return }
 
     if isProviderConfigured(providerId) {
       assignPrimaryProvider(providerId)
@@ -374,10 +360,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
   }
 
   func setSecondaryOrSetup(_ providerId: String) {
-    guard canUseProviderForRouting(providerId) else {
-      openAccountForDayflowPro(providerId)
-      return
-    }
+    guard canUseProviderForRouting(providerId) else { return }
 
     if isProviderConfigured(providerId) {
       assignSecondaryProvider(providerId)
@@ -401,13 +384,9 @@ final class ProvidersSettingsViewModel: ObservableObject {
   func assignPrimaryProvider(_ providerId: String) {
     print(
       "🧭 [ProvidersSettings] assign primary requested provider=\(providerId) "
-        + "current=\(primaryRoutingProviderId) signed_in=\(DayflowAuthManager.shared.isSignedIn) "
-        + "pro_active=\(isDayflowProActive)"
+        + "current=\(primaryRoutingProviderId)"
     )
-    guard canUseProviderForRouting(providerId) else {
-      openAccountForDayflowPro(providerId)
-      return
-    }
+    guard canUseProviderForRouting(providerId) else { return }
 
     guard canAssignPrimary(providerId) else { return }
 
@@ -432,10 +411,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
   }
 
   func assignSecondaryProvider(_ providerId: String) {
-    guard canUseProviderForRouting(providerId) else {
-      openAccountForDayflowPro(providerId)
-      return
-    }
+    guard canUseProviderForRouting(providerId) else { return }
 
     guard canAssignSecondary(providerId) else { return }
 
@@ -517,8 +493,6 @@ final class ProvidersSettingsViewModel: ObservableObject {
       let preferredTool = (UserDefaults.standard.string(forKey: "chatCLIPreferredTool") ?? "")
         .trimmingCharacters(in: .whitespacesAndNewlines)
       return !preferredTool.isEmpty
-    case "dayflow":
-      return isDayflowProActive
     default:
       return false
     }
@@ -531,9 +505,6 @@ final class ProvidersSettingsViewModel: ObservableObject {
     }
 
     guard canAssignSecondary(providerId) else {
-      if !canUseProviderForRouting(providerId) {
-        openAccountForDayflowPro(providerId)
-      }
       return
     }
 
@@ -553,43 +524,8 @@ final class ProvidersSettingsViewModel: ObservableObject {
     return providerDisplayName(backupProvider)
   }
 
-  var isDayflowProActive: Bool {
-    let entitlement = DayflowAuthManager.shared.entitlements
-    return entitlement.plan == "pro" && entitlement.status == "active"
-  }
-
-  func shouldShowDayflowUpgradeAction(for providerId: String) -> Bool {
-    canonicalProviderId(for: providerId) == "dayflow" && !isDayflowProActive
-  }
-
-  func openDayflowUpgradeAccount(from providerId: String) {
-    openAccountForDayflowPro(providerId)
-  }
-
   private func canUseProviderForRouting(_ providerId: String) -> Bool {
-    canonicalProviderId(for: providerId) != "dayflow" || isDayflowProActive
-  }
-
-  private func openAccountForDayflowPro(_ providerId: String) {
-    guard canonicalProviderId(for: providerId) == "dayflow" else { return }
-    upgradeStatusMessage = "托管卡片生成和转写需要 Dayflow Pro。"
-    openAccountForDayflowProvider(providerId)
-  }
-
-  private func openAccountForDayflowProvider(_ providerId: String) {
-    guard canonicalProviderId(for: providerId) == "dayflow" else { return }
-    if isDayflowProActive {
-      upgradeStatusMessage = "请在“账号”中管理 Dayflow Pro。"
-    }
-    NotificationCenter.default.post(name: .openAccountSettings, object: nil)
-    AnalyticsService.shared.capture(
-      "dayflow_backend_provider_paywall_opened",
-      [
-        "provider": providerId,
-        "is_signed_in": DayflowAuthManager.shared.isSignedIn,
-        "entitlement_plan": DayflowAuthManager.shared.entitlements.plan,
-        "entitlement_status": DayflowAuthManager.shared.entitlements.status,
-      ])
+    canonicalProviderId(for: providerId) != "dayflow"
   }
 
   private func ensureBackupProviderIsValid(primaryProvider: String) {
@@ -608,8 +544,6 @@ final class ProvidersSettingsViewModel: ObservableObject {
       providerType = .ollamaLocal(endpoint: endpoint)
     case "gemini":
       providerType = .geminiDirect
-    case "dayflow":
-      providerType = .dayflowBackend()
     case "chatgpt_claude":
       providerType = .chatGPTClaude
     default:
@@ -720,14 +654,6 @@ final class ProvidersSettingsViewModel: ObservableObject {
   private var providerCatalog: [CompactProviderInfo] {
     [
       CompactProviderInfo(
-        id: "dayflow",
-        title: "Dayflow Pro",
-        summary: "托管卡片与转写 • 无需 API Key • 需要 Pro",
-        badgeText: "PRO",
-        badgeType: .blue,
-        icon: "sparkles"
-      ),
-      CompactProviderInfo(
         id: "claude",
         title: "Claude",
         summary: "通过你现有的 Claude 方案使用 Claude Code",
@@ -788,8 +714,6 @@ final class ProvidersSettingsViewModel: ObservableObject {
         return "Claude Code CLI"
       }
       return chatCLIStatusLabel()
-    case "dayflow":
-      return isDayflowProActive ? "Dayflow Pro 已启用" : "需要 Dayflow Pro"
     default:
       return nil
     }
@@ -818,8 +742,6 @@ final class ProvidersSettingsViewModel: ObservableObject {
         return "\(tool.shortName) CLI"
       }
       return "ChatGPT / Claude CLI"
-    case "dayflow":
-      return "Dayflow 后端"
     default:
       return "诊断"
     }
@@ -836,7 +758,6 @@ final class ProvidersSettingsViewModel: ObservableObject {
         return preferredCLITool == .codex ? "ChatGPT" : "Claude"
       }
       return "ChatGPT 或 Claude"
-    case "dayflow": return "Dayflow Pro"
     default: return id.capitalized
     }
   }
