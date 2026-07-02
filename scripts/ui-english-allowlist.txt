@@ -4,6 +4,7 @@
 
 # Keep project/brand/product names and runtime identifiers
 Dayflow	brand
+dayflow	internal-key
 Dayflow Pro	brand
 Gemini	brand
 Claude	brand
@@ -12,7 +13,11 @@ Ollama	brand
 LLM	brand
 LM Studio	brand
 Qwen3-VL	model-name
+Qwen3VL	model-name
+Qwen2.5	model-name
 OpenAI-compatible	model-name
+Pro	brand
+API	technical-term
 
 # Keep analytics and internal identifiers
 PostHog	internal-key
@@ -63,3 +68,4 @@ ABC123	test-fixture
 \(row.label)	interpolation-placeholder
 \(categoryName)	interpolation-placeholder
 \(cellGap\, format: \.number\.precision\(\.fractionLength\(1\)\))	interpolation-placeholder
+\(Int(viewModel.playbackSpeed * 20))x	unit-display

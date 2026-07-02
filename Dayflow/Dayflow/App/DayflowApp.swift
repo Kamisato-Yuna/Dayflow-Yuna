@@ -264,7 +264,7 @@ struct DayflowApp: App {
 
       // Add Sparkle's update menu item
       CommandGroup(after: .appInfo) {
-        Button("Check for Updates…") {
+        Button("检查更新…") {
           updaterManager.checkForUpdates(showUI: true)
         }
 

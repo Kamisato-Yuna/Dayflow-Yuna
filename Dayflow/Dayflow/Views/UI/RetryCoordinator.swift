@@ -22,13 +22,13 @@ final class RetryCoordinator: ObservableObject {
 
     switch status {
     case .queued(let position, let total):
-      return "Status: Queued (\(position) of \(total))"
+      return "状态：排队中（第 \(position) 个，共 \(total) 个）"
     case .running(let step):
-      return "Status: Reprocessing - Step: \(stepLabel(step))\(dots)"
+      return "状态：重新处理中 - 步骤：\(stepLabel(step))\(dots)"
     case .failed:
-      return "Status: Failed - retry stopped"
+      return "状态：失败，已停止重试"
     case .stopped:
-      return "Status: Stopped - earlier batch failed"
+      return "状态：已停止，前序批次失败"
     case .done:
       return nil
     }
@@ -164,9 +164,9 @@ final class RetryCoordinator: ObservableObject {
   private func stepLabel(_ step: LLMProcessingStep) -> String {
     switch step {
     case .transcribing:
-      return "1/2 Transcribing"
+      return "1/2 转录中"
     case .generatingCards:
-      return "2/2 Generating cards"
+      return "2/2 生成卡片中"
     }
   }
 }

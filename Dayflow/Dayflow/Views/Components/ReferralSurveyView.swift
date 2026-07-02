@@ -59,7 +59,7 @@ struct ReferralSurveyView: View {
       detailField
 
       if showsThankYou && hasSubmitted {
-        Label("Thanks for letting me know!", systemImage: "checkmark.circle.fill")
+        Label("谢谢你的反馈！", systemImage: "checkmark.circle.fill")
           .font(.custom("Figtree", size: 14))
           .foregroundColor(Color(red: 0.25, green: 0.17, blue: 0))
           .padding(.top, 4)

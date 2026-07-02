@@ -76,3 +76,18 @@
 - 验证命令：
   - `xcodebuild -project Dayflow/Dayflow.xcodeproj -scheme Dayflow -showBuildSettings >/tmp/dayflow-build-settings.txt`
   - 结果：命令返回码 74，未成功生成可用的 build settings（包依赖解析阶段失败：`Operation not permitted` 写入 Package 缓存目录）。
+
+## T09 全局剩余英文收口（2026-07-02）
+
+- 目标：清理扫描脚本发现的剩余用户可见英文，并为保留项补齐 allowlist 原因。
+- 已翻译：
+  - Sparkle 更新菜单、待复盘卡片角标、分类环形图总计/单位、最长专注卡片、推荐来源反馈、时间线复盘摘要、Daily 入口文案、重试状态、开关无障碍状态、预览控件文案。
+- allowlist 新增保留项：
+  - `API`：技术术语，按计划保留。
+  - `dayflow`：provider id / 内部路由标识。
+  - `Qwen3VL`、`Qwen2.5`：模型名。
+  - `Pro`：SKU / 品牌标识。
+  - `\(Int(viewModel.playbackSpeed * 20))x`：播放倍率显示。
+- 扫描结果：
+  - `bash scripts/audit-ui-english.sh`：通过，无未分类英文。
+- 剩余无法确认项：无。

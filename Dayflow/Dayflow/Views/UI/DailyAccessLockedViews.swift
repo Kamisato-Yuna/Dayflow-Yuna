@@ -30,7 +30,7 @@ struct DailyAccessIntroView: View {
         .frame(maxWidth: 480)
         .padding(.horizontal, 24)
 
-      Text("分析满 5 小时的时间线数据后即可解锁 Daily。\(progressText)")
+      Text("分析满 5 小时的时间线数据后即可解锁每日复盘。\(progressText)")
         .font(.custom("Figtree-SemiBold", size: 13))
         .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12).opacity(0.76))
         .multilineTextAlignment(.center)
@@ -118,13 +118,13 @@ struct DailyProviderOnboardingView: View {
 
       VStack(spacing: 12) {
         VStack(spacing: 6) {
-          Text("选择你的 Daily 提供商")
+          Text("选择你的每日复盘提供商")
             .font(.custom("InstrumentSerif-Regular", size: 24))
             .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
             .multilineTextAlignment(.center)
 
           Text(
-            "选择 Daily 如何生成你的复盘，或关闭生成功能。之后也可以随时更改。"
+            "选择每日复盘如何生成，或关闭生成功能。之后也可以随时更改。"
           )
           .font(.custom("Figtree-Regular", size: 13))
           .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12).opacity(0.8))
@@ -199,7 +199,7 @@ struct DailyProviderOnboardingView: View {
         DayflowSurfaceButton(
           action: onContinue,
           content: {
-            Text("继续使用 Daily")
+            Text("继续使用每日复盘")
               .font(.custom("Figtree", size: 14))
               .fontWeight(.semibold)
           },
@@ -309,7 +309,7 @@ private struct DailyAnimatedRequestAccessButton: View {
           .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
 
         ZStack {
-          Text("解锁 Daily")
+          Text("解锁每日复盘")
             .font(.custom("Figtree", size: 15))
             .fontWeight(.semibold)
             .foregroundColor(.white)
@@ -319,7 +319,7 @@ private struct DailyAnimatedRequestAccessButton: View {
           HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
               .font(.system(size: 14, weight: .semibold))
-            Text("Daily 已解锁")
+            Text("每日复盘已解锁")
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           }
@@ -352,7 +352,7 @@ private struct DailyNotificationPermissionPanelView: View {
 
   var body: some View {
     VStack(spacing: 16) {
-      Text("开启通知以解锁 Daily")
+      Text("开启通知以解锁每日复盘")
         .font(.custom("InstrumentSerif-Regular", size: 30))
         .foregroundColor(Color(red: 0.85, green: 0.45, blue: 0.25))
         .multilineTextAlignment(.center)

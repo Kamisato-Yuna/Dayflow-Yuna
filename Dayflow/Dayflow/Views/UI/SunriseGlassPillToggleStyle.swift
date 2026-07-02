@@ -73,7 +73,7 @@ struct SunriseGlassPillToggleStyle: ToggleStyle {
           .padding(2)
       }
       .accessibilityElement(children: .ignore)
-      .accessibilityValue(Text(isOn ? "On" : "Off"))
+      .accessibilityValue(Text(isOn ? "开启" : "关闭"))
     }
     .buttonStyle(.plain)
     .pointingHandCursor()

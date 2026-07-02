@@ -88,7 +88,7 @@ struct TimelineReviewSummaryCard: View {
 
   private var header: some View {
     VStack(alignment: .leading, spacing: Design.headerSpacing) {
-      Text("Your review")
+      Text("你的复盘")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundColor(Design.titleColor)
 
@@ -114,8 +114,8 @@ struct TimelineReviewSummaryCard: View {
   private var subtitle: Text {
     let baseText =
       summary.hasData
-      ? "Last reviewed at \(formattedLastReviewedAt)."
-      : "No reviews yet."
+      ? "上次复盘于 \(formattedLastReviewedAt)。"
+      : "还没有复盘。"
     var composed = Text(baseText)
       .foregroundColor(Design.subtitleColor)
 
@@ -123,12 +123,12 @@ struct TimelineReviewSummaryCard: View {
       return composed
     }
 
-    let reviewText = "Review \(reviewCountText)"
+    let reviewText = "复盘 \(reviewCountText)"
     composed =
       composed
       + Text(" \(reviewText)")
       .foregroundColor(Design.linkColor)
-      + Text(" to update your data.")
+      + Text("以更新你的数据。")
       .foregroundColor(Design.subtitleColor)
 
     return composed
@@ -195,7 +195,7 @@ struct TimelineReviewSummaryCard: View {
     let placeholder = summary.hasData == false
     let distracted = ReviewMetric(
       id: "distracted",
-      label: "Distracted",
+      label: "分心",
       ratio: max(CGFloat(summary.distractedRatio), 0),
       durationText: durationText(summary.distractedDuration),
       style: metricStyle(
@@ -209,7 +209,7 @@ struct TimelineReviewSummaryCard: View {
 
     let neutral = ReviewMetric(
       id: "neutral",
-      label: "Neutral",
+      label: "中性",
       ratio: max(CGFloat(summary.neutralRatio), 0),
       durationText: durationText(summary.neutralDuration),
       style: metricStyle(
@@ -223,7 +223,7 @@ struct TimelineReviewSummaryCard: View {
 
     let productive = ReviewMetric(
       id: "productive",
-      label: "Focused",
+      label: "专注",
       ratio: max(CGFloat(summary.productiveRatio), 0),
       durationText: durationText(summary.productiveDuration),
       style: metricStyle(
@@ -271,11 +271,11 @@ struct TimelineReviewSummaryCard: View {
     let minutes = totalMinutes % 60
 
     if hours > 0 && minutes > 0 {
-      return "\(hours)h \(minutes)m"
+      return "\(hours)小时 \(minutes)分钟"
     } else if hours > 0 {
-      return "\(hours)h"
+      return "\(hours)小时"
     } else {
-      return "\(minutes)m"
+      return "\(minutes)分钟"
     }
   }
 
@@ -285,13 +285,13 @@ struct TimelineReviewSummaryCard: View {
   }
 
   private var reviewCountText: String {
-    cardsToReviewCount == 1 ? "1 card" : "\(cardsToReviewCount) cards"
+    "\(cardsToReviewCount) 张卡片"
   }
 
   private static let timeFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "h:mm a"
-    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "HH:mm"
+    formatter.locale = Locale(identifier: "zh_Hans")
     return formatter
   }()
 }

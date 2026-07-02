@@ -80,7 +80,7 @@ extension DailyView {
             .font(.custom("InstrumentSerif-Regular", size: 22 * scale))
             .foregroundStyle(Color(hex: "2E221B"))
 
-          Text("选择 Daily 如何生成这份复盘，或关闭生成功能。")
+          Text("选择每日复盘如何生成，或关闭生成功能。")
             .font(.custom("Figtree-Regular", size: 12 * scale))
             .foregroundStyle(Color(hex: "8B6B59"))
         }

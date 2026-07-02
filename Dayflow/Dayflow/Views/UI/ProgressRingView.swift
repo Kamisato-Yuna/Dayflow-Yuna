@@ -478,11 +478,11 @@ private struct ProgressRingDemoView: View {
       ProgressRingView(totalSegments: 7, filledSegments: filled)
 
       HStack(spacing: 8) {
-        Button("Advance") { filled = min(filled + 1, 7) }
+        Button("前进") { filled = min(filled + 1, 7) }
           .buttonStyle(.borderedProminent)
           .disabled(filled >= 7)
 
-        Button("Reset") { filled = 0 }
+        Button("重置") { filled = 0 }
           .buttonStyle(.bordered)
       }
     }

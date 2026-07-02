@@ -141,7 +141,7 @@ struct DayflowButton_Previews: PreviewProvider {
       DayflowButton(title: "开始", action: {})
       DayflowButton(title: "继续", action: {}, width: 200)
       DayflowButton(title: "下一步", action: {}, width: 120, fontSize: 14)
-      DayflowButton(title: "Subtle", action: {}, isSubtle: true)
+      DayflowButton(title: "轻量", action: {}, isSubtle: true)
     }
     .padding(40)
     .background(Color.gray.opacity(0.1))
