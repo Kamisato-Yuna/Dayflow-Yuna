@@ -93,7 +93,7 @@ struct JournalWeeklyView: View {
               .foregroundStyle(Color.white)
           }
 
-          Text("设置提醒")
+          Text("Set reminders")
             .font(.custom("Figtree-SemiBold", size: 13))
             .foregroundStyle(JournalWeeklyTokens.accentText)
         }

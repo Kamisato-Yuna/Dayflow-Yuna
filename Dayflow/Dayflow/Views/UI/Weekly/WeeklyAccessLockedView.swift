@@ -38,22 +38,22 @@ struct WeeklyAccessProgressSnapshot: Equatable {
   static let recordedHourTarget = 30
   static let completedBatchTarget = recordedHourTarget * batchesPerRecordedHour
 
-  let completedBatch数量: Int
+  let completedBatchCount: Int
 
   var progress: Double {
-    Double(cappedCompletedBatch数量) / Double(Self.completedBatchTarget)
+    Double(cappedCompletedBatchCount) / Double(Self.completedBatchTarget)
   }
 
   var isComplete: Bool {
-    completedBatch数量 >= Self.completedBatchTarget
+    completedBatchCount >= Self.completedBatchTarget
   }
 
-  var remainingBatch数量: Int {
-    max(Self.completedBatchTarget - completedBatch数量, 0)
+  var remainingBatchCount: Int {
+    max(Self.completedBatchTarget - completedBatchCount, 0)
   }
 
   var recordedTimeText: String {
-    let minutes = cappedCompletedBatch数量 * Self.batchDurationMinutes
+    let minutes = cappedCompletedBatchCount * Self.batchDurationMinutes
     let hours = minutes / 60
     let remainingMinutes = minutes % 60
 
@@ -73,11 +73,11 @@ struct WeeklyAccessProgressSnapshot: Equatable {
   }
 
   func estimatedUnlockDate(from date: Date) -> Date {
-    date.addingTimeInterval(TimeInterval(remainingBatch数量 * Self.batchDurationMinutes * 60))
+    date.addingTimeInterval(TimeInterval(remainingBatchCount * Self.batchDurationMinutes * 60))
   }
 
-  private var cappedCompletedBatch数量: Int {
-    min(max(completedBatch数量, 0), Self.completedBatchTarget)
+  private var cappedCompletedBatchCount: Int {
+    min(max(completedBatchCount, 0), Self.completedBatchTarget)
   }
 }
 
@@ -164,7 +164,7 @@ private struct WeeklyAccessLockCard: View {
       .frame(width: 333, height: 47.2)
       .position(x: 241.5, y: 48.9)
 
-      WeeklyAccess数量downPill(text: recordedTimeText)
+      WeeklyAccessCountdownPill(text: recordedTimeText)
         .frame(width: 166, height: 60)
         .position(x: 244.39, y: 120.49)
 
@@ -186,7 +186,7 @@ private struct WeeklyAccessLockCard: View {
       )
       .buttonStyle(.plain)
       .disabled(isButtonDisabled)
-      .pointingHandCursor开启Hover(enabled: !isButtonDisabled)
+      .pointingHandCursorOnHover(enabled: !isButtonDisabled)
       .position(x: 247.94, y: 229)
     }
     .frame(width: 485, height: 276)
@@ -247,7 +247,7 @@ private struct WeeklyAccessGlowCircle: View {
   }
 }
 
-private struct WeeklyAccess数量downPill: View {
+private struct WeeklyAccessCountdownPill: View {
   let text: String
 
   var body: some View {
@@ -301,7 +301,7 @@ private struct WeeklyAccessProgressBar: View {
 
   var body: some View {
     let clampedProgress = min(max(progress, 0), 1)
-    let knob关闭set = barWidth * clampedProgress
+    let knobOffset = barWidth * clampedProgress
 
     ZStack(alignment: .leading) {
       Capsule(style: .continuous)
@@ -314,7 +314,7 @@ private struct WeeklyAccessProgressBar: View {
         startPoint: .leading,
         endPoint: .trailing
       )
-      .frame(width: max(0, knob关闭set), height: barHeight)
+      .frame(width: max(0, knobOffset), height: barHeight)
       .clipShape(Capsule(style: .continuous))
       .offset(x: knobSize / 2)
 
@@ -331,7 +331,7 @@ private struct WeeklyAccessProgressBar: View {
             .rotationEffect(.degrees(reduceMotion ? 0 : logoRotation))
         )
         .shadow(color: Color(hex: "FF6E00").opacity(0.18), radius: 5, x: 0, y: 2)
-        .offset(x: knob关闭set)
+        .offset(x: knobOffset)
     }
     .frame(width: barWidth + knobSize, height: knobSize, alignment: .leading)
     .onAppear {
@@ -402,7 +402,7 @@ private struct WeeklyAccessPreviewBackground: View {
       let scale = previewScale(for: geometry.size)
       let scaledHeight = Self.contentHeight * scale
       let travel = scrollTravel(contentHeight: scaledHeight, viewportHeight: geometry.size.height)
-      let y关闭set =
+      let yOffset =
         reduceMotion
         ? -travel * 0.32
         : (isScrolledDown ? -travel : geometry.size.height * 0.08)
@@ -412,11 +412,11 @@ private struct WeeklyAccessPreviewBackground: View {
         .scaleEffect(scale, anchor: .top)
         .frame(width: Self.designWidth * scale, height: scaledHeight, alignment: .top)
         .frame(maxWidth: .infinity, alignment: .center)
-        .offset(y: y关闭set)
+        .offset(y: yOffset)
         .opacity(0.46)
         .blur(radius: 2.2)
         .saturation(1.04)
-        .allowsHit测试ing(false)
+        .allowsHitTesting(false)
         .onAppear {
           startScrollingIfNeeded()
         }
@@ -429,7 +429,7 @@ private struct WeeklyAccessPreviewBackground: View {
         }
     }
     .clipped()
-    .allowsHit测试ing(false)
+    .allowsHitTesting(false)
   }
 
   private var previewContent: some View {
@@ -447,7 +447,7 @@ private struct WeeklyAccessPreviewBackground: View {
         .frame(width: Self.designWidth, height: 548, alignment: .topLeading)
         .clipped()
 
-      Weekly专注HeatmapSection(snapshot: .figmaPreview)
+      WeeklyFocusHeatmapSection(snapshot: .figmaPreview)
 
       WeeklyContextChartsSection(snapshot: .figmaPreview)
         .frame(width: Self.designWidth, height: 427, alignment: .topLeading)
@@ -483,8 +483,8 @@ extension WeeklySankeySnapshot {
       .init(id: "research", name: "Research", minutes: 430, colorHex: "93BCFF"),
       .init(id: "communication", name: "Communication", minutes: 360, colorHex: "6CDACD"),
       .init(id: "design", name: "Design", minutes: 720, colorHex: "DE9DFC"),
-      .init(id: "testing", name: "测试ing", minutes: 240, colorHex: "FFA189"),
-      .init(id: "distractions", name: "分心", minutes: 150, colorHex: "FF5950"),
+      .init(id: "testing", name: "Testing", minutes: 240, colorHex: "FFA189"),
+      .init(id: "distractions", name: "Distractions", minutes: 150, colorHex: "FF5950"),
       .init(id: "personal", name: "Personal", minutes: 180, colorHex: "FFC6B7"),
     ],
     apps: [
@@ -518,7 +518,7 @@ extension WeeklySankeySnapshot {
 
 #Preview("Weekly Access Locked", traits: .fixedLayout(width: 1024, height: 604)) {
   WeeklyAccessLockedView(
-    accessProgress: WeeklyAccessProgressSnapshot(completedBatch数量: 34),
+    accessProgress: WeeklyAccessProgressSnapshot(completedBatchCount: 34),
     notificationState: .idle,
     onNotify: {}
   )

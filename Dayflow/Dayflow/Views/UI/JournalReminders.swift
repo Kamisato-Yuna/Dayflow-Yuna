@@ -18,18 +18,18 @@ struct JournalRemindersView: View {
     .monday, .tuesday, .wednesday, .thursday, .friday,
   ]
 
-  @专注State private var focusedField: Field?
+  @FocusState private var focusedField: Field?
   @State private var highlightedField: Field?
   private let labelColumnWidth: CGFloat = 146
 
   var body: some View {
     VStack(spacing: 24) {
       VStack(spacing: 6) {
-        Text("设置提醒")
+        Text("Set reminders")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .kerning(-0.22)
           .foregroundColor(JournalReminderTokens.primaryText)
-        Text("设置定时提醒，提示你在意图与复盘提醒。")
+        Text("Set recurring notifications to remind yourself to set your intentions and reflect.")
           .font(.custom("Figtree-Regular", size: 12))
           .kerning(-0.12)
           .foregroundColor(JournalReminderTokens.primaryText.opacity(0.9))
@@ -58,7 +58,7 @@ struct JournalRemindersView: View {
           periodField: .reflectionPeriod
         )
 
-        repeat开启Row
+        repeatOnRow
       }
       .padding(.horizontal, 24)
       .padding(.vertical, 28)
@@ -70,8 +70,8 @@ struct JournalRemindersView: View {
       )
 
       HStack(spacing: 12) {
-        // 测试 button (fires notification in 3 seconds)
-        Button("测试", action: send测试Notification)
+        // Test button (fires notification in 3 seconds)
+        Button("Test", action: sendTestNotification)
           .buttonStyle(
             JournalReminderPillButtonStyle(
               background: JournalReminderTokens.inputBackground,
@@ -142,7 +142,7 @@ struct JournalRemindersView: View {
     reflectionMinute = String(format: "%02d", savedReflectionMinute)
     reflectionPeriod = refPeriod
 
-    // Convert 日历 weekdays (1=Sun) to Weekday enum (0=Sun)
+    // Convert Calendar weekdays (1=Sun) to Weekday enum (0=Sun)
     selectedDays = Set(
       savedWeekdays.compactMap { calWeekday in
         Weekday(rawValue: NotificationPreferences.viewWeekday(from: calWeekday))
@@ -163,7 +163,7 @@ struct JournalRemindersView: View {
     NotificationPreferences.reflectionHour = reflectionHour24
     NotificationPreferences.reflectionMinute = Int(reflectionMinute) ?? 0
 
-    // Convert Weekday enum (0=Sun) to 日历 weekdays (1=Sun)
+    // Convert Weekday enum (0=Sun) to Calendar weekdays (1=Sun)
     NotificationPreferences.weekdays = Set(
       selectedDays.map { weekday in
         NotificationPreferences.calendarWeekday(from: weekday.rawValue)
@@ -171,7 +171,7 @@ struct JournalRemindersView: View {
 
     // Request permission and schedule notifications
     Task {
-      await NotificationService.shared.request权限()
+      await NotificationService.shared.requestPermission()
       NotificationService.shared.scheduleReminders()
     }
 
@@ -202,14 +202,14 @@ struct JournalRemindersView: View {
     }
   }
 
-  private func send测试Notification() {
+  private func sendTestNotification() {
     Task {
       // Request permission first if needed
-      await NotificationService.shared.request权限()
+      await NotificationService.shared.requestPermission()
 
       // Schedule a test notification in 3 seconds
       let content = UNMutableNotificationContent()
-      content.title = "测试: Set your intentions"
+      content.title = "Test: Set your intentions"
       content.body = "This is a test notification from Dayflow."
       content.sound = .default
       content.categoryIdentifier = "journal_reminder"
@@ -223,7 +223,7 @@ struct JournalRemindersView: View {
 
       do {
         try await UNUserNotificationCenter.current().add(request)
-        print("[JournalReminders] 测试 notification scheduled for 3 seconds")
+        print("[JournalReminders] Test notification scheduled for 3 seconds")
 
         // Also set badge directly after delay (for testing - delegate should also set it)
         try await Task.sleep(nanoseconds: 3_500_000_000)  // 3.5 seconds
@@ -258,7 +258,7 @@ struct JournalRemindersView: View {
         Text(":")
           .font(.custom("Figtree", size: 14))
           .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
-          .baseline关闭set(-1)
+          .baselineOffset(-1)
         TimeDigitField(text: minute, field: minuteField, focusedField: $focusedField)
         PeriodDropdown(
           selection: period,
@@ -270,9 +270,9 @@ struct JournalRemindersView: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  private var repeat开启Row: some View {
+  private var repeatOnRow: some View {
     HStack(alignment: .center, spacing: 8) {
-      Text("每次执行")
+      Text("Repeat on")
         .font(.custom("Figtree-Regular", size: 14))
         .kerning(-0.14)
         .foregroundColor(JournalReminderTokens.primaryText)
@@ -289,7 +289,7 @@ struct JournalRemindersView: View {
 private struct TimeDigitField: View {
   @Binding var text: String
   let field: JournalRemindersView.Field
-  let focusedField: 专注State<JournalRemindersView.Field?>.Binding
+  let focusedField: FocusState<JournalRemindersView.Field?>.Binding
   @State private var isHovering = false
 
   var body: some View {

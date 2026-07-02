@@ -16,8 +16,8 @@ struct DayDistractionSummarySection: View {
   let isSelectionEmpty: Bool
   let categories: [TimelineCategory]
   let selectedCategoryIDs: Set<UUID>
-  let isEditing分类: Bool
-  var onEdit分类: () -> Void
+  let isEditingCategories: Bool
+  var onEditCategories: () -> Void
   var onToggleCategory: (TimelineCategory) -> Void
   var onDoneEditing: () -> Void
 
@@ -25,8 +25,8 @@ struct DayDistractionSummarySection: View {
     static let sectionSpacing: CGFloat = 16
     static let editButtonSize: CGFloat = 20
     static let editorWidth: CGFloat = 358
-    static let editor关闭setX: CGFloat = -18
-    static let editor关闭setY: CGFloat = 28
+    static let editorOffsetX: CGFloat = -18
+    static let editorOffsetY: CGFloat = 28
     static let titleColor = Color(hex: "333333")
     static let subtitleColor = Color(hex: "707070")
   }
@@ -36,7 +36,7 @@ struct DayDistractionSummarySection: View {
       header
 
       if isSelectionEmpty {
-        Text("编辑分类来计算分心情况。")
+        Text("Edit categories to calculate distractions.")
           .font(.custom("Figtree", size: 11))
           .foregroundColor(Design.subtitleColor)
       }
@@ -52,16 +52,16 @@ struct DayDistractionSummarySection: View {
       .opacity(isSelectionEmpty ? 0.45 : 1)
     }
     .overlay(alignment: .topLeading) {
-      if isEditing分类 {
+      if isEditingCategories {
         DayCategorySelectionEditor(
           categories: categories,
           selectedCategoryIDs: selectedCategoryIDs,
-          helperText: "选择算作分心的分类",
+          helperText: "Pick the categories that count towards Distractions",
           onToggle: onToggleCategory,
           onDone: onDoneEditing
         )
         .frame(width: Design.editorWidth, alignment: .leading)
-        .offset(x: Design.editor关闭setX, y: Design.editor关闭setY)
+        .offset(x: Design.editorOffsetX, y: Design.editorOffsetY)
         .onTapGesture {}
       }
     }
@@ -69,14 +69,14 @@ struct DayDistractionSummarySection: View {
 
   private var header: some View {
     HStack(alignment: .center, spacing: 6) {
-      Text("分心总计")
+      Text("Distractions so far")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundColor(Design.titleColor)
 
       Spacer()
 
       CategoryEditCircleButton(
-        action: onEdit分类,
+        action: onEditCategories,
         diameter: Design.editButtonSize
       )
     }

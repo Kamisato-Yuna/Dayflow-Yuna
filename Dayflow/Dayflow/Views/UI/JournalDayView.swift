@@ -20,7 +20,7 @@ struct BookFlipModifier: ViewModifier {
       .overlay(
         Color.black
           .opacity(calculateShadowOpacity(angle: angle))
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
       )
   }
 
@@ -327,7 +327,7 @@ extension JournalDayView {
               .foregroundStyle(JournalDayTokens.reminderText)
               .frame(width: 16, height: 16)
 
-            Text("设置提醒")
+            Text("Set reminders")
               .font(.custom("Figtree-SemiBold", size: 12))
               .foregroundStyle(JournalDayTokens.reminderText)
           }
@@ -348,7 +348,7 @@ private struct JournalTextEditor: View {
   @Binding var text: String
   var placeholder: String
   var minLines: Int = 3
-  var auto专注: Bool = false
+  var autoFocus: Bool = false
 
   private let font = NSFont(name: "Figtree-Regular", size: 15) ?? .systemFont(ofSize: 15)
   private let verticalInset: CGFloat = 4
@@ -362,7 +362,7 @@ private struct JournalTextEditor: View {
           .foregroundStyle(JournalDayTokens.bodyText.opacity(0.45))
           .padding(.top, verticalInset)
           .padding(.leading, 4)
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
       }
 
       MacTextView(
@@ -370,7 +370,7 @@ private struct JournalTextEditor: View {
         height: $height,
         minLines: minLines,
         font: font,
-        auto专注: auto专注
+        autoFocus: autoFocus
       )
       .frame(height: max(height, calculateMinHeight()))
     }
@@ -392,7 +392,7 @@ private struct MacTextView: NSViewRepresentable {
   @Binding var height: CGFloat
   var minLines: Int
   var font: NSFont
-  var auto专注: Bool = false
+  var autoFocus: Bool = false
 
   func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
 
@@ -422,7 +422,7 @@ private struct MacTextView: NSViewRepresentable {
       .foregroundColor: NSColor(red: 0.18, green: 0.11, blue: 0.06, alpha: 1.0),
     ]
 
-    if auto专注 {
+    if autoFocus {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         textView.window?.makeFirstResponder(textView)
       }
@@ -470,8 +470,8 @@ private struct MacTextView: NSViewRepresentable {
 }
 
 private class JournalClickableTextView: NSTextView {
-  override func hit测试(_ point: NSPoint) -> NSView? {
-    let hitView = super.hit测试(point)
+  override func hitTest(_ point: NSPoint) -> NSView? {
+    let hitView = super.hitTest(point)
     if hitView != nil { return hitView }
     if self.bounds.contains(point) { return self }
     return nil
@@ -564,7 +564,7 @@ private struct IntentionsEditForm: View {
 
   private var sectionIntentions: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text("今日意图")
+      Text("Today's intentions")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundStyle(JournalDayTokens.sectionHeader)
         .padding(.leading, titleLeading)
@@ -573,7 +573,7 @@ private struct IntentionsEditForm: View {
         text: $intentions,
         placeholder: intentionsPlaceholder,
         minLines: 3,
-        auto专注: true
+        autoFocus: true
       )
     }
   }
@@ -598,7 +598,7 @@ private struct IntentionsEditForm: View {
   private var sectionGoals: some View {
     VStack(alignment: .leading, spacing: 0) {
       HStack(spacing: 6) {
-        Text("长期目标")
+        Text("Long term goals")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .foregroundStyle(JournalDayTokens.sectionHeader)
           .padding(.leading, titleLeading)
@@ -708,7 +708,7 @@ private struct JournalLeftCardView: View {
   var body: some View {
     ScrollView(.vertical, showsIndicators: false) {
       VStack(alignment: .leading, spacing: 18) {
-        section("今日意图") {
+        section("Today's intentions") {
           JournalDayBulletList(items: intentions)
         }
         section("Notes for the day") {
@@ -721,7 +721,7 @@ private struct JournalLeftCardView: View {
           .foregroundStyle(JournalDayTokens.divider)
           .overlay(JournalDayTokens.divider)
           .padding(.vertical, 6)
-        section("长期目标") {
+        section("Long term goals") {
           JournalDayBulletList(items: goals)
         }
         Spacer(minLength: 0)
@@ -811,12 +811,12 @@ private struct ReflectionPromptCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("今日复盘")
+      Text("Today's reflections")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundStyle(JournalDayTokens.sectionHeader.opacity(0.4))
 
       Text(
-        "在一天结束前后，回顾你的意图。 Let Dayflow generate a narrative summary based on the activities on your Timeline."
+        "Return near the end of your day to reflect on your intentions. Let Dayflow generate a narrative summary based on the activities on your Timeline."
       )
       .font(.custom("Figtree-Regular", size: 15))
       .foregroundStyle(JournalDayTokens.bodyText.opacity(0.65))
@@ -827,7 +827,7 @@ private struct ReflectionPromptCard: View {
       if isEnabled {
         HStack {
           Spacer()
-          Button("回顾今天", action: onReflect)
+          Button("Reflect on your day", action: onReflect)
             .buttonStyle(JournalPillButtonStyle(horizontalPadding: 20, verticalPadding: 10))
         }
       }
@@ -843,7 +843,7 @@ private struct ReflectionEditorCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("今日反思")
+      Text("Your reflections")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
@@ -887,7 +887,7 @@ private struct ReflectionSavedCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("今日反思")
+      Text("Your reflections")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
@@ -901,7 +901,7 @@ private struct ReflectionSavedCard: View {
             .padding(.horizontal, 2)
         }
       } else {
-        Text("在一天结束前后，回顾你的意图。")
+        Text("Return near the end of your day to reflect on your intentions.")
           .font(.custom("Figtree-Regular", size: 15))
           .foregroundStyle(JournalDayTokens.bodyText.opacity(0.65))
       }
@@ -913,7 +913,7 @@ private struct ReflectionSavedCard: View {
         if isLoading {
           HStack(spacing: 8) {
             ProgressView().scaleEffect(0.8)
-            Text("正在生成摘要…").font(.custom("Figtree-Regular", size: 14))
+            Text("Generating summary...").font(.custom("Figtree-Regular", size: 14))
               .foregroundStyle(
                 JournalDayTokens.bodyText.opacity(0.7))
           }
@@ -968,7 +968,7 @@ private struct SummaryCard: View {
       }
 
       VStack(alignment: .leading, spacing: 8) {
-        Text("今日反思")
+        Text("Your reflections")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .foregroundStyle(JournalDayTokens.sectionHeader)
 
@@ -978,7 +978,7 @@ private struct SummaryCard: View {
             .foregroundStyle(JournalDayTokens.bodyText)
             .fixedSize(horizontal: false, vertical: true)
         } else {
-          Text("在一天结束前后，回顾你的意图。")
+          Text("Return near the end of your day to reflect on your intentions.")
             .font(.custom("Figtree-Regular", size: 15))
             .foregroundStyle(JournalDayTokens.bodyText.opacity(0.65))
         }
@@ -986,7 +986,7 @@ private struct SummaryCard: View {
 
       if let onRegenerate {
         Button(action: onRegenerate) {
-          Text("重生成摘要")
+          Text("Regenerate summary")
             .font(.custom("Figtree-Regular", size: 13))
             .foregroundStyle(JournalDayTokens.sectionHeader)
         }
@@ -1007,7 +1007,7 @@ private struct IntroView: View {
 
   var body: some View {
     VStack(spacing: 20) {
-      Text("设置今日意图并跟踪进度")
+      Text("Set daily intentions and track your progress")
         .font(.custom("InstrumentSerif-Regular", size: 34))
         .foregroundStyle(JournalDayTokens.sectionHeader)
         .multilineTextAlignment(.center)
@@ -1042,7 +1042,7 @@ private struct SummaryView: View {
 
   var body: some View {
     VStack(spacing: 20) {
-      Text("昨日汇总")
+      Text("Summary from yesterday")
         .font(.custom("InstrumentSerif-Regular", size: 30))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
@@ -1054,7 +1054,7 @@ private struct SummaryView: View {
       .frame(maxHeight: 300)
 
       Button(action: onTapCTA) {
-        Text("设置今日意图")
+        Text("Set today's intentions")
           .font(.custom("Figtree-SemiBold", size: 17))
       }
       .buttonStyle(JournalPillButtonStyle(horizontalPadding: 28, verticalPadding: 10))

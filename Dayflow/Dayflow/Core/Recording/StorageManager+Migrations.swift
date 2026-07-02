@@ -45,7 +45,7 @@ extension StorageManager {
 
           let pattern = replacement.legacyPrefix + "%"
           let count =
-            try Int.fetch开启e(
+            try Int.fetchOne(
               db,
               sql: "SELECT COUNT(*) FROM \(replacement.table) WHERE \(replacement.column) LIKE ?",
               arguments: [pattern]
@@ -62,7 +62,7 @@ extension StorageManager {
             arguments: [replacement.legacyPrefix, replacement.newPrefix, pattern]
           )
 
-          let updated = db.changes数量
+          let updated = db.changesCount
           print(
             "ℹ️ StorageManager: migrated \(updated) \(replacement.label) to \(replacement.newPrefix)"
           )
@@ -82,7 +82,7 @@ extension StorageManager {
     let filenames = ["chunks.sqlite", "chunks.sqlite-wal", "chunks.sqlite-shm"]
 
     guard
-      filenames.contains(w这里: {
+      filenames.contains(where: {
         fileManager.fileExists(atPath: legacyRecordingsDir.appendingPathComponent($0).path)
       })
     else {

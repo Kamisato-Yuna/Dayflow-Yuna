@@ -24,7 +24,7 @@ final class FilmstripGenerator {
   private let queue: OperationQueue = {
     let q = OperationQueue()
     q.name = "com.dayflow.filmstripgen"
-    q.maxConcurrentOperation数量 = 1
+    q.maxConcurrentOperationCount = 1
     q.qualityOfService = .userInitiated
     return q
   }()
@@ -36,13 +36,13 @@ final class FilmstripGenerator {
   private init() {}
 
   func generate(
-    url: URL, frame数量: Int, targetHeight: CGFloat, completion: @escaping (Int, [NSImage]) -> Void
+    url: URL, frameCount: Int, targetHeight: CGFloat, completion: @escaping (Int, [NSImage]) -> Void
   ) {
     // Key by file path + mtime + parameters
-    let key = Self.cacheKey(for: url, frame数量: frame数量, targetHeight: targetHeight)
+    let key = Self.cacheKey(for: url, frameCount: frameCount, targetHeight: targetHeight)
 
     if let images = syncQueue.sync(execute: { cache[key] }) {
-      completion(frame数量, images)
+      completion(frameCount, images)
       return
     }
 
@@ -84,12 +84,12 @@ final class FilmstripGenerator {
       semaphore.wait()
 
       guard isPlayable else {
-        self.finish(key: key, frame数量: frame数量, images: [])
+        self.finish(key: key, frameCount: frameCount, images: [])
         return
       }
 
       if durationSec.isNaN || durationSec.isInfinite || durationSec <= 0 {
-        self.finish(key: key, frame数量: frame数量, images: [])
+        self.finish(key: key, frameCount: frameCount, images: [])
         return
       }
 
@@ -103,8 +103,8 @@ final class FilmstripGenerator {
         width: targetHeight * 16 / 9 * scale, height: targetHeight * scale)
 
       // Evenly spaced times across duration (avoid 0 exactly)
-      let step = duration / Double(frame数量)
-      let times: [NSValue] = (0..<frame数量).map { i in
+      let step = duration / Double(frameCount)
+      let times: [NSValue] = (0..<frameCount).map { i in
         let t = max(0.001, Double(i) * step + step * 0.5)
         return NSValue(time: CMTime(seconds: t, preferredTimescale: 600))
       }
@@ -113,7 +113,7 @@ final class FilmstripGenerator {
         indexMap[v.timeValue.value] = i
       }
 
-      var images: [NSImage] = Array(repeating: NSImage(), count: frame数量)
+      var images: [NSImage] = Array(repeating: NSImage(), count: frameCount)
       var produced = 0
 
       // Use generateCGImagesAsynchronously for better throughput
@@ -123,43 +123,43 @@ final class FilmstripGenerator {
           let index =
             indexMap[requestedTime.value]
             ?? Int(
-              (CMTimeGetSeconds(actualTime) / duration * Double(frame数量)).clamped(
-                to: 0.0, Double(frame数量 - 1)))
+              (CMTimeGetSeconds(actualTime) / duration * Double(frameCount)).clamped(
+                to: 0.0, Double(frameCount - 1)))
           let image = NSImage(cgImage: cg, size: NSSize(width: cg.width, height: cg.height))
           if index >= 0 && index < images.count {
             images[index] = image
           }
         }
         produced += 1
-        if produced == frame数量 {
+        if produced == frameCount {
           self.syncQueue.sync {
             self.cache[key] = images
           }
-          self.finish(key: key, frame数量: frame数量, images: images)
+          self.finish(key: key, frameCount: frameCount, images: images)
         }
       }
     }
   }
 
-  private func finish(key: String, frame数量: Int, images: [NSImage]) {
+  private func finish(key: String, frameCount: Int, images: [NSImage]) {
     var callbacks: [(Int, [NSImage]) -> Void] = []
     syncQueue.sync {
       callbacks = inflight[key] ?? []
       inflight.removeValue(forKey: key)
     }
     DispatchQueue.main.async {
-      callbacks.forEach { $0(frame数量, images) }
+      callbacks.forEach { $0(frameCount, images) }
     }
   }
 
-  private static func cacheKey(for url: URL, frame数量: Int, targetHeight: CGFloat) -> String {
+  private static func cacheKey(for url: URL, frameCount: Int, targetHeight: CGFloat) -> String {
     var mtimeString = "-"
     if url.isFileURL, let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
       let mtime = attrs[.modificationDate] as? Date
     {
       mtimeString = String(Int(mtime.timeIntervalSince1970))
     }
-    return "\(url.absoluteString)|m:\(mtimeString)|n:\(frame数量)|h:\(Int(targetHeight.rounded()))"
+    return "\(url.absoluteString)|m:\(mtimeString)|n:\(frameCount)|h:\(Int(targetHeight.rounded()))"
   }
 }
 
@@ -175,7 +175,7 @@ struct ScrubberView: View {
   @State private var images: [NSImage] = []
   @State private var isDragging: Bool = false
 
-  private let frame数量 = 12
+  private let frameCount = 12
   private let filmstripHeight: CGFloat = 64
   private let aspect: CGFloat = 16.0 / 9.0
   private let zoom: CGFloat = 1.2  // 20% zoom
@@ -268,12 +268,12 @@ struct ScrubberView: View {
               .frame(width: 5, height: barHeight)
               .shadow(color: .black.opacity(0.25), radius: 1.0, x: 0, y: 0)
               .offset(x: xInside - 2.5, y: -3)
-              .allowsHit测试ing(false)
+              .allowsHitTesting(false)
             Rectangle()
               .fill(Color.white)
               .frame(width: 3, height: barHeight)
               .offset(x: xInside - 1.5, y: -3)
-              .allowsHit测试ing(false)
+              .allowsHitTesting(false)
           }
           .frame(width: stripWidth, height: filmstripHeight)
           .padding(.horizontal, sideGutter)  // create outer gutters
@@ -324,9 +324,9 @@ struct ScrubberView: View {
 
   private func generateFilmstripIfNeeded(count: Int) {
     guard count > 0 else { return }
-    FilmstripGenerator.shared.generate(url: url, frame数量: count, targetHeight: filmstripHeight) {
-      produced数量, imgs in
-      // 开启ly set if counts match current expectation to avoid race during resizes
+    FilmstripGenerator.shared.generate(url: url, frameCount: count, targetHeight: filmstripHeight) {
+      producedCount, imgs in
+      // Only set if counts match current expectation to avoid race during resizes
       self.images = imgs
     }
   }

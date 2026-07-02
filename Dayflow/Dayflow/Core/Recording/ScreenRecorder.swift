@@ -52,7 +52,7 @@ private enum InputIdleSnapshot {
   }
 }
 
-// MARK: - 调试日志ging
+// MARK: - Debug Logging
 
 private let recorderDebugLogging = false
 @inline(__always) func dbg(_ msg: @autoclosure () -> String) {
@@ -116,7 +116,7 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
           guard let self else { return }
           self.wantsRecording = rec
 
-          // 清除 paused state when user disables recording
+          // Clear paused state when user disables recording
           if !rec && self.state == .paused {
             self.transition(to: .idle, context: "user disabled recording")
           }
@@ -222,15 +222,15 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
   // MARK: - Capture Setup
 
   private func setupCapture(attempt: Int = 1, maxAttempts: Int = 4) async {
-    guard ScreenRecording权限Notice.isGranted else {
-      handleMissingScreenRecording权限(reason: "setupCapture")
+    guard ScreenRecordingPermissionNotice.isGranted else {
+      handleMissingScreenRecordingPermission(reason: "setupCapture")
       return
     }
 
     do {
       // 1. Get shareable content (requires screen recording permission)
       let content = try await SCShareableContent.excludingDesktopWindows(
-        false, onScreenWindows开启ly: true)
+        false, onScreenWindowsOnly: true)
       cachedContent = content
 
       // 2. Choose display: prefer requested → active → first
@@ -280,8 +280,8 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
     } catch {
       dbg("setupCapture failed [attempt \(attempt)] – \(error.localizedDescription)")
 
-      if !ScreenRecording权限Notice.isGranted {
-        handleMissingScreenRecording权限(reason: "setupCapture_failed_permission")
+      if !ScreenRecordingPermissionNotice.isGranted {
+        handleMissingScreenRecordingPermission(reason: "setupCapture_failed_permission")
         return
       }
 
@@ -343,8 +343,8 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
       dbg("captureScreenshot skipped - no display")
       return
     }
-    guard ScreenRecording权限Notice.isGranted else {
-      handleMissingScreenRecording权限(reason: "captureScreenshot")
+    guard ScreenRecordingPermissionNotice.isGranted else {
+      handleMissingScreenRecordingPermission(reason: "captureScreenshot")
       return
     }
 
@@ -421,8 +421,8 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
     } catch {
       dbg("❌ Screenshot capture failed: \(error.localizedDescription)")
 
-      if !ScreenRecording权限Notice.isGranted {
-        handleMissingScreenRecording权限(reason: "captureScreenshot_failed_permission")
+      if !ScreenRecordingPermissionNotice.isGranted {
+        handleMissingScreenRecordingPermission(reason: "captureScreenshot_failed_permission")
         return
       }
 
@@ -460,21 +460,21 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
   }
 
   private func refreshDisplay() async {
-    guard ScreenRecording权限Notice.isGranted else {
-      handleMissingScreenRecording权限(reason: "refreshDisplay")
+    guard ScreenRecordingPermissionNotice.isGranted else {
+      handleMissingScreenRecordingPermission(reason: "refreshDisplay")
       return
     }
 
     do {
       let content = try await SCShareableContent.excludingDesktopWindows(
-        false, onScreenWindows开启ly: true)
+        false, onScreenWindowsOnly: true)
       cachedContent = content
 
       // Prefer requested display (from active display tracking) over current
       let targetID = requestedDisplayID ?? currentDisplayID
 
       if let id = targetID,
-        let display = content.displays.first(w这里: { $0.displayID == id })
+        let display = content.displays.first(where: { $0.displayID == id })
       {
         cachedDisplay = display
         currentDisplayID = id
@@ -485,8 +485,8 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
         currentDisplayID = first.displayID
       }
     } catch {
-      if !ScreenRecording权限Notice.isGranted {
-        handleMissingScreenRecording权限(reason: "refreshDisplay_failed_permission")
+      if !ScreenRecordingPermissionNotice.isGranted {
+        handleMissingScreenRecordingPermission(reason: "refreshDisplay_failed_permission")
         return
       }
 
@@ -494,7 +494,7 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
     }
   }
 
-  private func handleMissingScreenRecording权限(reason: String) {
+  private func handleMissingScreenRecordingPermission(reason: String) {
     q.async { [weak self] in
       guard let self else { return }
       self.stopCaptureTimer()
@@ -515,7 +515,7 @@ final class ScreenRecorder: NSObject, @unchecked Sendable {
           persistPreference: false
         )
       }
-      ScreenRecording权限Notice.post(reason: reason)
+      ScreenRecordingPermissionNotice.post(reason: reason)
     }
   }
 

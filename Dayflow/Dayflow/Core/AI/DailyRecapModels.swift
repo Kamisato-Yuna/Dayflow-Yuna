@@ -154,8 +154,8 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
       return trimmed
     }
 
-    let raw引擎 = defaults.string(forKey: "llmLocal引擎") ?? Local引擎.ollama.rawValue
-    let engine = Local引擎(rawValue: raw引擎) ?? .ollama
+    let rawEngine = defaults.string(forKey: "llmLocalEngine") ?? LocalEngine.ollama.rawValue
+    let engine = LocalEngine(rawValue: rawEngine) ?? .ollama
     return LocalModelPreferences.defaultModelId(for: engine)
   }
 }
@@ -310,7 +310,7 @@ enum DailyRecapSourceDayResolver {
   ) -> DailyRecapSourceDayCandidate? {
     guard lookbackWindowDays > 0 else { return nil }
 
-    let calendar = 日历.current
+    let calendar = Calendar.current
     for offset in 1...lookbackWindowDays {
       guard
         let sourceStart = calendar.date(byAdding: .day, value: -offset, to: targetStart)

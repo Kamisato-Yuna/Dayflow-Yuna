@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum WeeklyInteractionGraphFixtures {
-  static let title = "高频应用互动"
+  static let title = "Interactions between most used applications"
   static let subtitle = "More than 80% of recorded time was spent using these applications."
 
   static let figmaReference = WeeklyInteractionGraphSnapshot(
@@ -17,7 +17,7 @@ enum WeeklyInteractionGraphFixtures {
       .init(id: "slack", title: "Slack", category: .work, glyph: .slack),
       .init(id: "stats", title: "Stats", category: .work, glyph: .bars),
       .init(id: "zoom", title: "Zoom", category: .work, glyph: .zoom),
-      .init(id: "focus", title: "专注", category: .work, glyph: .bullseye),
+      .init(id: "focus", title: "Focus", category: .work, glyph: .bullseye),
       .init(id: "cube", title: "Cube", category: .personal, glyph: .cube, importanceBoost: 2),
       .init(id: "chatgpt", title: "ChatGPT", category: .personal, glyph: .asset("ChatGPTLogo")),
       .init(id: "burst", title: "Burst", category: .personal, glyph: .burst, importanceBoost: 2),
@@ -143,7 +143,7 @@ enum WeeklyInteractionGraphFixtures {
       .init(id: "chrome", title: "Chrome", category: .personal, glyph: .asset("ChromeFavicon")),
       .init(id: "linear", title: "Linear", category: .personal, glyph: .linear),
       .init(
-        id: "calendar", title: "日历", category: .personal,
+        id: "calendar", title: "Calendar", category: .personal,
         glyph: .monogram("C", backgroundHex: "D9D9D9", foregroundHex: "333333")),
       .init(
         id: "mail", title: "Mail", category: .personal,

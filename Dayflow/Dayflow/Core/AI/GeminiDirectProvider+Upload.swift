@@ -88,7 +88,7 @@ extension GeminiDirectProvider {
       }
     }
 
-    // 全部 cycles failed
+    // All cycles failed
     throw lastError
       ?? NSError(
         domain: "GeminiError", code: 3,
@@ -203,7 +203,7 @@ extension GeminiDirectProvider {
     var uploadRequest = URLRequest(url: URL(string: uploadURL)!)
     uploadRequest.httpMethod = "PUT"
     uploadRequest.setValue("upload, finalize", forHTTPHeaderField: "X-Goog-Upload-Command")
-    uploadRequest.setValue("0", forHTTPHeaderField: "X-Goog-Upload-关闭set")
+    uploadRequest.setValue("0", forHTTPHeaderField: "X-Goog-Upload-Offset")
     uploadRequest.httpBody = data
 
     let uploadStartTime = Date()

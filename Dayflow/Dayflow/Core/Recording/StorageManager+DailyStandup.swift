@@ -10,7 +10,7 @@ extension StorageManager {
   func dailyStandupDayKey(for date: Date = Date(), timeZone: TimeZone = .autoupdatingCurrent)
     -> String
   {
-    var calendar = 日历(identifier: .gregorian)
+    var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = timeZone
 
     let formatter = DateFormatter()
@@ -24,7 +24,7 @@ extension StorageManager {
   func fetchDailyStandup(forDay standupDay: String) -> DailyStandupEntry? {
     return try? timedRead("fetchDailyStandup(forDay:\(standupDay))") { db in
       guard
-        let row = try Row.fetch开启e(
+        let row = try Row.fetchOne(
           db,
           sql: """
                 SELECT standup_day, payload_json, created_at, updated_at
@@ -49,7 +49,7 @@ extension StorageManager {
   /// affecting the scheduler anchor.
   func fetchLatestDailyStandupDay() -> String? {
     return try? timedRead("fetchLatestDailyStandupDay") { db in
-      try String.fetch开启e(
+      try String.fetchOne(
         db,
         sql: """
               SELECT standup_day
@@ -67,7 +67,7 @@ extension StorageManager {
       (try? timedRead("fetchRecentDailyStandups(limit:\(limit))") { db in
         let rows: [Row]
         if let excludingDay, !excludingDay.isEmpty {
-          rows = try Row.fetch全部(
+          rows = try Row.fetchAll(
             db,
             sql: """
                   SELECT standup_day, payload_json, created_at, updated_at
@@ -77,7 +77,7 @@ extension StorageManager {
                   LIMIT ?
               """, arguments: [excludingDay, limit])
         } else {
-          rows = try Row.fetch全部(
+          rows = try Row.fetchAll(
             db,
             sql: """
                   SELECT standup_day, payload_json, created_at, updated_at
@@ -98,12 +98,12 @@ extension StorageManager {
       }) ?? []
   }
 
-  func fetch全部DailyStandups(excludingDay: String? = nil) -> [DailyStandupEntry] {
+  func fetchAllDailyStandups(excludingDay: String? = nil) -> [DailyStandupEntry] {
     return
-      (try? timedRead("fetch全部DailyStandups") { db in
+      (try? timedRead("fetchAllDailyStandups") { db in
         let rows: [Row]
         if let excludingDay, !excludingDay.isEmpty {
-          rows = try Row.fetch全部(
+          rows = try Row.fetchAll(
             db,
             sql: """
                   SELECT standup_day, payload_json, created_at, updated_at
@@ -112,7 +112,7 @@ extension StorageManager {
                   ORDER BY standup_day DESC
               """, arguments: [excludingDay])
         } else {
-          rows = try Row.fetch全部(
+          rows = try Row.fetchAll(
             db,
             sql: """
                   SELECT standup_day, payload_json, created_at, updated_at

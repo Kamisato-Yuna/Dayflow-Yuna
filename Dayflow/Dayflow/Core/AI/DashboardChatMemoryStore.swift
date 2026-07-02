@@ -1,5 +1,5 @@
 //
-//  DashboardChat记忆Store.swift
+//  DashboardChatMemoryStore.swift
 //  Dayflow
 //
 //  Persists a single dashboard chat memory blob.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-enum DashboardChat记忆Store {
+enum DashboardChatMemoryStore {
   static let maxCharacters = 10_000
 
-  private static let memoryKey = "dashboardChat记忆Blob"
-  private static let updatedAtKey = "dashboardChat记忆UpdatedAt"
+  private static let memoryKey = "dashboardChatMemoryBlob"
+  private static let updatedAtKey = "dashboardChatMemoryUpdatedAt"
   private static let store = UserDefaults.standard
 
   static func load() -> String {

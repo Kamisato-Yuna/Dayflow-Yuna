@@ -151,7 +151,7 @@ private struct ChatMarkdownInlineText: View {
       .replacingOccurrences(of: "\r", with: "\n")
 
     let options = AttributedString.MarkdownParsingOptions(
-      interpretedSyntax: .inline开启lyPreservingWhitespace
+      interpretedSyntax: .inlineOnlyPreservingWhitespace
     )
 
     if let parsed = try? AttributedString(markdown: normalized, options: options) {
@@ -198,7 +198,7 @@ enum ChatMarkdownParser {
         blocks.append(.paragraph(text))
       }
 
-      paragraphLines.remove全部(keepingCapacity: true)
+      paragraphLines.removeAll(keepingCapacity: true)
     }
 
     while index < lines.count {
@@ -273,7 +273,7 @@ enum ChatMarkdownParser {
           break
         }
 
-        if leadingSpace数量(in: nextLine) > baseIndent {
+        if leadingSpaceCount(in: nextLine) > baseIndent {
           contentLines.append(trimmed)
           index += 1
           continue
@@ -360,7 +360,7 @@ enum ChatMarkdownParser {
   }
 
   private static func listItemInfo(from line: String) -> ListItemMatch? {
-    let leadingSpaces = leadingSpace数量(in: line)
+    let leadingSpaces = leadingSpaceCount(in: line)
     let trimmedLeading = line.dropFirst(leadingSpaces)
 
     if let remainder = trimmedLeading.dropMarkdownListPrefix("-")
@@ -397,7 +397,7 @@ enum ChatMarkdownParser {
     )
   }
 
-  private static func leadingSpace数量(in line: String) -> Int {
+  private static func leadingSpaceCount(in line: String) -> Int {
     line.prefix(while: { $0 == " " }).count
   }
 

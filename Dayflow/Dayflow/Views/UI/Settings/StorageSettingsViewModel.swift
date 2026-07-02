@@ -6,7 +6,7 @@ import Foundation
 @MainActor
 final class StorageSettingsViewModel: ObservableObject {
   @Published var isRefreshingStorage = false
-  @Published var storage权限Granted: Bool?
+  @Published var storagePermissionGranted: Bool?
   @Published var lastStorageCheck: Date?
   @Published var recordingsUsageBytes: Int64 = 0
   @Published var timelapseUsageBytes: Int64 = 0
@@ -17,8 +17,8 @@ final class StorageSettingsViewModel: ObservableObject {
   @Published var showLimitConfirmation = false
   @Published var pendingLimit: PendingLimit?
 
-  let usageFormatter: Byte数量Formatter = {
-    let formatter = Byte数量Formatter()
+  let usageFormatter: ByteCountFormatter = {
+    let formatter = ByteCountFormatter()
     formatter.allowedUnits = [.useMB, .useGB]
     formatter.countStyle = .file
     return formatter
@@ -35,7 +35,7 @@ final class StorageSettingsViewModel: ObservableObject {
   }
 
   func refreshStorageIfNeeded(isStorageTab: Bool) {
-    if storage权限Granted == nil && isStorageTab {
+    if storagePermissionGranted == nil && isStorageTab {
       refreshStorageMetrics()
     }
   }
@@ -75,7 +75,7 @@ final class StorageSettingsViewModel: ObservableObject {
 
       await MainActor.run {
         guard let self else { return }
-        self.storage权限Granted = permission
+        self.storagePermissionGranted = permission
         self.recordingsUsageBytes = recordingsSize
         self.timelapseUsageBytes = timelapseSize
         self.lastStorageCheck = Date()
@@ -94,10 +94,10 @@ final class StorageSettingsViewModel: ObservableObject {
   func storageFooterText() -> String {
     let recordingsText =
       recordingsLimitBytes == Int64.max
-      ? "Unlimited" : usageFormatter.string(fromByte数量: recordingsLimitBytes)
+      ? "Unlimited" : usageFormatter.string(fromByteCount: recordingsLimitBytes)
     let timelapsesText =
       timelapsesLimitBytes == Int64.max
-      ? "Unlimited" : usageFormatter.string(fromByte数量: timelapsesLimitBytes)
+      ? "Unlimited" : usageFormatter.string(fromByteCount: timelapsesLimitBytes)
     return
       "Recording cap: \(recordingsText) • Timelapse cap: \(timelapsesText). Lowering a cap immediately deletes the oldest files for that type. Timeline card text stays preserved. Please avoid deleting files manually so you do not remove Dayflow's database."
   }
@@ -178,10 +178,10 @@ final class StorageSettingsViewModel: ObservableObject {
     if bytes >= Int64.max {
       return storageOptions.count - 1
     }
-    if let exact = storageOptions.firstIndex(w这里: { $0.resolvedBytes == bytes }) {
+    if let exact = storageOptions.firstIndex(where: { $0.resolvedBytes == bytes }) {
       return exact
     }
-    for option in storageOptions w这里 option.bytes != nil {
+    for option in storageOptions where option.bytes != nil {
       if bytes <= option.resolvedBytes {
         return option.id
       }
@@ -193,7 +193,7 @@ final class StorageSettingsViewModel: ObservableObject {
     let fileManager = FileManager.default
     guard
       let enumerator = fileManager.enumerator(
-        at: url, includingPropertiesForKeys: [.file全部ocatedSizeKey, .totalFile全部ocatedSizeKey],
+        at: url, includingPropertiesForKeys: [.fileAllocatedSizeKey, .totalFileAllocatedSizeKey],
         options: [.skipsHiddenFiles])
     else {
       return 0
@@ -202,9 +202,9 @@ final class StorageSettingsViewModel: ObservableObject {
     for case let fileURL as URL in enumerator {
       do {
         let values = try fileURL.resourceValues(forKeys: [
-          .totalFile全部ocatedSizeKey, .file全部ocatedSizeKey,
+          .totalFileAllocatedSizeKey, .fileAllocatedSizeKey,
         ])
-        total += Int64(values.totalFile全部ocatedSize ?? values.file全部ocatedSize ?? 0)
+        total += Int64(values.totalFileAllocatedSize ?? values.fileAllocatedSize ?? 0)
       } catch {
         continue
       }

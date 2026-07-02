@@ -76,7 +76,7 @@ extension DailyView {
     }
     .buttonStyle(DailyCopyPressButtonStyle())
     .animation(.easeInOut(duration: 0.22), value: standupCopyState)
-    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+    .pointingHandCursorOnHover(reassertOnPressEnd: true)
     .accessibilityLabel(
       Text(standupCopyState == .copied ? "站会更新已复制" : "复制站会更新"))
   }
@@ -143,10 +143,10 @@ extension DailyView {
     .buttonStyle(DailyCopyPressButtonStyle())
     .animation(.easeInOut(duration: 0.22), value: standupRegenerateState)
     .disabled(!canRegenerateStandup)
-    .pointingHandCursor开启Hover(
-      enabled: canRegenerateStandup, reassert开启PressEnd: true
+    .pointingHandCursorOnHover(
+      enabled: canRegenerateStandup, reassertOnPressEnd: true
     )
-    .accessibilityLabel(Text("重生成站会亮点"))
+    .accessibilityLabel(Text("Regenerate standup highlights"))
     .help(regenerateButtonHelpText)
     .background {
       if standupRegenerateState == .regenerating {
@@ -232,7 +232,7 @@ extension DailyView {
     pasteboard.clearContents()
     pasteboard.setString(clipboardText, forType: .string)
 
-    standupCopy重置Task?.cancel()
+    standupCopyResetTask?.cancel()
 
     withAnimation(.easeInOut(duration: 0.22)) {
       standupCopyState = .copied
@@ -246,7 +246,7 @@ extension DailyView {
         "tasks_count": standupDraft.tasks.count,
       ])
 
-    standupCopy重置Task = Task {
+    standupCopyResetTask = Task {
       try? await Task.sleep(nanoseconds: 2_000_000_000)
       guard !Task.isCancelled else { return }
 
@@ -254,7 +254,7 @@ extension DailyView {
         withAnimation(.easeInOut(duration: 0.22)) {
           standupCopyState = .idle
         }
-        standupCopy重置Task = nil
+        standupCopyResetTask = nil
       }
     }
   }
@@ -290,7 +290,7 @@ extension DailyView {
           ],
           uniquingKeysWith: { _, new in new }
         ))
-      scheduleStandupRegenerate重置()
+      scheduleStandupRegenerateReset()
       return
     }
 
@@ -303,7 +303,7 @@ extension DailyView {
     let currentBlockersTitle = standupTitles.blockers
 
     standupRegenerateTask?.cancel()
-    standupRegenerate重置Task?.cancel()
+    standupRegenerateResetTask?.cancel()
 
     AnalyticsService.shared.capture(
       "daily_standup_regenerate_clicked",
@@ -343,7 +343,7 @@ extension DailyView {
 
           standupRegenerateState = .noData
           standupRegenerateTask = nil
-          scheduleStandupRegenerate重置()
+          scheduleStandupRegenerateReset()
         }
         return
       }
@@ -437,11 +437,11 @@ extension DailyView {
 
         guard !Task.isCancelled else { return }
         let latencyMs = Int(Date().timeIntervalSince(startedAt) * 1000)
-        let blockers数量 = regeneratedDraft.blockersBody
-          .split(w这里Separator: \.isNewline)
+        let blockersCount = regeneratedDraft.blockersBody
+          .split(whereSeparator: \.isNewline)
           .count
         print(
-          "[Daily] Regenerate succeeded run_id=\(regenerateRunId) day=\(dayString) cards=\(cards.count) observations=\(observations.count) highlights=\(regeneratedDraft.highlights.count) tasks=\(regeneratedDraft.tasks.count) blockers=\(blockers数量) latency_ms=\(latencyMs)"
+          "[Daily] Regenerate succeeded run_id=\(regenerateRunId) day=\(dayString) cards=\(cards.count) observations=\(observations.count) highlights=\(regeneratedDraft.highlights.count) tasks=\(regeneratedDraft.tasks.count) blockers=\(blockersCount) latency_ms=\(latencyMs)"
         )
 
         let shouldApplyVisibleResult = await MainActor.run {
@@ -456,7 +456,7 @@ extension DailyView {
                 "timeline_day": storageDayString,
                 "highlights_count": regeneratedDraft.highlights.count,
                 "tasks_count": regeneratedDraft.tasks.count,
-                "blockers_count": blockers数量,
+                "blockers_count": blockersCount,
               ],
               uniquingKeysWith: { _, new in new }
             ))
@@ -468,7 +468,7 @@ extension DailyView {
                 "source": "regenerate_button",
                 "highlights_count": regeneratedDraft.highlights.count,
                 "tasks_count": regeneratedDraft.tasks.count,
-                "blockers_count": blockers数量,
+                "blockers_count": blockersCount,
                 "latency_ms": latencyMs,
               ],
               uniquingKeysWith: { _, new in new }
@@ -489,7 +489,7 @@ extension DailyView {
           standupRegenerateTask = nil
           standupRegenerateState = .regenerated
 
-          scheduleStandupRegenerate重置()
+          scheduleStandupRegenerateReset()
         }
       } catch {
         let nsError = error as NSError
@@ -558,7 +558,7 @@ extension DailyView {
     items.compactMap { sanitizedBulletText($0.text) }
   }
   func sanitizedBlockers(_ text: String) -> [String] {
-    let segments = text.split(w这里Separator: \.isNewline).map(String.init)
+    let segments = text.split(whereSeparator: \.isNewline).map(String.init)
     if segments.isEmpty {
       return sanitizedBulletText(text).map { [$0] } ?? []
     }
@@ -700,15 +700,15 @@ extension DailyView {
       return nil
     }
   }
-  func scheduleStandupRegenerate重置() {
-    standupRegenerate重置Task?.cancel()
-    standupRegenerate重置Task = Task {
+  func scheduleStandupRegenerateReset() {
+    standupRegenerateResetTask?.cancel()
+    standupRegenerateResetTask = Task {
       try? await Task.sleep(nanoseconds: 2_000_000_000)
       guard !Task.isCancelled else { return }
 
       await MainActor.run {
         standupRegenerateState = .idle
-        standupRegenerate重置Task = nil
+        standupRegenerateResetTask = nil
       }
     }
   }
@@ -742,7 +742,7 @@ extension DailyView {
     return "Tasks for \(label)"
   }
   func standupDayLabelText(for date: Date) -> String {
-    let calendar = 日历.current
+    let calendar = Calendar.current
     let displayDate = normalizedTimelineDate(date)
     let timelineToday = timelineDisplayDate(from: Date())
 

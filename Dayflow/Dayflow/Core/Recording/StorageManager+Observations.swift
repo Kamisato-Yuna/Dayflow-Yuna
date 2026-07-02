@@ -24,7 +24,7 @@ extension StorageManager {
 
   func fetchObservations(batchId: Int64) -> [Observation] {
     (try? timedRead("fetchObservations(batchId)") { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT * FROM observations 
@@ -52,7 +52,7 @@ extension StorageManager {
 
     return
       (try? db.read { db in
-        try Row.fetch全部(
+        try Row.fetchAll(
           db,
           sql: """
                 SELECT * FROM observations 
@@ -128,7 +128,7 @@ extension StorageManager {
 
   func fetchObservations(startTs: Int, endTs: Int) -> [Observation] {
     (try? db.read { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT * FROM observations 
@@ -157,7 +157,7 @@ extension StorageManager {
     let sql =
       "SELECT file_url, start_ts, end_ts FROM chunks WHERE file_url IN (\(placeholders)) AND (is_deleted = 0 OR is_deleted IS NULL)"
     try? db.read { db in
-      let rows = try Row.fetch全部(db, sql: sql, arguments: StatementArguments(paths))
+      let rows = try Row.fetchAll(db, sql: sql, arguments: StatementArguments(paths))
       for row in rows {
         if let path: String = row["file_url"],
           let start: Int = row["start_ts"],

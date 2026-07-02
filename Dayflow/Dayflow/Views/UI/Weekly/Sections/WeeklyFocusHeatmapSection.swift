@@ -1,10 +1,10 @@
 import AppKit
 import SwiftUI
 
-struct Weekly专注HeatmapSection: View {
-  let snapshot: Weekly专注HeatmapSnapshot
+struct WeeklyFocusHeatmapSection: View {
+  let snapshot: WeeklyFocusHeatmapSnapshot
   let width: CGFloat
-  let cell空档: CGFloat
+  let cellGap: CGFloat
   let usesScrollContainers: Bool
 
   private enum Design {
@@ -34,26 +34,26 @@ struct Weekly专注HeatmapSection: View {
   }
 
   init(
-    snapshot: Weekly专注HeatmapSnapshot,
+    snapshot: WeeklyFocusHeatmapSnapshot,
     width: CGFloat = Design.cardWidth,
-    cell空档: CGFloat = 1,
+    cellGap: CGFloat = 1,
     usesScrollContainers: Bool = true
   ) {
     self.snapshot = snapshot
     self.width = width
-    self.cell空档 = cell空档
+    self.cellGap = cellGap
     self.usesScrollContainers = usesScrollContainers
   }
 
-  static func exportWidth(for snapshot: Weekly专注HeatmapSnapshot, cell空档: CGFloat = 1) -> CGFloat
+  static func exportWidth(for snapshot: WeeklyFocusHeatmapSnapshot, cellGap: CGFloat = 1) -> CGFloat
   {
-    let column数量 = snapshot.rows.map { $0.values.count }.max() ?? 0
-    guard column数量 > 0 else { return Design.cardWidth }
+    let columnCount = snapshot.rows.map { $0.values.count }.max() ?? 0
+    guard columnCount > 0 else { return Design.cardWidth }
 
-    let resolved空档 = max(cell空档, 0)
+    let resolvedGap = max(cellGap, 0)
     let gridWidth =
-      (CGFloat(column数量) * Design.cellWidth)
-      + (CGFloat(column数量 - 1) * resolved空档)
+      (CGFloat(columnCount) * Design.cellWidth)
+      + (CGFloat(columnCount - 1) * resolvedGap)
     let requiredWidth =
       Design.leadingPadding
       + Design.labelsWidth
@@ -64,19 +64,19 @@ struct Weekly专注HeatmapSection: View {
     return max(Design.cardWidth, requiredWidth)
   }
 
-  private var resolvedCell空档: CGFloat {
-    max(cell空档, 0)
+  private var resolvedCellGap: CGFloat {
+    max(cellGap, 0)
   }
 
-  private var column数量: Int {
+  private var columnCount: Int {
     snapshot.rows.map { $0.values.count }.max() ?? 0
   }
 
   private var gridWidth: CGFloat {
-    guard column数量 > 0 else { return 0 }
+    guard columnCount > 0 else { return 0 }
 
-    return (CGFloat(column数量) * cellWidth)
-      + (CGFloat(column数量 - 1) * resolvedCell空档)
+    return (CGFloat(columnCount) * cellWidth)
+      + (CGFloat(columnCount - 1) * resolvedCellGap)
   }
 
   private var cellWidth: CGFloat {
@@ -163,14 +163,14 @@ struct Weekly专注HeatmapSection: View {
       ScrollView(.horizontal, showsIndicators: false) {
         gridAndAxis
       }
-      .scrollBounceBehavior(.based开启Size, axes: .horizontal)
+      .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
     } else {
       gridAndAxis
     }
   }
 
   private var dayLabels: some View {
-    VStack(alignment: .leading, spacing: resolvedCell空档) {
+    VStack(alignment: .leading, spacing: resolvedCellGap) {
       ForEach(snapshot.rows) { row in
         Text(row.label)
           .font(.custom("Figtree-Regular", size: 10))
@@ -182,9 +182,9 @@ struct Weekly专注HeatmapSection: View {
 
   private var gridAndAxis: some View {
     VStack(alignment: .leading, spacing: Design.axisTopSpacing) {
-      VStack(alignment: .leading, spacing: resolvedCell空档) {
+      VStack(alignment: .leading, spacing: resolvedCellGap) {
         ForEach(snapshot.rows) { row in
-          HStack(spacing: resolvedCell空档) {
+          HStack(spacing: resolvedCellGap) {
             ForEach(Array(row.values.enumerated()), id: \.offset) { entry in
               RoundedRectangle(cornerRadius: 0.5, style: .continuous)
                 .fill(color(for: entry.element, rowValues: row.values, index: entry.offset))
@@ -201,20 +201,20 @@ struct Weekly专注HeatmapSection: View {
             .font(.custom("Figtree-Regular", size: 10))
             .foregroundStyle(Color.black)
             .frame(width: 34, alignment: axisAlignment(for: label))
-            .offset(x: axis关闭set(for: label))
+            .offset(x: axisOffset(for: label))
         }
       }
       .frame(width: gridWidth, height: 14, alignment: .leading)
     }
   }
 
-  private func axis关闭set(for label: WeeklyWorkflowTimeLabel) -> CGFloat {
+  private func axisOffset(for label: WeeklyWorkflowTimeLabel) -> CGFloat {
     guard snapshot.endMinute > snapshot.startMinute else { return 0 }
 
     let labelWidth: CGFloat = 34
     let progress = CGFloat(
       (label.minute - snapshot.startMinute) / (snapshot.endMinute - snapshot.startMinute))
-    let raw关闭set = (progress * gridWidth) - (labelWidth / 2)
+    let rawOffset = (progress * gridWidth) - (labelWidth / 2)
 
     if label.minute <= snapshot.startMinute {
       return 0
@@ -222,7 +222,7 @@ struct Weekly专注HeatmapSection: View {
     if label.minute >= snapshot.endMinute {
       return max(0, gridWidth - labelWidth)
     }
-    return min(max(0, raw关闭set), max(0, gridWidth - labelWidth))
+    return min(max(0, rawOffset), max(0, gridWidth - labelWidth))
   }
 
   private func axisAlignment(for label: WeeklyWorkflowTimeLabel) -> Alignment {
@@ -346,7 +346,7 @@ struct Weekly专注HeatmapSection: View {
   }
 }
 
-struct Weekly专注HeatmapSnapshot {
+struct WeeklyFocusHeatmapSnapshot {
   let title: String
   let focusedLabel: String
   let distractedLabel: String
@@ -354,11 +354,11 @@ struct Weekly专注HeatmapSnapshot {
   let endMinute: Double
   let bucketMinutes: Double
   let timeLabels: [WeeklyWorkflowTimeLabel]
-  let rows: [Weekly专注HeatmapRow]
+  let rows: [WeeklyFocusHeatmapRow]
 
-  static let figmaPreview = Weekly专注HeatmapSnapshot(
-    title: "专注 and distraction heat map",
-    focusedLabel: "专注ed work",
+  static let figmaPreview = WeeklyFocusHeatmapSnapshot(
+    title: "Focus and distraction heat map",
+    focusedLabel: "Focused work",
     distractedLabel: "Distracted",
     startMinute: 9.0 * 60.0,
     endMinute: 18.0 * 60.0,
@@ -509,15 +509,15 @@ struct Weekly专注HeatmapSnapshot {
     for run in runs {
       switch run {
       case .neutral(let range):
-        for index in range w这里 values.indices.contains(index) {
+        for index in range where values.indices.contains(index) {
           values[index] = 0
         }
       case .focused(let range, let intensity):
-        for index in range w这里 values.indices.contains(index) {
+        for index in range where values.indices.contains(index) {
           values[index] = -intensity
         }
       case .distracted(let range, let intensity):
-        for index in range w这里 values.indices.contains(index) {
+        for index in range where values.indices.contains(index) {
           values[index] = intensity
         }
       }
@@ -527,7 +527,7 @@ struct Weekly专注HeatmapSnapshot {
   }
 }
 
-struct Weekly专注HeatmapRow: Identifiable {
+struct WeeklyFocusHeatmapRow: Identifiable {
   let id: String
   let label: String
   let values: [Double]
@@ -550,26 +550,26 @@ private enum DesignColor {
   static let distractionDarkNS = NSColor(hex: "FC7645") ?? .systemOrange
 }
 
-private struct Weekly专注Heatmap空档Preview: View {
-  @State private var cell空档: CGFloat = 0.5
+private struct WeeklyFocusHeatmapGapPreview: View {
+  @State private var cellGap: CGFloat = 0.5
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       HStack(spacing: 12) {
-        Text("空档")
+        Text("Gap")
           .font(.custom("Figtree-Regular", size: 12))
 
-        Slider(value: $cell空档, in: 0...1.5, step: 0.1)
+        Slider(value: $cellGap, in: 0...1.5, step: 0.1)
           .frame(width: 220)
 
-        Text("\(cell空档, format: .number.precision(.fractionLength(1))) pt")
+        Text("\(cellGap, format: .number.precision(.fractionLength(1))) pt")
           .font(.custom("Figtree-Regular", size: 12))
           .monospacedDigit()
       }
 
-      Weekly专注HeatmapSection(
+      WeeklyFocusHeatmapSection(
         snapshot: .figmaPreview,
-        cell空档: cell空档
+        cellGap: cellGap
       )
     }
     .padding(24)
@@ -577,6 +577,6 @@ private struct Weekly专注Heatmap空档Preview: View {
   }
 }
 
-#Preview("Weekly 专注 Heatmap Tuning") {
-  Weekly专注Heatmap空档Preview()
+#Preview("Weekly Focus Heatmap Tuning") {
+  WeeklyFocusHeatmapGapPreview()
 }

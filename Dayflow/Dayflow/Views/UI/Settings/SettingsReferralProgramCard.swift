@@ -181,7 +181,7 @@ struct ReferralStepRow: View {
   private var iconView: some View {
     switch icon {
     case .menuBarMark:
-      Image("MenuBar关闭Icon")
+      Image("MenuBarOffIcon")
         .resizable()
         .renderingMode(.template)
         .foregroundColor(Color(hex: "B8AA9E"))
@@ -279,7 +279,7 @@ struct ReferralFieldText: View {
   }
 }
 
-struct Referral邮箱Field: View {
+struct ReferralEmailField: View {
   @Binding var email: String
   let isDisabled: Bool
 

@@ -9,7 +9,7 @@ protocol AppStateManaging: ObservableObject {
 }
 
 @MainActor
-final class AppState: ObservableObject, AppStateManaging {  // <-- Add AppStateManaging 这里
+final class AppState: ObservableObject, AppStateManaging {  // <-- Add AppStateManaging here
   static let shared = AppState()
 
   private let recordingKey = "isRecording"
@@ -23,7 +23,7 @@ final class AppState: ObservableObject, AppStateManaging {  // <-- Add AppStateM
     didSet {
       defer { skipNextPersistence = false }
 
-      // 开启ly persist after onboarding is complete
+      // Only persist after onboarding is complete
       if shouldPersist && !skipNextPersistence {
         UserDefaults.standard.set(isRecording, forKey: recordingKey)
       }

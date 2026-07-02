@@ -8,14 +8,14 @@ import SwiftUI
 /// Coordinates journal-level UI state that needs to be shared across the view hierarchy
 @MainActor
 final class JournalCoordinator: ObservableObject {
-  @Published var show开启boardingVideo = false
-  @Published var showRemindersAfter开启boarding = false
+  @Published var showOnboardingVideo = false
+  @Published var showRemindersAfterOnboarding = false
 }
 
 struct JournalView: View {
   // MARK: - Storage & State
   @AppStorage("isJournalUnlocked") private var isUnlocked: Bool = false
-  @AppStorage("hasCompletedJournal开启boarding") private var hasCompleted开启boarding: Bool = false
+  @AppStorage("hasCompletedJournalOnboarding") private var hasCompletedOnboarding: Bool = false
   @EnvironmentObject private var coordinator: JournalCoordinator
   @State private var accessCode: String = ""
   @State private var attempts: Int = 0
@@ -42,15 +42,15 @@ struct JournalView: View {
       JournalRemindersView(
         onSave: {
           showRemindersSheet = false
-          coordinator.showRemindersAfter开启boarding = false
+          coordinator.showRemindersAfterOnboarding = false
         },
         onCancel: {
           showRemindersSheet = false
-          coordinator.showRemindersAfter开启boarding = false
+          coordinator.showRemindersAfterOnboarding = false
         }
       )
     }
-    .onChange(of: coordinator.showRemindersAfter开启boarding) { _, shouldShow in
+    .onChange(of: coordinator.showRemindersAfterOnboarding) { _, shouldShow in
       if shouldShow {
         showRemindersSheet = true
       }
@@ -62,14 +62,14 @@ struct JournalView: View {
     VStack(spacing: 24) {
       Spacer()
 
-      // Header: "Dayflow Journal" with 测试版 badge
+      // Header: "Dayflow Journal" with BETA badge
       HStack(alignment: .top, spacing: 4) {
         Text("Dayflow Journal")
           .font(.custom("InstrumentSerif-Italic", size: 38))
           .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
 
-        // 测试版 badge
-        Text("测试版")
+        // BETA badge
+        Text("BETA")
           .font(.custom("Figtree-Bold", size: 11))
           .foregroundColor(.white)
           .padding(.horizontal, 8)
@@ -107,7 +107,7 @@ struct JournalView: View {
           .scaledToFill()
           .frame(width: geo.size.width, height: geo.size.height)
           .clipped()
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
       }
     )
   }
@@ -124,7 +124,7 @@ struct JournalView: View {
       // Overlay content: title, text field, button (anchored to bottom)
       VStack(spacing: 16) {
         // Title
-        Text("输入访问码")
+        Text("Enter access code")
           .font(.custom("Figtree-SemiBold", size: 20))
           .foregroundColor(Color(red: 0.85, green: 0.45, blue: 0.25))
 
@@ -146,7 +146,7 @@ struct JournalView: View {
 
         // Submit button
         Button(action: validateCode) {
-          Text("获得抢先体验")
+          Text("Get early access")
             .font(.custom("Figtree-SemiBold", size: 15))
             .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
             .padding(.horizontal, 28)
@@ -181,7 +181,7 @@ struct JournalView: View {
   // MARK: - Unlocked Content
   @ViewBuilder
   var unlockedContent: some View {
-    if hasCompleted开启boarding {
+    if hasCompletedOnboarding {
       // Main journal view
       JournalDayView(
         onSetReminders: { showRemindersSheet = true }
@@ -190,9 +190,9 @@ struct JournalView: View {
       .padding(.horizontal, 12)
     } else {
       // Journal onboarding screen
-      Journal开启boardingView(onStart开启boarding: {
+      JournalOnboardingView(onStartOnboarding: {
         AnalyticsService.shared.capture("journal_onboarding_started")
-        coordinator.show开启boardingVideo = true
+        coordinator.showOnboardingVideo = true
       })
     }
   }
@@ -219,17 +219,17 @@ struct JournalView: View {
   }
 }
 
-// MARK: - Journal 开启boarding View
+// MARK: - Journal Onboarding View
 
-private struct Journal开启boardingView: View {
-  var onStart开启boarding: () -> Void
+private struct JournalOnboardingView: View {
+  var onStartOnboarding: () -> Void
 
   var body: some View {
     VStack(spacing: 24) {
       Spacer()
 
       // Title
-      Text("设置今日意图")
+      Text("Set your intentions today")
         .font(.custom("InstrumentSerif-Regular", size: 42))
         .foregroundColor(Color(red: 0.85, green: 0.45, blue: 0.15))
         .multilineTextAlignment(.center)
@@ -246,9 +246,9 @@ private struct Journal开启boardingView: View {
 
       Spacer()
 
-      // 开始 onboarding button
-      Button(action: onStart开启boarding) {
-        Text("开始 onboarding")
+      // Start onboarding button
+      Button(action: onStartOnboarding) {
+        Text("Start onboarding")
           .font(.custom("Figtree-SemiBold", size: 16))
           .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
           .padding(.horizontal, 32)
@@ -280,9 +280,9 @@ private struct Journal开启boardingView: View {
   }
 }
 
-// MARK: - Journal 开启boarding Video View
+// MARK: - Journal Onboarding Video View
 
-struct Journal开启boardingVideoView: View {
+struct JournalOnboardingVideoView: View {
   var onComplete: () -> Void
 
   @State private var player: AVPlayer?
@@ -313,14 +313,14 @@ struct Journal开启boardingVideoView: View {
   private func setupVideo() {
     // Try root, then Videos subfolder, then mov fallback
     guard
-      let videoURL = Bundle.main.url(forResource: "Journal开启boardingVideo", withExtension: "mp4")
+      let videoURL = Bundle.main.url(forResource: "JournalOnboardingVideo", withExtension: "mp4")
         ?? Bundle.main.url(
-          forResource: "Journal开启boardingVideo", withExtension: "mp4", subdirectory: "Videos")
-        ?? Bundle.main.url(forResource: "Journal开启boardingVideo", withExtension: "mov")
+          forResource: "JournalOnboardingVideo", withExtension: "mp4", subdirectory: "Videos")
+        ?? Bundle.main.url(forResource: "JournalOnboardingVideo", withExtension: "mov")
         ?? Bundle.main.url(
-          forResource: "Journal开启boardingVideo", withExtension: "mov", subdirectory: "Videos")
+          forResource: "JournalOnboardingVideo", withExtension: "mov", subdirectory: "Videos")
     else {
-      print("⚠️ [Journal开启boardingVideoView] Video not found in bundle, completing immediately")
+      print("⚠️ [JournalOnboardingVideoView] Video not found in bundle, completing immediately")
       completeVideo()
       return
     }
@@ -366,7 +366,7 @@ struct Journal开启boardingVideoView: View {
     statusObservation = playerItem.observe(\.status) { item, _ in
       if item.status == .failed {
         print(
-          "❌ [Journal开启boardingVideoView] Video failed: \(item.error?.localizedDescription ?? "Unknown")"
+          "❌ [JournalOnboardingVideoView] Video failed: \(item.error?.localizedDescription ?? "Unknown")"
         )
         DispatchQueue.main.async {
           self.completeVideo()
@@ -432,7 +432,7 @@ private struct JournalVideoPlayerView: NSViewRepresentable {
 }
 
 private class JournalNonInteractivePlayerView: AVPlayerView {
-  override func hit测试(_ point: NSPoint) -> NSView? {
+  override func hitTest(_ point: NSPoint) -> NSView? {
     // Prevent all mouse interactions
     return nil
   }

@@ -21,7 +21,7 @@ struct WeeklyOverviewSection: View {
     static let topPadding = EdgeInsets(top: 32, leading: 40, bottom: 32, trailing: 40)
     static let headerSpacing: CGFloat = 32
     static let chartSpacing: CGFloat = 28
-    static let chartLabel空档: CGFloat = 8
+    static let chartLabelGap: CGFloat = 8
     static let chartRowsSpacing: CGFloat = 2
     static let axisSpacing: CGFloat = 8
     static let rowHeight: CGFloat = 18
@@ -71,7 +71,7 @@ struct WeeklyOverviewSection: View {
   private var topPanel: some View {
     VStack(alignment: .leading, spacing: Design.headerSpacing) {
       HStack(alignment: .bottom) {
-        Text("时间分布")
+        Text("Time distribution")
           .font(.custom("InstrumentSerif-Regular", size: 20))
           .foregroundStyle(Design.titleColor)
 
@@ -104,11 +104,11 @@ struct WeeklyOverviewSection: View {
       .frame(width: Design.summaryDividerX, alignment: .leading)
 
       WeeklyOverviewSummaryGroup(
-        title: "专注",
+        title: "Focus",
         metrics: [
-          .init(label: "总时长", value: compactDurationText(snapshot.total专注Minutes)),
-          .init(label: "Longest duration", value: longest专注Text),
-          .init(label: "Primary focus", value: primary专注Text),
+          .init(label: "Total length", value: compactDurationText(snapshot.totalFocusMinutes)),
+          .init(label: "Longest duration", value: longestFocusText),
+          .init(label: "Primary focus", value: primaryFocusText),
         ]
       )
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -154,18 +154,18 @@ struct WeeklyOverviewSection: View {
     }
   }
 
-  private var longest专注Text: String {
-    guard let longest专注 = snapshot.longest专注 else {
+  private var longestFocusText: String {
+    guard let longestFocus = snapshot.longestFocus else {
       return "No focus yet"
     }
-    return "\(compactDurationText(longest专注.minutes)), \(longest专注.weekdayName)"
+    return "\(compactDurationText(longestFocus.minutes)), \(longestFocus.weekdayName)"
   }
 
-  private var primary专注Text: String {
-    guard let primary专注 = snapshot.primary专注 else {
+  private var primaryFocusText: String {
+    guard let primaryFocus = snapshot.primaryFocus else {
       return "No focus yet"
     }
-    return "\(primary专注.name), \(compactDurationText(primary专注.minutes))"
+    return "\(primaryFocus.name), \(compactDurationText(primaryFocus.minutes))"
   }
 
   private func compactDurationText(_ minutes: Int) -> String {
@@ -190,7 +190,7 @@ private struct WeeklyOverviewTimelineChart: View {
     static let rowSpacing: CGFloat = 2
     static let axisSpacing: CGFloat = 8
     static let dayLabelWidth: CGFloat = 26
-    static let label空档: CGFloat = 8
+    static let labelGap: CGFloat = 8
     static let barsWidth: CGFloat = 836
     static let axisWidth: CGFloat = 837
     static let rowHeight: CGFloat = 18
@@ -204,7 +204,7 @@ private struct WeeklyOverviewTimelineChart: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: Design.chartSpacing) {
-      HStack(alignment: .top, spacing: Design.label空档) {
+      HStack(alignment: .top, spacing: Design.labelGap) {
         VStack(alignment: .leading, spacing: 6) {
           ForEach(snapshot.rows) { row in
             Text(row.label)
@@ -314,19 +314,19 @@ private struct WeeklyOverviewTabStrip: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 12) {
-        Text("全部")
+        Text("All")
           .font(.custom("Figtree-Bold", size: 12))
           .foregroundStyle(Color(hex: "333333"))
 
-        Text("最长专注时段")
+        Text("Longest focus period")
           .font(.custom("Figtree-Medium", size: 12))
           .foregroundStyle(Color(hex: "333333"))
 
-        Text("最少上下文切换")
+        Text("Least context shifts")
           .font(.custom("Figtree-Medium", size: 12))
           .foregroundStyle(Color(hex: "333333"))
 
-        Text("上下文切换次数最多")
+        Text("Most context shifts")
           .font(.custom("Figtree-Medium", size: 12))
           .foregroundStyle(Color(hex: "333333"))
       }
@@ -448,14 +448,14 @@ extension WeeklyOverviewSnapshot {
       WeeklyOverviewLegendItem(id: "research", name: "Research", colorHex: "93BCFF"),
       WeeklyOverviewLegendItem(id: "design", name: "Design", colorHex: "DE9DFC"),
       WeeklyOverviewLegendItem(id: "alignment", name: "Alignment", colorHex: "6CDACD"),
-      WeeklyOverviewLegendItem(id: "testing", name: "测试ing", colorHex: "FFA189"),
+      WeeklyOverviewLegendItem(id: "testing", name: "Testing", colorHex: "FFA189"),
       WeeklyOverviewLegendItem(id: "general", name: "General", colorHex: "BFB6AE"),
     ],
     contextSwitchTotal: 52,
     contextSwitchAverage: 7,
-    total专注Minutes: 1478,
-    longest专注: WeeklyOverview专注Summary(weekdayName: "Wednesday", minutes: 245),
-    primary专注: WeeklyOverviewCategorySummary(
+    totalFocusMinutes: 1478,
+    longestFocus: WeeklyOverviewFocusSummary(weekdayName: "Wednesday", minutes: 245),
+    primaryFocus: WeeklyOverviewCategorySummary(
       name: "Design",
       minutes: 734,
       colorHex: "DE9DFC"

@@ -80,15 +80,15 @@ extension MainView {
     }
   }
 
-  func performIdle重置AndScroll() {
+  func performIdleResetAndScroll() {
     // Switch to today
     setSelectedDate(timelineDisplayDate(from: Date()))
-    // 清除 selection
+    // Clear selection
     selectedActivity = nil
     // Nudge timeline to scroll to now after it reloads
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
       #if DEBUG
-        print("[MainView] performIdle重置AndScroll -> nudging scrollToNowTick")
+        print("[MainView] performIdleResetAndScroll -> nudging scrollToNowTick")
       #endif
       withAnimation(.easeInOut(duration: 0.35)) {
         scrollToNowTick &+= 1

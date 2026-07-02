@@ -1,23 +1,23 @@
 //
-//  测试ConnectionView.swift
+//  TestConnectionView.swift
 //  Dayflow
 //
-//  测试 connection button for Gemini API
+//  Test connection button for Gemini API
 //
 
 import SwiftUI
 
-struct 测试ConnectionView: View {
-  let on测试Complete: ((Bool) -> Void)?
+struct TestConnectionView: View {
+  let onTestComplete: ((Bool) -> Void)?
 
-  @State private var is测试ing = false
-  @State private var testResult: 测试Result?
+  @State private var isTesting = false
+  @State private var testResult: TestResult?
 
-  init(on测试Complete: ((Bool) -> Void)? = nil) {
-    self.on测试Complete = on测试Complete
+  init(onTestComplete: ((Bool) -> Void)? = nil) {
+    self.onTestComplete = onTestComplete
   }
 
-  enum 测试Result {
+  enum TestResult {
     case success(String)
     case failure(String)
   }
@@ -25,9 +25,9 @@ struct 测试ConnectionView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       SettingsPrimaryButton(
-        title: is测试ing ? "测试ing…" : "测试 connection",
+        title: isTesting ? "Testing…" : "Test connection",
         systemImage: "bolt.fill",
-        isLoading: is测试ing,
+        isLoading: isTesting,
         action: testConnection
       )
 
@@ -41,7 +41,7 @@ struct 测试ConnectionView: View {
   }
 
   private func testConnection() {
-    guard !is测试ing else { return }
+    guard !isTesting else { return }
 
     guard
       let apiKey = KeychainManager.shared.retrieve(for: "gemini")?
@@ -49,13 +49,13 @@ struct 测试ConnectionView: View {
       !apiKey.isEmpty
     else {
       testResult = .failure("No API key found. Enter your API key first.")
-      on测试Complete?(false)
+      onTestComplete?(false)
       AnalyticsService.shared.capture(
         "connection_test_failed", ["provider": "gemini", "error_code": "no_api_key"])
       return
     }
 
-    is测试ing = true
+    isTesting = true
     testResult = nil
     AnalyticsService.shared.capture("connection_test_started", ["provider": "gemini"])
 
@@ -64,15 +64,15 @@ struct 测试ConnectionView: View {
         let _ = try await GeminiAPIHelper.shared.testConnection(apiKey: apiKey)
         await MainActor.run {
           testResult = .success("Connection successful.")
-          is测试ing = false
-          on测试Complete?(true)
+          isTesting = false
+          onTestComplete?(true)
         }
         AnalyticsService.shared.capture("connection_test_succeeded", ["provider": "gemini"])
       } catch GeminiAPIHelper.APIError.rateLimited {
         await MainActor.run {
           testResult = .success("API key works, but Gemini is rate limited right now.")
-          is测试ing = false
-          on测试Complete?(true)
+          isTesting = false
+          onTestComplete?(true)
         }
         AnalyticsService.shared.capture(
           "connection_test_succeeded",
@@ -84,8 +84,8 @@ struct 测试ConnectionView: View {
       } catch {
         await MainActor.run {
           testResult = .failure(error.localizedDescription)
-          is测试ing = false
-          on测试Complete?(false)
+          isTesting = false
+          onTestComplete?(false)
         }
         AnalyticsService.shared.capture(
           "connection_test_failed",
@@ -95,7 +95,7 @@ struct 测试ConnectionView: View {
   }
 }
 
-extension 测试ConnectionView.测试Result {
+extension TestConnectionView.TestResult {
   var isSuccess: Bool {
     switch self {
     case .success: return true

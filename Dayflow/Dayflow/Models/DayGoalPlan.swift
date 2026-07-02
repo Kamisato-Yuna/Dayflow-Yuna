@@ -56,8 +56,8 @@ struct DayGoalPlan: Equatable, Sendable {
   var day: String
   var focusTargetMinutes: Int
   var distractionLimitMinutes: Int
-  var focus分类: [DayGoalCategorySnapshot]
-  var distraction分类: [DayGoalCategorySnapshot]
+  var focusCategories: [DayGoalCategorySnapshot]
+  var distractionCategories: [DayGoalCategorySnapshot]
   var isSkipped: Bool
   var createdAt: Int
   var updatedAt: Int
@@ -83,12 +83,12 @@ struct DayGoalPlan: Equatable, Sendable {
 
   func carriedForward(to day: String, categories: [TimelineCategory]) -> DayGoalPlan {
     var copy = forDay(day)
-    copy.focus分类 = Self.resolvedSnapshots(
-      copy.focus分类,
+    copy.focusCategories = Self.resolvedSnapshots(
+      copy.focusCategories,
       categories: categories
     )
-    copy.distraction分类 = Self.resolvedSnapshots(
-      copy.distraction分类,
+    copy.distractionCategories = Self.resolvedSnapshots(
+      copy.distractionCategories,
       categories: categories
     )
     return copy
@@ -97,9 +97,9 @@ struct DayGoalPlan: Equatable, Sendable {
   func categorySnapshots(for kind: DayGoalCategoryKind) -> [DayGoalCategorySnapshot] {
     switch kind {
     case .focus:
-      return focus分类
+      return focusCategories
     case .distraction:
-      return distraction分类
+      return distractionCategories
     }
   }
 
@@ -124,10 +124,10 @@ struct DayGoalPlan: Equatable, Sendable {
       day: day,
       focusTargetMinutes: 270,
       distractionLimitMinutes: 120,
-      focus分类: focusCandidates.enumerated().map { index, category in
+      focusCategories: focusCandidates.enumerated().map { index, category in
         DayGoalCategorySnapshot(category: category, sortOrder: index)
       },
-      distraction分类: distraction.enumerated().map { index, category in
+      distractionCategories: distraction.enumerated().map { index, category in
         DayGoalCategorySnapshot(category: category, sortOrder: index)
       },
       isSkipped: false,
@@ -184,7 +184,7 @@ struct DayGoalReviewSnapshot: Equatable, Sendable {
   var plan: DayGoalPlan
   var focusDuration: TimeInterval
   var distractedDuration: TimeInterval
-  var focus分类: [DayGoalCategoryResult]
+  var focusCategories: [DayGoalCategoryResult]
 
   static func empty(day: String, plan: DayGoalPlan) -> DayGoalReviewSnapshot {
     DayGoalReviewSnapshot(
@@ -192,7 +192,7 @@ struct DayGoalReviewSnapshot: Equatable, Sendable {
       plan: plan,
       focusDuration: 0,
       distractedDuration: 0,
-      focus分类: []
+      focusCategories: []
     )
   }
 }

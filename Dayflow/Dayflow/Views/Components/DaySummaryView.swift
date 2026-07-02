@@ -2,7 +2,7 @@
 //  DaySummaryView.swift
 //  Dayflow
 //
-//  "今日概况" dashboard showing category breakdown and focus stats
+//  "Your day so far" dashboard showing category breakdown and focus stats
 //
 
 import SwiftUI
@@ -13,7 +13,7 @@ struct DaySummaryView: View {
   let selectedDate: Date
   let categories: [TimelineCategory]
   let storageManager: StorageManaging
-  let cardsToReview数量: Int
+  let cardsToReviewCount: Int
   let reviewRefreshToken: Int
   let recordingControlMode: RecordingControlMode
   var goalPromptDay: String? = nil
@@ -25,9 +25,9 @@ struct DaySummaryView: View {
   @State private var isLoading = true
   @State private var hasCompletedInitialLoad = false
   @State private var focusCategoryIDs: Set<UUID> = []
-  @State private var isEditing专注分类 = false
+  @State private var isEditingFocusCategories = false
   @State private var distractionCategoryIDs: Set<UUID> = []
-  @State private var isEditingDistraction分类 = false
+  @State private var isEditingDistractionCategories = false
   @State private var dayGoalPlan: DayGoalPlan?
   @State private var hasExplicitDayGoalPlan = false
   @State private var explicitYesterdayGoalPlan: DayGoalPlan?
@@ -39,9 +39,9 @@ struct DaySummaryView: View {
   // These are computed on background thread when data loads, avoiding main thread hangs
   @State private var cardsWithDurations: [CardWithDuration] = []
   @State private var cachedCategoryDurations: [CategoryTimeData] = []
-  @State private var cachedTotal专注Time: TimeInterval = 0
+  @State private var cachedTotalFocusTime: TimeInterval = 0
   @State private var cachedTotalCapturedTime: TimeInterval = 0
-  @State private var cached专注Blocks: [专注Block] = []
+  @State private var cachedFocusBlocks: [FocusBlock] = []
   @State private var cachedTotalDistractedTime: TimeInterval = 0
   @State private var reviewSummary = TimelineReviewSummarySnapshot.placeholder
 
@@ -61,7 +61,7 @@ struct DaySummaryView: View {
     static let titleColor = Color(hex: "333333")
     static let subtitleColor = Color(hex: "707070")
 
-    static let focus空档Minutes: Int = 5
+    static let focusGapMinutes: Int = 5
     static let timelineDayStartMinutes: Int = 4 * 60
     static let minutesPerDay: Int = 24 * 60
   }
@@ -84,7 +84,7 @@ struct DaySummaryView: View {
 
   private var previousTimelineDayInfo: (dayString: String, startOfDay: Date, endOfDay: Date) {
     let previousDate =
-      日历.current.date(byAdding: .day, value: -1, to: selectedDate)
+      Calendar.current.date(byAdding: .day, value: -1, to: selectedDate)
       ?? selectedDate
     let timelineDate = timelineDisplayDate(from: previousDate)
     let info = timelineDate.getDayInfoFor4AMBoundary()
@@ -105,16 +105,16 @@ struct DaySummaryView: View {
     cachedCategoryDurations
   }
 
-  private var total专注Time: TimeInterval {
-    cachedTotal专注Time
+  private var totalFocusTime: TimeInterval {
+    cachedTotalFocusTime
   }
 
   private var totalCapturedTime: TimeInterval {
     cachedTotalCapturedTime
   }
 
-  private var focusBlocks: [专注Block] {
-    cached专注Blocks
+  private var focusBlocks: [FocusBlock] {
+    cachedFocusBlocks
   }
 
   private var totalDistractedTime: TimeInterval {
@@ -196,11 +196,11 @@ struct DaySummaryView: View {
     }
     .contentShape(Rectangle())
     .onTapGesture {
-      if isEditing专注分类 {
-        isEditing专注分类 = false
+      if isEditingFocusCategories {
+        isEditingFocusCategories = false
       }
-      if isEditingDistraction分类 {
-        isEditingDistraction分类 = false
+      if isEditingDistractionCategories {
+        isEditingDistractionCategories = false
       }
     }
   }
@@ -217,7 +217,7 @@ struct DaySummaryView: View {
     let currentTimelineDate = timelineDisplayDate(from: selectedDate)
 
     // Capture current state for background computation
-    let current分类 = categories
+    let currentCategories = categories
 
     Task.detached(priority: .userInitiated) {
       // Use timeline display date to handle 4 AM boundary
@@ -226,7 +226,7 @@ struct DaySummaryView: View {
       let plan = Self.carriedForwardGoalPlan(
         day: dayString,
         storageManager: storageManager,
-        categories: current分类
+        categories: currentCategories
       )
       let summary = Self.makeReviewSummary(
         segments: storageManager.fetchReviewRatingSegments(
@@ -237,31 +237,31 @@ struct DaySummaryView: View {
         dayEndTs: Int(dayInfo.endOfDay.timeIntervalSince1970)
       )
 
-      // Pre-compute all card durations (expensive parsing done once 这里, off main thread)
+      // Pre-compute all card durations (expensive parsing done once here, off main thread)
       let precomputed = self.precomputeCardDurations(cards)
 
       // Pre-compute all stats using the parsed durations
       let catDurations = self.computeCategoryDurations(
-        from: precomputed, categories: current分类)
+        from: precomputed, categories: currentCategories)
       let totalCaptured = self.computeTotalCapturedTime(
-        from: precomputed, categories: current分类)
-      let total专注 = self.computeTotal专注Time(
-        from: precomputed, snapshots: plan.focus分类, categories: current分类)
-      let blocks = self.compute专注Blocks(
-        from: precomputed, snapshots: plan.focus分类, baseDate: dayInfo.startOfDay,
-        categories: current分类)
+        from: precomputed, categories: currentCategories)
+      let totalFocus = self.computeTotalFocusTime(
+        from: precomputed, snapshots: plan.focusCategories, categories: currentCategories)
+      let blocks = self.computeFocusBlocks(
+        from: precomputed, snapshots: plan.focusCategories, baseDate: dayInfo.startOfDay,
+        categories: currentCategories)
       let totalDistracted = self.computeTotalDistractedTime(
-        from: precomputed, snapshots: plan.distraction分类, categories: current分类)
+        from: precomputed, snapshots: plan.distractionCategories, categories: currentCategories)
       let yesterdayReview = self.makeGoalReviewSnapshot(
         dayInfo: previousDayInfo,
         storageManager: storageManager,
-        categories: current分类
+        categories: currentCategories
       )
       let explicitYesterdayPlan = storageManager.fetchDayGoalPlan(forDay: previousDayInfo.dayString)
       let setupReferenceStats = self.makeGoalSetupReferenceStats(
         currentTimelineDate: currentTimelineDate,
         storageManager: storageManager,
-        categories: current分类
+        categories: currentCategories
       )
 
       await MainActor.run {
@@ -271,8 +271,8 @@ struct DaySummaryView: View {
         self.cardsWithDurations = precomputed
         self.cachedCategoryDurations = catDurations
         self.cachedTotalCapturedTime = totalCaptured
-        self.cachedTotal专注Time = total专注
-        self.cached专注Blocks = blocks
+        self.cachedTotalFocusTime = totalFocus
+        self.cachedFocusBlocks = blocks
         self.cachedTotalDistractedTime = totalDistracted
         self.isLoading = false
         self.hasCompletedInitialLoad = true
@@ -308,8 +308,8 @@ struct DaySummaryView: View {
   private var todayTargetsSection: some View {
     DayGoalHeader(
       focusTargetDuration: effectiveGoalPlan.focusTargetDuration,
-      focusDuration: total专注Time,
-      focus分类: target专注分类,
+      focusDuration: totalFocusTime,
+      focusCategories: targetFocusCategories,
       distractionLimitDuration: effectiveGoalPlan.distractionLimitDuration,
       distractedDuration: totalDistractedTime,
       showsDisabledState: effectiveGoalPlan.isSkipped,
@@ -350,7 +350,7 @@ struct DaySummaryView: View {
       DayGoalFlowPresentation(
         review: review,
         plan: plan,
-        categories: selectable分类,
+        categories: selectableCategories,
         setupReferenceStats: goalSetupReferenceStats,
         initialScreen: resolvedInitialScreen,
         onSkip: skipGoalPlan,
@@ -410,7 +410,7 @@ struct DaySummaryView: View {
   private var daySoFarContent: some View {
     VStack(alignment: .leading, spacing: Design.donutSectionSpacing) {
       VStack(alignment: .leading, spacing: Design.headerSpacing) {
-        Text("今日概况")
+        Text("Your day so far")
           .font(.custom("InstrumentSerif-Regular", size: 24))
           .foregroundColor(Design.titleColor)
       }
@@ -447,28 +447,28 @@ struct DaySummaryView: View {
   private var reviewSection: some View {
     TimelineReviewSummaryCard(
       summary: reviewSummary,
-      cardsToReview数量: cardsToReview数量,
+      cardsToReviewCount: cardsToReviewCount,
       onReviewTap: onReviewTap
     )
   }
 
-  // MARK: - 专注 Section
+  // MARK: - Focus Section
 
   private var focusSection: some View {
-    Day专注SummarySection(
-      total专注Text: formatDurationTitleCase(total专注Time),
+    DayFocusSummarySection(
+      totalFocusText: formatDurationTitleCase(totalFocusTime),
       focusBlocks: focusBlocks,
-      isSelectionEmpty: is专注SelectionEmpty,
-      categories: selectable分类,
+      isSelectionEmpty: isFocusSelectionEmpty,
+      categories: selectableCategories,
       selectedCategoryIDs: focusCategoryIDs,
-      isEditing分类: isEditing专注分类,
-      onEdit分类: {
-        isEditing专注分类 = true
-        isEditingDistraction分类 = false
+      isEditingCategories: isEditingFocusCategories,
+      onEditCategories: {
+        isEditingFocusCategories = true
+        isEditingDistractionCategories = false
       },
-      onToggleCategory: toggle专注Category,
+      onToggleCategory: toggleFocusCategory,
       onDoneEditing: {
-        isEditing专注分类 = false
+        isEditingFocusCategories = false
       }
     )
   }
@@ -481,16 +481,16 @@ struct DaySummaryView: View {
       patternTitle: showDistractionPattern ? (distractionPattern?.title ?? "") : "",
       patternDescription: showDistractionPattern ? (distractionPattern?.description ?? "") : "",
       isSelectionEmpty: isDistractionSelectionEmpty,
-      categories: selectable分类,
+      categories: selectableCategories,
       selectedCategoryIDs: distractionCategoryIDs,
-      isEditing分类: isEditingDistraction分类,
-      onEdit分类: {
-        isEditingDistraction分类 = true
-        isEditing专注分类 = false
+      isEditingCategories: isEditingDistractionCategories,
+      onEditCategories: {
+        isEditingDistractionCategories = true
+        isEditingFocusCategories = false
       },
       onToggleCategory: toggleDistractionCategory,
       onDoneEditing: {
-        isEditingDistraction分类 = false
+        isEditingDistractionCategories = false
       }
     )
   }
@@ -509,7 +509,7 @@ struct DaySummaryView: View {
     return min(max(ratio, 0), 1)
   }
 
-  private var target专注分类: [TargetCategoryProgress] {
+  private var targetFocusCategories: [TargetCategoryProgress] {
     let durationByID = categoryDurations.reduce(into: [String: TimeInterval]()) { result, item in
       result[item.id] = item.duration
     }
@@ -517,7 +517,7 @@ struct DaySummaryView: View {
       result[normalizedCategoryName(item.name)] = item.duration
     }
 
-    return effectiveGoalPlan.focus分类
+    return effectiveGoalPlan.focusCategories
       .map(resolveSnapshot)
       .sorted { $0.sortOrder < $1.sortOrder }
       .prefix(4)
@@ -538,7 +538,7 @@ struct DaySummaryView: View {
     name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
   }
 
-  private var selectable分类: [TimelineCategory] {
+  private var selectableCategories: [TimelineCategory] {
     categories
       .filter {
         $0.isSystem == false && $0.isIdle == false && normalizedCategoryName($0.name) != "system"
@@ -546,7 +546,7 @@ struct DaySummaryView: View {
       .sorted { $0.order < $1.order }
   }
 
-  private var is专注SelectionEmpty: Bool {
+  private var isFocusSelectionEmpty: Bool {
     focusCategoryIDs.isEmpty
   }
 
@@ -554,16 +554,16 @@ struct DaySummaryView: View {
     distractionCategoryIDs.isEmpty
   }
 
-  private func toggle专注Category(_ category: TimelineCategory) {
+  private func toggleFocusCategory(_ category: TimelineCategory) {
     var plan = effectiveGoalPlan
     let categoryID = category.id.uuidString
     let action: String
-    if plan.focus分类.contains(w这里: { $0.categoryID == categoryID }) {
-      plan.focus分类.remove全部 { $0.categoryID == categoryID }
+    if plan.focusCategories.contains(where: { $0.categoryID == categoryID }) {
+      plan.focusCategories.removeAll { $0.categoryID == categoryID }
       action = "removed"
     } else {
-      plan.focus分类.append(
-        DayGoalCategorySnapshot(category: category, sortOrder: plan.focus分类.count)
+      plan.focusCategories.append(
+        DayGoalCategorySnapshot(category: category, sortOrder: plan.focusCategories.count)
       )
       action = "added"
     }
@@ -585,12 +585,12 @@ struct DaySummaryView: View {
     var plan = effectiveGoalPlan
     let categoryID = category.id.uuidString
     let action: String
-    if plan.distraction分类.contains(w这里: { $0.categoryID == categoryID }) {
-      plan.distraction分类.remove全部 { $0.categoryID == categoryID }
+    if plan.distractionCategories.contains(where: { $0.categoryID == categoryID }) {
+      plan.distractionCategories.removeAll { $0.categoryID == categoryID }
       action = "removed"
     } else {
-      plan.distraction分类.append(
-        DayGoalCategorySnapshot(category: category, sortOrder: plan.distraction分类.count)
+      plan.distractionCategories.append(
+        DayGoalCategorySnapshot(category: category, sortOrder: plan.distractionCategories.count)
       )
       action = "added"
     }
@@ -611,9 +611,9 @@ struct DaySummaryView: View {
   private func applyGoalPlan(_ plan: DayGoalPlan) {
     let resolved = plan.carriedForward(to: timelineDayInfo.dayString, categories: categories)
     dayGoalPlan = resolved
-    focusCategoryIDs = Set(resolved.focus分类.compactMap { UUID(uuidString: $0.categoryID) })
+    focusCategoryIDs = Set(resolved.focusCategories.compactMap { UUID(uuidString: $0.categoryID) })
     distractionCategoryIDs = Set(
-      resolved.distraction分类.compactMap { UUID(uuidString: $0.categoryID) }
+      resolved.distractionCategories.compactMap { UUID(uuidString: $0.categoryID) }
     )
   }
 
@@ -669,8 +669,8 @@ struct DaySummaryView: View {
   }
 
   private func normalizedPlan(_ plan: DayGoalPlan) -> DayGoalPlan {
-    var copy = plan.carriedForward(to: timelineDayInfo.dayString, categories: selectable分类)
-    copy.focus分类 = copy.focus分类.enumerated().map { index, snapshot in
+    var copy = plan.carriedForward(to: timelineDayInfo.dayString, categories: selectableCategories)
+    copy.focusCategories = copy.focusCategories.enumerated().map { index, snapshot in
       let resolved = resolveSnapshot(snapshot)
       return DayGoalCategorySnapshot(
         categoryID: resolved.categoryID,
@@ -679,7 +679,7 @@ struct DaySummaryView: View {
         sortOrder: index
       )
     }
-    copy.distraction分类 = copy.distraction分类.enumerated().map { index, snapshot in
+    copy.distractionCategories = copy.distractionCategories.enumerated().map { index, snapshot in
       let resolved = resolveSnapshot(snapshot)
       return DayGoalCategorySnapshot(
         categoryID: resolved.categoryID,
@@ -807,8 +807,8 @@ struct DaySummaryView: View {
       "source": source,
       "focus_target_minutes": plan.focusTargetMinutes,
       "distraction_limit_minutes": plan.distractionLimitMinutes,
-      "focus_category_count": plan.focus分类.count,
-      "distraction_category_count": plan.distraction分类.count,
+      "focus_category_count": plan.focusCategories.count,
+      "distraction_category_count": plan.distractionCategories.count,
       "is_skipped": plan.isSkipped,
       "had_existing_plan": hadExistingPlan,
     ]
@@ -816,8 +816,8 @@ struct DaySummaryView: View {
 
   private func resolveSnapshot(_ snapshot: DayGoalCategorySnapshot) -> DayGoalCategorySnapshot {
     let current =
-      selectable分类.first(w这里: { $0.id.uuidString == snapshot.categoryID })
-      ?? selectable分类.first {
+      selectableCategories.first(where: { $0.id.uuidString == snapshot.categoryID })
+      ?? selectableCategories.first {
         normalizedCategoryName($0.name) == normalizedCategoryName(snapshot.name)
       }
     guard let current else {
@@ -1018,7 +1018,7 @@ struct DaySummaryView: View {
   }
 
   /// Computes total focus time from pre-computed data
-  nonisolated private func computeTotal专注Time(
+  nonisolated private func computeTotalFocusTime(
     from precomputed: [CardWithDuration], snapshots: [DayGoalCategorySnapshot],
     categories: [TimelineCategory]
   ) -> TimeInterval {
@@ -1030,10 +1030,10 @@ struct DaySummaryView: View {
   }
 
   /// Computes focus blocks from pre-computed data
-  nonisolated private func compute专注Blocks(
+  nonisolated private func computeFocusBlocks(
     from precomputed: [CardWithDuration], snapshots: [DayGoalCategorySnapshot], baseDate: Date,
     categories: [TimelineCategory]
-  ) -> [专注Block] {
+  ) -> [FocusBlock] {
     let focusCards = normalizedNonSystemDurations(from: precomputed, categories: categories)
       .filter {
         isGoalCategoryStatic($0.card.category, snapshots: snapshots, categories: categories)
@@ -1049,7 +1049,7 @@ struct DaySummaryView: View {
     for block in sorted {
       if let last = merged.last {
         let gap = block.start - last.end
-        if gap < Design.focus空档Minutes {
+        if gap < Design.focusGapMinutes {
           merged[merged.count - 1].end = max(last.end, block.end)
           continue
         }
@@ -1060,7 +1060,7 @@ struct DaySummaryView: View {
     return merged.map { block in
       let startDate = baseDate.addingTimeInterval(TimeInterval(block.start * 60))
       let endDate = baseDate.addingTimeInterval(TimeInterval(block.end * 60))
-      return 专注Block(startTime: startDate, endTime: endDate)
+      return FocusBlock(startTime: startDate, endTime: endDate)
     }
   }
 
@@ -1084,7 +1084,7 @@ struct DaySummaryView: View {
   {
     let normalized = normalizedCategoryName(name)
     if normalized == "system" { return true }
-    guard let category = categories.first(w这里: { normalizedCategoryName($0.name) == normalized })
+    guard let category = categories.first(where: { normalizedCategoryName($0.name) == normalized })
     else {
       return false
     }
@@ -1099,7 +1099,7 @@ struct DaySummaryView: View {
     let normalized = normalizedCategoryName(name)
     let selectedIDs = Set(snapshots.map(\.categoryID))
 
-    if let category = categories.first(w这里: { normalizedCategoryName($0.name) == normalized }),
+    if let category = categories.first(where: { normalizedCategoryName($0.name) == normalized }),
       selectedIDs.contains(category.id.uuidString)
     {
       return true
@@ -1112,28 +1112,28 @@ struct DaySummaryView: View {
   private func recomputeCachedStatsForCategoryChange() {
     let precomputed =
       cardsWithDurations.isEmpty ? precomputeCardDurations(timelineCards) : cardsWithDurations
-    let current分类 = categories
+    let currentCategories = categories
     let plan = effectiveGoalPlan
     let baseDate = timelineDayInfo.startOfDay
 
     Task.detached(priority: .userInitiated) {
       let catDurations = self.computeCategoryDurations(
-        from: precomputed, categories: current分类)
+        from: precomputed, categories: currentCategories)
       let totalCaptured = self.computeTotalCapturedTime(
-        from: precomputed, categories: current分类)
-      let total专注 = self.computeTotal专注Time(
-        from: precomputed, snapshots: plan.focus分类, categories: current分类)
-      let blocks = self.compute专注Blocks(
-        from: precomputed, snapshots: plan.focus分类, baseDate: baseDate,
-        categories: current分类)
+        from: precomputed, categories: currentCategories)
+      let totalFocus = self.computeTotalFocusTime(
+        from: precomputed, snapshots: plan.focusCategories, categories: currentCategories)
+      let blocks = self.computeFocusBlocks(
+        from: precomputed, snapshots: plan.focusCategories, baseDate: baseDate,
+        categories: currentCategories)
       let totalDistracted = self.computeTotalDistractedTime(
-        from: precomputed, snapshots: plan.distraction分类, categories: current分类)
+        from: precomputed, snapshots: plan.distractionCategories, categories: currentCategories)
 
       await MainActor.run {
         self.cachedCategoryDurations = catDurations
         self.cachedTotalCapturedTime = totalCaptured
-        self.cachedTotal专注Time = total专注
-        self.cached专注Blocks = blocks
+        self.cachedTotalFocusTime = totalFocus
+        self.cachedFocusBlocks = blocks
         self.cachedTotalDistractedTime = totalDistracted
       }
     }
@@ -1152,14 +1152,14 @@ struct DaySummaryView: View {
     let cards = storageManager.fetchTimelineCards(forDay: dayInfo.dayString)
     let precomputed = precomputeCardDurations(cards)
     let categoryDurations = computeCategoryDurations(from: precomputed, categories: categories)
-    let focusDuration = computeTotal专注Time(
+    let focusDuration = computeTotalFocusTime(
       from: precomputed,
-      snapshots: plan.focus分类,
+      snapshots: plan.focusCategories,
       categories: categories
     )
     let distractedDuration = computeTotalDistractedTime(
       from: precomputed,
-      snapshots: plan.distraction分类,
+      snapshots: plan.distractionCategories,
       categories: categories
     )
 
@@ -1168,8 +1168,8 @@ struct DaySummaryView: View {
       plan: plan,
       focusDuration: focusDuration,
       distractedDuration: distractedDuration,
-      focus分类: goalCategoryResults(
-        snapshots: plan.focus分类,
+      focusCategories: goalCategoryResults(
+        snapshots: plan.focusCategories,
         categoryDurations: categoryDurations,
         categories: categories
       )
@@ -1181,7 +1181,7 @@ struct DaySummaryView: View {
     storageManager: StorageManaging,
     categories: [TimelineCategory]
   ) -> DayGoalSetupReferenceStats {
-    let calendar = 日历.current
+    let calendar = Calendar.current
     let dayStrings = (1...7).compactMap { offset -> String? in
       guard let date = calendar.date(byAdding: .day, value: -offset, to: currentTimelineDate)
       else {
@@ -1213,12 +1213,12 @@ struct DaySummaryView: View {
       }
     }
 
-    let day数量 = max(Double(dayStrings.count), 1)
+    let dayCount = max(Double(dayStrings.count), 1)
     return DayGoalSetupReferenceStats(
       yesterdayByCategoryID: yesterdayMaps.byID,
       yesterdayByCategoryName: yesterdayMaps.byName,
-      lastWeekAverageByCategoryID: lastWeekByIDTotals.mapValues { $0 / day数量 },
-      lastWeekAverageByCategoryName: lastWeekByNameTotals.mapValues { $0 / day数量 }
+      lastWeekAverageByCategoryID: lastWeekByIDTotals.mapValues { $0 / dayCount },
+      lastWeekAverageByCategoryName: lastWeekByNameTotals.mapValues { $0 / dayCount }
     )
   }
 
@@ -1250,7 +1250,7 @@ struct DaySummaryView: View {
     storageManager: StorageManaging,
     categories: [TimelineCategory]
   ) -> DayGoalPlan {
-    let saved = storageManager.fetchMostRecentDayGoalPlan(beforeOr开启: day)
+    let saved = storageManager.fetchMostRecentDayGoalPlan(beforeOrOn: day)
     let plan = saved ?? DayGoalPlan.defaultPlan(day: day, categories: categories)
     return plan.carriedForward(to: day, categories: categories)
   }
@@ -1344,7 +1344,7 @@ struct DaySummaryView: View {
 }
 
 #Preview("Day Summary") {
-  let sample分类: [TimelineCategory] = [
+  let sampleCategories: [TimelineCategory] = [
     TimelineCategory(name: "Research", colorHex: "#8BAAFF", order: 0),
     TimelineCategory(name: "Coding", colorHex: "#CF8FFF", order: 1),
     TimelineCategory(name: "Code review", colorHex: "#90DDF0", order: 2),
@@ -1355,9 +1355,9 @@ struct DaySummaryView: View {
 
   DaySummaryView(
     selectedDate: Date(),
-    categories: sample分类,
+    categories: sampleCategories,
     storageManager: StorageManager.shared,
-    cardsToReview数量: 3,
+    cardsToReviewCount: 3,
     reviewRefreshToken: 0,
     recordingControlMode: .active,
     onReviewTap: {}

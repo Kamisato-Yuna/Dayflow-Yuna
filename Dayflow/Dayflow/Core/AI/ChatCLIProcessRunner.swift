@@ -39,7 +39,7 @@ struct ChatCLIProcessRunner {
         while true {
           let chunk: Data
           do {
-            guard let data = try self.handle.read(upTo数量: Constants.readChunkSize), !data.isEmpty
+            guard let data = try self.handle.read(upToCount: Constants.readChunkSize), !data.isEmpty
             else { break }
             chunk = data
           } catch {
@@ -86,7 +86,7 @@ struct ChatCLIProcessRunner {
           NSLocalizedDescriptionKey: "Failed to allocate pseudo-terminal for Claude streaming."
         ])
     }
-    let masterHandle = FileHandle(fileDescriptor: master, close开启Dealloc: true)
+    let masterHandle = FileHandle(fileDescriptor: master, closeOnDealloc: true)
     return PseudoTerminal(master: masterHandle, slaveFd: slave)
   }
 
@@ -358,7 +358,7 @@ struct ChatCLIProcessRunner {
     if tool == .claude {
       let pty = try makePseudoTerminal()
       stdoutHandle = pty.master
-      let slaveHandle = FileHandle(fileDescriptor: pty.slaveFd, close开启Dealloc: false)
+      let slaveHandle = FileHandle(fileDescriptor: pty.slaveFd, closeOnDealloc: false)
       process.standardInput = slaveHandle
       process.standardOutput = slaveHandle
       cleanupPty = {
@@ -521,7 +521,7 @@ struct ChatCLIProcessRunner {
             parsedEvents.append(event)
           }
         }
-        lineBuffer.remove全部(keepingCapacity: false)
+        lineBuffer.removeAll(keepingCapacity: false)
       }
 
       return parsedEvents
@@ -727,30 +727,30 @@ struct ChatCLIProcessRunner {
   }
 
   /// Extract thinking blocks from Codex stdout (between "thinking\n" markers)
-  func parse思考中FromOutput(_ output: String) -> String? {
+  func parseThinkingFromOutput(_ output: String) -> String? {
     var thinkingParts: [String] = []
     let lines = output.components(separatedBy: .newlines)
-    var in思考中 = false
-    var current思考中: [String] = []
+    var inThinking = false
+    var currentThinking: [String] = []
 
     for line in lines {
       let trimmed = line.trimmingCharacters(in: .whitespaces)
       if trimmed == "thinking" {
-        if in思考中 && !current思考中.isEmpty {
-          thinkingParts.append(current思考中.joined(separator: " "))
-          current思考中 = []
+        if inThinking && !currentThinking.isEmpty {
+          thinkingParts.append(currentThinking.joined(separator: " "))
+          currentThinking = []
         }
-        in思考中 = !in思考中
-      } else if in思考中 && !trimmed.isEmpty && !trimmed.hasPrefix("exec")
+        inThinking = !inThinking
+      } else if inThinking && !trimmed.isEmpty && !trimmed.hasPrefix("exec")
         && !trimmed.hasPrefix("/bin")
       {
         let cleaned = trimmed.replacingOccurrences(of: "**", with: "")
-        current思考中.append(cleaned)
+        currentThinking.append(cleaned)
       }
     }
 
-    if !current思考中.isEmpty {
-      thinkingParts.append(current思考中.joined(separator: " "))
+    if !currentThinking.isEmpty {
+      thinkingParts.append(currentThinking.joined(separator: " "))
     }
 
     guard !thinkingParts.isEmpty else { return nil }

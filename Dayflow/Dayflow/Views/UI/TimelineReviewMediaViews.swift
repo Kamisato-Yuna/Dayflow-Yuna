@@ -24,19 +24,19 @@ struct TimelineReviewCardMedia: View {
           videoGravity: .resizeAspectFill,
           onReadyForDisplay: { ready in isPlayerReady = ready }
         )
-        .allowsHit测试ing(false)
+        .allowsHitTesting(false)
         .clipped()
         .opacity(isPlayerReady ? 1 : 0)
 
         // Show thumbnail until the player layer has rendered its first frame
         if !isPlayerReady, let image = previewImage {
           TimelineReviewLayerBackedImageView(image: image)
-            .allowsHit测试ing(false)
+            .allowsHitTesting(false)
             .clipped()
         }
       } else if let image = playbackState.currentImage ?? previewImage {
         TimelineReviewLayerBackedImageView(image: image)
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
           .clipped()
       } else {
         LinearGradient(

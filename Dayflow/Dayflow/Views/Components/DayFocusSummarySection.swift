@@ -1,20 +1,20 @@
 //
-//  Day专注SummarySection.swift
+//  DayFocusSummarySection.swift
 //  Dayflow
 //
-//  专注 section for the Day Summary right rail.
+//  Focus section for the Day Summary right rail.
 //
 
 import SwiftUI
 
-struct Day专注SummarySection: View {
-  let total专注Text: String
-  let focusBlocks: [专注Block]
+struct DayFocusSummarySection: View {
+  let totalFocusText: String
+  let focusBlocks: [FocusBlock]
   let isSelectionEmpty: Bool
   let categories: [TimelineCategory]
   let selectedCategoryIDs: Set<UUID>
-  let isEditing分类: Bool
-  var onEdit分类: () -> Void
+  let isEditingCategories: Bool
+  var onEditCategories: () -> Void
   var onToggleCategory: (TimelineCategory) -> Void
   var onDoneEditing: () -> Void
 
@@ -23,8 +23,8 @@ struct Day专注SummarySection: View {
     static let cardsSpacing: CGFloat = 8
     static let editButtonSize: CGFloat = 20
     static let editorWidth: CGFloat = 358
-    static let editor关闭setX: CGFloat = -18
-    static let editor关闭setY: CGFloat = 28
+    static let editorOffsetX: CGFloat = -18
+    static let editorOffsetY: CGFloat = 28
     static let titleColor = Color(hex: "333333")
     static let subtitleColor = Color(hex: "707070")
     static let iconColor = Color(hex: "CFC7BE")
@@ -35,29 +35,29 @@ struct Day专注SummarySection: View {
       header
 
       if isSelectionEmpty {
-        Text("编辑分类来计算专注情况。")
+        Text("Edit categories to calculate focus.")
           .font(.custom("Figtree", size: 11))
           .foregroundColor(Design.subtitleColor)
       }
 
       VStack(spacing: Design.cardsSpacing) {
-        Total专注Card(value: total专注Text)
+        TotalFocusCard(value: totalFocusText)
 
-        Longest专注Card(focusBlocks: focusBlocks)
+        LongestFocusCard(focusBlocks: focusBlocks)
       }
       .opacity(isSelectionEmpty ? 0.45 : 1)
     }
     .overlay(alignment: .topLeading) {
-      if isEditing分类 {
+      if isEditingCategories {
         DayCategorySelectionEditor(
           categories: categories,
           selectedCategoryIDs: selectedCategoryIDs,
-          helperText: "Pick the categories that count towards 专注",
+          helperText: "Pick the categories that count towards Focus",
           onToggle: onToggleCategory,
           onDone: onDoneEditing
         )
         .frame(width: Design.editorWidth, alignment: .leading)
-        .offset(x: Design.editor关闭setX, y: Design.editor关闭setY)
+        .offset(x: Design.editorOffsetX, y: Design.editorOffsetY)
         .onTapGesture {}
       }
     }
@@ -65,7 +65,7 @@ struct Day专注SummarySection: View {
 
   private var header: some View {
     HStack(alignment: .center, spacing: 6) {
-      Text("你的专注")
+      Text("Your focus")
         .font(.custom("InstrumentSerif-Regular", size: 22))
         .foregroundColor(Design.titleColor)
 
@@ -76,20 +76,20 @@ struct Day专注SummarySection: View {
       Spacer()
 
       CategoryEditCircleButton(
-        action: onEdit分类,
+        action: onEditCategories,
         diameter: Design.editButtonSize
       )
     }
   }
 }
 
-private struct Total专注Card: View {
+private struct TotalFocusCard: View {
   let value: String
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       HStack(spacing: 6) {
-        Text("总专注时长")
+        Text("Total focus time")
           .font(.custom("InstrumentSerif-Regular", size: 16))
           .foregroundColor(Color(hex: "333333"))
 

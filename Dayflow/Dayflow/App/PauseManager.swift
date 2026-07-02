@@ -58,14 +58,14 @@ final class PauseManager: ObservableObject {
   @Published private(set) var pauseEndTime: Date?
 
   /// True if user selected indefinite pause (∞). Separate from timed pause.
-  @Published private(set) var is已暂停Indefinitely: Bool = false
+  @Published private(set) var isPausedIndefinitely: Bool = false
 
   /// The duration that was selected (for analytics)
   private var currentPauseDuration: PauseDuration?
 
   /// Convenience: true if any kind of user-initiated pause is active
-  var is已暂停: Bool {
-    is已暂停Indefinitely || pauseEndTime != nil
+  var isPaused: Bool {
+    isPausedIndefinitely || pauseEndTime != nil
   }
 
   /// Remaining seconds for countdown display. nil if not on timed pause.
@@ -94,14 +94,14 @@ final class PauseManager: ObservableObject {
   func clearPauseState() {
     stopTimer()
     pauseEndTime = nil
-    is已暂停Indefinitely = false
+    isPausedIndefinitely = false
     currentPauseDuration = nil
   }
 
   /// Pause recording for a specific duration from a specific source.
   /// - Parameters:
   ///   - duration: The pause duration (15 mins, 30 mins, 1 hour, or indefinite)
-  ///   - source: W这里 the pause was initiated from (menu bar, main app, etc.)
+  ///   - source: Where the pause was initiated from (menu bar, main app, etc.)
   func pause(for duration: PauseDuration, source: PauseSource) {
     clearPauseState()
 
@@ -111,12 +111,12 @@ final class PauseManager: ObservableObject {
     if let interval = duration.timeInterval {
       // Timed pause
       pauseEndTime = Date().addingTimeInterval(interval)
-      is已暂停Indefinitely = false
+      isPausedIndefinitely = false
       startTimer()
     } else {
       // Indefinite pause
       pauseEndTime = nil
-      is已暂停Indefinitely = true
+      isPausedIndefinitely = true
     }
 
     // Stop recording
@@ -211,7 +211,7 @@ final class PauseManager: ObservableObject {
 
   private func handleWake() {
     // If we were on a timed pause and it has now expired, auto-resume
-    // This handles the case w这里 computer slept past the pause end time
+    // This handles the case where computer slept past the pause end time
     if let end = pauseEndTime, Date() >= end {
       resume(source: .wakeFromSleep)
     }

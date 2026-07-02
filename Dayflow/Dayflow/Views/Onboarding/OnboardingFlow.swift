@@ -1,5 +1,5 @@
 //
-//  开启boardingFlow.swift
+//  OnboardingFlow.swift
 //  Dayflow
 //
 
@@ -9,14 +9,14 @@ import SwiftUI
 
 // Window manager removed - no longer needed!
 
-struct 开启boardingFlow: View {
+struct OnboardingFlow: View {
   @AppStorage("onboardingStep") private var savedStepRawValue = 0
-  @State private var step: 开启boardingStep = 开启boardingStepMigration.restoredStep()
-  @AppStorage("did开启board") private var did开启board = false
+  @State private var step: OnboardingStep = OnboardingStepMigration.restoredStep()
+  @AppStorage("didOnboard") private var didOnboard = false
   @AppStorage("selectedLLMProvider") private var selectedProvider: String = "gemini"
   @AppStorage("onboardingHasPaidAI") private var savedHasPaidAISelection = ""
   @EnvironmentObject private var categoryStore: CategoryStore
-  @State private var userHasPaidAI: Bool? = 开启boardingFlow.loadSavedHasPaidAISelection()
+  @State private var userHasPaidAI: Bool? = OnboardingFlow.loadSavedHasPaidAISelection()
   @State private var flowID = UUID().uuidString.lowercased()
 
   private var onboardingFilledSegments: Int {
@@ -45,11 +45,11 @@ struct 开启boardingFlow: View {
       // NO NESTING! Just render the appropriate view directly - NO GROUP!
       switch step {
       case .introVideo:
-        开启boardingPrototypeVideoIntroStep(
-          videoName: "Dayflow开启boarding",
+        OnboardingPrototypeVideoIntroStep(
+          videoName: "DayflowOnboarding",
           onPlaybackStarted: {
             AnalyticsService.shared.capture(
-              "onboarding_video_started", ["asset": "Dayflow开启boarding.mp4"])
+              "onboarding_video_started", ["asset": "DayflowOnboarding.mp4"])
           },
           onPlaybackCompleted: { reason in
             AnalyticsService.shared.capture("onboarding_video_completed", ["reason": reason])
@@ -68,9 +68,9 @@ struct 开启boardingFlow: View {
         }
 
       case .roleSelection:
-        开启boardingPrototypeRoleSelectionStep(
+        OnboardingPrototypeRoleSelectionStep(
           onContinue: { selectedRole in
-            categoryStore.set开启boardingRole(selectedRole)
+            categoryStore.setOnboardingRole(selectedRole)
             AnalyticsService.shared.capture("onboarding_role_selected", ["role": selectedRole])
             advance(selectedRole: selectedRole)
           }
@@ -82,7 +82,7 @@ struct 开启boardingFlow: View {
         }
 
       case .downloadReason:
-        开启boardingPrototypeDownloadReasonStep(
+        OnboardingPrototypeDownloadReasonStep(
           onContinue: { reasons, otherDetail in
             var payload: [String: Any] = [
               "reasons": reasons.map(\.analyticsValue),
@@ -103,7 +103,7 @@ struct 开启boardingFlow: View {
         }
 
       case .referral:
-        开启boardingPrototypeReferralStep(
+        OnboardingPrototypeReferralStep(
           onContinue: { option, detail in
             var payload: [String: Any] = [
               "source": option.analyticsValue,
@@ -124,7 +124,7 @@ struct 开启boardingFlow: View {
         }
 
       case .preferences:
-        开启boardingPrototypePreferencesStep(
+        OnboardingPrototypePreferencesStep(
           onContinue: { hasPaidAI in
             userHasPaidAI = hasPaidAI
             savedHasPaidAISelection = hasPaidAI ? "yes" : "no"
@@ -138,7 +138,7 @@ struct 开启boardingFlow: View {
         }
 
       case .llmSelection:
-        开启boardingPrototypeChooseProviderStep(
+        OnboardingPrototypeChooseProviderStep(
           hasPaidAI: userHasPaidAI ?? false,
           flowID: flowID,
           flowVariant: "production_onboarding",
@@ -159,8 +159,8 @@ struct 开启boardingFlow: View {
 
             var props: [String: Any] = ["provider": providerID]
             if providerID == "ollama" {
-              let local引擎 = UserDefaults.standard.string(forKey: "llmLocal引擎") ?? "ollama"
-              props["local_engine"] = local引擎
+              let localEngine = UserDefaults.standard.string(forKey: "llmLocalEngine") ?? "ollama"
+              props["local_engine"] = localEngine
             }
             AnalyticsService.shared.capture("llm_provider_selected", props)
             AnalyticsService.shared.setPersonProperties(["current_llm_provider": providerID])
@@ -189,10 +189,10 @@ struct 开启boardingFlow: View {
         }
 
       case .categories:
-        开启boardingCategoryStepView(
+        OnboardingCategoryStepView(
           onBack: {
             // Go back to llmSetup, or llmSelection if they picked dayflow
-            let backStep: 开启boardingStep =
+            let backStep: OnboardingStep =
               (selectedProvider == "dayflow") ? .llmSelection : .llmSetup
             setStep(backStep)
           },
@@ -207,7 +207,7 @@ struct 开启boardingFlow: View {
         }
 
       case .categoryColors:
-        开启boardingCategoryColorStepView(
+        OnboardingCategoryColorStepView(
           onBack: {
             setStep(.categories)
           },
@@ -219,7 +219,7 @@ struct 开启boardingFlow: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
       case .screen:
-        ScreenRecording权限View(
+        ScreenRecordingPermissionView(
           onBack: {
             setStep(.categoryColors)
           },
@@ -234,10 +234,10 @@ struct 开启boardingFlow: View {
         CompletionView(
           onFinish: {
             // Create sample card BEFORE switching views (sync write)
-            StorageManager.shared.create开启boardingCard()
+            StorageManager.shared.createOnboardingCard()
 
             markStepCompleted(.completion)
-            did开启board = true
+            didOnboard = true
             savedStepRawValue = 0
             savedHasPaidAISelection = ""
             AnalyticsService.shared.capture("onboarding_completed")
@@ -257,7 +257,7 @@ struct 开启boardingFlow: View {
         .animation(.easeInOut(duration: 0.3), value: showsProgressRing)
         .padding(.leading, 0)
         .padding(.bottom, 0)
-        .allowsHit测试ing(false)
+        .allowsHitTesting(false)
     }
     .animation(.easeInOut(duration: 0.5), value: step)
     .onAppear {
@@ -265,7 +265,7 @@ struct 开启boardingFlow: View {
     }
     .background {
       // Background at parent level - fills entire window!
-      Image("开启boardingBackgroundv2")
+      Image("OnboardingBackgroundv2")
         .resizable()
         .aspectRatio(contentMode: .fill)
         .ignoresSafeArea()
@@ -274,14 +274,14 @@ struct 开启boardingFlow: View {
   }
 
   private func restoreSavedStep() {
-    let migratedValue = 开启boardingStepMigration.migrateIfNeeded()
+    let migratedValue = OnboardingStepMigration.migrateIfNeeded()
     if migratedValue != savedStepRawValue {
       savedStepRawValue = migratedValue
     }
     userHasPaidAI = persistedHasPaidAISelection
-    if let savedStep = 开启boardingStep(rawValue: migratedValue) {
+    if let savedStep = OnboardingStep(rawValue: migratedValue) {
       if savedStep == .categories {
-        prepare分类For开启boardingIfNeeded()
+        prepareCategoriesForOnboardingIfNeeded()
       }
       step = savedStep
     }
@@ -291,20 +291,20 @@ struct 开启boardingFlow: View {
     Self.decodeHasPaidAISelection(savedHasPaidAISelection)
   }
 
-  private func setStep(_ newStep: 开启boardingStep) {
+  private func setStep(_ newStep: OnboardingStep) {
     if newStep == .categories {
-      prepare分类For开启boardingIfNeeded()
+      prepareCategoriesForOnboardingIfNeeded()
     }
     step = newStep
     savedStepRawValue = newStep.rawValue
   }
 
-  private func prepare分类For开启boardingIfNeeded() {
-    categoryStore.apply开启boardingPresetIfNeeded()
+  private func prepareCategoriesForOnboardingIfNeeded() {
+    categoryStore.applyOnboardingPresetIfNeeded()
   }
 
   private func markStepCompleted(
-    _ completedStep: 开启boardingStep,
+    _ completedStep: OnboardingStep,
     extraProps: [String: Any] = [:]
   ) {
     var props: [String: Any] = ["step": completedStep.analyticsName]
@@ -339,7 +339,7 @@ struct 开启boardingFlow: View {
       savedStepRawValue = step.rawValue
     case .llmSelection:
       markStepCompleted(step, extraProps: extraProps)
-      let nextStep: 开启boardingStep = (selectedProvider == "dayflow") ? .categories : .llmSetup
+      let nextStep: OnboardingStep = (selectedProvider == "dayflow") ? .categories : .llmSetup
       setStep(nextStep)
     case .llmSetup:
       markStepCompleted(step)
@@ -351,32 +351,32 @@ struct 开启boardingFlow: View {
       markStepCompleted(step)
       setStep(.screen)
     case .screen:
-      // 权限 request is handled by ScreenRecording权限View itself
+      // Permission request is handled by ScreenRecordingPermissionView itself
       markStepCompleted(step)
       step.next()
       savedStepRawValue = step.rawValue
 
-      // 开启ly try to start recording if we already have permission
+      // Only try to start recording if we already have permission
       if CGPreflightScreenCaptureAccess() {
         Task {
           do {
             // Verify we have permission
             _ = try await SCShareableContent.excludingDesktopWindows(
-              false, onScreenWindows开启ly: true)
+              false, onScreenWindowsOnly: true)
             // Start recording
             await MainActor.run {
               AppState.shared.setRecording(true, analyticsReason: "onboarding")
             }
           } catch {
-            // 权限 not granted yet, that's ok
+            // Permission not granted yet, that's ok
             // It will start after restart
             print("Will start recording after restart")
           }
         }
       }
     case .completion:
-      did开启board = true
-      savedStepRawValue = 0  // 重置 for next time
+      didOnboard = true
+      savedStepRawValue = 0  // Reset for next time
     }
   }
 
@@ -398,7 +398,7 @@ struct 开启boardingFlow: View {
 }
 
 /// Wizard step order
-enum 开启boardingStep: Int, CaseIterable {
+enum OnboardingStep: Int, CaseIterable {
   case introVideo, roleSelection, downloadReason, referral, preferences, llmSelection, llmSetup,
     categories, categoryColors, screen, completion
 
@@ -430,14 +430,14 @@ enum 开启boardingStep: Int, CaseIterable {
   }
 
   static func hasPassedScreenRecordingStep(rawValue: Int) -> Bool {
-    guard let step = 开启boardingStep(rawValue: rawValue) else { return false }
-    return step.rawValue > 开启boardingStep.screen.rawValue
+    guard let step = OnboardingStep(rawValue: rawValue) else { return false }
+    return step.rawValue > OnboardingStep.screen.rawValue
   }
 
-  mutating func next() { self = 开启boardingStep(rawValue: rawValue + 1)! }
+  mutating func next() { self = OnboardingStep(rawValue: rawValue + 1)! }
 }
 
-enum 开启boardingStepMigration {
+enum OnboardingStepMigration {
   static let schemaVersionKey = "onboardingStepSchemaVersion"
   private static let onboardingStepKey = "onboardingStep"
   static let currentVersion = 5
@@ -490,8 +490,8 @@ enum 开启boardingStepMigration {
     return migratedValue
   }
 
-  static func restoredStep(defaults: UserDefaults = .standard) -> 开启boardingStep {
-    开启boardingStep(rawValue: migrateIfNeeded(defaults: defaults)) ?? .introVideo
+  static func restoredStep(defaults: UserDefaults = .standard) -> OnboardingStep {
+    OnboardingStep(rawValue: migrateIfNeeded(defaults: defaults)) ?? .introVideo
   }
 
   static func migrateV0toV1(_ rawValue: Int) -> Int {
@@ -560,7 +560,7 @@ enum 开启boardingStepMigration {
 struct WelcomeView: View {
   let fullText: String
   @Binding var textOpacity: Double
-  @Binding var timeline关闭set: CGFloat
+  @Binding var timelineOffset: CGFloat
   let onStart: () -> Void
 
   var body: some View {
@@ -614,16 +614,16 @@ struct WelcomeView: View {
       // Timeline image
       VStack {
         Spacer()
-        Image("开启boardingTimeline")
+        Image("OnboardingTimeline")
           .resizable()
           .aspectRatio(contentMode: .fit)
           .frame(maxWidth: 800)
-          .offset(y: timeline关闭set)
-          .opacity(timeline关闭set > 0 ? 0 : 1)
+          .offset(y: timelineOffset)
+          .opacity(timelineOffset > 0 ? 0 : 1)
           .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0).delay(0.3))
             {
-              timeline关闭set = 0
+              timelineOffset = 0
             }
           }
       }
@@ -631,7 +631,7 @@ struct WelcomeView: View {
   }
 }
 
-struct 开启boardingCategoryColorStepView: View {
+struct OnboardingCategoryColorStepView: View {
   let onBack: () -> Void
   let onNext: () -> Void
   @EnvironmentObject private var categoryStore: CategoryStore
@@ -640,7 +640,7 @@ struct 开启boardingCategoryColorStepView: View {
     VStack(spacing: 32) {
       ColorOrganizerRoot(
         presentationStyle: .embedded,
-        flowMode: .colors开启ly,
+        flowMode: .colorsOnly,
         onBack: onBack,
         onDismiss: {
           onNext()
@@ -657,7 +657,7 @@ struct 开启boardingCategoryColorStepView: View {
   }
 }
 
-struct 开启boardingPrototypeDownloadReasonStep: View {
+struct OnboardingPrototypeDownloadReasonStep: View {
   let onContinue: ([DownloadReasonOption], String?) -> Void
 
   @State private var shuffledReasons = DownloadReasonOption.randomizedConcreteOptions()
@@ -691,7 +691,7 @@ struct 开启boardingPrototypeDownloadReasonStep: View {
             .font(.custom("Figtree", size: 20))
             .foregroundColor(Color(hex: "89380E"))
 
-          Text("这有助于为你个性化体验。")
+          Text("This helps personalize the experience for you.")
             .font(.custom("Figtree", size: 16))
             .foregroundColor(Color(hex: "89380E").opacity(0.78))
         }
@@ -731,7 +731,7 @@ struct 开启boardingPrototypeDownloadReasonStep: View {
         showOverlayStroke: true
       )
       .opacity(canContinue ? 1.0 : 0.4)
-      .allowsHit测试ing(canContinue)
+      .allowsHitTesting(canContinue)
       .animation(.easeInOut(duration: 0.2), value: canContinue)
 
       Spacer()
@@ -784,7 +784,7 @@ struct 开启boardingPrototypeDownloadReasonStep: View {
   }
 
   private var otherField: some View {
-    TextField("告诉我更多", text: $otherText)
+    TextField("Tell me more", text: $otherText)
       .font(.custom("Figtree", size: 16))
       .foregroundColor(Color(hex: "492304"))
       .textFieldStyle(.plain)
@@ -802,7 +802,7 @@ struct 开启boardingPrototypeDownloadReasonStep: View {
       )
       .opacity(selectedReasons.contains(.other) ? 1 : 0)
       .disabled(!selectedReasons.contains(.other))
-      .allowsHit测试ing(selectedReasons.contains(.other))
+      .allowsHitTesting(selectedReasons.contains(.other))
       .frame(maxWidth: .infinity)
   }
 
@@ -821,8 +821,8 @@ struct 开启boardingPrototypeDownloadReasonStep: View {
 enum DownloadReasonOption: CaseIterable, Identifiable, Hashable {
   case automaticLog
   case proofOfWork
-  case cut分心
-  case productive专注ed
+  case cutDistractions
+  case productiveFocused
   case automatedManualTracking
   case openSourcePrivate
   case other
@@ -839,9 +839,9 @@ enum DownloadReasonOption: CaseIterable, Identifiable, Hashable {
       return "To keep an automatic log of what I worked on"
     case .proofOfWork:
       return "To have something to show for my work (standups, reviews, clients)"
-    case .cut分心:
+    case .cutDistractions:
       return "To find and cut distractions"
-    case .productive专注ed:
+    case .productiveFocused:
       return "To be more productive or focused"
     case .automatedManualTracking:
       return "I was already tracking this manually and wanted it automated"
@@ -858,9 +858,9 @@ enum DownloadReasonOption: CaseIterable, Identifiable, Hashable {
       return "automatic_log"
     case .proofOfWork:
       return "proof_of_work"
-    case .cut分心:
+    case .cutDistractions:
       return "cut_distractions"
-    case .productive专注ed:
+    case .productiveFocused:
       return "productive_focused"
     case .automatedManualTracking:
       return "automated_manual_tracking"
@@ -872,7 +872,7 @@ enum DownloadReasonOption: CaseIterable, Identifiable, Hashable {
   }
 }
 
-struct 开启boardingPrototypeReferralStep: View {
+struct OnboardingPrototypeReferralStep: View {
   let onContinue: (ReferralOption, String?) -> Void
 
   @State private var selectedReferral: ReferralOption? = nil
@@ -895,7 +895,7 @@ struct 开启boardingPrototypeReferralStep: View {
       Spacer()
         .frame(height: 39)
 
-      Text("开启e quick question")
+      Text("One quick question")
         .font(.custom("InstrumentSerif-Regular", size: 40))
         .tracking(-1.2)
         .multilineTextAlignment(.center)
@@ -909,7 +909,7 @@ struct 开启boardingPrototypeReferralStep: View {
 
       VStack(spacing: 20) {
         ReferralSurveyView(
-          prompt: "W这里 did you first hear about Dayflow?",
+          prompt: "Where did you first hear about Dayflow?",
           showSubmitButton: false,
           selectedReferral: $selectedReferral,
           customReferral: $referralDetail
@@ -941,7 +941,7 @@ struct 开启boardingPrototypeReferralStep: View {
         showOverlayStroke: true
       )
       .opacity(canContinue ? 1.0 : 0.4)
-      .allowsHit测试ing(canContinue)
+      .allowsHitTesting(canContinue)
       .animation(.easeInOut(duration: 0.2), value: canContinue)
 
       Spacer()
@@ -964,7 +964,7 @@ struct CompletionView: View {
 
       // Title section
       VStack(spacing: 8) {
-        Text("准备好了！")
+        Text("You are ready to go!")
           .font(.custom("InstrumentSerif-Regular", size: 36))
           .foregroundColor(.black.opacity(0.9))
 
@@ -1004,9 +1004,9 @@ struct CompletionView: View {
   }
 }
 
-struct 开启boardingFlow_Previews: PreviewProvider {
+struct OnboardingFlow_Previews: PreviewProvider {
   static var previews: some View {
-    开启boardingFlow()
+    OnboardingFlow()
       .environmentObject(AppState.shared)
       .frame(width: 1200, height: 800)
   }

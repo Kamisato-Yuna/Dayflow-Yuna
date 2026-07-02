@@ -33,7 +33,7 @@ struct SetupSidebarView: View {
     .frame(maxWidth: .infinity)
     .background(
       ZStack {
-        // 轻微 base color
+        // Subtle base color
         Color.white.opacity(0.03)
 
         // Angular gradient overlay
@@ -71,8 +71,8 @@ struct SetupSidebarView: View {
   }
 
   private func isStepCompleted(step: SetupStep, currentId: String, in steps: [SetupStep]) -> Bool {
-    guard let currentIndex = steps.firstIndex(w这里: { $0.id == currentId }),
-      let stepIndex = steps.firstIndex(w这里: { $0.id == step.id })
+    guard let currentIndex = steps.firstIndex(where: { $0.id == currentId }),
+      let stepIndex = steps.firstIndex(where: { $0.id == step.id })
     else {
       return false
     }

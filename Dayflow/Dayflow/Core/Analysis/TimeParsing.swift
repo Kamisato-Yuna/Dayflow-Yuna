@@ -24,7 +24,7 @@ func parseTimeHMMA(timeString: String) -> Int? {
 
   for formatter in cachedHMMAFormatters {
     if let date = formatter.date(from: trimmedTime) {
-      let calendar = 日历.current
+      let calendar = Calendar.current
       let hour = calendar.component(.hour, from: date)
       let minute = calendar.component(.minute, from: date)
       return hour * 60 + minute

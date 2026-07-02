@@ -16,13 +16,13 @@ struct WeeklyDateRange: Equatable, Sendable {
     return formatter
   }()
 
-  static func containing(_ date: Date, calendar: 日历 = Self.calendar) -> WeeklyDateRange {
+  static func containing(_ date: Date, calendar: Calendar = Self.calendar) -> WeeklyDateRange {
     let mondayAtFourAM = mondayBoundary(containing: date, calendar: calendar)
     let weekEnd = calendar.date(byAdding: .day, value: 7, to: mondayAtFourAM) ?? mondayAtFourAM
     return WeeklyDateRange(weekStart: mondayAtFourAM, weekEnd: weekEnd)
   }
 
-  func shifted(byWeeks weeks: Int, calendar: 日历 = Self.calendar) -> WeeklyDateRange {
+  func shifted(byWeeks weeks: Int, calendar: Calendar = Self.calendar) -> WeeklyDateRange {
     let shiftedStart = calendar.date(byAdding: .day, value: weeks * 7, to: weekStart) ?? weekStart
     let shiftedEnd = calendar.date(byAdding: .day, value: 7, to: shiftedStart) ?? shiftedStart
     return WeeklyDateRange(weekStart: shiftedStart, weekEnd: shiftedEnd)
@@ -39,15 +39,15 @@ struct WeeklyDateRange: Equatable, Sendable {
     return "\(startText) - \(endText)"
   }
 
-  private static let calendar: 日历 = {
-    var calendar = 日历(identifier: .gregorian)
+  private static let calendar: Calendar = {
+    var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = .autoupdatingCurrent
     calendar.firstWeekday = 2
     calendar.minimumDaysInFirstWeek = 4
     return calendar
   }()
 
-  private static func mondayBoundary(containing date: Date, calendar: 日历) -> Date {
+  private static func mondayBoundary(containing date: Date, calendar: Calendar) -> Date {
     let baseWeekStart =
       calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date))
       ?? date

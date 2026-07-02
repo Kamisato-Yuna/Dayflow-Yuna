@@ -21,11 +21,11 @@ final class ProvidersSettingsViewModel: ObservableObject {
   }
 
   @Published var selectedGeminiModel: GeminiModel
-  @Published var local引擎: Local引擎 {
+  @Published var localEngine: LocalEngine {
     didSet {
-      guard oldValue != local引擎 else { return }
-      UserDefaults.standard.set(local引擎.rawValue, forKey: "llmLocal引擎")
-      LocalModelPreferences.syncPreset(for: local引擎, modelId: localModelId)
+      guard oldValue != localEngine else { return }
+      UserDefaults.standard.set(localEngine.rawValue, forKey: "llmLocalEngine")
+      LocalModelPreferences.syncPreset(for: localEngine, modelId: localModelId)
       refreshUpgradeBannerState()
     }
   }
@@ -39,7 +39,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
     didSet {
       guard oldValue != localModelId else { return }
       UserDefaults.standard.set(localModelId, forKey: "llmLocalModelId")
-      LocalModelPreferences.syncPreset(for: local引擎, modelId: localModelId)
+      LocalModelPreferences.syncPreset(for: localEngine, modelId: localModelId)
       refreshUpgradeBannerState()
     }
   }
@@ -56,13 +56,13 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   @Published var geminiPromptOverridesLoaded = false
   @Published var isUpdatingGeminiPromptState = false
-  @Published var use自定义GeminiTitlePrompt = false {
+  @Published var useCustomGeminiTitlePrompt = false {
     didSet { persistGeminiPromptOverridesIfReady() }
   }
-  @Published var use自定义GeminiSummaryPrompt = false {
+  @Published var useCustomGeminiSummaryPrompt = false {
     didSet { persistGeminiPromptOverridesIfReady() }
   }
-  @Published var use自定义GeminiDetailedPrompt = false {
+  @Published var useCustomGeminiDetailedPrompt = false {
     didSet { persistGeminiPromptOverridesIfReady() }
   }
   @Published var geminiTitlePromptText = GeminiPromptDefaults.titleBlock {
@@ -77,10 +77,10 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   @Published var ollamaPromptOverridesLoaded = false
   @Published var isUpdatingOllamaPromptState = false
-  @Published var use自定义OllamaTitlePrompt = false {
+  @Published var useCustomOllamaTitlePrompt = false {
     didSet { persistOllamaPromptOverridesIfReady() }
   }
-  @Published var use自定义OllamaSummaryPrompt = false {
+  @Published var useCustomOllamaSummaryPrompt = false {
     didSet { persistOllamaPromptOverridesIfReady() }
   }
   @Published var ollamaTitlePromptText = OllamaPromptDefaults.titleBlock {
@@ -92,13 +92,13 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   @Published var chatCLIPromptOverridesLoaded = false
   @Published var isUpdatingChatCLIPromptState = false
-  @Published var use自定义ChatCLITitlePrompt = false {
+  @Published var useCustomChatCLITitlePrompt = false {
     didSet { persistChatCLIPromptOverridesIfReady() }
   }
-  @Published var use自定义ChatCLISummaryPrompt = false {
+  @Published var useCustomChatCLISummaryPrompt = false {
     didSet { persistChatCLIPromptOverridesIfReady() }
   }
-  @Published var use自定义ChatCLIDetailedPrompt = false {
+  @Published var useCustomChatCLIDetailedPrompt = false {
     didSet { persistChatCLIPromptOverridesIfReady() }
   }
   @Published var chatCLITitlePromptText = ChatCLIPromptDefaults.titleBlock {
@@ -121,11 +121,11 @@ final class ProvidersSettingsViewModel: ObservableObject {
     selectedGeminiModel = preference.primary
     savedGeminiModel = preference.primary
 
-    let raw引擎 = UserDefaults.standard.string(forKey: "llmLocal引擎") ?? "ollama"
-    let engine = Local引擎(rawValue: raw引擎) ?? .ollama
-    local引擎 = engine
+    let rawEngine = UserDefaults.standard.string(forKey: "llmLocalEngine") ?? "ollama"
+    let engine = LocalEngine(rawValue: rawEngine) ?? .ollama
+    localEngine = engine
     localBaseURL =
-      UserDefaults.standard.string(forKey: "llmLocalBaseURL") ?? Local引擎.ollama.defaultBaseURL
+      UserDefaults.standard.string(forKey: "llmLocalBaseURL") ?? LocalEngine.ollama.defaultBaseURL
 
     let defaults = UserDefaults.standard
     let storedModel = defaults.string(forKey: "llmLocalModelId") ?? ""
@@ -143,22 +143,22 @@ final class ProvidersSettingsViewModel: ObservableObject {
     }
   }
 
-  func handle开启Appear() {
+  func handleOnAppear() {
     DayflowAuthManager.shared.loadStoredSessionIfNeeded()
     loadCurrentProvider()
     loadBackupProvider()
     reloadLocalProviderSettings()
-    LocalModelPreferences.syncPreset(for: local引擎, modelId: localModelId)
+    LocalModelPreferences.syncPreset(for: localEngine, modelId: localModelId)
     refreshUpgradeBannerState()
     loadGeminiPromptOverridesIfNeeded()
     loadOllamaPromptOverridesIfNeeded()
     loadChatCLIPromptOverridesIfNeeded()
   }
 
-  func handleLocal测试Completion() {
+  func handleLocalTestCompletion() {
     UserDefaults.standard.set(localBaseURL, forKey: "llmLocalBaseURL")
     UserDefaults.standard.set(localModelId, forKey: "llmLocalModelId")
-    LocalModelPreferences.syncPreset(for: local引擎, modelId: localModelId)
+    LocalModelPreferences.syncPreset(for: localEngine, modelId: localModelId)
     persistLocalAPIKey(localAPIKey)
     refreshUpgradeBannerState()
   }
@@ -189,15 +189,15 @@ final class ProvidersSettingsViewModel: ObservableObject {
     localBaseURL = UserDefaults.standard.string(forKey: "llmLocalBaseURL") ?? localBaseURL
     localModelId = UserDefaults.standard.string(forKey: "llmLocalModelId") ?? localModelId
     localAPIKey = UserDefaults.standard.string(forKey: "llmLocalAPIKey") ?? localAPIKey
-    let raw = UserDefaults.standard.string(forKey: "llmLocal引擎") ?? local引擎.rawValue
-    local引擎 = Local引擎(rawValue: raw) ?? local引擎
-    LocalModelPreferences.syncPreset(for: local引擎, modelId: localModelId)
+    let raw = UserDefaults.standard.string(forKey: "llmLocalEngine") ?? localEngine.rawValue
+    localEngine = LocalEngine(rawValue: raw) ?? localEngine
+    LocalModelPreferences.syncPreset(for: localEngine, modelId: localModelId)
   }
 
   var usingRecommendedLocalModel: Bool {
-    let comparison引擎 = local引擎 == .custom ? .ollama : local引擎
+    let comparisonEngine = localEngine == .custom ? .ollama : localEngine
     let normalized = localModelId.trimmingCharacters(in: .whitespacesAndNewlines)
-    let recommended = LocalModelPreset.recommended.modelId(for: comparison引擎)
+    let recommended = LocalModelPreset.recommended.modelId(for: comparisonEngine)
     if normalized.caseInsensitiveCompare(recommended) == .orderedSame {
       return true
     }
@@ -206,19 +206,19 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   func refreshUpgradeBannerState() {
     let shouldShow = LocalModelPreferences.shouldShowUpgradeBanner(
-      engine: local引擎, modelId: localModelId)
+      engine: localEngine, modelId: localModelId)
     showLocalModelUpgradeBanner = shouldShow && currentProvider == "ollama"
   }
 
-  func handleUpgradeSuccess(engine: Local引擎, baseURL: String, modelId: String, apiKey: String) {
+  func handleUpgradeSuccess(engine: LocalEngine, baseURL: String, modelId: String, apiKey: String) {
     let normalizedKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
-    local引擎 = engine
+    localEngine = engine
     localBaseURL = baseURL
     localModelId = modelId
     localAPIKey = normalizedKey
     UserDefaults.standard.set(baseURL, forKey: "llmLocalBaseURL")
     UserDefaults.standard.set(modelId, forKey: "llmLocalModelId")
-    UserDefaults.standard.set(engine.rawValue, forKey: "llmLocal引擎")
+    UserDefaults.standard.set(engine.rawValue, forKey: "llmLocalEngine")
     persistLocalAPIKey(normalizedKey)
     LocalModelPreferences.syncPreset(for: engine, modelId: modelId)
     LocalModelPreferences.markUpgradeDismissed(true)
@@ -305,7 +305,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
   }
 
   func beginProviderSetup(_ providerId: String, role: ProviderRoutingRole) {
-    guard providerCatalog.contains(w这里: { $0.id == providerId }) else { return }
+    guard providerCatalog.contains(where: { $0.id == providerId }) else { return }
     guard canUseProviderForRouting(providerId) else {
       openAccountForDayflowPro(providerId)
       return
@@ -317,7 +317,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
   }
 
   func editProviderConfiguration(_ providerId: String) {
-    guard providerCatalog.contains(w这里: { $0.id == providerId }) else { return }
+    guard providerCatalog.contains(where: { $0.id == providerId }) else { return }
     if canonicalProviderId(for: providerId) == "dayflow" {
       openAccountForDayflowProvider(providerId)
       return
@@ -328,7 +328,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
       return
     }
 
-    pendingSetupRole = .setup开启ly
+    pendingSetupRole = .setupOnly
     pendingSetupDisplayProviderId = providerId
     setupModalProvider = canonicalProviderId(for: providerId)
   }
@@ -340,7 +340,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
       reloadLocalProviderSettings()
     }
 
-    let role = pendingSetupRole ?? .setup开启ly
+    let role = pendingSetupRole ?? .setupOnly
     let displayProviderId =
       pendingSetupDisplayProviderId
       ?? displayProviderId(
@@ -355,7 +355,7 @@ final class ProvidersSettingsViewModel: ObservableObject {
       assignPrimaryProvider(displayProviderId)
     case .secondary:
       assignSecondaryProvider(displayProviderId)
-    case .setup开启ly:
+    case .setupOnly:
       break
     }
   }
@@ -686,12 +686,12 @@ final class ProvidersSettingsViewModel: ObservableObject {
   private func recordProviderSetupCompleted(_ providerId: String) {
     var props: [String: Any] = ["provider": providerId]
     if providerId == "ollama" {
-      let local引擎Value = UserDefaults.standard.string(forKey: "llmLocal引擎") ?? "ollama"
+      let localEngineValue = UserDefaults.standard.string(forKey: "llmLocalEngine") ?? "ollama"
       let localModelValue = UserDefaults.standard.string(forKey: "llmLocalModelId") ?? "unknown"
       let localBaseValue = UserDefaults.standard.string(forKey: "llmLocalBaseURL") ?? "unknown"
       let localAPIKeyValue = (UserDefaults.standard.string(forKey: "llmLocalAPIKey") ?? "")
         .trimmingCharacters(in: .whitespacesAndNewlines)
-      props["local_engine"] = local引擎Value
+      props["local_engine"] = localEngineValue
       props["model_id"] = localModelValue
       props["base_url"] = localBaseValue
       props["has_api_key"] = !localAPIKeyValue.isEmpty
@@ -769,10 +769,10 @@ final class ProvidersSettingsViewModel: ObservableObject {
     switch canonicalId {
     case "ollama":
       let engineName: String
-      switch local引擎 {
+      switch localEngine {
       case .ollama: engineName = "Ollama"
       case .lmstudio: engineName = "LM Studio"
-      case .custom: engineName = "自定义"
+      case .custom: engineName = "Custom"
       }
       let displayModel = localModelId.isEmpty ? "qwen2.5vl:3b" : localModelId
       let truncatedModel =
@@ -879,9 +879,9 @@ final class ProvidersSettingsViewModel: ObservableObject {
     let trimmedSummary = overrides.summaryBlock?.trimmingCharacters(in: .whitespacesAndNewlines)
     let trimmedDetailed = overrides.detailedBlock?.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    use自定义GeminiTitlePrompt = trimmedTitle?.isEmpty == false
-    use自定义GeminiSummaryPrompt = trimmedSummary?.isEmpty == false
-    use自定义GeminiDetailedPrompt = trimmedDetailed?.isEmpty == false
+    useCustomGeminiTitlePrompt = trimmedTitle?.isEmpty == false
+    useCustomGeminiSummaryPrompt = trimmedSummary?.isEmpty == false
+    useCustomGeminiDetailedPrompt = trimmedDetailed?.isEmpty == false
 
     geminiTitlePromptText = trimmedTitle ?? GeminiPromptDefaults.titleBlock
     geminiSummaryPromptText = trimmedSummary ?? GeminiPromptDefaults.summaryBlock
@@ -899,11 +899,11 @@ final class ProvidersSettingsViewModel: ObservableObject {
   func persistGeminiPromptOverrides() {
     let overrides = GeminiPromptOverrides(
       titleBlock: normalizedOverride(
-        text: geminiTitlePromptText, enabled: use自定义GeminiTitlePrompt),
+        text: geminiTitlePromptText, enabled: useCustomGeminiTitlePrompt),
       summaryBlock: normalizedOverride(
-        text: geminiSummaryPromptText, enabled: use自定义GeminiSummaryPrompt),
+        text: geminiSummaryPromptText, enabled: useCustomGeminiSummaryPrompt),
       detailedBlock: normalizedOverride(
-        text: geminiDetailedPromptText, enabled: use自定义GeminiDetailedPrompt)
+        text: geminiDetailedPromptText, enabled: useCustomGeminiDetailedPrompt)
     )
 
     if overrides.isEmpty {
@@ -915,9 +915,9 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   func resetGeminiPromptOverrides() {
     isUpdatingGeminiPromptState = true
-    use自定义GeminiTitlePrompt = false
-    use自定义GeminiSummaryPrompt = false
-    use自定义GeminiDetailedPrompt = false
+    useCustomGeminiTitlePrompt = false
+    useCustomGeminiSummaryPrompt = false
+    useCustomGeminiDetailedPrompt = false
     geminiTitlePromptText = GeminiPromptDefaults.titleBlock
     geminiSummaryPromptText = GeminiPromptDefaults.summaryBlock
     geminiDetailedPromptText = GeminiPromptDefaults.detailedSummaryBlock
@@ -934,8 +934,8 @@ final class ProvidersSettingsViewModel: ObservableObject {
     let trimmedSummary = overrides.summaryBlock?.trimmingCharacters(in: .whitespacesAndNewlines)
     let trimmedTitle = overrides.titleBlock?.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    use自定义OllamaSummaryPrompt = trimmedSummary?.isEmpty == false
-    use自定义OllamaTitlePrompt = trimmedTitle?.isEmpty == false
+    useCustomOllamaSummaryPrompt = trimmedSummary?.isEmpty == false
+    useCustomOllamaTitlePrompt = trimmedTitle?.isEmpty == false
 
     ollamaSummaryPromptText = trimmedSummary ?? OllamaPromptDefaults.summaryBlock
     ollamaTitlePromptText = trimmedTitle ?? OllamaPromptDefaults.titleBlock
@@ -952,9 +952,9 @@ final class ProvidersSettingsViewModel: ObservableObject {
   func persistOllamaPromptOverrides() {
     let overrides = OllamaPromptOverrides(
       summaryBlock: normalizedOverride(
-        text: ollamaSummaryPromptText, enabled: use自定义OllamaSummaryPrompt),
+        text: ollamaSummaryPromptText, enabled: useCustomOllamaSummaryPrompt),
       titleBlock: normalizedOverride(
-        text: ollamaTitlePromptText, enabled: use自定义OllamaTitlePrompt)
+        text: ollamaTitlePromptText, enabled: useCustomOllamaTitlePrompt)
     )
 
     if overrides.isEmpty {
@@ -966,8 +966,8 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   func resetOllamaPromptOverrides() {
     isUpdatingOllamaPromptState = true
-    use自定义OllamaSummaryPrompt = false
-    use自定义OllamaTitlePrompt = false
+    useCustomOllamaSummaryPrompt = false
+    useCustomOllamaTitlePrompt = false
     ollamaSummaryPromptText = OllamaPromptDefaults.summaryBlock
     ollamaTitlePromptText = OllamaPromptDefaults.titleBlock
     OllamaPromptPreferences.reset()
@@ -984,9 +984,9 @@ final class ProvidersSettingsViewModel: ObservableObject {
     let trimmedSummary = overrides.summaryBlock?.trimmingCharacters(in: .whitespacesAndNewlines)
     let trimmedDetailed = overrides.detailedBlock?.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    use自定义ChatCLITitlePrompt = trimmedTitle?.isEmpty == false
-    use自定义ChatCLISummaryPrompt = trimmedSummary?.isEmpty == false
-    use自定义ChatCLIDetailedPrompt = trimmedDetailed?.isEmpty == false
+    useCustomChatCLITitlePrompt = trimmedTitle?.isEmpty == false
+    useCustomChatCLISummaryPrompt = trimmedSummary?.isEmpty == false
+    useCustomChatCLIDetailedPrompt = trimmedDetailed?.isEmpty == false
 
     chatCLITitlePromptText = trimmedTitle ?? ChatCLIPromptDefaults.titleBlock
     chatCLISummaryPromptText = trimmedSummary ?? ChatCLIPromptDefaults.summaryBlock
@@ -1004,11 +1004,11 @@ final class ProvidersSettingsViewModel: ObservableObject {
   func persistChatCLIPromptOverrides() {
     let overrides = ChatCLIPromptOverrides(
       titleBlock: normalizedOverride(
-        text: chatCLITitlePromptText, enabled: use自定义ChatCLITitlePrompt),
+        text: chatCLITitlePromptText, enabled: useCustomChatCLITitlePrompt),
       summaryBlock: normalizedOverride(
-        text: chatCLISummaryPromptText, enabled: use自定义ChatCLISummaryPrompt),
+        text: chatCLISummaryPromptText, enabled: useCustomChatCLISummaryPrompt),
       detailedBlock: normalizedOverride(
-        text: chatCLIDetailedPromptText, enabled: use自定义ChatCLIDetailedPrompt)
+        text: chatCLIDetailedPromptText, enabled: useCustomChatCLIDetailedPrompt)
     )
 
     if overrides.isEmpty {
@@ -1020,9 +1020,9 @@ final class ProvidersSettingsViewModel: ObservableObject {
 
   func resetChatCLIPromptOverrides() {
     isUpdatingChatCLIPromptState = true
-    use自定义ChatCLITitlePrompt = false
-    use自定义ChatCLISummaryPrompt = false
-    use自定义ChatCLIDetailedPrompt = false
+    useCustomChatCLITitlePrompt = false
+    useCustomChatCLISummaryPrompt = false
+    useCustomChatCLIDetailedPrompt = false
     chatCLITitlePromptText = ChatCLIPromptDefaults.titleBlock
     chatCLISummaryPromptText = ChatCLIPromptDefaults.summaryBlock
     chatCLIDetailedPromptText = ChatCLIPromptDefaults.detailedSummaryBlock
@@ -1061,5 +1061,5 @@ struct CompactProviderInfo: Identifiable {
 enum ProviderRoutingRole {
   case primary
   case secondary
-  case setup开启ly
+  case setupOnly
 }

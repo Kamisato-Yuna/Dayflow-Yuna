@@ -232,7 +232,7 @@ struct AssistantMessageIconButton: View {
     }
     .buttonStyle(.plain)
     .hoverScaleEffect(scale: 1.02)
-    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+    .pointingHandCursorOnHover(reassertOnPressEnd: true)
     .accessibilityLabel(Text(accessibilityLabel))
     .onHover { hovering in
       withAnimation(hoverAnimation) {

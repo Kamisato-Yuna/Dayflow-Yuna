@@ -1,14 +1,14 @@
 import Foundation
 
 enum TimelapsePreferences {
-  static let save全部TimelapsesToDiskKey = "save全部TimelapsesToDisk"
+  static let saveAllTimelapsesToDiskKey = "saveAllTimelapsesToDisk"
 
-  static var save全部TimelapsesToDisk: Bool {
+  static var saveAllTimelapsesToDisk: Bool {
     get {
-      UserDefaults.standard.object(forKey: save全部TimelapsesToDiskKey) as? Bool ?? false
+      UserDefaults.standard.object(forKey: saveAllTimelapsesToDiskKey) as? Bool ?? false
     }
     set {
-      UserDefaults.standard.set(newValue, forKey: save全部TimelapsesToDiskKey)
+      UserDefaults.standard.set(newValue, forKey: saveAllTimelapsesToDiskKey)
     }
   }
 }

@@ -33,7 +33,7 @@ struct SettingsProvidersTabView: View {
         geminiModelSection
       }
 
-      prompt自定义izationSection
+      promptCustomizationSection
     }
   }
 
@@ -49,7 +49,7 @@ struct SettingsProvidersTabView: View {
 
         HStack(spacing: 8) {
           SettingsSecondaryButton(
-            title: "编辑设置",
+            title: "Edit configuration",
             action: { viewModel.editProviderConfiguration(viewModel.primaryRoutingProviderId) }
           )
 
@@ -91,7 +91,7 @@ struct SettingsProvidersTabView: View {
 
     switch viewModel.currentProvider {
     case "ollama":
-      SettingsRow(label: "引擎") { SettingsMetadata(text: viewModel.local引擎.displayName) }
+      SettingsRow(label: "Engine") { SettingsMetadata(text: viewModel.localEngine.displayName) }
       SettingsRow(label: "Model") {
         SettingsMetadata(
           text: viewModel.localModelId.isEmpty ? "Not configured" : viewModel.localModelId)
@@ -140,20 +140,20 @@ struct SettingsProvidersTabView: View {
 
         switch viewModel.currentProvider {
         case "gemini":
-          测试ConnectionView(on测试Complete: { _ in })
+          TestConnectionView(onTestComplete: { _ in })
         case "ollama":
-          LocalLLM测试View(
+          LocalLLMTestView(
             baseURL: $viewModel.localBaseURL,
             modelId: $viewModel.localModelId,
             apiKey: $viewModel.localAPIKey,
-            engine: viewModel.local引擎,
-            showInputs: viewModel.local引擎 == .custom,
-            on测试Complete: { _ in viewModel.handleLocal测试Completion() }
+            engine: viewModel.localEngine,
+            showInputs: viewModel.localEngine == .custom,
+            onTestComplete: { _ in viewModel.handleLocalTestCompletion() }
           )
         case "chatgpt_claude":
-          ChatCLI测试View(
+          ChatCLITestView(
             selectedTool: viewModel.preferredCLITool,
-            on测试Complete: { _ in }
+            onTestComplete: { _ in }
           )
         case "dayflow":
           Text("Hosted cards and transcription run through your Dayflow account.")
@@ -223,48 +223,48 @@ struct SettingsProvidersTabView: View {
 
       HStack(spacing: 8) {
         if viewModel.shouldShowDayflowUpgradeAction(for: provider.id) {
-          SettingsPrimaryButton(title: "升级账户", systemImage: "sparkles") {
+          SettingsPrimaryButton(title: "Upgrade account", systemImage: "sparkles") {
             viewModel.openDayflowUpgradeAccount(from: provider.id)
           }
         } else if provider.id == "dayflow" {
           if !isPrimary {
-            SettingsSecondaryButton(title: "设为主要") {
+            SettingsSecondaryButton(title: "Set primary") {
               viewModel.setPrimaryOrSetup(provider.id)
             }
           }
 
           if !isSecondary {
-            SettingsSecondaryButton(title: "设为次要", isDisabled: !canSetSecondary) {
+            SettingsSecondaryButton(title: "Set secondary", isDisabled: !canSetSecondary) {
               viewModel.setSecondaryOrSetup(provider.id)
             }
           } else {
-            SettingsSecondaryButton(title: "取消次要") {
+            SettingsSecondaryButton(title: "Unset secondary") {
               viewModel.clearBackupProvider()
             }
           }
         } else {
           if !isConfigured {
             SettingsSecondaryButton(title: "设置") {
-              viewModel.beginProviderSetup(provider.id, role: .setup开启ly)
+              viewModel.beginProviderSetup(provider.id, role: .setupOnly)
             }
           }
 
-          SettingsSecondaryButton(title: "编辑设置") {
+          SettingsSecondaryButton(title: "Edit configuration") {
             viewModel.editProviderConfiguration(provider.id)
           }
 
           if !isPrimary {
-            SettingsSecondaryButton(title: "设为主要") {
+            SettingsSecondaryButton(title: "Set primary") {
               viewModel.setPrimaryOrSetup(provider.id)
             }
           }
 
           if !isSecondary {
-            SettingsSecondaryButton(title: "设为次要", isDisabled: !canSetSecondary) {
+            SettingsSecondaryButton(title: "Set secondary", isDisabled: !canSetSecondary) {
               viewModel.setSecondaryOrSetup(provider.id)
             }
           } else {
-            SettingsSecondaryButton(title: "取消次要") {
+            SettingsSecondaryButton(title: "Unset secondary") {
               viewModel.clearBackupProvider()
             }
           }
@@ -315,7 +315,7 @@ struct SettingsProvidersTabView: View {
   // MARK: - Prompt customization
 
   @ViewBuilder
-  private var prompt自定义izationSection: some View {
+  private var promptCustomizationSection: some View {
     switch viewModel.currentProvider {
     case "gemini":
       promptSection(
@@ -327,49 +327,49 @@ struct SettingsProvidersTabView: View {
           promptEditorConfig(
             heading: "Card titles",
             description: "Shape how card titles read and tweak the example list.",
-            isEnabled: $viewModel.use自定义GeminiTitlePrompt,
+            isEnabled: $viewModel.useCustomGeminiTitlePrompt,
             text: $viewModel.geminiTitlePromptText,
             defaultText: GeminiPromptDefaults.titleBlock
           ),
           promptEditorConfig(
             heading: "Card summaries",
             description: "Control tone and style for the summary field.",
-            isEnabled: $viewModel.use自定义GeminiSummaryPrompt,
+            isEnabled: $viewModel.useCustomGeminiSummaryPrompt,
             text: $viewModel.geminiSummaryPromptText,
             defaultText: GeminiPromptDefaults.summaryBlock
           ),
           promptEditorConfig(
             heading: "Detailed summaries",
             description: "Define the minute-by-minute breakdown format and examples.",
-            isEnabled: $viewModel.use自定义GeminiDetailedPrompt,
+            isEnabled: $viewModel.useCustomGeminiDetailedPrompt,
             text: $viewModel.geminiDetailedPromptText,
             defaultText: GeminiPromptDefaults.detailedSummaryBlock
           ),
         ],
-        on重置: viewModel.resetGeminiPromptOverrides
+        onReset: viewModel.resetGeminiPromptOverrides
       )
     case "ollama":
       promptSection(
         title: "Local prompt customization",
         subtitle: "Adjust the prompts used for local timeline summaries.",
-        intro: "自定义ize the local model prompts for summary and title generation.",
+        intro: "Customize the local model prompts for summary and title generation.",
         sections: [
           promptEditorConfig(
             heading: "Timeline summaries",
             description: "Control how the local model writes its 2-3 sentence card summaries.",
-            isEnabled: $viewModel.use自定义OllamaSummaryPrompt,
+            isEnabled: $viewModel.useCustomOllamaSummaryPrompt,
             text: $viewModel.ollamaSummaryPromptText,
             defaultText: OllamaPromptDefaults.summaryBlock
           ),
           promptEditorConfig(
             heading: "Card titles",
             description: "Adjust the tone and examples for local title generation.",
-            isEnabled: $viewModel.use自定义OllamaTitlePrompt,
+            isEnabled: $viewModel.useCustomOllamaTitlePrompt,
             text: $viewModel.ollamaTitlePromptText,
             defaultText: OllamaPromptDefaults.titleBlock
           ),
         ],
-        on重置: viewModel.resetOllamaPromptOverrides
+        onReset: viewModel.resetOllamaPromptOverrides
       )
     case "chatgpt_claude":
       promptSection(
@@ -381,26 +381,26 @@ struct SettingsProvidersTabView: View {
           promptEditorConfig(
             heading: "Card titles",
             description: "Shape how card titles read and tweak the example list.",
-            isEnabled: $viewModel.use自定义ChatCLITitlePrompt,
+            isEnabled: $viewModel.useCustomChatCLITitlePrompt,
             text: $viewModel.chatCLITitlePromptText,
             defaultText: ChatCLIPromptDefaults.titleBlock
           ),
           promptEditorConfig(
             heading: "Card summaries",
             description: "Control tone and style for the summary field.",
-            isEnabled: $viewModel.use自定义ChatCLISummaryPrompt,
+            isEnabled: $viewModel.useCustomChatCLISummaryPrompt,
             text: $viewModel.chatCLISummaryPromptText,
             defaultText: ChatCLIPromptDefaults.summaryBlock
           ),
           promptEditorConfig(
             heading: "Detailed summaries",
             description: "Define the minute-by-minute breakdown format and examples.",
-            isEnabled: $viewModel.use自定义ChatCLIDetailedPrompt,
+            isEnabled: $viewModel.useCustomChatCLIDetailedPrompt,
             text: $viewModel.chatCLIDetailedPromptText,
             defaultText: ChatCLIPromptDefaults.detailedSummaryBlock
           ),
         ],
-        on重置: viewModel.resetChatCLIPromptOverrides
+        onReset: viewModel.resetChatCLIPromptOverrides
       )
     default:
       EmptyView()
@@ -432,7 +432,7 @@ struct SettingsProvidersTabView: View {
     subtitle: String,
     intro: String,
     sections: [PromptEditorConfig],
-    on重置: @escaping () -> Void
+    onReset: @escaping () -> Void
   ) -> some View {
     SettingsSection(title: title, subtitle: subtitle) {
       VStack(alignment: .leading, spacing: 18) {
@@ -448,9 +448,9 @@ struct SettingsProvidersTabView: View {
         HStack {
           Spacer()
           SettingsSecondaryButton(
-            title: "重置 to Dayflow defaults",
+            title: "Reset to Dayflow defaults",
             systemImage: "arrow.counterclockwise",
-            action: on重置
+            action: onReset
           )
         }
       }
@@ -462,7 +462,7 @@ struct SettingsProvidersTabView: View {
   /// against the paper background.
   private func promptEditorBlock(config: PromptEditorConfig) -> some View {
     VStack(alignment: .leading, spacing: 12) {
-      Toggle(is开启: config.isEnabled) {
+      Toggle(isOn: config.isEnabled) {
         VStack(alignment: .leading, spacing: 3) {
           Text(config.heading)
             .font(.custom("Figtree", size: 14))
@@ -485,7 +485,7 @@ struct SettingsProvidersTabView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
             .fixedSize(horizontal: false, vertical: true)
-            .allowsHit测试ing(false)
+            .allowsHitTesting(false)
         }
 
         TextEditor(text: config.text)
@@ -533,7 +533,7 @@ private struct LocalModelUpgradeBanner: View {
             .font(.custom("Figtree", size: 16))
             .fontWeight(.semibold)
             .foregroundColor(.white)
-          Text("升级到 Qwen3VL，可显著提升质量。")
+          Text("Upgrade to Qwen3VL for a big improvement in quality.")
             .font(.custom("Figtree", size: 13))
             .foregroundColor(.white.opacity(0.8))
         }
@@ -556,7 +556,7 @@ private struct LocalModelUpgradeBanner: View {
 
       HStack(spacing: 12) {
         Button(action: onKeepLegacy) {
-          Text("保留 Qwen2.5")
+          Text("Keep Qwen2.5")
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
             .foregroundColor(.white)
@@ -572,7 +572,7 @@ private struct LocalModelUpgradeBanner: View {
 
         Button(action: onUpgrade) {
           HStack(spacing: 6) {
-            Text("立即升级")
+            Text("Upgrade now")
               .font(.custom("Figtree", size: 13))
               .fontWeight(.semibold)
             Image(systemName: "arrow.right")
@@ -602,14 +602,14 @@ private struct LocalModelUpgradeBanner: View {
 
 struct LocalModelUpgradeSheet: View {
   let preset: LocalModelPreset
-  let initial引擎: Local引擎
+  let initialEngine: LocalEngine
   let initialBaseURL: String
   let initialModelId: String
   let initialAPIKey: String
   let onCancel: () -> Void
-  let onUpgradeSuccess: (Local引擎, String, String, String) -> Void
+  let onUpgradeSuccess: (LocalEngine, String, String, String) -> Void
 
-  @State private var selected引擎: Local引擎
+  @State private var selectedEngine: LocalEngine
   @State private var candidateBaseURL: String
   @State private var candidateModelId: String
   @State private var candidateAPIKey: String
@@ -617,26 +617,26 @@ struct LocalModelUpgradeSheet: View {
 
   init(
     preset: LocalModelPreset,
-    initial引擎: Local引擎,
+    initialEngine: LocalEngine,
     initialBaseURL: String,
     initialModelId: String,
     initialAPIKey: String,
     onCancel: @escaping () -> Void,
-    onUpgradeSuccess: @escaping (Local引擎, String, String, String) -> Void
+    onUpgradeSuccess: @escaping (LocalEngine, String, String, String) -> Void
   ) {
     self.preset = preset
-    self.initial引擎 = initial引擎
+    self.initialEngine = initialEngine
     self.initialBaseURL = initialBaseURL
     self.initialModelId = initialModelId
     self.initialAPIKey = initialAPIKey
     self.onCancel = onCancel
     self.onUpgradeSuccess = onUpgradeSuccess
 
-    let starting引擎 = initial引擎
-    _selected引擎 = State(initialValue: starting引擎)
+    let startingEngine = initialEngine
+    _selectedEngine = State(initialValue: startingEngine)
     _candidateBaseURL = State(
-      initialValue: initialBaseURL.isEmpty ? starting引擎.defaultBaseURL : initialBaseURL)
-    let recommendedModel = preset.modelId(for: starting引擎 == .custom ? .ollama : starting引擎)
+      initialValue: initialBaseURL.isEmpty ? startingEngine.defaultBaseURL : initialBaseURL)
+    let recommendedModel = preset.modelId(for: startingEngine == .custom ? .ollama : startingEngine)
     _candidateModelId = State(initialValue: recommendedModel)
     _candidateAPIKey = State(initialValue: initialAPIKey)
   }
@@ -679,40 +679,40 @@ struct LocalModelUpgradeSheet: View {
         }
 
         VStack(alignment: .leading, spacing: 12) {
-          Text("你在用哪个本地运行时？")
+          Text("Which local runtime are you using?")
             .font(.custom("Figtree", size: 14))
             .foregroundColor(SettingsStyle.secondary)
-          Picker("引擎", selection: $selected引擎) {
-            Text("Ollama").tag(Local引擎.ollama)
-            Text("LM Studio").tag(Local引擎.lmstudio)
-            Text("自定义").tag(Local引擎.custom)
+          Picker("Engine", selection: $selectedEngine) {
+            Text("Ollama").tag(LocalEngine.ollama)
+            Text("LM Studio").tag(LocalEngine.lmstudio)
+            Text("Custom").tag(LocalEngine.custom)
           }
           .pickerStyle(.segmented)
           .frame(maxWidth: 420)
         }
 
-        instructionView(for: selected引擎)
+        instructionView(for: selectedEngine)
 
-        LocalLLM测试View(
+        LocalLLMTestView(
           baseURL: $candidateBaseURL,
           modelId: $candidateModelId,
           apiKey: $candidateAPIKey,
-          engine: selected引擎,
+          engine: selectedEngine,
           showInputs: true,
-          buttonLabel: "测试 upgrade",
-          basePlaceholder: selected引擎.defaultBaseURL,
+          buttonLabel: "Test upgrade",
+          basePlaceholder: selectedEngine.defaultBaseURL,
           modelPlaceholder: preset.modelId(
-            for: selected引擎 == .custom ? .ollama : selected引擎),
-          on测试Complete: { success in
+            for: selectedEngine == .custom ? .ollama : selectedEngine),
+          onTestComplete: { success in
             if success && !didApplyUpgrade {
               didApplyUpgrade = true
-              onUpgradeSuccess(selected引擎, candidateBaseURL, candidateModelId, candidateAPIKey)
+              onUpgradeSuccess(selectedEngine, candidateBaseURL, candidateModelId, candidateAPIKey)
             }
           }
         )
 
         Text(
-          "开启ce the test succeeds, Dayflow updates your settings to \(preset.displayName) automatically."
+          "Once the test succeeds, Dayflow updates your settings to \(preset.displayName) automatically."
         )
         .font(.custom("Figtree", size: 12))
         .foregroundColor(SettingsStyle.secondary)
@@ -726,17 +726,17 @@ struct LocalModelUpgradeSheet: View {
       .padding(32)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-    .onChange(of: selected引擎) { _, new引擎 in
-      candidateModelId = preset.modelId(for: new引擎 == .custom ? .ollama : new引擎)
-      if new引擎 != .custom {
-        candidateBaseURL = new引擎.defaultBaseURL
+    .onChange(of: selectedEngine) { _, newEngine in
+      candidateModelId = preset.modelId(for: newEngine == .custom ? .ollama : newEngine)
+      if newEngine != .custom {
+        candidateBaseURL = newEngine.defaultBaseURL
         candidateAPIKey = ""
       }
     }
   }
 
   @ViewBuilder
-  private func instructionView(for engine: Local引擎) -> some View {
+  private func instructionView(for engine: LocalEngine) -> some View {
     let instruction = preset.instructions(for: engine == .custom ? .ollama : engine)
     VStack(alignment: .leading, spacing: 12) {
       Text(instruction.title)

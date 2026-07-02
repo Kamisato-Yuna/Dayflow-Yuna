@@ -3,7 +3,7 @@ import SwiftUI
 struct SettingsDataTabView: View {
   @ObservedObject var viewModel: OtherSettingsViewModel
   @State private var activeExportDatePicker: ExportDatePicker?
-  @State private var is重新处理DatePickerExpanded = false
+  @State private var isReprocessDatePickerExpanded = false
 
   private enum ExportDatePicker {
     case start
@@ -38,7 +38,7 @@ struct SettingsDataTabView: View {
             onTap: {
               withAnimation(.easeOut(duration: 0.2)) {
                 activeExportDatePicker = activeExportDatePicker == .start ? nil : .start
-                is重新处理DatePickerExpanded = false
+                isReprocessDatePickerExpanded = false
               }
             }
           )
@@ -55,14 +55,14 @@ struct SettingsDataTabView: View {
             onTap: {
               withAnimation(.easeOut(duration: 0.2)) {
                 activeExportDatePicker = activeExportDatePicker == .end ? nil : .end
-                is重新处理DatePickerExpanded = false
+                isReprocessDatePickerExpanded = false
               }
             }
           )
         }
 
         if let activeExportDatePicker {
-          inline日历(
+          inlineCalendar(
             date: exportDateBinding(for: activeExportDatePicker),
             onDateSelected: {
               withAnimation(.easeOut(duration: 0.2)) {
@@ -90,7 +90,7 @@ struct SettingsDataTabView: View {
           )
 
           if rangeInvalid {
-            Text("开始时间必须早于或等于结束时间。")
+            Text("Start must be on or before end.")
               .font(.custom("Figtree", size: 12))
               .foregroundColor(SettingsStyle.destructive)
           }
@@ -111,38 +111,38 @@ struct SettingsDataTabView: View {
     }
   }
 
-  // MARK: - 重新处理 day
+  // MARK: - Reprocess day
 
   private var reprocessSection: some View {
     let normalizedDate = timelineDisplayDate(from: viewModel.reprocessDayDate)
     let dayString = DateFormatter.yyyyMMdd.string(from: normalizedDate)
 
     return SettingsSection(
-      title: "重新处理 day",
+      title: "Reprocess day",
       subtitle: "Re-run analysis for every batch on one timeline day."
     ) {
       VStack(alignment: .leading, spacing: 14) {
         datePill(
           label: "Day",
           date: viewModel.reprocessDayDate,
-          isExpanded: is重新处理DatePickerExpanded,
-          accessibilityLabel: "重新处理 day",
-          disabled: viewModel.is重新处理ingDay,
+          isExpanded: isReprocessDatePickerExpanded,
+          accessibilityLabel: "Reprocess day",
+          disabled: viewModel.isReprocessingDay,
           onTap: {
             withAnimation(.easeOut(duration: 0.2)) {
-              is重新处理DatePickerExpanded.toggle()
+              isReprocessDatePickerExpanded.toggle()
               activeExportDatePicker = nil
             }
           }
         )
 
-        if is重新处理DatePickerExpanded {
-          inline日历(
+        if isReprocessDatePickerExpanded {
+          inlineCalendar(
             date: $viewModel.reprocessDayDate,
-            disabled: viewModel.is重新处理ingDay,
+            disabled: viewModel.isReprocessingDay,
             onDateSelected: {
               withAnimation(.easeOut(duration: 0.2)) {
-                is重新处理DatePickerExpanded = false
+                isReprocessDatePickerExpanded = false
               }
             }
           )
@@ -155,13 +155,13 @@ struct SettingsDataTabView: View {
 
         VStack(alignment: .leading, spacing: 4) {
           Text(
-            "清除s existing cards and observations for that day, then runs analysis again from the original recordings."
+            "Clears existing cards and observations for that day, then runs analysis again from the original recordings."
           )
           .font(.custom("Figtree", size: 12))
           .foregroundColor(SettingsStyle.secondary)
           .fixedSize(horizontal: false, vertical: true)
 
-          Text("注意：这可能消耗大量 API 调用。")
+          Text("Heads up: this can consume a large number of API calls.")
             .font(.custom("Figtree", size: 12))
             .fontWeight(.semibold)
             .foregroundColor(SettingsStyle.text)
@@ -169,10 +169,10 @@ struct SettingsDataTabView: View {
 
         HStack(spacing: 12) {
           SettingsPrimaryButton(
-            title: viewModel.is重新处理ingDay ? "重新处理ing…" : "重新处理 day",
-            systemImage: viewModel.is重新处理ingDay ? nil : "arrow.clockwise",
-            isLoading: viewModel.is重新处理ingDay,
-            action: { viewModel.show重新处理DayConfirm = true }
+            title: viewModel.isReprocessingDay ? "Reprocessing…" : "Reprocess day",
+            systemImage: viewModel.isReprocessingDay ? nil : "arrow.clockwise",
+            isLoading: viewModel.isReprocessingDay,
+            action: { viewModel.showReprocessDayConfirm = true }
           )
 
           if let status = viewModel.reprocessStatusMessage {
@@ -188,9 +188,9 @@ struct SettingsDataTabView: View {
             .foregroundColor(SettingsStyle.destructive)
         }
       }
-      .alert("重新处理 day?", isPresented: $viewModel.show重新处理DayConfirm) {
+      .alert("Reprocess day?", isPresented: $viewModel.showReprocessDayConfirm) {
         Button("取消", role: .cancel) {}
-        Button("重新处理", role: .destructive) { viewModel.reprocessSelectedDay() }
+        Button("Reprocess", role: .destructive) { viewModel.reprocessSelectedDay() }
       } message: {
         Text(
           "This will delete existing timeline cards for \(dayString) and re-run analysis. It can consume many API calls."
@@ -203,7 +203,7 @@ struct SettingsDataTabView: View {
   //
   // A small label+date button that opens the inline calendar. Visually
   // aligned with SettingsSecondaryButton but with a top-label for form
-  // clarity. 开启e style, used for all date inputs.
+  // clarity. One style, used for all date inputs.
 
   private func datePill(
     label: String,
@@ -255,12 +255,12 @@ struct SettingsDataTabView: View {
   // surface (white fill + hairline black stroke) because it's an input
   // widget, not a section container — like any dropdown menu.
 
-  private func inline日历(
+  private func inlineCalendar(
     date: Binding<Date>,
     disabled: Bool = false,
     onDateSelected: @escaping () -> Void
   ) -> some View {
-    Dayflow日历Grid(selectedDate: date, onDateSelected: onDateSelected)
+    DayflowCalendarGrid(selectedDate: date, onDateSelected: onDateSelected)
       .disabled(disabled)
       .opacity(disabled ? 0.7 : 1)
   }
@@ -285,20 +285,20 @@ struct SettingsDataTabView: View {
   }()
 }
 
-// MARK: - 自定义 calendar grid
+// MARK: - Custom calendar grid
 //
 // Renamed and restyled — no amber accents, ink-brown selection circle,
 // hairline black stroke on the panel. Everything else (layout, keyboard
 // handling, month nav) preserved from the previous implementation.
 
-private struct Dayflow日历Grid: View {
+private struct DayflowCalendarGrid: View {
   @Binding var selectedDate: Date
   var onDateSelected: () -> Void
 
   @State private var displayedMonth: Date = Date()
   @Environment(\.isEnabled) private var isEnabled
 
-  private let calendar = 日历.current
+  private let calendar = Calendar.current
   private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
 
   var body: some View {

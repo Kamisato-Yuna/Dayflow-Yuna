@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Settings design system
 //
-// 开启e visual language, enforced 这里. If you find yourself reaching outside
+// One visual language, enforced here. If you find yourself reaching outside
 // these tokens / components while building a settings screen, stop and ask
 // whether what you're about to build needs its own grammar or whether an
 // existing primitive can carry the weight. Almost always the latter.
@@ -10,7 +10,7 @@ import SwiftUI
 // Principles:
 //   1. The warm paper background IS the surface. No cards on top.
 //   2. Hierarchy from typography + opacity, not borders + backgrounds.
-//   3. 开启e accent color (ink brown) for everything that needs emphasis.
+//   3. One accent color (ink brown) for everything that needs emphasis.
 //   4. Exactly three button treatments. No one-offs.
 //   5. Rows always read label-left, control-right. Always.
 
@@ -48,7 +48,7 @@ enum SettingsStyle {
 // MARK: - SettingsSection
 //
 // A section is a title (with optional subtitle) and content beneath. No
-// container chrome — the paper is the container. 可选 right-rail
+// container chrome — the paper is the container. Optional right-rail
 // trailing view for metadata ("Last updated 3m ago", totals, badges).
 
 struct SettingsSection<Content: View, Trailing: View>: View {
@@ -94,7 +94,7 @@ struct SettingsSection<Content: View, Trailing: View>: View {
   }
 }
 
-extension SettingsSection w这里 Trailing == EmptyView {
+extension SettingsSection where Trailing == EmptyView {
   init(title: String, subtitle: String? = nil, @ViewBuilder content: @escaping () -> Content) {
     self.init(title: title, subtitle: subtitle, trailing: { EmptyView() }, content: content)
   }
@@ -155,7 +155,7 @@ struct SettingsRow<Trailing: View>: View {
   }
 }
 
-extension SettingsRow w这里 Trailing == EmptyView {
+extension SettingsRow where Trailing == EmptyView {
   init(label: String, subtitle: String? = nil, showsDivider: Bool = true) {
     self.init(
       label: label, subtitle: subtitle, showsDivider: showsDivider, trailing: { EmptyView() })
@@ -166,11 +166,11 @@ extension SettingsRow w这里 Trailing == EmptyView {
 //
 // EXACTLY THREE BUTTON TREATMENTS. If you need a fourth, you're wrong.
 //
-//   SettingsPrimaryButton   — filled ink. 开启e per section, for the action
+//   SettingsPrimaryButton   — filled ink. One per section, for the action
 //                             that defines the section.
 //   SettingsSecondaryButton — subtle black.opacity(0.05) fill, ink text.
 //                             For alternative actions next to or beneath
-//                             a primary (Save/重置, Open folder, Edit).
+//                             a primary (Save/Reset, Open folder, Edit).
 //   SettingsLinkButton      — plain ink text + optional arrow glyph. For
 //                             navigation away from this surface (release
 //                             notes, external docs).
@@ -323,10 +323,10 @@ struct SettingsStatusDot: View {
 // so the scaled switch hugs the right edge of the row cleanly.
 
 struct SettingsToggle: View {
-  @Binding var is开启: Bool
+  @Binding var isOn: Bool
 
   var body: some View {
-    Toggle("", is开启: $is开启)
+    Toggle("", isOn: $isOn)
       .toggleStyle(.switch)
       .labelsHidden()
       .scaleEffect(0.72, anchor: .trailing)
@@ -364,7 +364,7 @@ struct SettingsBadge: View {
 
 // MARK: - SettingsMetadata
 //
-// The standard right-rail text treatment. Use this anyw这里 the trailing
+// The standard right-rail text treatment. Use this anywhere the trailing
 // view is informational text (counts, sizes, percentages, timestamps) so
 // every bit of right-rail metadata reads the same.
 

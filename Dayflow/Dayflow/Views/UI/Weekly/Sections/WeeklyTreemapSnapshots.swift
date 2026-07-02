@@ -53,7 +53,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "testing",
-        name: "测试ing",
+        name: "Testing",
         palette: .testing,
         apps: [
           WeeklyTreemapApp(
@@ -156,7 +156,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "testing",
-        name: "测试ing",
+        name: "Testing",
         palette: .testing,
         apps: [
           WeeklyTreemapApp(
@@ -270,7 +270,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "testing",
-        name: "测试ing",
+        name: "Testing",
         palette: .testing,
         apps: [
           WeeklyTreemapApp(

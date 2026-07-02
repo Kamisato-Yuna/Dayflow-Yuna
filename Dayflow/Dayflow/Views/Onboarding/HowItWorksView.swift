@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HowItWorksView: View {
   @State private var titleOpacity: Double = 0
-  @State private var card关闭sets: [CGFloat] = [50, 50, 50]
+  @State private var cardOffsets: [CGFloat] = [50, 50, 50]
   @State private var cardOpacities: [Double] = [0, 0, 0]
   @State private var buttonsOpacity: Double = 0
 
@@ -21,17 +21,17 @@ struct HowItWorksView: View {
 
   private let cards: [(icon: String, title: String, body: String)] = [
     (
-      "开启boardingHow",
+      "OnboardingHow",
       "Install and Forget",
       "Dayflow takes periodic screen captures to understand what you're working on, all stored privately on your device. You can toggle this whenever you like."
     ),
     (
-      "开启boardingSecurity",
+      "OnboardingSecurity",
       "Privacy by Default",
       "Dayflow can run entirely on local AI models, which means your data never leaves your computer. You can also find the source code below - please consider giving it a star on Github!"
     ),
     (
-      "开启boardingUnderstanding",
+      "OnboardingUnderstanding",
       "Understand your Day",
       "Knows the difference between YouTube tutorials and YouTube rabbit holes. Dayflow actually gets what you're working on."
     ),
@@ -61,7 +61,7 @@ struct HowItWorksView: View {
               title: cards[idx].title,
               description: cards[idx].body
             )
-            .offset(y: card关闭sets[idx])
+            .offset(y: cardOffsets[idx])
             .opacity(cardOpacities[idx])
           }
         }
@@ -150,7 +150,7 @@ extension HowItWorksView {
             dampingFraction: 0.75,
             blendDuration: 0)
         ) {
-          card关闭sets[idx] = 0
+          cardOffsets[idx] = 0
           cardOpacities[idx] = 1
         }
       }

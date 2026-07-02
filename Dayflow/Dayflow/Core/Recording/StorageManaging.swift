@@ -12,7 +12,7 @@ protocol StorageManaging: Sendable {
   func markChunkFailed(url: URL)
 
   // Fetch unprocessed (completed + not yet batched) chunks
-  func fetchUnprocessedChunks(olderThan oldest全部owed: Int) -> [RecordingChunk]
+  func fetchUnprocessedChunks(olderThan oldestAllowed: Int) -> [RecordingChunk]
   func fetchChunksInTimeRange(startTs: Int, endTs: Int) -> [RecordingChunk]
 
   // Analysis‑batch management
@@ -49,11 +49,11 @@ protocol StorageManaging: Sendable {
   func applyReviewRating(startTs: Int, endTs: Int, rating: String)
   func hasAnyTimelineReviewRating() -> Bool
   func hasReviewRatingInRecentTimelineDays(days: Int) -> Bool
-  func fetchUnreviewedTimelineCard数量(forDay day: String, coverageThreshold: Double) -> Int
+  func fetchUnreviewedTimelineCardCount(forDay day: String, coverageThreshold: Double) -> Int
 
   // Daily goals
   func fetchDayGoalPlan(forDay day: String) -> DayGoalPlan?
-  func fetchMostRecentDayGoalPlan(beforeOr开启 day: String) -> DayGoalPlan?
+  func fetchMostRecentDayGoalPlan(beforeOrOn day: String) -> DayGoalPlan?
   func saveDayGoalPlan(_ plan: DayGoalPlan)
 
   func fetchRecentLLMCallsForDebug(limit: Int) -> [LLMCallDebugEntry]
@@ -71,7 +71,7 @@ protocol StorageManaging: Sendable {
   // Helper for GeminiService – map file paths → timestamps
   func getTimestampsForVideoFiles(paths: [String]) -> [String: (startTs: Int, endTs: Int)]
 
-  // 重新处理ing Methods
+  // Reprocessing Methods
   func deleteTimelineCards(forDay day: String) -> [String]  // Returns video paths to clean up
   func deleteTimelineCards(forBatchIds batchIds: [Int64]) -> [String]
   func deleteObservations(forBatchIds batchIds: [Int64])
@@ -82,7 +82,7 @@ protocol StorageManaging: Sendable {
   /// Chunks that belong to one batch, already sorted.
   func chunksForBatch(_ batchId: Int64) -> [RecordingChunk]
 
-  /// 全部 batches, newest first
+  /// All batches, newest first
   func allBatches() -> [(id: Int64, start: Int, end: Int, status: String)]
 
   // MARK: - Screenshot Management (new - replaces video chunks)

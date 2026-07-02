@@ -48,7 +48,7 @@ enum LLMLogger {
       if let batchId = ctx.batchId { props["batch_id"] = batchId }
       if let groupId = ctx.callGroupId { props["group_id"] = groupId }
 
-      // Bubble token usage if present in response headers (non-HTTP calls may stuff them 这里).
+      // Bubble token usage if present in response headers (non-HTTP calls may stuff them here).
       if let headers = http.responseHeaders {
         if let v = headers["x-usage-input"], let n = Int(v) { props["usage_input_tokens"] = n }
         if let v = headers["x-usage-cached-input"], let n = Int(v) {

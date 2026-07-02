@@ -13,7 +13,7 @@ private enum K {
   static let squishScale: CGFloat = 0.95
   static let squishRotate: Double = -1.5
   static let popScale: CGFloat = 1.08
-  static let particle数量 = 6
+  static let particleCount = 6
   static let particleSpread: CGFloat = 40
   static let windUpSec: Double = 0.08
   static let counterSec: Double = 0.25
@@ -61,7 +61,7 @@ struct ProgressRingView: View {
 
   // MARK: Internal state
 
-  @State private var renderedSeg数量 = 0
+  @State private var renderedSegCount = 0
   @State private var segFillAmounts: [CGFloat] = []
   @State private var segVisible: [Bool] = []
   @State private var segStrokeWidths: [CGFloat] = []
@@ -98,7 +98,7 @@ struct ProgressRingView: View {
         .scaleEffect(ringScale)
         .rotationEffect(.degrees(ringRotation))
 
-      Text(String(displayPercent) + "%")
+      Text("\(displayPercent)%")
         .font(.custom("Figtree-Bold", size: 16))
         .foregroundColor(K.textColor)
         .scaleEffect(percentScale)
@@ -155,18 +155,18 @@ struct ProgressRingView: View {
       segFillAmounts[i] = segFrac
       segVisible[i] = true
     }
-    renderedSeg数量 = filledSegments
+    renderedSegCount = filledSegments
     displayPercent = percent(for: filledSegments)
   }
 
-  // MARK: - 继续 to target
+  // MARK: - Advance to target
 
   private func advanceTo(_ target: Int) {
     guard initialized else { return }
     let clamped = min(target, totalSegments)
-    guard clamped > renderedSeg数量 else { return }
+    guard clamped > renderedSegCount else { return }
 
-    let prev = renderedSeg数量
+    let prev = renderedSegCount
     let next = clamped
     let hit100 = next >= totalSegments
 
@@ -200,14 +200,14 @@ struct ProgressRingView: View {
         }
       }
 
-      renderedSeg数量 = next
+      renderedSegCount = next
 
       if hit100 {
         spawnConfetti(count: 40, spread: 140)
       }
 
       let counterDuration = K.counterSec + Double(newSegs.count) * K.segStaggerSec
-      animate数量er(from: prevPct, to: newPct, duration: counterDuration)
+      animateCounter(from: prevPct, to: newPct, duration: counterDuration)
 
       // ③ RETURN to rest
       let totalStagger = Double(newSegs.count) * K.segStaggerSec
@@ -247,15 +247,15 @@ struct ProgressRingView: View {
       }
     }
 
-    let p数量 = hit100 ? 25 : K.particle数量
-    let pPerSeg = Int(ceil(Double(p数量) / Double(totalNewSegs)))
+    let pCount = hit100 ? 25 : K.particleCount
+    let pPerSeg = Int(ceil(Double(pCount) / Double(totalNewSegs)))
     let spread = hit100 ? K.particleSpread * 1.3 : K.particleSpread
     spawnParticles(count: pPerSeg, spread: spread, atAngle: segMidAngle(index))
   }
 
-  // MARK: - 数量er animation
+  // MARK: - Counter animation
 
-  private func animate数量er(from: Int, to: Int, duration: Double) {
+  private func animateCounter(from: Int, to: Int, duration: Double) {
     Task { @MainActor in
       let startTime = CACurrentMediaTime()
       var lastVal = from
@@ -321,7 +321,7 @@ struct ProgressRingView: View {
     let ids = Set(batch.map(\.id))
     Task { @MainActor in
       try? await Task.sleep(nanoseconds: nsec(0.9))
-      particles.remove全部 { ids.contains($0.id) }
+      particles.removeAll { ids.contains($0.id) }
     }
   }
 
@@ -359,7 +359,7 @@ struct ProgressRingView: View {
     let ids = Set(batch.map(\.id))
     Task { @MainActor in
       try? await Task.sleep(nanoseconds: nsec(1.6))
-      confetti.remove全部 { ids.contains($0.id) }
+      confetti.removeAll { ids.contains($0.id) }
     }
   }
 
@@ -478,11 +478,11 @@ private struct ProgressRingDemoView: View {
       ProgressRingView(totalSegments: 7, filledSegments: filled)
 
       HStack(spacing: 8) {
-        Button("继续") { filled = min(filled + 1, 7) }
+        Button("Advance") { filled = min(filled + 1, 7) }
           .buttonStyle(.borderedProminent)
           .disabled(filled >= 7)
 
-        Button("重置") { filled = 0 }
+        Button("Reset") { filled = 0 }
           .buttonStyle(.bordered)
       }
     }

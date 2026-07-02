@@ -15,7 +15,7 @@ final class StatusBarController: NSObject {
 
     if let button = statusItem.button {
       button.imageScaling = .scaleProportionallyDown
-      button.imagePosition = .image开启ly
+      button.imagePosition = .imageOnly
 
       let isRecording = AppState.shared.isRecording
       button.image = menuBarIcon(isRecording: isRecording)
@@ -36,7 +36,7 @@ final class StatusBarController: NSObject {
   }
 
   private func menuBarIcon(isRecording: Bool) -> NSImage? {
-    let name = isRecording ? "MenuBar开启Icon" : "MenuBar关闭Icon"
+    let name = isRecording ? "MenuBarOnIcon" : "MenuBarOffIcon"
     guard let image = NSImage(named: name)?.copy() as? NSImage else { return nil }
     image.size = NSSize(width: 22, height: 18)
     return image

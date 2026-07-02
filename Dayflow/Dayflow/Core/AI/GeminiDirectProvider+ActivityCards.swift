@@ -40,20 +40,20 @@ extension GeminiDirectProvider {
       Each card covers one cohesive chunk of activity, roughly 15–60 minutes.
 
       - Minimum 10 minutes per card. If something would be shorter, fold it into the neighboring card that makes the most sense.
-      - Maximum 60 minutes. If a card runs longer, split it w这里 the focus naturally shifts.
-      - No gaps or overlaps between cards. If t这里's a real gap in the source data, preserve it. Otherwise, cards should meet cleanly.
+      - Maximum 60 minutes. If a card runs longer, split it where the focus naturally shifts.
+      - No gaps or overlaps between cards. If there's a real gap in the source data, preserve it. Otherwise, cards should meet cleanly.
 
       **When to start a new card:**
       1. What's the main thing happening right now?
       2. Does the next chunk of activity continue that same thing? → Keep extending.
-      3. Is t这里 a brief unrelated detour (<5 min)? → Log it as a distraction, keep the card going.
+      3. Is there a brief unrelated detour (<5 min)? → Log it as a distraction, keep the card going.
       4. Has the focus genuinely shifted for 10+ minutes? → New card.
 
       **When to merge with a previous card:**
       1. Is the previous card's main activity the same as what's happening now? (same PR, same feature, same codebase, same article) → Merge.
       2. Did the person just take a 2–5 minute break (X, messages, YouTube) and come back to the same thing? → That's a distraction, not a new card. Merge.
       3. Are two adjacent cards both "scrolling X with occasional work check-ins"? → Merge. The vibe didn't change.
-      4. 开启ly start a new card if the CORE INTENT changed for 10+ minutes.
+      4. Only start a new card if the CORE INTENT changed for 10+ minutes.
 
       DEFAULT TO MERGING. Two 15-minute cards about the same work stream should almost never exist. If you're unsure whether to merge or split, merge.
 
@@ -79,7 +79,7 @@ extension GeminiDirectProvider {
 
       ---
 
-      ## 分心
+      ## Distractions
 
       A distraction is a brief (<5 min) unrelated interruption inside a card. Checking X for 2 minutes while debugging is a distraction. Spending 15 minutes on X is not a distraction — it's either part of the card's theme or it's a new card.
 
@@ -92,7 +92,7 @@ extension GeminiDirectProvider {
       Identify the main app or website for each card.
 
       - primary: the main app used in the card (canonical domain, lowercase, no protocol).
-      - secondary: another meaningful app used, or the enclosing app (e.g., browser). Omit if t这里 isn't a clear one.
+      - secondary: another meaningful app used, or the enclosing app (e.g., browser). Omit if there isn't a clear one.
 
       Be specific: docs.google.com not google.com, mail.google.com not google.com.
 
@@ -185,7 +185,7 @@ extension GeminiDirectProvider {
         let (durationValid, durationError) = validateTimeline(normalizedCards)
 
         if coverageValid && durationValid {
-          // SUCCESS! 全部 validations passed
+          // SUCCESS! All validations passed
           print("✅ Activity cards generation succeeded on attempt \(attempt + 1)")
           finalResponse = response
           finalCards = normalizedCards
@@ -230,7 +230,7 @@ extension GeminiDirectProvider {
             DURATION ERROR:
             \(durationError!)
 
-            REMINDER: 全部 cards except the last one must be at least 10 minutes long. Please merge short activities into longer, more meaningful cards that tell a co这里nt story.
+            REMINDER: All cards except the last one must be at least 10 minutes long. Please merge short activities into longer, more meaningful cards that tell a coherent story.
             """)
         }
 
@@ -308,9 +308,9 @@ extension GeminiDirectProvider {
       attempt += 1
     }
 
-    // If we get 这里 and finalCards is empty, all retries were exhausted
+    // If we get here and finalCards is empty, all retries were exhausted
     if finalCards.isEmpty {
-      print("❌ 全部 \(maxRetries) attempts failed")
+      print("❌ All \(maxRetries) attempts failed")
       throw lastError
         ?? NSError(
           domain: "GeminiError", code: 999,
@@ -416,7 +416,7 @@ extension GeminiDirectProvider {
       // Prepare logging context
       let responseHeaders: [String: String] = httpResponse.allHeaderFields.reduce(into: [:]) {
         acc, kv in
-        if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+        if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
           acc[k] = v.description
         }
       }
@@ -534,7 +534,7 @@ extension GeminiDirectProvider {
       return text
 
     } catch {
-      // 开启ly log if this is a network/transport error (not our custom GeminiError which was already logged)
+      // Only log if this is a network/transport error (not our custom GeminiError which was already logged)
       if (error as NSError).domain != "GeminiError" {
         let modelName = model.rawValue
         let ctx = LLMCallContext(
@@ -705,7 +705,7 @@ extension GeminiDirectProvider {
       formatter.locale = Locale(identifier: "en_US_POSIX")
 
       if let date = formatter.date(from: timeStr) {
-        let calendar = 日历.current
+        let calendar = Calendar.current
         let components = calendar.dateComponents([.hour, .minute], from: date)
         return Double((components.hour ?? 0) * 60 + (components.minute ?? 0))
       }
@@ -781,10 +781,10 @@ extension GeminiDirectProvider {
     for inputRange in mergedInputRanges {
       // Check if this input range is covered by output ranges
       var coveredStart = inputRange.start
-      var safety数量er = 10000  // Fix #3: Safety cap to prevent infinite loops
+      var safetyCounter = 10000  // Fix #3: Safety cap to prevent infinite loops
 
-      while coveredStart < inputRange.end && safety数量er > 0 {
-        safety数量er -= 1
+      while coveredStart < inputRange.end && safetyCounter > 0 {
+        safetyCounter -= 1
         // Find an output range that covers this point
         var foundCoverage = false
 
@@ -824,7 +824,7 @@ extension GeminiDirectProvider {
       }
 
       // Check if safety counter was exhausted
-      if safety数量er == 0 {
+      if safetyCounter == 0 {
         return (
           false,
           "Time coverage validation loop exceeded safety limit - possible infinite loop detected"
@@ -837,7 +837,7 @@ extension GeminiDirectProvider {
       var uncoveredDesc: [String] = []
       for segment in uncoveredSegments {
         let duration = segment.end - segment.start
-        if duration > flexibility {  // 开启ly report significant gaps
+        if duration > flexibility {  // Only report significant gaps
           let startTime = minutesToTimeString(segment.start)
           let endTime = minutesToTimeString(segment.end)
           uncoveredDesc.append("\(startTime)-\(endTime) (\(Int(duration)) min)")
@@ -885,7 +885,7 @@ extension GeminiDirectProvider {
           // Handle day rollover (e.g., 11:30 PM to 12:30 AM)
           if endDate < startDate {
             adjustedEndDate =
-              日历.current.date(byAdding: .day, value: 1, to: endDate) ?? endDate
+              Calendar.current.date(byAdding: .day, value: 1, to: endDate) ?? endDate
           }
 
           durationMinutes = adjustedEndDate.timeIntervalSince(startDate) / 60.0

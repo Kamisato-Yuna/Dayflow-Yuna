@@ -31,7 +31,7 @@ extension ChatCLIProvider {
       You are synthesizing a user's activity log into timeline cards. Each card represents one main thing they did.
 
       CORE PRINCIPLE:
-      Each card = one co这里nt activity. Time is a constraint (10-60 min), not a goal. 
+      Each card = one coherent activity. Time is a constraint (10-60 min), not a goal.
 
       CARD BOUNDARIES:
       - Minimum card length: 10 minutes
@@ -111,14 +111,14 @@ extension ChatCLIProvider {
           Before finalizing a card, ask:
           1. What's the one main thing in this card?
           2. Can I title it without using "and" between unrelated things?
-          3. Are t这里 any sustained (>10 min) activities that should be their own card?
+          3. Are there any sustained (>10 min) activities that should be their own card?
           4. Are the "distractions" actually brief interruptions, or separate activities?
 
           INPUT/OUTPUT CONTRACT:
           Your output cards MUST cover the same total time range as the "Previous cards" plus any new time from observations.
           - If Previous cards span 11:11 AM - 11:53 AM, your output must also cover 11:11 AM - 11:53 AM (you may restructure the cards, but don't drop time segments)
           - If new observations extend beyond the previous cards' time range, create additional cards to cover that new time
-          - The only exception: if t这里's a genuine gap between previous cards (e.g., 11:27 AM to 11:33 AM with no activity), preserve that gap
+          - The only exception: if there's a genuine gap between previous cards (e.g., 11:27 AM to 11:33 AM with no activity), preserve that gap
           - Think of "Previous cards" as a DRAFT that you're revising/extending, not as locked history
 
           INPUTS:

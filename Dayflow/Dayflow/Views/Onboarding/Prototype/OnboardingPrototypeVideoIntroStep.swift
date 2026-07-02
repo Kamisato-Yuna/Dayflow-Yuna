@@ -1,12 +1,12 @@
 //
-//  开启boardingPrototypeVideoIntroStep.swift
+//  OnboardingPrototypeVideoIntroStep.swift
 //  Dayflow
 //
 
 import AVFoundation
 import SwiftUI
 
-struct 开启boardingPrototypeVideoIntroStep: View {
+struct OnboardingPrototypeVideoIntroStep: View {
   let videoName: String
   let onPlaybackStarted: () -> Void
   let onPlaybackCompleted: (String) -> Void

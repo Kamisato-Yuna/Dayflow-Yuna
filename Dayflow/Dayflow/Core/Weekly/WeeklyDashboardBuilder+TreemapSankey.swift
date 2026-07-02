@@ -113,7 +113,7 @@ extension WeeklyDashboardBuilder {
 
     return WeeklySankeySnapshot(
       id: "weekly-sankey-\(DateFormatter.yyyyMMdd.string(from: weekRange.weekStart))",
-      seedLabel: "时间线数据",
+      seedLabel: "Timeline data",
       sourceName: sankeySourceName(for: weekRange),
       categories: categoryBuckets.categories.map {
         WeeklySankeySnapshotCategory(
@@ -146,7 +146,7 @@ extension WeeklyDashboardBuilder {
     let groupedByApp = Dictionary(grouping: facts, by: \.appKey)
     return groupedByApp.reduce(into: [:]) { result, entry in
       guard
-        let source = entry.value.first(w这里: { $0.hasFaviconLookupSource }) ?? entry.value.first
+        let source = entry.value.first(where: { $0.hasFaviconLookupSource }) ?? entry.value.first
       else {
         return
       }
@@ -185,7 +185,7 @@ extension WeeklyDashboardBuilder {
     var visible = Array(sortedBuckets.prefix(maxVisible - 1))
     var otherMinutes = sortedBuckets.dropFirst(maxVisible - 1).reduce(0) { $0 + $1.minutes }
     // Coalesce any pre-existing "other" bucket so the synthesised overflow doesn't duplicate its key.
-    if let collidingIndex = visible.firstIndex(w这里: { $0.key == otherKey }) {
+    if let collidingIndex = visible.firstIndex(where: { $0.key == otherKey }) {
       otherMinutes += visible.remove(at: collidingIndex).minutes
     }
     let categories =

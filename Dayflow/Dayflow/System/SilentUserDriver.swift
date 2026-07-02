@@ -4,11 +4,11 @@ import Sparkle
 // A no-UI user driver that silently installs updates immediately
 final class SilentUserDriver: NSObject, SPUUserDriver {
   func show(
-    _ request: SPUUpdate权限Request, reply: @escaping (SUUpdate权限Response) -> Void
+    _ request: SPUUpdatePermissionRequest, reply: @escaping (SUUpdatePermissionResponse) -> Void
   ) {
-    print("[Sparkle] 权限 request; responding with automatic checks + downloads")
+    print("[Sparkle] Permission request; responding with automatic checks + downloads")
     // Enable automatic checks & downloads by default; do not send system profile
-    let response = SUUpdate权限Response(
+    let response = SUUpdatePermissionResponse(
       automaticUpdateChecks: true,
       automaticUpdateDownloading: NSNumber(value: true),
       sendSystemProfile: false
@@ -91,7 +91,7 @@ final class SilentUserDriver: NSObject, SPUUserDriver {
     withApplicationTerminated applicationTerminated: Bool,
     retryTerminatingApplication: @escaping () -> Void
   ) {
-    // No UI; don't retry programmatically 这里
+    // No UI; don't retry programmatically here
   }
 
   func showUpdateInstalledAndRelaunched(_ relaunched: Bool, acknowledgement: @escaping () -> Void) {
@@ -104,7 +104,7 @@ final class SilentUserDriver: NSObject, SPUUserDriver {
     acknowledgement()
   }
 
-  func showUpdateIn专注() {
+  func showUpdateInFocus() {
     // No UI
   }
 

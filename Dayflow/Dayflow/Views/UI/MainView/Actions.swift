@@ -112,16 +112,16 @@ extension MainView {
     }
   }
 
-  func updateCardsToReview数量(trigger: String = "unspecified") {
-    review数量Task?.cancel()
+  func updateCardsToReviewCount(trigger: String = "unspecified") {
+    reviewCountTask?.cancel()
     let timelineDate = timelineDisplayDate(from: selectedDate, now: Date())
     let dayString = DateFormatter.yyyyMMdd.string(from: timelineDate)
 
-    timelinePerfLog("review数量.schedule trigger=\(trigger) day=\(dayString)")
+    timelinePerfLog("reviewCount.schedule trigger=\(trigger) day=\(dayString)")
 
-    review数量Task = Task.detached(priority: .userInitiated) {
+    reviewCountTask = Task.detached(priority: .userInitiated) {
       let fetchStart = CFAbsoluteTimeGetCurrent()
-      let count = StorageManager.shared.fetchUnreviewedTimelineCard数量(
+      let count = StorageManager.shared.fetchUnreviewedTimelineCardCount(
         forDay: dayString, coverageThreshold: 0.8)
       let hasAnyReviewRating = StorageManager.shared.hasAnyTimelineReviewRating()
       let hasRecentReviewRating = StorageManager.shared.hasReviewRatingInRecentTimelineDays(days: 7)
@@ -135,18 +135,18 @@ extension MainView {
         )
         guard currentDayString == dayString else {
           timelinePerfLog(
-            "review数量.discardStale trigger=\(trigger) requestedDay=\(dayString) currentDay=\(currentDayString) fetch_ms=\(fetchMs)"
+            "reviewCount.discardStale trigger=\(trigger) requestedDay=\(dayString) currentDay=\(currentDayString) fetch_ms=\(fetchMs)"
           )
           return
         }
 
         let commitStart = CFAbsoluteTimeGetCurrent()
-        cardsToReview数量 = count
+        cardsToReviewCount = count
         hasAnyTimelineReviewRating = hasAnyReviewRating
         hasRecentTimelineReviewRating = hasRecentReviewRating
         let commitMs = Int((CFAbsoluteTimeGetCurrent() - commitStart) * 1000)
         timelinePerfLog(
-          "review数量.complete trigger=\(trigger) day=\(dayString) count=\(count) hasAnyReviewRating=\(hasAnyReviewRating) hasRecentReviewRating=\(hasRecentReviewRating) fetch_ms=\(fetchMs) commit_ms=\(commitMs)"
+          "reviewCount.complete trigger=\(trigger) day=\(dayString) count=\(count) hasAnyReviewRating=\(hasAnyReviewRating) hasRecentReviewRating=\(hasRecentReviewRating) fetch_ms=\(fetchMs) commit_ms=\(commitMs)"
         )
       }
     }

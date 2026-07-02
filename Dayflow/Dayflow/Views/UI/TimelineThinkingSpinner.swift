@@ -3,7 +3,7 @@ import CoreImage
 import QuartzCore
 import SwiftUI
 
-struct Timeline思考中Spinner: View {
+struct TimelineThinkingSpinner: View {
   var config: TimelineSpinnerConfig = .reference
   var visualScale: CGFloat = 1
 
@@ -185,7 +185,7 @@ private class SpinnerNSView: NSView {
   private func setupLayers() {
     pixelContainer.sublayers?.forEach { $0.removeFromSuperlayer() }
     bloomContainer.sublayers?.forEach { $0.removeFromSuperlayer() }
-    gridLayers.remove全部()
+    gridLayers.removeAll()
 
     for _ in 0..<9 {
       let pixelLayer = CALayer()
@@ -257,8 +257,8 @@ private class SpinnerNSView: NSView {
       for i in 0..<9 { recordedBrightnesses[i].append(brightness[i]) }
     }
 
-    pixelAnimations.remove全部()
-    bloomColorAnimations.remove全部()
+    pixelAnimations.removeAll()
+    bloomColorAnimations.removeAll()
 
     for i in 0..<9 {
       let bValues = recordedBrightnesses[i]
@@ -267,7 +267,7 @@ private class SpinnerNSView: NSView {
       pAnim.values = bValues.map { SpinnerNSView.color(for: $0, alpha: $0, config: config) as Any }
       pAnim.calculationMode = .linear
       pAnim.duration = config.cycleDuration
-      pAnim.repeat数量 = .infinity
+      pAnim.repeatCount = .infinity
 
       let bcAnim = CAKeyframeAnimation(keyPath: "backgroundColor")
       bcAnim.values = bValues.map { b in
@@ -277,7 +277,7 @@ private class SpinnerNSView: NSView {
       }
       bcAnim.calculationMode = .linear
       bcAnim.duration = config.cycleDuration
-      bcAnim.repeat数量 = .infinity
+      bcAnim.repeatCount = .infinity
 
       pixelAnimations.append(pAnim)
       bloomColorAnimations.append(bcAnim)
@@ -313,8 +313,8 @@ private class SpinnerNSView: NSView {
     guard isAnimating else { return }
     isAnimating = false
     for i in 0..<9 {
-      gridLayers[i].pixel.remove全部Animations()
-      gridLayers[i].bloom.remove全部Animations()
+      gridLayers[i].pixel.removeAllAnimations()
+      gridLayers[i].bloom.removeAllAnimations()
     }
   }
 

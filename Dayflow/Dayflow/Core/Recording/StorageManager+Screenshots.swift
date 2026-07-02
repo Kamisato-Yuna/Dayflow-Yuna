@@ -48,7 +48,7 @@ extension StorageManager {
 
   func fetchUnprocessedScreenshots(since oldestTimestamp: Int) -> [Screenshot] {
     (try? timedRead("fetchUnprocessedScreenshots") { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT * FROM screenshots
@@ -87,7 +87,7 @@ extension StorageManager {
 
   func screenshotsForBatch(_ batchId: Int64) -> [Screenshot] {
     (try? timedRead("screenshotsForBatch") { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT s.* FROM batch_screenshots bs
@@ -103,7 +103,7 @@ extension StorageManager {
 
   func fetchScreenshotsInTimeRange(startTs: Int, endTs: Int) -> [Screenshot] {
     (try? timedRead("fetchScreenshotsInTimeRange") { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT * FROM screenshots

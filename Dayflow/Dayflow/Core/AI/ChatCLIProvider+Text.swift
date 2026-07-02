@@ -5,7 +5,7 @@ extension ChatCLIProvider {
   // MARK: - Text Generation (Streaming)
 
   /// Stream chat responses with real-time thinking and tool execution events
-  /// - Parameter sessionId: 可选 session ID to resume a previous conversation
+  /// - Parameter sessionId: Optional session ID to resume a previous conversation
   func generateChatStreaming(prompt: String, sessionId: String? = nil) -> AsyncThrowingStream<
     ChatStreamEvent, Error
   > {
@@ -125,9 +125,9 @@ extension ChatCLIProvider {
     // Parse thinking - Codex puts it in stdout, Claude in stderr
     let thinking: String?
     if tool == .codex {
-      thinking = runner.parse思考中FromOutput(run.rawStdout)
+      thinking = runner.parseThinkingFromOutput(run.rawStdout)
     } else {
-      thinking = parse思考中FromStderr(run.stderr)
+      thinking = parseThinkingFromStderr(run.stderr)
     }
 
     let log = makeLLMCall(start: callStart, end: run.finishedAt, input: prompt, output: run.stdout)

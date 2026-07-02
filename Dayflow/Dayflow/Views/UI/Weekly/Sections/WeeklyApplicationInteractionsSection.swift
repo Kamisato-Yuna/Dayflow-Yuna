@@ -24,7 +24,7 @@ private struct WeeklyApplicationNetworkPane: View {
       Color(hex: "FBF6F0")
 
       VStack(alignment: .leading, spacing: 7) {
-        Text("高频应用互动")
+        Text("Interactions between most used applications")
           .font(.custom("InstrumentSerif-Regular", size: 20))
           .foregroundStyle(Color(hex: "B46531"))
 
@@ -42,7 +42,7 @@ private struct WeeklyApplicationNetworkPane: View {
           path.move(to: from.point)
           let control = CGPoint(
             x: (from.x + to.x) / 2,
-            y: (from.y + to.y) / 2 + edge.curve关闭set
+            y: (from.y + to.y) / 2 + edge.curveOffset
           )
           path.addQuadCurve(to: to.point, control: control)
           context.stroke(
@@ -123,7 +123,7 @@ private struct WeeklyApplicationPatternsPane: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text("最常见工作模式")
+      Text("Most common work patterns")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.top, 28)
@@ -138,7 +138,7 @@ private struct WeeklyApplicationPatternsPane: View {
       .padding(.horizontal, 16)
       .padding(.leading, 8)
 
-      Text("分心 and rabbit holes")
+      Text("Distractions and rabbit holes")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.top, 19)
@@ -173,7 +173,7 @@ private struct WeeklyPatternFlow: View {
 
       HStack(spacing: 0) {
         averagePill(pattern.from.avg)
-        flow数量er(pattern.count, color: Color(hex: "4779E9"))
+        flowCounter(pattern.count, color: Color(hex: "4779E9"))
         averagePill(pattern.to.avg, isWide: true)
       }
 
@@ -222,7 +222,7 @@ private struct WeeklyRabbitHoleFlow: View {
 
       HStack(spacing: 0) {
         averagePill(snapshot.from.avg, tone: .distraction)
-        flow数量er(snapshot.targets.count, color: Color(hex: "FF7C5A"))
+        flowCounter(snapshot.targets.count, color: Color(hex: "FF7C5A"))
         averagePill(snapshot.avg, isWide: true, tone: .distraction)
       }
     }
@@ -290,7 +290,7 @@ private func averagePill(
   )
 }
 
-private func flow数量er(_ count: Int, color: Color) -> some View {
+private func flowCounter(_ count: Int, color: Color) -> some View {
   HStack(spacing: 0) {
     Rectangle()
       .fill(color)
@@ -351,31 +351,31 @@ struct WeeklyApplicationInteractionsSnapshot {
         id: "notion", name: "Notion", x: 62, y: 304.8, size: 31, kind: .work, mark: "N",
         isMuted: true),
       .init(
-        id: "clock", name: "日历", x: 111, y: 233.8, size: 37, kind: .work, mark: "C",
+        id: "clock", name: "Calendar", x: 111, y: 233.8, size: 37, kind: .work, mark: "C",
         isMuted: true),
       .init(
         id: "browser", name: "Browser", x: 179.5, y: 343.3, size: 30, kind: .work, mark: "B",
         isMuted: true),
     ],
     edges: [
-      .init(from: "runway", to: "flora", kind: .work, weight: 0.5, curve关闭set: -20),
-      .init(from: "runway", to: "figma", kind: .work, weight: 0.9, curve关闭set: -42),
-      .init(from: "flora", to: "figma", kind: .work, weight: 0.72, curve关闭set: 24),
-      .init(from: "notion", to: "figma", kind: .work, weight: 0.64, curve关闭set: -30),
-      .init(from: "slack", to: "figma", kind: .work, weight: 0.82, curve关闭set: -55),
-      .init(from: "browser", to: "figma", kind: .work, weight: 0.46, curve关闭set: -24),
-      .init(from: "figma", to: "x", kind: .work, weight: 0.78, curve关闭set: -38),
-      .init(from: "x", to: "substack", kind: .distraction, weight: 0.64, curve关闭set: -14),
-      .init(from: "substack", to: "reddit", kind: .distraction, weight: 0.5, curve关闭set: -22),
-      .init(from: "x", to: "youtube", kind: .distraction, weight: 0.74, curve关闭set: -62),
-      .init(from: "reddit", to: "youtube", kind: .personal, weight: 0.3, curve关闭set: 30),
-      .init(from: "figma", to: "youtube", kind: .distraction, weight: 0.72, curve关闭set: -22),
-      .init(from: "figma", to: "cube", kind: .work, weight: 0.34, curve关闭set: 20),
-      .init(from: "figma", to: "claude", kind: .work, weight: 0.54, curve关闭set: 52),
-      .init(from: "figma", to: "chatgpt", kind: .personal, weight: 0.3, curve关闭set: 26),
-      .init(from: "cube", to: "claude", kind: .personal, weight: 0.26, curve关闭set: 8),
-      .init(from: "slack", to: "browser", kind: .work, weight: 0.42, curve关闭set: -10),
-      .init(from: "chatgpt", to: "claude", kind: .personal, weight: 0.32, curve关闭set: -14),
+      .init(from: "runway", to: "flora", kind: .work, weight: 0.5, curveOffset: -20),
+      .init(from: "runway", to: "figma", kind: .work, weight: 0.9, curveOffset: -42),
+      .init(from: "flora", to: "figma", kind: .work, weight: 0.72, curveOffset: 24),
+      .init(from: "notion", to: "figma", kind: .work, weight: 0.64, curveOffset: -30),
+      .init(from: "slack", to: "figma", kind: .work, weight: 0.82, curveOffset: -55),
+      .init(from: "browser", to: "figma", kind: .work, weight: 0.46, curveOffset: -24),
+      .init(from: "figma", to: "x", kind: .work, weight: 0.78, curveOffset: -38),
+      .init(from: "x", to: "substack", kind: .distraction, weight: 0.64, curveOffset: -14),
+      .init(from: "substack", to: "reddit", kind: .distraction, weight: 0.5, curveOffset: -22),
+      .init(from: "x", to: "youtube", kind: .distraction, weight: 0.74, curveOffset: -62),
+      .init(from: "reddit", to: "youtube", kind: .personal, weight: 0.3, curveOffset: 30),
+      .init(from: "figma", to: "youtube", kind: .distraction, weight: 0.72, curveOffset: -22),
+      .init(from: "figma", to: "cube", kind: .work, weight: 0.34, curveOffset: 20),
+      .init(from: "figma", to: "claude", kind: .work, weight: 0.54, curveOffset: 52),
+      .init(from: "figma", to: "chatgpt", kind: .personal, weight: 0.3, curveOffset: 26),
+      .init(from: "cube", to: "claude", kind: .personal, weight: 0.26, curveOffset: 8),
+      .init(from: "slack", to: "browser", kind: .work, weight: 0.42, curveOffset: -10),
+      .init(from: "chatgpt", to: "claude", kind: .personal, weight: 0.32, curveOffset: -14),
     ],
     patterns: [
       WeeklyWorkPattern(
@@ -463,7 +463,7 @@ struct WeeklyApplicationEdge: Identifiable {
   let to: String
   let kind: WeeklyApplicationKind
   let weight: Double
-  let curve关闭set: CGFloat
+  let curveOffset: CGFloat
 
   var color: Color {
     switch kind {

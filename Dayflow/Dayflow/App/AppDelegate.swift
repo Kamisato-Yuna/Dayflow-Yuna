@@ -81,23 +81,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     deepLinkRouter = AppDeepLinkRouter()
 
     // Check if we've passed the screen recording permission step
-    let onboardingStep = 开启boardingStepMigration.migrateIfNeeded()
-    let did开启board = UserDefaults.standard.bool(forKey: "did开启board")
+    let onboardingStep = OnboardingStepMigration.migrateIfNeeded()
+    let didOnboard = UserDefaults.standard.bool(forKey: "didOnboard")
 
     // Seed recording flag low, then create recorder so the first
     // transition to true will reliably start capture.
     AppState.shared.isRecording = false
     recorder = ScreenRecorder(autoStart: true)
 
-    // 开启ly attempt to start recording if we're past the screen step or fully onboarded.
-    if did开启board || 开启boardingStep.hasPassedScreenRecordingStep(rawValue: onboardingStep) {
-      // 开启boarding complete - enable persistence and restore user preference
+    // Only attempt to start recording if we're past the screen step or fully onboarded.
+    if didOnboard || OnboardingStep.hasPassedScreenRecordingStep(rawValue: onboardingStep) {
+      // Onboarding complete - enable persistence and restore user preference
       AppState.shared.enablePersistence()
 
       // Try to start recording, but handle permission failures gracefully
       Task { [weak self] in
         guard let self else { return }
-        guard ScreenRecording权限Notice.isGranted else {
+        guard ScreenRecordingPermissionNotice.isGranted else {
           await MainActor.run {
             AppState.shared.setRecording(
               false,
@@ -105,8 +105,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
               persistPreference: false
             )
           }
-          if did开启board {
-            ScreenRecording权限Notice.post(reason: "launch_preflight_missing")
+          if didOnboard {
+            ScreenRecordingPermissionNotice.post(reason: "launch_preflight_missing")
           }
           self.flushPendingDeepLinks()
           return
@@ -114,8 +114,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         do {
           // Check if we have permission by trying to access content
-          _ = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindows开启ly: true)
-          // 权限 granted - restore saved preference or default to ON
+          _ = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+          // Permission granted - restore saved preference or default to ON
           await MainActor.run {
             let savedPref = AppState.shared.getSavedPreference()
             AppState.shared.setRecording(savedPref ?? true, analyticsReason: "auto")
@@ -133,8 +133,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
               persistPreference: false
             )
           }
-          if did开启board {
-            ScreenRecording权限Notice.post(reason: "launch_shareable_content_failed")
+          if didOnboard {
+            ScreenRecordingPermissionNotice.post(reason: "launch_shareable_content_failed")
           }
           print("Screen recording permission not granted, skipping auto-start")
         }
@@ -175,7 +175,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     powerObserver = NSWorkspace.shared.notificationCenter.addObserver(
-      forName: NSWorkspace.willPower关闭Notification,
+      forName: NSWorkspace.willPowerOffNotification,
       object: nil,
       queue: .main
     ) { _ in
@@ -304,10 +304,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     DailyRecapScheduler.shared.stop()
     flushReferralUsage(reason: "terminate")
     // If onboarding not completed, mark abandoned with last step
-    let did开启board = UserDefaults.standard.bool(forKey: "did开启board")
-    if !did开启board {
-      let stepIdx = 开启boardingStepMigration.migrateIfNeeded()
-      let stepName = 开启boardingStep(rawValue: stepIdx)?.analyticsName ?? "unknown"
+    let didOnboard = UserDefaults.standard.bool(forKey: "didOnboard")
+    if !didOnboard {
+      let stepIdx = OnboardingStepMigration.migrateIfNeeded()
+      let stepName = OnboardingStep(rawValue: stepIdx)?.analyticsName ?? "unknown"
       AnalyticsService.shared.capture("onboarding_abandoned", ["last_step": stepName])
     }
     AnalyticsService.shared.capture("app_terminated")
@@ -317,7 +317,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private func flushPendingDeepLinks() {
     guard let router = deepLinkRouter, !pendingDeepLinkURLs.isEmpty else { return }
     let urls = pendingDeepLinkURLs
-    pendingDeepLinkURLs.remove全部()
+    pendingDeepLinkURLs.removeAll()
     for url in urls {
       _ = router.handle(url)
     }
@@ -344,14 +344,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       let sessionHours = Date().timeIntervalSince(launch) / 3600
       props["session_hours"] = round(sessionHours * 10) / 10  // 1 decimal place
     }
-    if let cpuSnapshot = ProcessCPUMonitor.shared.heartbeatSnapshotAnd重置() {
+    if let cpuSnapshot = ProcessCPUMonitor.shared.heartbeatSnapshotAndReset() {
       props["cpu_current_pct_bucket"] = AnalyticsService.shared.cpuPercentBucket(
         cpuSnapshot.currentCPUPercent)
       props["cpu_avg_pct_bucket"] = AnalyticsService.shared.cpuPercentBucket(
         cpuSnapshot.averageCPUPercent)
       props["cpu_peak_pct_bucket"] = AnalyticsService.shared.cpuPercentBucket(
         cpuSnapshot.peakCPUPercent)
-      props["cpu_sample_count"] = cpuSnapshot.sample数量
+      props["cpu_sample_count"] = cpuSnapshot.sampleCount
       props["cpu_sampler_interval_s"] = Int(cpuSnapshot.samplerInterval)
     }
     if let currentTab = AppState.shared.currentTabName {

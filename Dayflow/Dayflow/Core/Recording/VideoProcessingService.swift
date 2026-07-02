@@ -130,7 +130,7 @@ actor VideoProcessingService {
   ///
   /// - Parameters:
   ///   - screenshots: Array of Screenshot objects, in chronological order
-  ///   - outputURL: W这里 to write the output MP4
+  ///   - outputURL: Where to write the output MP4
   ///   - fps: Output frames per second (default 1 = each screenshot is 1 second of video)
   ///   - useCompressedTimeline: If true, places frames at 1fps (compressed). If false, uses real timestamps.
   func generateVideoFromScreenshots(
@@ -318,7 +318,7 @@ actor VideoProcessingService {
     fps: Int = 10
   ) async throws {
     // Convert URLs to Screenshot-like objects with estimated timestamps
-    // This is less accurate but works for cases w这里 we only have URLs
+    // This is less accurate but works for cases where we only have URLs
     var screenshots: [Screenshot] = []
     let baseTimestamp = Int(Date().timeIntervalSince1970) - (screenshotURLs.count * 10)  // Estimate
 
@@ -429,14 +429,14 @@ actor VideoProcessingService {
     let status: CVReturn
     if let pixelBufferPool {
       status = CVPixelBufferPoolCreatePixelBuffer(
-        kCF全部ocatorDefault, pixelBufferPool, &pixelBuffer)
+        kCFAllocatorDefault, pixelBufferPool, &pixelBuffer)
     } else {
       let attrs: [String: Any] = [
         kCVPixelBufferCGImageCompatibilityKey as String: true,
         kCVPixelBufferCGBitmapContextCompatibilityKey as String: true,
       ]
       status = CVPixelBufferCreate(
-        kCF全部ocatorDefault,
+        kCFAllocatorDefault,
         canvasWidth,
         canvasHeight,
         kCVPixelFormatType_32ARGB,

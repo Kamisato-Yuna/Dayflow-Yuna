@@ -96,14 +96,14 @@ struct ChatWorkStatus: Sendable, Equatable {
   }
 
   var hasDetails: Bool {
-    let trimmed思考中 = thinkingText.trimmingCharacters(in: .whitespacesAndNewlines)
-    if !trimmed思考中.isEmpty { return true }
+    let trimmedThinking = thinkingText.trimmingCharacters(in: .whitespacesAndNewlines)
+    if !trimmedThinking.isEmpty { return true }
     return tools.contains { !$0.output.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
   }
 
   var hasErrors: Bool {
     if stage == .error { return true }
-    if tools.contains(w这里: { $0.state == .failed }) { return true }
+    if tools.contains(where: { $0.state == .failed }) { return true }
     if let message = errorMessage, !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     {
       return true
@@ -137,7 +137,7 @@ final class ChatService: ObservableObject {
   private var recentSuggestionHistory: [String] = []
   private var currentSessionId: String?
 
-  // MARK: - 调试日志ging
+  // MARK: - Debug Logging
 
   private func log(_ type: ChatDebugEntry.EntryType, _ content: String) {
     let entry = ChatDebugEntry(timestamp: Date(), type: type, content: content)
@@ -175,7 +175,7 @@ final class ChatService: ObservableObject {
     isProcessing = false
   }
 
-  /// 清除 the conversation
+  /// Clear the conversation
   func clearConversation() {
     messages = []
     conversationHistory = []
@@ -187,7 +187,7 @@ final class ChatService: ObservableObject {
     currentSessionId = nil
   }
 
-  func didUpdateDashboard记忆(from oldValue: String, to newValue: String) {
+  func didUpdateDashboardMemory(from oldValue: String, to newValue: String) {
     guard oldValue != newValue else { return }
     invalidateCLISession(reason: "dashboard memory changed")
   }
@@ -241,7 +241,7 @@ final class ChatService: ObservableObject {
           }
 
         case .thinking(let text):
-          log(.info, "💭 思考中: \(text)")
+          log(.info, "💭 Thinking: \(text)")
           updateWorkStatus { status in
             status.stage = .thinking
             status.thinkingText += text
@@ -301,7 +301,7 @@ final class ChatService: ObservableObject {
 
           // Update response message in place
           if let id = responseMessageId,
-            let index = messages.firstIndex(w这里: { $0.id == id })
+            let index = messages.firstIndex(where: { $0.id == id })
           {
             messages[index] = ChatMessage(
               id: id,
@@ -331,7 +331,7 @@ final class ChatService: ObservableObject {
           streamingText = responseText
           log(.response, responseText)
           if let id = responseMessageId,
-            let index = messages.firstIndex(w这里: { $0.id == id })
+            let index = messages.firstIndex(where: { $0.id == id })
           {
             messages[index] = ChatMessage(
               id: id,
@@ -374,7 +374,7 @@ final class ChatService: ObservableObject {
 
       // Update response message with error
       if let id = responseMessageId,
-        let index = messages.firstIndex(w这里: { $0.id == id })
+        let index = messages.firstIndex(where: { $0.id == id })
       {
         messages[index] = ChatMessage.assistant(
           "I encountered an error: \(error.localizedDescription)")
@@ -394,23 +394,23 @@ final class ChatService: ObservableObject {
     let cleanedText = metadata.cleanedText
 
     if let memoryBlob = metadata.memoryBlob {
-      let previous记忆 = DashboardChat记忆Store.load()
-      DashboardChat记忆Store.save(memoryBlob)
-      let updated记忆 = DashboardChat记忆Store.load()
-      didUpdateDashboard记忆(from: previous记忆, to: updated记忆)
-      let char数量 = DashboardChat记忆Store.load().count
-      log(.info, "🧠 记忆 updated (\(char数量) chars)")
+      let previousMemory = DashboardChatMemoryStore.load()
+      DashboardChatMemoryStore.save(memoryBlob)
+      let updatedMemory = DashboardChatMemoryStore.load()
+      didUpdateDashboardMemory(from: previousMemory, to: updatedMemory)
+      let charCount = DashboardChatMemoryStore.load().count
+      log(.info, "🧠 Memory updated (\(charCount) chars)")
       AnalyticsService.shared.capture(
         "chat_memory_auto_updated",
         [
           "provider": provider.analyticsProvider,
-          "chars": char数量,
+          "chars": charCount,
         ])
     }
 
     // Update final response (with suggestions block removed)
     if let id = responseMessageId,
-      let index = messages.firstIndex(w这里: { $0.id == id })
+      let index = messages.firstIndex(where: { $0.id == id })
     {
       // Remove response message if empty (error case or no response)
       if cleanedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -468,9 +468,9 @@ final class ChatService: ObservableObject {
 
     var prompt = systemPrompt + "\n\n"
 
-    let memoryBlob = DashboardChat记忆Store.load()
+    let memoryBlob = DashboardChatMemoryStore.load()
     if !memoryBlob.isEmpty {
-      prompt += "## User 记忆\n\(memoryBlob)\n\n"
+      prompt += "## User Memory\n\(memoryBlob)\n\n"
     }
 
     // Add conversation history
@@ -484,9 +484,9 @@ final class ChatService: ObservableObject {
 
   private func buildGeminiSystemInstruction() -> String {
     var instruction = buildGeminiSystemPrompt()
-    let memoryBlob = DashboardChat记忆Store.load()
+    let memoryBlob = DashboardChatMemoryStore.load()
     if !memoryBlob.isEmpty {
-      instruction += "\n\n## User 记忆\n\(memoryBlob)"
+      instruction += "\n\n## User Memory\n\(memoryBlob)"
     }
     let recentSuggestions = recentSuggestionHistory.suffix(9)
     if !recentSuggestions.isEmpty {
@@ -557,7 +557,7 @@ final class ChatService: ObservableObject {
 
       ### Tables
 
-      **timeline_cards** - High-level activity summaries (start 这里)
+      **timeline_cards** - High-level activity summaries (start here)
       - day (YYYY-MM-DD), start_ts/end_ts (epoch seconds)
       - title, summary, detailed_summary, category, subcategory (detailed_summary is large—only pull if you really need the granularity)
       - category values: Work, Personal, Distraction, Idle, System
@@ -609,7 +609,7 @@ final class ChatService: ObservableObject {
          - Why it's bad: activity might be labeled "X", or only mentioned in summaries.
          - Do instead: Scan titles + summaries for Twitter/X mentions and summarize.
 
-      5) 专注 time (bad: category-only filtering)
+      5) Focus time (bad: category-only filtering)
          - Bad approach: WHERE category = 'Work' or a hardcoded "focus" category.
          - Why it's bad: focus is a judgment call and may include deep research or analysis labeled differently.
          - Do instead: Infer focus from the actual content in titles/summaries.
@@ -635,7 +635,7 @@ final class ChatService: ObservableObject {
       ```
 
       ```chart type=line
-      { "title": "专注 time by day", "x": ["Mon", "Tue", "Wed"], "y": [2.5, 3.0, 1.8], "color": "#1F6FEB" }
+      { "title": "Focus time by day", "x": ["Mon", "Tue", "Wed"], "y": [2.5, 3.0, 1.8], "color": "#1F6FEB" }
       ```
 
       ```chart type=stacked_bar
@@ -647,25 +647,25 @@ final class ChatService: ObservableObject {
       ```
 
       ```chart type=heatmap
-      { "title": "专注 by daypart", "x": ["Mon", "Tue", "Wed"], "y": ["Morning", "Afternoon", "Evening"], "values": [[1.2, 0.8, 1.5], [2.0, 1.6, 1.1], [0.7, 1.0, 0.9]], "color": "#1F6FEB" }
+      { "title": "Focus by daypart", "x": ["Mon", "Tue", "Wed"], "y": ["Morning", "Afternoon", "Evening"], "values": [[1.2, 0.8, 1.5], [2.0, 1.6, 1.1], [0.7, 1.0, 0.9]], "color": "#1F6FEB" }
       ```
 
       ```chart type=gantt
-      { "title": "专注 blocks (today)", "items": [{ "label": "Research", "start": 9.0, "end": 10.5, "color": "#1F6FEB" }, { "label": "Break", "start": 10.5, "end": 11.0, "color": "#F96E00" }] }
+      { "title": "Focus blocks (today)", "items": [{ "label": "Research", "start": 9.0, "end": 10.5, "color": "#1F6FEB" }, { "label": "Break", "start": 10.5, "end": 11.0, "color": "#F96E00" }] }
       ```
 
       RULES:
-      - 全部owed chart types: bar, line, stacked_bar, donut, heatmap, gantt
+      - Allowed chart types: bar, line, stacked_bar, donut, heatmap, gantt
       - JSON must be valid (double quotes, no trailing commas)
       - For donut charts use `type=donut` (not `pie`)
       - x and y must be arrays of the same length
       - Use numbers only for y values
-      - 可选: color can be a hex string like "#F96E00" or "F96E00"
+      - Optional: color can be a hex string like "#F96E00" or "F96E00"
       - For stacked_bar: provide x categories and a series array; each series needs name + values (values count must match x); color optional per series
       - For donut: provide labels + values (same length); optional colors array (same length) for slice colors
-      - For heatmap: provide x labels, y labels, and values as a 2D array w这里 each row matches y and each row length matches x; optional base color
+      - For heatmap: provide x labels, y labels, and values as a 2D array where each row matches y and each row length matches x; optional base color
       - For gantt: provide items with label, start, end (numbers, start < end); optional color per item
-      - Place the chart block w这里 you want it to appear in the response
+      - Place the chart block where you want it to appear in the response
       - If a chart isn't helpful, omit it
 
       \(categoryColorsSection())
@@ -676,7 +676,7 @@ final class ChatService: ObservableObject {
       - **Avoid overly granular timestamps.**
       - **High-level summaries** - Don't list every activity, summarize the vibe
       - **Human-readable durations** - "about an hour", "a couple hours", not "45 minutes" or "4140 seconds"
-      - **Markdown** - Use **bold** for emphasis w这里 helpful
+      - **Markdown** - Use **bold** for emphasis where helpful
 
       GOOD example:
       "Pulled today's cards.
@@ -710,7 +710,7 @@ final class ChatService: ObservableObject {
     }
 
     return """
-      You are the AI assistant inside Dayflow, a macOS app that records what people do on their computer and builds a semantic timeline of their day. You have deep visibility into the user's work patterns — what they built, w这里 they got stuck, how they spent their time. Use that context to give answers that feel like a well-informed colleague, not a generic chatbot.
+      You are the AI assistant inside Dayflow, a macOS app that records what people do on their computer and builds a semantic timeline of their day. You have deep visibility into the user's work patterns — what they built, where they got stuck, how they spent their time. Use that context to give answers that feel like a well-informed colleague, not a generic chatbot.
 
       Current date: \(currentDate)
       Current time: \(currentTime)
@@ -764,7 +764,7 @@ final class ChatService: ObservableObject {
 
       ## MEMORY
 
-      You may receive an existing `## User 记忆` block. Use it to maintain lightweight, durable context across conversations.
+      You may receive an existing `## User Memory` block. Use it to maintain lightweight, durable context across conversations.
 
       Fields:
       - **Profile:** Stable user context relevant to Dayflow (role, work patterns, team).
@@ -835,7 +835,7 @@ final class ChatService: ObservableObject {
       - Do not place suggestion questions in the main response body.
       - Do not output any text after the `memory` block.
       - For quick clarifications, acknowledgments, or corrections, omit the `suggestions` block and include only the `memory` block.
-      - Do not add headings like "Suggestions", "记忆", "### Suggestions", or "### 记忆".
+      - Do not add headings like "Suggestions", "Memory", "### Suggestions", or "### Memory".
       - Emit only the fenced `suggestions` block and fenced `memory` block after the main answer.
       """
   }
@@ -848,7 +848,7 @@ final class ChatService: ObservableObject {
       guard !trimmed.isEmpty else { continue }
 
       let normalized = normalizeSuggestion(trimmed)
-      if let existingIndex = recentSuggestionHistory.firstIndex(w这里: {
+      if let existingIndex = recentSuggestionHistory.firstIndex(where: {
         normalizeSuggestion($0) == normalized
       }) {
         recentSuggestionHistory.remove(at: existingIndex)
@@ -901,7 +901,7 @@ final class ChatService: ObservableObject {
     """
       ## MEMORY CONTRACT (REQUIRED)
 
-      You may receive an existing section called "## User 记忆".
+      You may receive an existing section called "## User Memory".
       This memory is ONLY for durable assistant behavior, not a running life log.
       Keep only these two fields:
       - Profile: stable user context relevant to this app (very short)
@@ -911,7 +911,7 @@ final class ChatService: ObservableObject {
       - Contact names/relationships
       - Travel plans or itineraries
       - Investment/trading ideas
-      - 开启e-off tasks, daily events, or temporary interests
+      - One-off tasks, daily events, or temporary interests
       - Secrets, passwords, tokens, API keys, or sensitive details
 
       ## RESPONSE FORMAT (REQUIRED)
@@ -962,11 +962,11 @@ final class ChatService: ObservableObject {
 
   private func toolCompletionIndex(in status: ChatWorkStatus, preferredId: UUID?) -> Int? {
     if let preferredId,
-      let index = status.tools.firstIndex(w这里: { $0.id == preferredId })
+      let index = status.tools.firstIndex(where: { $0.id == preferredId })
     {
       return index
     }
-    return status.tools.lastIndex(w这里: { $0.state == .running })
+    return status.tools.lastIndex(where: { $0.state == .running })
   }
 
   private func toolSummary(command: String, output: String, exitCode: Int?) -> String {
@@ -988,7 +988,7 @@ final class ChatService: ObservableObject {
     if base == "Data fetch" {
       return trimmed
     }
-    let rows = trimmed.split(w这里Separator: \.isNewline).count
+    let rows = trimmed.split(whereSeparator: \.isNewline).count
     let rowLabel = rows == 1 ? "1 row" : "\(rows) rows"
     return "\(base) returned \(rowLabel)"
   }
@@ -996,7 +996,7 @@ final class ChatService: ObservableObject {
   private func invalidateCLISession(reason: String) {
     guard currentSessionId != nil else { return }
     currentSessionId = nil
-    log(.info, "♻️ 重置 CLI session: \(reason)")
+    log(.info, "♻️ Reset CLI session: \(reason)")
   }
 
   // MARK: - Metadata Parsing
@@ -1011,7 +1011,7 @@ final class ChatService: ObservableObject {
     let suggestionPattern =
       "(?ims)(?:^|\\n)\\s*(?:#{1,6}\\s*Suggestions\\s*\\n+|Suggestions:\\s*)?```suggestions\\s*\\n([\\s\\S]*?)\\n?```"
     let memoryPattern =
-      "(?ims)(?:^|\\n)\\s*(?:#{1,6}\\s*记忆\\s*\\n+|记忆:\\s*)?```memory\\s*\\n([\\s\\S]*?)\\n?```"
+      "(?ims)(?:^|\\n)\\s*(?:#{1,6}\\s*Memory\\s*\\n+|Memory:\\s*)?```memory\\s*\\n([\\s\\S]*?)\\n?```"
 
     var workingText = text
     var suggestions: [String] = []
@@ -1045,21 +1045,21 @@ final class ChatService: ObservableObject {
       }
     }
 
-    if let (stripped, raw记忆) = extractTaggedBlock(from: workingText, pattern: memoryPattern) {
+    if let (stripped, rawMemory) = extractTaggedBlock(from: workingText, pattern: memoryPattern) {
       workingText = stripped
-      if let normalized记忆 = normalizeAuto记忆Blob(raw记忆) {
-        memoryBlob = normalized记忆
+      if let normalizedMemory = normalizeAutoMemoryBlob(rawMemory) {
+        memoryBlob = normalizedMemory
       } else {
         log(.info, "🧠 Ignored memory block that did not match Profile/Style format")
       }
     }
 
     if memoryBlob == nil,
-      let (stripped, raw记忆) = extractLoose记忆(from: workingText)
+      let (stripped, rawMemory) = extractLooseMemory(from: workingText)
     {
       workingText = stripped
-      if let normalized记忆 = normalizeAuto记忆Blob(raw记忆) {
-        memoryBlob = normalized记忆
+      if let normalizedMemory = normalizeAutoMemoryBlob(rawMemory) {
+        memoryBlob = normalizedMemory
       } else {
         log(.info, "🧠 Ignored loose memory block that did not match Profile/Style format")
       }
@@ -1096,7 +1096,7 @@ final class ChatService: ObservableObject {
 
   private func extractLooseSuggestions(from text: String) -> (String, String)? {
     let pattern =
-      "(?ims)(?:^|\\n)\\s*(?:#{1,6}\\s*Suggestions\\s*\\n+|Suggestions:\\s*\\n?)(\\[[\\s\\S]*?\\])(?=\\n\\s*(?:#{1,6}\\s*记忆\\b|记忆:)|\\z)"
+      "(?ims)(?:^|\\n)\\s*(?:#{1,6}\\s*Suggestions\\s*\\n+|Suggestions:\\s*\\n?)(\\[[\\s\\S]*?\\])(?=\\n\\s*(?:#{1,6}\\s*Memory\\b|Memory:)|\\z)"
     guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else { return nil }
     let range = NSRange(text.startIndex..., in: text)
     guard
@@ -1116,9 +1116,9 @@ final class ChatService: ObservableObject {
     return (stripped, content)
   }
 
-  private func extractLoose记忆(from text: String) -> (String, String)? {
+  private func extractLooseMemory(from text: String) -> (String, String)? {
     let pattern =
-      "(?ims)(?:^|\\n)\\s*(?:#{1,6}\\s*记忆\\s*\\n+|记忆:\\s*\\n?)(Profile:[\\s\\S]*?Style:[^\\n]*(?:\\n[^#\\n].*)*)(?=\\z)"
+      "(?ims)(?:^|\\n)\\s*(?:#{1,6}\\s*Memory\\s*\\n+|Memory:\\s*\\n?)(Profile:[\\s\\S]*?Style:[^\\n]*(?:\\n[^#\\n].*)*)(?=\\z)"
     guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else { return nil }
     let range = NSRange(text.startIndex..., in: text)
     guard
@@ -1141,9 +1141,9 @@ final class ChatService: ObservableObject {
   private func stripResidualMetadataHeadings(from text: String) -> String {
     let patterns = [
       "(?im)^\\s*#{1,6}\\s*Suggestions\\s*$",
-      "(?im)^\\s*#{1,6}\\s*记忆\\s*$",
+      "(?im)^\\s*#{1,6}\\s*Memory\\s*$",
       "(?im)^\\s*Suggestions:\\s*$",
-      "(?im)^\\s*记忆:\\s*$",
+      "(?im)^\\s*Memory:\\s*$",
     ]
 
     return patterns.reduce(text) { partial, pattern in
@@ -1160,7 +1160,7 @@ final class ChatService: ObservableObject {
     }
   }
 
-  private func normalizeAuto记忆Blob(_ raw: String) -> String? {
+  private func normalizeAutoMemoryBlob(_ raw: String) -> String? {
     let lines = raw
       .replacingOccurrences(of: "\r\n", with: "\n")
       .replacingOccurrences(of: "\r", with: "\n")

@@ -12,14 +12,14 @@ struct DailyWorkflowGrid: View {
 
   @Binding var hoveredDistractionId: String?
   @Binding var hoveredCellKey: String?
-  @State private var hover清除Task: Task<Void, Never>? = nil
+  @State private var hoverClearTask: Task<Void, Never>? = nil
   private let hoverExitDelayNanoseconds: UInt64 = 80_000_000
 
   private var renderRows: [DailyWorkflowGridRow] {
     if rows.isEmpty {
-      return DailyWorkflowGridRow.placeholderRows(slot数量: timelineWindow.slot数量)
+      return DailyWorkflowGridRow.placeholderRows(slotCount: timelineWindow.slotCount)
     }
-    // Hide the Distraction/分心 category row when we have a dedicated distractions row
+    // Hide the Distraction/Distractions category row when we have a dedicated distractions row
     if showDistractionRow {
       return rows.filter {
         !isDistractionCategoryKey($0.id)
@@ -31,8 +31,8 @@ struct DailyWorkflowGrid: View {
   var body: some View {
     GeometryReader { geo in
       let hourTicks = timelineWindow.hourTickHours
-      let slot数量 = max(
-        1, renderRows.map { $0.slotOccupancies.count }.max() ?? timelineWindow.slot数量)
+      let slotCount = max(
+        1, renderRows.map { $0.slotOccupancies.count }.max() ?? timelineWindow.slotCount)
       let layoutScale = scale
 
       let leftInset: CGFloat = 36 * layoutScale
@@ -46,31 +46,31 @@ struct DailyWorkflowGrid: View {
       let distractionRowHeight: CGFloat = 10 * layoutScale
       let distractionRowSpacing: CGFloat = 6 * layoutScale
       let distractionCornerRadius: CGFloat = max(1, 2 * layoutScale)
-      let show分心 = showDistractionRow && !distractionMarkers.isEmpty
+      let showDistractions = showDistractionRow && !distractionMarkers.isEmpty
       let distractionLabelWidth =
-        show分心
+        showDistractions
         ? labelColumnWidth(
           for: [
             DailyWorkflowGridRow(
-              id: "d", name: "分心", colorHex: "FF5950",
+              id: "d", name: "Distractions", colorHex: "FF5950",
               slotOccupancies: [], slotCardInfos: [])
           ], layoutScale: layoutScale) : 0
       let effectiveLabelWidth =
-        show分心
+        showDistractions
         ? max(categoryLabelWidth, distractionLabelWidth) : categoryLabelWidth
 
       let gridViewportWidth = max(
         80, geo.size.width - leftInset - effectiveLabelWidth - labelToGridSpacing - rightInset)
       let baselineCellSize: CGFloat = 18 * layoutScale
-      let baseline空档: CGFloat = 2 * layoutScale
+      let baselineGap: CGFloat = 2 * layoutScale
       let cellSize = baselineCellSize
-      let columnSpacing = baseline空档
-      let rowSpacing = baseline空档
+      let columnSpacing = baselineGap
+      let rowSpacing = baselineGap
       let cellCornerRadius = max(1.2, 2.5 * layoutScale)
       let categoryLabelFontSize: CGFloat = 12 * layoutScale
       let axisLabelFontSize: CGFloat = 10 * layoutScale
-      let total空档 = columnSpacing * CGFloat(slot数量 - 1)
-      let gridWidth = (cellSize * CGFloat(slot数量)) + total空档
+      let totalGap = columnSpacing * CGFloat(slotCount - 1)
+      let gridWidth = (cellSize * CGFloat(slotCount)) + totalGap
       let axisWidth = gridWidth
 
       VStack(alignment: .leading, spacing: 0) {
@@ -82,8 +82,8 @@ struct DailyWorkflowGrid: View {
                 .foregroundStyle(Color.black.opacity(0.9))
                 .frame(width: effectiveLabelWidth, height: cellSize, alignment: .trailing)
             }
-            if show分心 {
-              Text("分心")
+            if showDistractions {
+              Text("Distractions")
                 .font(.custom("Figtree-Regular", size: categoryLabelFontSize))
                 .foregroundStyle(Color.black.opacity(0.9))
                 .frame(
@@ -100,7 +100,7 @@ struct DailyWorkflowGrid: View {
                 VStack(alignment: .leading, spacing: rowSpacing) {
                   ForEach(Array(renderRows.enumerated()), id: \.element.id) { rowIndex, row in
                     HStack(spacing: columnSpacing) {
-                      ForEach(0..<slot数量, id: \.self) { slotIndex in
+                      ForEach(0..<slotCount, id: \.self) { slotIndex in
                         let cellKey = "\(rowIndex)-\(slotIndex)"
                         Rectangle()
                           .foregroundStyle(.clear)
@@ -122,7 +122,7 @@ struct DailyWorkflowGrid: View {
                   }
                 }
 
-                if show分心 {
+                if showDistractions {
                   let totalMinutes = timelineWindow.endMinute - timelineWindow.startMinute
 
                   ZStack(alignment: .topLeading) {
@@ -175,8 +175,8 @@ struct DailyWorkflowGrid: View {
                   .frame(width: axisWidth, height: max(0.7, 0.9 * layoutScale))
 
                 if hourTicks.count > 1 {
-                  let interval数量 = hourTicks.count - 1
-                  let intervalWidth = axisWidth / CGFloat(interval数量)
+                  let intervalCount = hourTicks.count - 1
+                  let intervalWidth = axisWidth / CGFloat(intervalCount)
                   let labelWidth = max(22 * layoutScale, min(34 * layoutScale, intervalWidth * 1.4))
 
                   ZStack(alignment: .leading) {
@@ -190,13 +190,13 @@ struct DailyWorkflowGrid: View {
                           width: labelWidth,
                           alignment: axisLabelAlignment(
                             tickIndex: index,
-                            tick数量: hourTicks.count
+                            tickCount: hourTicks.count
                           )
                         )
                         .offset(
-                          x: axisLabel关闭set(
+                          x: axisLabelOffset(
                             tickIndex: index,
-                            tick数量: hourTicks.count,
+                            tickCount: hourTicks.count,
                             tickX: tickX,
                             axisWidth: axisWidth,
                             labelWidth: labelWidth
@@ -231,9 +231,9 @@ struct DailyWorkflowGrid: View {
   }
 
   private func contentHeight(
-    for row数量: Int, layoutScale: CGFloat, includeDistractionRow: Bool = false
+    for rowCount: Int, layoutScale: CGFloat, includeDistractionRow: Bool = false
   ) -> CGFloat {
-    let rows = max(1, row数量)
+    let rows = max(1, rowCount)
     let topInset: CGFloat = 25 * layoutScale
     let cell: CGFloat = 18 * layoutScale
     let gap: CGFloat = 2 * layoutScale
@@ -261,19 +261,19 @@ struct DailyWorkflowGrid: View {
     return Color(hex: row.colorHex).opacity(alpha)
   }
 
-  private func axisLabelAlignment(tickIndex: Int, tick数量: Int) -> Alignment {
-    if tickIndex == tick数量 - 1 { return .trailing }
+  private func axisLabelAlignment(tickIndex: Int, tickCount: Int) -> Alignment {
+    if tickIndex == tickCount - 1 { return .trailing }
     return .leading
   }
 
-  private func axisLabel关闭set(
+  private func axisLabelOffset(
     tickIndex: Int,
-    tick数量: Int,
+    tickCount: Int,
     tickX: CGFloat,
     axisWidth: CGFloat,
     labelWidth: CGFloat
   ) -> CGFloat {
-    if tickIndex == tick数量 - 1 { return max(0, axisWidth - labelWidth) }
+    if tickIndex == tickCount - 1 { return max(0, axisWidth - labelWidth) }
     return min(max(0, tickX), max(0, axisWidth - labelWidth))
   }
 
@@ -283,28 +283,28 @@ struct DailyWorkflowGrid: View {
 
   private func handleCellHover(_ hovering: Bool, cellKey: String) {
     if hovering {
-      cancelPendingHover清除()
+      cancelPendingHoverClear()
       hoveredCellKey = cellKey
       hoveredDistractionId = nil
       return
     }
 
-    scheduleHover清除(cellKey: cellKey)
+    scheduleHoverClear(cellKey: cellKey)
   }
 
   private func handleDistractionHover(_ hovering: Bool, markerID: String) {
     if hovering {
-      cancelPendingHover清除()
+      cancelPendingHoverClear()
       hoveredDistractionId = markerID
       hoveredCellKey = nil
       return
     }
 
-    scheduleHover清除(distractionID: markerID)
+    scheduleHoverClear(distractionID: markerID)
   }
 
-  private func scheduleHover清除(cellKey: String? = nil, distractionID: String? = nil) {
-    cancelPendingHover清除()
+  private func scheduleHoverClear(cellKey: String? = nil, distractionID: String? = nil) {
+    cancelPendingHoverClear()
 
     if hoverExitDelayNanoseconds == 0 {
       if let cellKey, hoveredCellKey == cellKey {
@@ -316,7 +316,7 @@ struct DailyWorkflowGrid: View {
       return
     }
 
-    hover清除Task = Task { @MainActor in
+    hoverClearTask = Task { @MainActor in
       try? await Task.sleep(nanoseconds: hoverExitDelayNanoseconds)
       guard !Task.isCancelled else { return }
 
@@ -327,13 +327,13 @@ struct DailyWorkflowGrid: View {
         hoveredDistractionId = nil
       }
 
-      hover清除Task = nil
+      hoverClearTask = nil
     }
   }
 
-  private func cancelPendingHover清除() {
-    hover清除Task?.cancel()
-    hover清除Task = nil
+  private func cancelPendingHoverClear() {
+    hoverClearTask?.cancel()
+    hoverClearTask = nil
   }
 
 }
@@ -388,7 +388,7 @@ func workflowTooltip(
   .padding(8 * layoutScale)
   .frame(width: 200 * layoutScale, alignment: .leading)
   .background(tooltipBackground(layoutScale: layoutScale))
-  .allowsHit测试ing(false)
+  .allowsHitTesting(false)
 }
 
 func tooltipBackground(layoutScale: CGFloat) -> some View {

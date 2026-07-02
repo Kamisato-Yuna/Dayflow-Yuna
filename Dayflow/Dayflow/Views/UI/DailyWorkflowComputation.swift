@@ -9,13 +9,13 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
   -> DailyWorkflowComputationResult
 {
   let systemCategoryKey = normalizedCategoryKey("System")
-  let ordered分类 =
+  let orderedCategories =
     categories
     .sorted { $0.order < $1.order }
     .filter { normalizedCategoryKey($0.name) != systemCategoryKey }
 
   let categoryLookup = firstCategoryLookup(
-    from: ordered分类,
+    from: orderedCategories,
     normalizedKey: normalizedCategoryKey
   )
   let colorMap = categoryLookup.mapValues { normalizedHex($0.colorHex) }
@@ -84,7 +84,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
 
   let visibleStart = workflowWindow.startMinute
   let visibleEnd = workflowWindow.endMinute
-  let slot数量 = workflowWindow.slot数量
+  let slotCount = workflowWindow.slotCount
   let slotDuration = DailyGridConfig.slotDurationMinutes
 
   let segments: [DailyWorkflowSegment] = rawSegments.compactMap { raw in
@@ -123,7 +123,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
   }
 
   let idleCategoryKeys = Set(
-    ordered分类.filter(\.isIdle).map { normalizedCategoryKey($0.name) })
+    orderedCategories.filter(\.isIdle).map { normalizedCategoryKey($0.name) })
   var contextSwitches = 0
   var interruptions = 0
   var focusedMinutes = 0.0
@@ -165,7 +165,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
   var selectedKeys: [String] = []
   var seenKeys = Set<String>()
 
-  for category in ordered分类 {
+  for category in orderedCategories {
     let key = normalizedCategoryKey(category.name)
     guard !key.isEmpty else { continue }
     guard seenKeys.insert(key).inserted else { continue }
@@ -188,10 +188,10 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
 
     var occupancies: [Double] = []
     var cardInfos: [DailyWorkflowSlotCardInfo?] = []
-    occupancies.reserveCapacity(slot数量)
-    cardInfos.reserveCapacity(slot数量)
+    occupancies.reserveCapacity(slotCount)
+    cardInfos.reserveCapacity(slotCount)
 
-    for slotIndex in 0..<slot数量 {
+    for slotIndex in 0..<slotCount {
       let slotStart = visibleStart + (Double(slotIndex) * slotDuration)
       let slotEnd = min(visibleEnd, slotStart + slotDuration)
       let slotMinutes = max(1, slotEnd - slotStart)
@@ -247,16 +247,16 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
     DailyWorkflowStatChip(
       id: "context-switched",
       title: "Context switched",
-      value: format数量(contextSwitches)
+      value: formatCount(contextSwitches)
     ),
     DailyWorkflowStatChip(
       id: "interrupted",
       title: "Interrupted",
-      value: format数量(interruptions)
+      value: formatCount(interruptions)
     ),
     DailyWorkflowStatChip(
       id: "focused-for",
-      title: "专注ed for",
+      title: "Focused for",
       value: formatDurationValue(focusedMinutes)
     ),
     DailyWorkflowStatChip(
@@ -273,7 +273,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
 
   // Check if user has a Distraction category
   let distractionCategoryKey = normalizedCategoryKey("Distraction")
-  let hasDistractionCategory = ordered分类.contains {
+  let hasDistractionCategory = orderedCategories.contains {
     normalizedCategoryKey($0.name) == distractionCategoryKey
   }
 
@@ -367,7 +367,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
             currentTitles.append(marker.title)
           }
         } else {
-          // 空档 — flush current merged marker
+          // Gap — flush current merged marker
           merged.append(
             DailyWorkflowDistractionMarker(
               id: "distraction-merged-\(merged.count)",
@@ -487,7 +487,7 @@ func formatAxisHourLabel(fromAbsoluteHour hour: Int) -> String {
   return "\(display)\(period)"
 }
 
-func format数量(_ count: Int) -> String {
+func formatCount(_ count: Int) -> String {
   "\(count) \(count == 1 ? "time" : "times")"
 }
 

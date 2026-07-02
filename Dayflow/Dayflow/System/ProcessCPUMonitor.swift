@@ -11,7 +11,7 @@ final class ProcessCPUMonitor {
     let currentCPUPercent: Double
     let averageCPUPercent: Double
     let peakCPUPercent: Double
-    let sample数量: Int
+    let sampleCount: Int
     let samplerInterval: TimeInterval
   }
 
@@ -30,7 +30,7 @@ final class ProcessCPUMonitor {
   private var currentCPUPercent: Double = 0
   private var rollingCPUPercentTotal: Double = 0
   private var rollingPeakCPUPercent: Double = 0
-  private var rollingSample数量 = 0
+  private var rollingSampleCount = 0
 
   private init() {}
 
@@ -66,7 +66,7 @@ final class ProcessCPUMonitor {
       currentCPUPercent = 0
       rollingCPUPercentTotal = 0
       rollingPeakCPUPercent = 0
-      rollingSample数量 = 0
+      rollingSampleCount = 0
       return timer
     }
 
@@ -74,21 +74,21 @@ final class ProcessCPUMonitor {
     timer?.cancel()
   }
 
-  func heartbeatSnapshotAnd重置() -> HeartbeatSnapshot? {
+  func heartbeatSnapshotAndReset() -> HeartbeatSnapshot? {
     lock.withLock {
-      guard rollingSample数量 > 0 else { return nil }
+      guard rollingSampleCount > 0 else { return nil }
 
       let snapshot = HeartbeatSnapshot(
         currentCPUPercent: currentCPUPercent,
-        averageCPUPercent: rollingCPUPercentTotal / Double(rollingSample数量),
+        averageCPUPercent: rollingCPUPercentTotal / Double(rollingSampleCount),
         peakCPUPercent: rollingPeakCPUPercent,
-        sample数量: rollingSample数量,
+        sampleCount: rollingSampleCount,
         samplerInterval: Constants.sampleInterval
       )
 
       rollingCPUPercentTotal = 0
       rollingPeakCPUPercent = 0
-      rollingSample数量 = 0
+      rollingSampleCount = 0
 
       return snapshot
     }
@@ -101,7 +101,7 @@ final class ProcessCPUMonitor {
       currentCPUPercent = cpuPercent
       rollingCPUPercentTotal += cpuPercent
       rollingPeakCPUPercent = max(rollingPeakCPUPercent, cpuPercent)
-      rollingSample数量 += 1
+      rollingSampleCount += 1
       return rollingPeakCPUPercent
     }
 
@@ -124,31 +124,31 @@ final class ProcessCPUMonitor {
 
   private func sampleProcessCPUPercent() -> Double? {
     var threadList: thread_act_array_t?
-    var thread数量: mach_msg_type_number_t = 0
+    var threadCount: mach_msg_type_number_t = 0
 
-    let result = task_threads(mach_task_self_, &threadList, &thread数量)
+    let result = task_threads(mach_task_self_, &threadList, &threadCount)
     guard result == KERN_SUCCESS, let threadList else { return nil }
 
     defer {
-      let byte数量 = vm_size_t(thread数量) * vm_size_t(记忆Layout<thread_t>.stride)
-      vm_deallocate(mach_task_self_, vm_address_t(bitPattern: threadList), byte数量)
+      let byteCount = vm_size_t(threadCount) * vm_size_t(MemoryLayout<thread_t>.stride)
+      vm_deallocate(mach_task_self_, vm_address_t(bitPattern: threadList), byteCount)
     }
 
     var totalCPUPercent: Double = 0
 
-    for index in 0..<Int(thread数量) {
+    for index in 0..<Int(threadCount) {
       var threadInfo = thread_basic_info_data_t()
-      var threadInfo数量 = mach_msg_type_number_t(
-        记忆Layout.size(ofValue: threadInfo) / 记忆Layout<integer_t>.size
+      var threadInfoCount = mach_msg_type_number_t(
+        MemoryLayout.size(ofValue: threadInfo) / MemoryLayout<integer_t>.size
       )
 
       let infoResult = withUnsafeMutablePointer(to: &threadInfo) { pointer in
-        pointer.with记忆Rebound(to: integer_t.self, capacity: Int(threadInfo数量)) { rebound in
+        pointer.withMemoryRebound(to: integer_t.self, capacity: Int(threadInfoCount)) { rebound in
           thread_info(
             threadList[index],
             thread_flavor_t(THREAD_BASIC_INFO),
             rebound,
-            &threadInfo数量
+            &threadInfoCount
           )
         }
       }

@@ -23,7 +23,7 @@ extension StorageManager {
       return nil
     }
 
-    let calendar = 日历.current
+    let calendar = Calendar.current
 
     let startComponents = calendar.dateComponents([.hour, .minute], from: startTime)
     guard let startHour = startComponents.hour, let startMinute = startComponents.minute else {
@@ -98,7 +98,7 @@ extension StorageManager {
               INSERT INTO timeline_cards(
                   batch_id, start, end, start_ts, end_ts, day, title,
                   summary, category, subcategory, detailed_summary, metadata
-                  -- video_summary_url is omitted 这里
+                  -- video_summary_url is omitted here
               )
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           """,
@@ -128,7 +128,7 @@ extension StorageManager {
 
     try? timedWrite("deleteTimelineCard(recordId:\(recordId))") { db in
       guard
-        let cardRow = try Row.fetch开启e(
+        let cardRow = try Row.fetchOne(
           db,
           sql: """
                 SELECT video_summary_url, start_ts, end_ts, batch_id
@@ -199,11 +199,11 @@ extension StorageManager {
     }
   }
 
-  // MARK: - 开启boarding Card
+  // MARK: - Onboarding Card
 
   /// Creates a dummy "Installed Dayflow!" card when onboarding completes.
   /// This gives users an immediate example of what cards look like.
-  func create开启boardingCard() {
+  func createOnboardingCard() {
     let now = Date()
     let startTime = now.addingTimeInterval(-13 * 60)  // 13 minute card
 
@@ -222,11 +222,11 @@ extension StorageManager {
     let (dayString, _, _) = startTime.getDayInfoFor4AMBoundary()
 
     // Get the first non-idle category, fallback to "Work"
-    let categories = CategoryPersistence.loadPersisted分类()
-    let category = categories.first(w这里: { !$0.isIdle })?.name ?? "Work"
+    let categories = CategoryPersistence.loadPersistedCategories()
+    let category = categories.first(where: { !$0.isIdle })?.name ?? "Work"
 
     // Build summary based on selected LLM provider
-    let summary = build开启boardingSummary()
+    let summary = buildOnboardingSummary()
 
     // Build metadata with appSites
     let encoder = JSONEncoder()
@@ -240,7 +240,7 @@ extension StorageManager {
       String(data: $0, encoding: .utf8)
     }
 
-    try? timedWrite("create开启boardingCard") { db in
+    try? timedWrite("createOnboardingCard") { db in
       try db.execute(
         sql: """
               INSERT INTO timeline_cards(
@@ -266,7 +266,7 @@ extension StorageManager {
     }
   }
 
-  func build开启boardingSummary() -> String {
+  func buildOnboardingSummary() -> String {
     let selectedProvider = UserDefaults.standard.string(forKey: "selectedLLMProvider") ?? "gemini"
 
     switch selectedProvider {
@@ -287,8 +287,8 @@ extension StorageManager {
 
     case "ollama":
       // Check which local engine they picked
-      let local引擎 = UserDefaults.standard.string(forKey: "llmLocal引擎") ?? "ollama"
-      if local引擎 == "lmstudio" {
+      let localEngine = UserDefaults.standard.string(forKey: "llmLocalEngine") ?? "ollama"
+      if localEngine == "lmstudio" {
         return
           "You successfully installed Dayflow with LM Studio — your data stays 100% on your device. Come back in 30 minutes to see your first real activity card! ✨ (This is a sample card, so you can see what your timeline will look like.)"
       } else {
@@ -306,7 +306,7 @@ extension StorageManager {
     let decoder = JSONDecoder()
     return
       (try? timedRead("fetchTimelineCards(forBatch)") { db in
-        try Row.fetch全部(
+        try Row.fetchAll(
           db,
           sql: """
                 SELECT * FROM timeline_cards
@@ -350,10 +350,10 @@ extension StorageManager {
       }) ?? []
   }
 
-  // 全部 batches, newest first
+  // All batches, newest first
   func allBatches() -> [(id: Int64, start: Int, end: Int, status: String)] {
     (try? db.read { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql:
           "SELECT id, batch_start_ts, batch_end_ts, status FROM analysis_batches ORDER BY id DESC"
@@ -368,7 +368,7 @@ extension StorageManager {
 
     return
       (try? db.read { db in
-        try Row.fetch全部(
+        try Row.fetchAll(
           db,
           sql: """
                 SELECT id, status, batch_start_ts, batch_end_ts, created_at, reason
@@ -396,7 +396,7 @@ extension StorageManager {
       return []
     }
 
-    let calendar = 日历.current
+    let calendar = Calendar.current
 
     // Get 4 AM of the given day as the start
     var startComponents = calendar.dateComponents([.year, .month, .day], from: dayDate)
@@ -417,7 +417,7 @@ extension StorageManager {
     let endTs = Int(dayEnd.timeIntervalSince1970)
 
     let cards: [TimelineCard]? = try? timedRead("fetchTimelineCards(forDay:\(day))") { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT * FROM timeline_cards
@@ -477,7 +477,7 @@ extension StorageManager {
       // and should be visible in Week view too for parity. Rendering in
       // Week's card layer handles System cards via the generic category
       // palette (falls back to a neutral accent).
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT * FROM timeline_cards
@@ -533,7 +533,7 @@ extension StorageManager {
     let endTs = Int(to.timeIntervalSince1970)
 
     let totalSeconds: Double? = try? timedRead("fetchTotalMinutesTracked") { db in
-      try Double.fetch开启e(
+      try Double.fetchOne(
         db,
         sql: """
               SELECT COALESCE(SUM(end_ts - start_ts), 0)
@@ -552,7 +552,7 @@ extension StorageManager {
   /// Returns total minutes of tracked activities for the week containing the given date.
   /// Week starts on Monday at 4 AM and ends the following Monday at 4 AM.
   func fetchTotalMinutesTrackedForWeek(containing date: Date) -> Double {
-    let calendar = 日历.current
+    let calendar = Calendar.current
 
     // Find the Monday of the week containing this date
     var weekStart = calendar.date(
@@ -576,7 +576,7 @@ extension StorageManager {
 
     return
       (try? db.read { db in
-        try Row.fetch全部(
+        try Row.fetchAll(
           db,
           sql: """
                 SELECT batch_id, day, start, end, category, subcategory, title, summary, detailed_summary, created_at
@@ -607,7 +607,7 @@ extension StorageManager {
 
     return
       (try? db.read { db in
-        try Row.fetch全部(
+        try Row.fetchAll(
           db,
           sql: """
                 SELECT created_at, batch_id, call_group_id, attempt, provider, model, operation, status, latency_ms, http_status, request_method, request_url, request_body, response_body, error_message
@@ -654,7 +654,7 @@ extension StorageManager {
 
     return
       (try? db.read { db in
-        try Row.fetch全部(
+        try Row.fetchAll(
           db,
           sql: """
                 SELECT created_at, batch_id, call_group_id, attempt, provider, model, operation, status, latency_ms, http_status, request_method, request_url, request_body, response_body, error_message
@@ -691,7 +691,7 @@ extension StorageManager {
 
     return try? timedRead("fetchTimelineCard(byId)") { db in
       guard
-        let row = try Row.fetch开启e(
+        let row = try Row.fetchOne(
           db,
           sql: """
                 SELECT * FROM timeline_cards
@@ -736,7 +736,7 @@ extension StorageManager {
 
     return try? timedRead("fetchLastTimelineCard(endingBefore:)") { db in
       guard
-        let row = try Row.fetch开启e(
+        let row = try Row.fetchOne(
           db,
           sql: """
                 SELECT *
@@ -799,7 +799,7 @@ extension StorageManager {
     try? timedWrite("replaceTimelineCardsInRange(\(newCards.count)_cards)") { db in
       // First, fetch the video paths that will be soft-deleted
       // Note: We exclude error cards (category='System') from other batches to preserve them
-      let videoRows = try Row.fetch全部(
+      let videoRows = try Row.fetchAll(
         db,
         sql: """
               SELECT video_summary_url FROM timeline_cards
@@ -813,7 +813,7 @@ extension StorageManager {
       videoPaths = videoRows.compactMap { $0["video_summary_url"] as? String }
 
       // Fetch the cards that will be deleted for debugging
-      let cardsToDelete = try Row.fetch全部(
+      let cardsToDelete = try Row.fetchAll(
         db,
         sql: """
               SELECT id, start, end, title FROM timeline_cards
@@ -840,8 +840,8 @@ extension StorageManager {
           """, arguments: [toTs, fromTs, fromTs, toTs, batchId])
 
       // Verify soft deletion (count remaining active cards)
-      let remaining数量 =
-        try Int.fetch开启e(
+      let remainingCount =
+        try Int.fetchOne(
           db,
           sql: """
                 SELECT COUNT(*) FROM timeline_cards
@@ -850,7 +850,7 @@ extension StorageManager {
                    AND is_deleted = 0
             """, arguments: [toTs, fromTs, fromTs, toTs]) ?? 0
 
-      if remaining数量 > 0 {
+      if remainingCount > 0 {
       } else {
       }
 
@@ -868,7 +868,7 @@ extension StorageManager {
         }
 
         // Resolve clock-only timestamps by picking the nearest day to the window midpoint
-        let calendar = 日历.current
+        let calendar = Calendar.current
         let anchor = from.addingTimeInterval(to.timeIntervalSince(from) / 2.0)
 
         let resolveClock: (Int, Int) -> Date = { hour, minute in

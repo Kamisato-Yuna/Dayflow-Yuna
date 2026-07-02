@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-struct Timeline日历ButtonFramePreferenceKey: PreferenceKey {
+struct TimelineCalendarButtonFramePreferenceKey: PreferenceKey {
   static var defaultValue: CGRect = .zero
 
   static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
@@ -15,20 +15,20 @@ struct Timeline日历ButtonFramePreferenceKey: PreferenceKey {
 
 enum TimelineAlignment {
   static let topInset: CGFloat = 24
-  static let pickerRow关闭set: CGFloat = -10
+  static let pickerRowOffset: CGFloat = -10
   static let categoryRowInset: CGFloat = 55
-  static let headerContent空档: CGFloat = 18
+  static let headerContentGap: CGFloat = 18
 }
 
 enum TimelineNavigationLayout {
   static let arrowSize: CGFloat = 24
   static let hoverCircleSize: CGFloat = 30
-  static let calendar空档: CGFloat = 4
+  static let calendarGap: CGFloat = 4
 }
 
 enum LogoPosition {
   static let logoSize: CGFloat = 48
-  static let logoVertical关闭set: CGFloat = 8
+  static let logoVerticalOffset: CGFloat = 8
 }
 
 extension MainView {
@@ -49,7 +49,7 @@ extension MainView {
       LogoBadgeView(imageName: "DayflowLogoMainApp", size: LogoPosition.logoSize)
         .frame(height: 100)
         .frame(maxWidth: .infinity)
-        .offset(y: LogoPosition.logoVertical关闭set)
+        .offset(y: LogoPosition.logoVerticalOffset)
         .scaleEffect(logoScale)
         .opacity(logoOpacity)
 
@@ -60,7 +60,7 @@ extension MainView {
         Spacer()
         SidebarView(selectedIcon: $selectedIcon)
           .frame(maxWidth: .infinity, alignment: .center)
-          .offset(y: sidebar关闭set)
+          .offset(y: sidebarOffset)
           .opacity(sidebarOpacity)
         Spacer()
       }
@@ -135,17 +135,17 @@ extension MainView {
     .coordinateSpace(name: "TimelinePanel")
     .overlay(alignment: .topLeading) {
       if goalFlowPresentation == nil {
-        timeline日历PopoverOverlay(panelWidth: geo.size.width)
+        timelineCalendarPopoverOverlay(panelWidth: geo.size.width)
       }
     }
     .animation(.spring(response: 0.32, dampingFraction: 0.9), value: goalFlowPresentation?.id)
-    .onPreferenceChange(Timeline日历ButtonFramePreferenceKey.self) { frame in
-      timeline日历ButtonFrame = frame
+    .onPreferenceChange(TimelineCalendarButtonFramePreferenceKey.self) { frame in
+      timelineCalendarButtonFrame = frame
     }
   }
 
   private var timelineLeftColumn: some View {
-    VStack(alignment: .leading, spacing: TimelineAlignment.headerContent空档) {
+    VStack(alignment: .leading, spacing: TimelineAlignment.headerContentGap) {
       timelineHeader
       timelineContent
     }
@@ -169,9 +169,9 @@ extension MainView {
   private var timelineContent: some View {
     VStack(alignment: .leading, spacing: 12) {
       TabFilterBar(
-        categories: categoryStore.editable分类,
+        categories: categoryStore.editableCategories,
         idleCategory: categoryStore.idleCategory,
-        onManage分类: { showCategoryEditor = true }
+        onManageCategories: { showCategoryEditor = true }
       )
       .padding(.leading, 10 + TimelineAlignment.categoryRowInset)
       .opacity(contentOpacity)
@@ -195,7 +195,7 @@ extension MainView {
             cardIconLeadingInset: TimelineCardLayout.iconLeadingInset,
             cardIconTextSpacing: TimelineCardLayout.iconTextSpacing,
             cardFaviconSize: TimelineCardLayout.faviconSize,
-            cardFaviconVertical关闭set: TimelineCardLayout.faviconVertical关闭set,
+            cardFaviconVerticalOffset: TimelineCardLayout.faviconVerticalOffset,
             cardCompactDurationThreshold: TimelineCardLayout.compactDurationThreshold,
             cardCompactVerticalPadding: TimelineCardLayout.compactVerticalPadding,
             cardNormalVerticalPadding: TimelineCardLayout.normalVerticalPadding,
@@ -217,7 +217,7 @@ extension MainView {
             refreshTrigger: $refreshActivitiesTrigger,
             weekRange: timelineWeekRange,
             onSelectActivity: selectTimelineActivity,
-            on清除Selection: { clearTimelineSelection() },
+            onClearSelection: { clearTimelineSelection() },
             weeklyHoursFrame: weeklyHoursFrame,
             weeklyHoursIntersectsCard: $weeklyHoursIntersectsCard,
             hideCardsForModeSwitch: hideWeekCardsDuringModeSwitch
@@ -238,10 +238,10 @@ extension MainView {
     .frame(minWidth: 0, maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 
-  private var cardsToReviewPrompt数量: Int {
-    guard cardsToReview数量 > 0 else { return 0 }
+  private var cardsToReviewPromptCount: Int {
+    guard cardsToReviewCount > 0 else { return 0 }
     if hasRecentTimelineReviewRating || hasAnyTimelineReviewRating == false {
-      return cardsToReview数量
+      return cardsToReviewCount
     }
     return 0
   }
@@ -249,7 +249,7 @@ extension MainView {
   private var timelineFooter: some View {
     let weeklyHoursOpacity =
       weeklyHoursFadeOpacity * (weeklyHoursIntersectsCard ? 0 : 1)
-    let reviewPrompt数量 = cardsToReviewPrompt数量
+    let reviewPromptCount = cardsToReviewPromptCount
 
     return ZStack(alignment: .bottom) {
       HStack(alignment: .bottom) {
@@ -263,8 +263,8 @@ extension MainView {
       }
       .padding(.horizontal, 24)
 
-      if timelineMode == .day, reviewPrompt数量 > 0 {
-        CardsToReviewButton(count: reviewPrompt数量) {
+      if timelineMode == .day, reviewPromptCount > 0 {
+        CardsToReviewButton(count: reviewPromptCount) {
           withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
             showTimelineReview = true
           }
@@ -273,7 +273,7 @@ extension MainView {
       }
     }
     .padding(.bottom, 17)
-    .allowsHit测试ing(true)
+    .allowsHitTesting(true)
   }
 
   private func timelineRightColumn(geo: GeometryProxy) -> some View {
@@ -313,7 +313,7 @@ extension MainView {
 
   @ViewBuilder
   private func dayTimelineInspectorContent(geo: GeometryProxy) -> some View {
-    let reviewPrompt数量 = cardsToReviewPrompt数量
+    let reviewPromptCount = cardsToReviewPromptCount
 
     if let activity = selectedActivity {
       timelineActivityInspector(activity: activity, geo: geo)
@@ -323,7 +323,7 @@ extension MainView {
         selectedDate: selectedDate,
         categories: categoryStore.categories,
         storageManager: StorageManager.shared,
-        cardsToReview数量: reviewPrompt数量,
+        cardsToReviewCount: reviewPromptCount,
         reviewRefreshToken: reviewSummaryRefreshToken,
         recordingControlMode: RecordingControl.currentMode(
           appState: appState,
@@ -334,7 +334,7 @@ extension MainView {
           markDailyGoalPromptHandled(day: day)
         },
         onReviewTap: {
-          guard reviewPrompt数量 > 0 else { return }
+          guard reviewPromptCount > 0 else { return }
           withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
             showTimelineReview = true
           }
@@ -385,7 +385,7 @@ extension MainView {
         }
       )
       .frame(maxWidth: .infinity, maxHeight: .infinity)
-      .allowsHit测试ing(!feedbackModalVisible)
+      .allowsHitTesting(!feedbackModalVisible)
       .padding(.bottom, rateSummaryFooterHeight)
 
       if !feedbackModalVisible {
@@ -395,7 +395,7 @@ extension MainView {
           onDelete: handleTimelineDelete
         )
         .frame(maxWidth: .infinity)
-        .allowsHit测试ing(!feedbackModalVisible)
+        .allowsHitTesting(!feedbackModalVisible)
         .transition(.move(edge: .bottom).combined(with: .opacity))
       }
     }
@@ -510,9 +510,9 @@ extension MainView {
       enabled: copyTimelineState != .copying,
       scale: 1.02
     )
-    .pointingHandCursor开启Hover(
+    .pointingHandCursorOnHover(
       enabled: copyTimelineState != .copying,
-      reassert开启PressEnd: true
+      reassertOnPressEnd: true
     )
     .accessibilityLabel(Text("复制时间线到剪贴板"))
   }

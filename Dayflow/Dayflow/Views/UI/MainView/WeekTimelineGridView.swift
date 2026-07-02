@@ -12,8 +12,8 @@ private enum WeekTimelineConfig {
   static let weekdayInlineSpacing: CGFloat = 6
   static let selectedDayLeadingMinutes: CGFloat = 60
   static let fallbackLeadingMinutes: CGFloat = 60
-  static let cardLeading空档: CGFloat = 3
-  static let cardTrailing空档: CGFloat = 5
+  static let cardLeadingGap: CGFloat = 3
+  static let cardTrailingGap: CGFloat = 5
   static let minimumCardHeight: CGFloat = 16
   static let totalHeight: CGFloat = CGFloat(endHour - startHour) * hourHeight
   // Hover-expand tuning
@@ -80,7 +80,7 @@ struct WeekTimelineGridView: View {
 
   let weekRange: TimelineWeekRange
   let onSelectActivity: (TimelineActivity) -> Void
-  let on清除Selection: () -> Void
+  let onClearSelection: () -> Void
 
   // Frame of the "X hours tracked" footer label in the TimelinePane coord
   // space; the grid compares against this to hide the label when it'd sit
@@ -99,14 +99,14 @@ struct WeekTimelineGridView: View {
   @State private var loadTask: Task<Void, Never>?
   @State private var autoScrollWeekKey: String?
   // Gate the ScrollView's visibility on whether the initial auto-scroll has
-  // fired. Prevents the flash-then-jump flicker w这里 the ScrollView
+  // fired. Prevents the flash-then-jump flicker where the ScrollView
   // momentarily renders at its default top position (~4 AM) and is then
   // yanked to the data-driven target hour (~10 AM). Flip-to-true is
   // sequenced one runloop after scrollToRelevantHour so the scroll offset
   // has committed before content becomes visible.
   @State private var hasPerformedInitialScroll: Bool = false
 
-  // Hover-expand state. Parent owns it so the whole grid animates co这里ntly.
+  // Hover-expand state. Parent owns it so the whole grid animates coherently.
   @State private var hoveredCardID: String?
   @State private var pendingHoverWorkItem: DispatchWorkItem?
   @State private var measuredExpandedHeights: [String: CGFloat] = [:]
@@ -179,7 +179,7 @@ struct WeekTimelineGridView: View {
           // the pre-positioned default frame off-screen so the user never
           // sees the 4 AM → target hour flash.
           .opacity(hasPerformedInitialScroll ? 1 : 0)
-          // 开启ly auto-scroll the very first time the Week view mounts (oldValue
+          // Only auto-scroll the very first time the Week view mounts (oldValue
           // nil → first loadActivities sets the key). Subsequent week changes
           // preserve whatever scroll offset the user had, so navigating
           // between weeks doesn't feel like the time axis is jumping around.
@@ -303,7 +303,7 @@ struct WeekTimelineGridView: View {
       Color.clear
         .contentShape(Rectangle())
         .onTapGesture {
-          on清除Selection()
+          onClearSelection()
         }
 
       weekGridLines(dayWidth: dayWidth, gridWidth: gridWidth)
@@ -316,7 +316,7 @@ struct WeekTimelineGridView: View {
 
       if !hideCardsForModeSwitch,
         let recordingProjection,
-        let todayIndex = weekRange.days.firstIndex(w这里: { $0.dayString == todayDayString })
+        let todayIndex = weekRange.days.firstIndex(where: { $0.dayString == todayDayString })
       {
         statusCard(
           dayWidth: dayWidth,
@@ -427,7 +427,7 @@ struct WeekTimelineGridView: View {
           }
         ) {
           if selectedActivity?.id == item.id {
-            on清除Selection()
+            onClearSelection()
           } else {
             onSelectActivity(item.activity)
           }
@@ -578,7 +578,7 @@ struct WeekTimelineGridView: View {
     switch recordingControlMode {
     case .active:
       HStack(spacing: 6) {
-        Timeline思考中Spinner(config: spinnerConfig, visualScale: 0.4)
+        TimelineThinkingSpinner(config: spinnerConfig, visualScale: 0.4)
         if !compact {
           Text("Next card...")
             .font(.custom("Figtree", size: 10).weight(.semibold))
@@ -587,7 +587,7 @@ struct WeekTimelineGridView: View {
         }
       }
     case .pausedTimed, .pausedIndefinite:
-      Label("已暂停", systemImage: "pause.fill")
+      Label("Paused", systemImage: "pause.fill")
         .font(.custom("Figtree", size: 10).weight(.medium))
         .foregroundColor(Color(hex: "888D95"))
     case .stopped:
@@ -729,7 +729,7 @@ struct WeekTimelineGridView: View {
         recordingProjection = projection
         hasAnyActivities = !positioned.isEmpty
         if let selectedActivity,
-          !positioned.contains(w这里: { $0.activity.id == selectedActivity.id })
+          !positioned.contains(where: { $0.activity.id == selectedActivity.id })
         {
           self.selectedActivity = nil
         }
@@ -770,7 +770,7 @@ struct WeekTimelineGridView: View {
     let intersectsTimelineCard = positionedActivities.contains { item in
       let cardFrame = CGRect(
         x: cardsLayerFrame.minX + CGFloat(item.columnIndex) * dayWidth
-          + WeekTimelineConfig.cardLeading空档,
+          + WeekTimelineConfig.cardLeadingGap,
         y: cardsLayerFrame.minY + item.yPosition,
         width: cardWidth,
         height: item.height
@@ -780,11 +780,11 @@ struct WeekTimelineGridView: View {
 
     let intersectsStatusCard: Bool
     if let projection = recordingProjection,
-      let todayIndex = activeWeekRange.days.firstIndex(w这里: { $0.dayString == todayDayString })
+      let todayIndex = activeWeekRange.days.firstIndex(where: { $0.dayString == todayDayString })
     {
       let statusFrame = CGRect(
         x: cardsLayerFrame.minX + CGFloat(todayIndex) * dayWidth
-          + WeekTimelineConfig.cardLeading空档,
+          + WeekTimelineConfig.cardLeadingGap,
         y: cardsLayerFrame.minY + calculateYPosition(for: projection.start) + 1,
         width: cardWidth,
         height: recordingProjectionHeight(for: projection)
@@ -831,7 +831,7 @@ struct WeekTimelineGridView: View {
   }
 
   private func targetHourIndex() -> Int {
-    if let selectedDayIndex = weekRange.days.firstIndex(w这里: {
+    if let selectedDayIndex = weekRange.days.firstIndex(where: {
       $0.dayString == selectedDayString
     }),
       let selectedDayYPosition = earliestContentYPosition(forDayAt: selectedDayIndex)
@@ -882,12 +882,12 @@ struct WeekTimelineGridView: View {
   }
 
   private var currentDayIndex: Int? {
-    weekRange.days.firstIndex(w这里: { $0.dayString == todayDayString })
+    weekRange.days.firstIndex(where: { $0.dayString == todayDayString })
   }
 
   private func hourIndex(forContentYPosition yPosition: CGFloat, leadingMinutes: CGFloat) -> Int {
-    let leading关闭set = leadingMinutes * WeekTimelineConfig.pixelsPerMinute
-    let adjustedYPosition = max(0, yPosition - leading关闭set)
+    let leadingOffset = leadingMinutes * WeekTimelineConfig.pixelsPerMinute
+    let adjustedYPosition = max(0, yPosition - leadingOffset)
     let rawHourIndex = adjustedYPosition / WeekTimelineConfig.hourHeight
     return clampHourIndex(Int(rawHourIndex.rounded()))
   }
@@ -929,7 +929,7 @@ struct WeekTimelineGridView: View {
   }
 
   private func calculateYPosition(for time: Date) -> CGFloat {
-    let calendar = 日历.current
+    let calendar = Calendar.current
     let hour = calendar.component(.hour, from: time)
     let minute = calendar.component(.minute, from: time)
 
@@ -965,11 +965,11 @@ struct WeekTimelineGridView: View {
   }
 
   private func weekCardWidth(for dayWidth: CGFloat) -> CGFloat {
-    max(0, dayWidth - WeekTimelineConfig.cardLeading空档 - WeekTimelineConfig.cardTrailing空档)
+    max(0, dayWidth - WeekTimelineConfig.cardLeadingGap - WeekTimelineConfig.cardTrailingGap)
   }
 
   private func weekCardXPosition(for columnIndex: Int, dayWidth: CGFloat) -> CGFloat {
-    CGFloat(columnIndex) * dayWidth + WeekTimelineConfig.cardLeading空档 + weekCardWidth(
+    CGFloat(columnIndex) * dayWidth + WeekTimelineConfig.cardLeadingGap + weekCardWidth(
       for: dayWidth) / 2
   }
 
@@ -979,7 +979,7 @@ struct WeekTimelineGridView: View {
     let matched = categoryStore.categories.first {
       $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalizedCategory
     }
-    let fallback = categoryStore.categories.first ?? CategoryPersistence.default分类.first!
+    let fallback = categoryStore.categories.first ?? CategoryPersistence.defaultCategories.first!
     let category = matched ?? fallback
     let accentNSColor = NSColor(hex: category.colorHex) ?? .systemBlue
     let fillColor =
@@ -1101,7 +1101,7 @@ private struct WeekTimelineActivityCard: View {
   }
 
   // Shared visual canvas — identical layout whether compact or hovered, so no
-  // existing text shifts when the card expands. 开启ly the line limit changes:
+  // existing text shifts when the card expands. Only the line limit changes:
   // compact clamps to 1 line with tail truncation; hovered unlocks the wrap.
   @ViewBuilder
   private func cardCanvas(renderingExpanded: Bool) -> some View {
@@ -1226,7 +1226,7 @@ private struct WeekTimelineActivityCard: View {
       }
     )
     .hidden()
-    .allowsHit测试ing(false)
+    .allowsHitTesting(false)
   }
 
   @ViewBuilder
@@ -1248,7 +1248,7 @@ private struct WeekTimelineActivityCard: View {
   }
 }
 
-// MARK: - 悬停展开原型 preview
+// MARK: - Hover-expand prototype preview
 
 /// Xcode Preview harness for experimenting with the hover-expand interaction.
 /// The segmented control at the top lets you flip between Overlay (card lifts,
@@ -1264,7 +1264,7 @@ private struct WeekTimelineHoverPrototypeHarness: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("悬停展开原型")
+        Text("Hover-expand prototype")
           .font(.custom("Figtree", size: 13).weight(.semibold))
           .foregroundColor(Color(hex: "333333"))
         Text(
@@ -1281,7 +1281,7 @@ private struct WeekTimelineHoverPrototypeHarness: View {
         refreshTrigger: $refresh,
         weekRange: Self.weekRange,
         onSelectActivity: { selectedActivity = $0 },
-        on清除Selection: { selectedActivity = nil },
+        onClearSelection: { selectedActivity = nil },
         previewPositionedActivities: Self.mockActivities()
       )
       .background(Color(hex: "FFF6EE"))

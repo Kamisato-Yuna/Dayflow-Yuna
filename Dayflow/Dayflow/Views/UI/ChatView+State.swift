@@ -17,14 +17,14 @@ extension ChatView {
 
   var hasChatMinimumAccess: Bool {
     FeatureAccessRequirements.hasRequiredBatches(
-      completedAccessBatch数量,
-      requiredBatch数量: FeatureAccessRequirements.chatRequiredBatch数量
+      completedAccessBatchCount,
+      requiredBatchCount: FeatureAccessRequirements.chatRequiredBatchCount
     )
   }
 
   var chatAccessProgressText: String {
     FeatureAccessRequirements.progressText(
-      completedBatch数量: completedAccessBatch数量,
+      completedBatchCount: completedAccessBatchCount,
       requiredHours: FeatureAccessRequirements.chatRequiredHours
     )
   }
@@ -82,22 +82,22 @@ extension ChatView {
   }
 
   var composerBorderColor: Color {
-    if isInput专注ed {
+    if isInputFocused {
       return Color(hex: "F4A867")
     }
     return Color(hex: "E5D8CA")
   }
 
-  var memoryCharacter数量: Int {
+  var memoryCharacterCount: Int {
     memoryDraft.count
   }
 
-  var is记忆Dirty: Bool {
-    memoryDraft != stored记忆Blob
+  var isMemoryDirty: Bool {
+    memoryDraft != storedMemoryBlob
   }
 
   var memoryUpdatedLabel: String {
     guard let memoryUpdatedAt else { return "Not saved yet" }
-    return chatView记忆UpdatedFormatter.string(from: memoryUpdatedAt)
+    return chatViewMemoryUpdatedFormatter.string(from: memoryUpdatedAt)
   }
 }

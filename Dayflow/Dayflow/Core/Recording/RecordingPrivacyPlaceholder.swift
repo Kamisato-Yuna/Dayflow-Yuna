@@ -9,7 +9,7 @@ enum RecordingPrivacyPlaceholder {
     applicationName: String = "Private app"
   ) -> Data? {
     let image = NSImage(size: size)
-    image.lock专注()
+    image.lockFocus()
 
     NSColor(calibratedWhite: 0.08, alpha: 1).setFill()
     NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
@@ -21,17 +21,17 @@ enum RecordingPrivacyPlaceholder {
     drawCenteredText(
       title,
       fontSize: min(size.width, size.height) * 0.035,
-      y关闭set: 18,
+      yOffset: 18,
       maxWidth: maxTextWidth
     )
     drawCenteredText(
       subtitle,
       fontSize: min(size.width, size.height) * 0.018,
-      y关闭set: -26,
+      yOffset: -26,
       maxWidth: maxTextWidth
     )
 
-    image.unlock专注()
+    image.unlockFocus()
 
     guard let tiffData = image.tiffRepresentation,
       let bitmap = NSBitmapImageRep(data: tiffData)
@@ -45,7 +45,7 @@ enum RecordingPrivacyPlaceholder {
   private static func drawCenteredText(
     _ text: String,
     fontSize: CGFloat,
-    y关闭set: CGFloat,
+    yOffset: CGFloat,
     maxWidth: CGFloat
   ) {
     guard let context = NSGraphicsContext.current?.cgContext else { return }
@@ -64,7 +64,7 @@ enum RecordingPrivacyPlaceholder {
     let textSize = attributedText.size()
     let origin = CGPoint(
       x: canvas.midX - textSize.width / 2,
-      y: canvas.midY - textSize.height / 2 + y关闭set
+      y: canvas.midY - textSize.height / 2 + yOffset
     )
     attributedText.draw(at: origin)
   }

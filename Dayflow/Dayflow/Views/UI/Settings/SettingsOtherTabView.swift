@@ -3,7 +3,7 @@ import SwiftUI
 struct SettingsOtherTabView: View {
   @ObservedObject var viewModel: OtherSettingsViewModel
   @ObservedObject var launchAtLoginManager: LaunchAtLoginManager
-  @专注State private var isOutputLanguage专注ed: Bool
+  @FocusState private var isOutputLanguageFocused: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: SettingsStyle.sectionSpacing) {
@@ -16,56 +16,56 @@ struct SettingsOtherTabView: View {
 
   private var appPreferencesSection: some View {
     SettingsSection(
-      title: "应用偏好",
-      subtitle: "常用开关与数据上报设置。"
+      title: "App preferences",
+      subtitle: "General toggles and telemetry settings."
     ) {
       VStack(alignment: .leading, spacing: 0) {
         SettingsRow(
-          label: "登录后自动启动 Dayflow",
+          label: "Launch Dayflow at login",
           subtitle:
-            "登录后自动启动菜单栏服务，录制可在你开机后立即恢复。"
+            "Keeps the menu bar controller running right after you sign in so capture can resume instantly."
         ) {
           SettingsToggle(
-            is开启: Binding(
+            isOn: Binding(
               get: { launchAtLoginManager.isEnabled },
               set: { launchAtLoginManager.setEnabled($0) }
             )
           )
         }
 
-        SettingsRow(label: "分享崩溃报告与匿名使用数据") {
-          SettingsToggle(is开启: $viewModel.analyticsEnabled)
+        SettingsRow(label: "Share crash reports and anonymous usage data") {
+          SettingsToggle(isOn: $viewModel.analyticsEnabled)
         }
 
         SettingsRow(
-          label: "显示 Dock 图标",
-          subtitle: "关闭后，Dayflow 将仅在菜单栏运行。"
+          label: "Show Dock icon",
+          subtitle: "When off, Dayflow runs as a menu bar-only app."
         ) {
-          SettingsToggle(is开启: $viewModel.showDockIcon)
+          SettingsToggle(isOn: $viewModel.showDockIcon)
         }
 
         SettingsRow(
-          label: "显示应用和网站图标",
-          subtitle: "关闭后，时间线卡片不再显示应用或网站图标。"
+          label: "Show app/website icons in timeline",
+          subtitle: "When off, timeline cards won't show app or website icons."
         ) {
-          SettingsToggle(is开启: $viewModel.showTimelineAppIcons)
+          SettingsToggle(isOn: $viewModel.showTimelineAppIcons)
         }
 
         SettingsRow(
-          label: "显示每日目标弹窗",
+          label: "Show daily goal popups",
           subtitle:
-            "关闭后，Dayflow 不再在凌晨 4 点后自动打开目标设置或昨日复盘。"
+            "When off, Dayflow won't automatically open goal setup or yesterday's review after 4am."
         ) {
-          SettingsToggle(is开启: $viewModel.showDailyGoalPopups)
+          SettingsToggle(isOn: $viewModel.showDailyGoalPopups)
         }
 
         SettingsRow(
-          label: "将所有延时摄影保存到磁盘",
+          label: "Save all timelapses to disk",
           subtitle:
-            "新建与重处理时间线卡片会提前生成延时摄影并保存在磁盘中，不再按需生成。此功能会增加磁盘占用和后台处理。",
+            "New and reprocessed timeline cards will pre-generate timelapse videos and store them on disk instead of building them on demand. Uses more storage and background processing.",
           showsDivider: false
         ) {
-          SettingsToggle(is开启: $viewModel.save全部TimelapsesToDisk)
+          SettingsToggle(isOn: $viewModel.saveAllTimelapsesToDisk)
         }
       }
     }
@@ -75,36 +75,36 @@ struct SettingsOtherTabView: View {
 
   private var outputLanguageSection: some View {
     SettingsSection(
-      title: "AI 输出语言",
+      title: "Output language override",
       subtitle:
-        "该设置控制 AI 回复使用的语言，不影响界面语言（默认显示中文）。你可以填写任意语言，例如：English、简体中文、Español、日本語、한국어、Français。"
+        "The default language is English. You can specify any language here (examples: English, 简体中文, Español, 日本語, 한국어, Français)."
     ) {
       HStack(spacing: 10) {
         TextField("English", text: $viewModel.outputLanguageOverride)
           .textFieldStyle(.roundedBorder)
           .disableAutocorrection(true)
           .frame(maxWidth: 220)
-          .focused($isOutputLanguage专注ed)
+          .focused($isOutputLanguageFocused)
           .onChange(of: viewModel.outputLanguageOverride) {
             viewModel.markOutputLanguageOverrideEdited()
           }
 
         SettingsSecondaryButton(
-          title: viewModel.isOutputLanguageOverrideSaved ? "已保存" : "保存",
+          title: viewModel.isOutputLanguageOverrideSaved ? "Saved" : "保存",
           systemImage: viewModel.isOutputLanguageOverrideSaved
             ? "checkmark" : nil,
           isDisabled: viewModel.isOutputLanguageOverrideSaved,
           action: {
             viewModel.saveOutputLanguageOverride()
-            isOutputLanguage专注ed = false
+            isOutputLanguageFocused = false
           }
         )
 
         SettingsSecondaryButton(
-          title: "重置",
+          title: "Reset",
           action: {
             viewModel.resetOutputLanguageOverride()
-            isOutputLanguage专注ed = false
+            isOutputLanguageFocused = false
           }
         )
 

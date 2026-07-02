@@ -12,7 +12,7 @@ struct SettingsStorageTabView: View {
       guard let pending = viewModel.pendingLimit,
         StorageSettingsViewModel.storageOptions.indices.contains(pending.index)
       else {
-        return Alert(title: Text("调整存储限制"), dismissButton: .default(Text("确定")))
+        return Alert(title: Text("Adjust storage limit"), dismissButton: .default(Text("OK")))
       }
 
       let option = StorageSettingsViewModel.storageOptions[pending.index]
@@ -36,7 +36,7 @@ struct SettingsStorageTabView: View {
   // MARK: - Recording Status
 
   private var recordingStatusSection: some View {
-    let permissionGranted = viewModel.storage权限Granted == true
+    let permissionGranted = viewModel.storagePermissionGranted == true
     let recordingEnabled = AppState.shared.isRecording
     let isRecording = permissionGranted && recordingEnabled
     let recorderStatus: SettingsStatusDot.State =
@@ -113,7 +113,7 @@ struct SettingsStorageTabView: View {
     }
   }
 
-  /// 开启e category of storage: label + usage metadata on the left, Open +
+  /// One category of storage: label + usage metadata on the left, Open +
   /// limit controls on the right, progress bar spanning full width below.
   /// Uses the single ink accent — categories differ by label, not color.
   private func usageRow(
@@ -125,7 +125,7 @@ struct SettingsStorageTabView: View {
     action: @escaping () -> Void,
     showsDivider: Bool = true
   ) -> some View {
-    let usageString = viewModel.usageFormatter.string(fromByte数量: size)
+    let usageString = viewModel.usageFormatter.string(fromByteCount: size)
     let progress: Double? =
       limitBytes == Int64.max || limitBytes == 0
       ? nil : min(Double(size) / Double(limitBytes), 1.0)

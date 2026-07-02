@@ -4,7 +4,7 @@ import SwiftUI
 
 struct AppKitComposerTextField: NSViewRepresentable {
   @Binding var text: String
-  @Binding var is专注ed: Bool
+  @Binding var isFocused: Bool
   let focusToken: Int
   let placeholder: String
   let onSubmit: () -> Void
@@ -48,8 +48,8 @@ struct AppKitComposerTextField: NSViewRepresentable {
     }
     nsView.refreshPlaceholderVisibility()
 
-    if context.coordinator.last专注Token != focusToken {
-      context.coordinator.last专注Token = focusToken
+    if context.coordinator.lastFocusToken != focusToken {
+      context.coordinator.lastFocusToken = focusToken
       DispatchQueue.main.async {
         nsView.window?.makeFirstResponder(nsView)
         if let editor = nsView.currentEditor() as? NSTextView {
@@ -61,7 +61,7 @@ struct AppKitComposerTextField: NSViewRepresentable {
       }
     }
 
-    if is专注ed, nsView.window?.firstResponder !== nsView.currentEditor() {
+    if isFocused, nsView.window?.firstResponder !== nsView.currentEditor() {
       DispatchQueue.main.async {
         nsView.window?.makeFirstResponder(nsView)
       }
@@ -70,18 +70,18 @@ struct AppKitComposerTextField: NSViewRepresentable {
 
   final class Coordinator: NSObject, NSTextFieldDelegate {
     var parent: AppKitComposerTextField
-    var last专注Token: Int = -1
+    var lastFocusToken: Int = -1
 
     init(parent: AppKitComposerTextField) {
       self.parent = parent
     }
 
     func controlTextDidBeginEditing(_ obj: Notification) {
-      parent.is专注ed = true
+      parent.isFocused = true
     }
 
     func controlTextDidEndEditing(_ obj: Notification) {
-      parent.is专注ed = false
+      parent.isFocused = false
     }
 
     func controlTextDidChange(_ obj: Notification) {
@@ -209,8 +209,8 @@ final class ComposerTextFieldCell: NSTextFieldCell {
   func centeredRect(forBounds rect: NSRect) -> NSRect {
     var insetRect = rect.insetBy(dx: horizontalInset, dy: verticalInset)
     let textHeight = (font?.ascender ?? 10) - (font?.descender ?? -4) + (font?.leading ?? 0)
-    let y关闭set = (insetRect.height - textHeight) / 2
-    insetRect.origin.y += max(0, y关闭set.rounded(.down) - 0.5)
+    let yOffset = (insetRect.height - textHeight) / 2
+    insetRect.origin.y += max(0, yOffset.rounded(.down) - 0.5)
     insetRect.size.height = textHeight
     return insetRect.integral
   }

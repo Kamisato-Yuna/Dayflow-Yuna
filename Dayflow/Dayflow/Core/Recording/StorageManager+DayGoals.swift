@@ -3,12 +3,12 @@ import GRDB
 
 extension StorageManager {
   func fetchDayGoalPlan(forDay day: String) -> DayGoalPlan? {
-    fetchDayGoalPlan(w这里SQL: "day = ?", arguments: [day], label: "fetchDayGoalPlan")
+    fetchDayGoalPlan(whereSQL: "day = ?", arguments: [day], label: "fetchDayGoalPlan")
   }
 
-  func fetchMostRecentDayGoalPlan(beforeOr开启 day: String) -> DayGoalPlan? {
+  func fetchMostRecentDayGoalPlan(beforeOrOn day: String) -> DayGoalPlan? {
     fetchDayGoalPlan(
-      w这里SQL: "day <= ?",
+      whereSQL: "day <= ?",
       arguments: [day],
       orderSQL: "ORDER BY day DESC",
       label: "fetchMostRecentDayGoalPlan"
@@ -47,27 +47,27 @@ extension StorageManager {
         arguments: [plan.day]
       )
 
-      try insertGoal分类(plan.focus分类, kind: .focus, day: plan.day, db: db)
-      try insertGoal分类(
-        plan.distraction分类, kind: .distraction, day: plan.day, db: db)
+      try insertGoalCategories(plan.focusCategories, kind: .focus, day: plan.day, db: db)
+      try insertGoalCategories(
+        plan.distractionCategories, kind: .distraction, day: plan.day, db: db)
     }
   }
 
   private func fetchDayGoalPlan(
-    w这里SQL: String,
+    whereSQL: String,
     arguments: StatementArguments,
     orderSQL: String = "",
     label: String
   ) -> DayGoalPlan? {
     try? timedRead(label) { db in
       guard
-        let row = try Row.fetch开启e(
+        let row = try Row.fetchOne(
           db,
           sql: """
                 SELECT day, focus_target_minutes, distraction_limit_minutes, is_skipped,
                        created_at, updated_at
                 FROM day_goals
-                WHERE \(w这里SQL)
+                WHERE \(whereSQL)
                 \(orderSQL)
                 LIMIT 1
             """,
@@ -78,7 +78,7 @@ extension StorageManager {
       }
 
       let day: String = row["day"]
-      let categories = try Row.fetch全部(
+      let categories = try Row.fetchAll(
         db,
         sql: """
               SELECT kind, category_id, category_name, category_color_hex, sort_order
@@ -89,8 +89,8 @@ extension StorageManager {
         arguments: [day]
       )
 
-      var focus分类: [DayGoalCategorySnapshot] = []
-      var distraction分类: [DayGoalCategorySnapshot] = []
+      var focusCategories: [DayGoalCategorySnapshot] = []
+      var distractionCategories: [DayGoalCategorySnapshot] = []
 
       for categoryRow in categories {
         let kindRaw: String = categoryRow["kind"]
@@ -105,9 +105,9 @@ extension StorageManager {
 
         switch kind {
         case .focus:
-          focus分类.append(snapshot)
+          focusCategories.append(snapshot)
         case .distraction:
-          distraction分类.append(snapshot)
+          distractionCategories.append(snapshot)
         }
       }
 
@@ -117,8 +117,8 @@ extension StorageManager {
         day: day,
         focusTargetMinutes: row["focus_target_minutes"],
         distractionLimitMinutes: row["distraction_limit_minutes"],
-        focus分类: focus分类,
-        distraction分类: distraction分类,
+        focusCategories: focusCategories,
+        distractionCategories: distractionCategories,
         isSkipped: isSkipped != 0,
         createdAt: row["created_at"],
         updatedAt: row["updated_at"]
@@ -126,7 +126,7 @@ extension StorageManager {
     }
   }
 
-  private func insertGoal分类(
+  private func insertGoalCategories(
     _ categories: [DayGoalCategorySnapshot],
     kind: DayGoalCategoryKind,
     day: String,

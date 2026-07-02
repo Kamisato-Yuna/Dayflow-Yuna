@@ -6,7 +6,7 @@ struct WeeklyTreemapCategoryCard: View {
 
   enum Design {
     static let cornerRadius: CGFloat = 4
-    static let tile空档: CGFloat = 4
+    static let tileGap: CGFloat = 4
     static let horizontalPadding: CGFloat = 8
     static let bottomPadding: CGFloat = 8
     static let headerHorizontalPadding: CGFloat = 10
@@ -35,14 +35,14 @@ struct WeeklyTreemapCategoryCard: View {
           let displayApps = WeeklyTreemapAggregation.appsForDisplay(
             category.apps,
             in: contentRect,
-            gap: Design.tile空档
+            gap: Design.tileGap
           )
           let placements = SquarifiedTreemapLayout.place(
             displayApps,
             value: { $0.weight },
             order: WeeklyTreemapApp.displayOrder,
             in: contentRect,
-            gap: Design.tile空档
+            gap: Design.tileGap
           )
 
           ZStack(alignment: .topLeading) {
@@ -195,7 +195,7 @@ struct WeeklyTreemapLeafTile: View {
     }
   }
 
-  func label开启lyContent(using typography: WeeklyTreemapLeafTypography) -> some View {
+  func labelOnlyContent(using typography: WeeklyTreemapLeafTypography) -> some View {
     nameRow(fontSize: max(typography.nameFontSize - 3, 10))
   }
 
@@ -209,8 +209,8 @@ struct WeeklyTreemapLeafTile: View {
       fullContent(using: typography)
     case .compact:
       compactContent(using: typography)
-    case .label开启ly:
-      label开启lyContent(using: typography)
+    case .labelOnly:
+      labelOnlyContent(using: typography)
     }
   }
 
@@ -373,7 +373,7 @@ enum WeeklyTreemapLeafTypography {
 enum WeeklyTreemapLeafPresentationMode {
   case full
   case compact
-  case label开启ly
+  case labelOnly
 
   static func resolve(
     for size: CGSize,
@@ -395,6 +395,6 @@ enum WeeklyTreemapLeafPresentationMode {
       return .compact
     }
 
-    return .label开启ly
+    return .labelOnly
   }
 }

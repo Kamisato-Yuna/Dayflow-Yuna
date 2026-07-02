@@ -7,7 +7,7 @@ extension ChatCLIProvider {
   /// Strip OSC (Operating System Command) escape sequences from CLI output.
   /// These are injected by terminal integrations like iTerm2 and pollute JSON responses.
   /// Examples: ]1337;RemoteHost=user@host, ]9;4;0;, ]1337;CurrentDir=/path
-  /// Safety: 开启ly strips if semicolon appears within first 5 chars (real OSC always has it)
+  /// Safety: Only strips if semicolon appears within first 5 chars (real OSC always has it)
   func stripOSCEscapes(_ input: String) -> String {
     var result = ""
     var i = input.startIndex
@@ -15,18 +15,18 @@ extension ChatCLIProvider {
       if input[i] == "]" {
         let next = input.index(after: i)
         if next < input.endIndex, input[next].isNumber {
-          // Look ahead to see if t这里's a semicolon within first 5 chars (OSC signature)
+          // Look ahead to see if there's a semicolon within first 5 chars (OSC signature)
           var hasSemicolon = false
           var lookAhead = next
-          var look数量 = 0
-          while lookAhead < input.endIndex, look数量 < 5 {
+          var lookCount = 0
+          while lookAhead < input.endIndex, lookCount < 5 {
             if input[lookAhead] == ";" {
               hasSemicolon = true
               break
             }
             if !input[lookAhead].isNumber { break }
             lookAhead = input.index(after: lookAhead)
-            look数量 += 1
+            lookCount += 1
           }
 
           if hasSemicolon {
@@ -251,14 +251,14 @@ extension ChatCLIProvider {
       lines.append(String(index + 1) + ". \"" + descriptor.name + "\"" + suffix)
     }
 
-    if let idle = descriptors.first(w这里: { $0.isIdle }) {
+    if let idle = descriptors.first(where: { $0.isIdle }) {
       lines.append(
-        "开启ly use \"" + idle.name
+        "Only use \"" + idle.name
           + "\" when the user is idle for more than half of the timeframe. Otherwise pick the closest non-idle label."
       )
     }
 
-    lines.append("Return the category exactly as written. 全部owed values: [" + allowed + "].")
+    lines.append("Return the category exactly as written. Allowed values: [" + allowed + "].")
     return lines.joined(separator: "\n")
   }
 
@@ -266,12 +266,12 @@ extension ChatCLIProvider {
     let cleaned = raw.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !cleaned.isEmpty else { return descriptors.first?.name ?? "" }
     let normalized = cleaned.lowercased()
-    if let match = descriptors.first(w这里: {
+    if let match = descriptors.first(where: {
       $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalized
     }) {
       return match.name
     }
-    if let idle = descriptors.first(w这里: { $0.isIdle }) {
+    if let idle = descriptors.first(where: { $0.isIdle }) {
       let idleLabels = ["idle", "idle time", idle.name.lowercased()]
       if idleLabels.contains(normalized) {
         return idle.name
@@ -310,7 +310,7 @@ extension ChatCLIProvider {
       formatter.dateFormat = "h:mm a"
       formatter.locale = Locale(identifier: "en_US_POSIX")
       guard let date = formatter.date(from: trimmed) else { return 0 }
-      let components = 日历.current.dateComponents([.hour, .minute], from: date)
+      let components = Calendar.current.dateComponents([.hour, .minute], from: date)
       let hours = Double(components.hour ?? 0)
       let minutes = Double(components.minute ?? 0)
       return hours * 60 + minutes
@@ -363,9 +363,9 @@ extension ChatCLIProvider {
 
     for inputRange in mergedInputRanges {
       var coveredStart = inputRange.start
-      var safety数量er = 10000
-      while coveredStart < inputRange.end && safety数量er > 0 {
-        safety数量er -= 1
+      var safetyCounter = 10000
+      while coveredStart < inputRange.end && safetyCounter > 0 {
+        safetyCounter -= 1
         var foundCoverage = false
         for outputRange in outputRanges {
           if outputRange.start - flexibility <= coveredStart
@@ -394,7 +394,7 @@ extension ChatCLIProvider {
           }
         }
       }
-      if safety数量er == 0 {
+      if safetyCounter == 0 {
         return (
           false,
           "Time coverage validation loop exceeded safety limit - possible infinite loop detected"
@@ -452,7 +452,7 @@ extension ChatCLIProvider {
           var adjustedEndDate = endDate
           if endDate < startDate {
             adjustedEndDate =
-              日历.current.date(byAdding: .day, value: 1, to: endDate) ?? endDate
+              Calendar.current.date(byAdding: .day, value: 1, to: endDate) ?? endDate
           }
           durationMinutes = adjustedEndDate.timeIntervalSince(startDate) / 60.0
         } else {
@@ -593,7 +593,7 @@ extension ChatCLIProvider {
   }
 
   /// Parse thinking content from Codex stderr (between "thinking" markers)
-  func parse思考中FromStderr(_ stderr: String) -> String? {
+  func parseThinkingFromStderr(_ stderr: String) -> String? {
     // Codex outputs thinking like:
     // thinking
     // **Some thinking text**
@@ -604,30 +604,30 @@ extension ChatCLIProvider {
 
     var thinkingParts: [String] = []
     let lines = stderr.components(separatedBy: .newlines)
-    var in思考中 = false
-    var current思考中: [String] = []
+    var inThinking = false
+    var currentThinking: [String] = []
 
     for line in lines {
       let trimmed = line.trimmingCharacters(in: .whitespaces)
       if trimmed == "thinking" {
-        if in思考中 {
+        if inThinking {
           // End of thinking block
-          if !current思考中.isEmpty {
-            thinkingParts.append(current思考中.joined(separator: "\n"))
+          if !currentThinking.isEmpty {
+            thinkingParts.append(currentThinking.joined(separator: "\n"))
           }
-          current思考中 = []
+          currentThinking = []
         }
-        in思考中 = !in思考中
-      } else if in思考中 && !trimmed.isEmpty {
+        inThinking = !inThinking
+      } else if inThinking && !trimmed.isEmpty {
         // Clean up markdown bold markers if present
         let cleaned = trimmed.replacingOccurrences(of: "**", with: "")
-        current思考中.append(cleaned)
+        currentThinking.append(cleaned)
       }
     }
 
     // Handle unclosed thinking block
-    if in思考中 && !current思考中.isEmpty {
-      thinkingParts.append(current思考中.joined(separator: "\n"))
+    if inThinking && !currentThinking.isEmpty {
+      thinkingParts.append(currentThinking.joined(separator: "\n"))
     }
 
     guard !thinkingParts.isEmpty else { return nil }

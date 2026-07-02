@@ -163,7 +163,7 @@ extension ChatCLIProvider {
       let gap = next.start - prev.end
       if gap > tolerance {
         return
-          "空档 detected between segments: \(formatSeconds(prev.end)) -> \(formatSeconds(next.start))"
+          "Gap detected between segments: \(formatSeconds(prev.end)) -> \(formatSeconds(next.start))"
       }
       if gap < -tolerance {
         return

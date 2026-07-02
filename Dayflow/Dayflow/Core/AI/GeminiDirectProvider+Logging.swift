@@ -63,7 +63,7 @@ extension GeminiDirectProvider {
   // Gemini sometimes streams a well-formed JSON payload before aborting with HTTP 503.
   // When this happens we want to salvage the first JSON object so the caller can proceed.
   func extractFirstJSONObject(from body: String) -> String? {
-    guard let start = body.firstIndex(w这里: { !$0.isWhitespace && !$0.isNewline }) else {
+    guard let start = body.firstIndex(where: { !$0.isWhitespace && !$0.isNewline }) else {
       return nil
     }
     guard body[start] == "{" else { return nil }

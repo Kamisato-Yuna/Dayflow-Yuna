@@ -68,7 +68,7 @@ final class KeychainManager {
         kSecAttrService as String: service,
         kSecAttrAccount as String: provider,
         kSecReturnData as String: true,
-        kSecMatchLimit as String: kSecMatchLimit开启e,
+        kSecMatchLimit as String: kSecMatchLimitOne,
       ]
 
       var result: AnyObject?
@@ -82,8 +82,8 @@ final class KeychainManager {
         print("❌ [KeychainManager] Item not found in keychain (errSecItemNotFound)")
       case errSecAuthFailed:
         print("❌ [KeychainManager] Authentication failed (errSecAuthFailed)")
-      case errSecInteractionNot全部owed:
-        print("❌ [KeychainManager] Interaction not allowed (errSecInteractionNot全部owed)")
+      case errSecInteractionNotAllowed:
+        print("❌ [KeychainManager] Interaction not allowed (errSecInteractionNotAllowed)")
         print("   This usually means the keychain is locked or inaccessible")
       case errSecParam:
         print("❌ [KeychainManager] Invalid parameters (errSecParam)")

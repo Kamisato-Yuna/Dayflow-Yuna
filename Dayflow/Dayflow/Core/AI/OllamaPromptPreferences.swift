@@ -38,7 +38,7 @@ enum OllamaPromptPreferences {
 
 enum OllamaPromptDefaults {
   static let summaryBlock = """
-          汇总 GUIDELINES:
+          SUMMARY GUIDELINES:
           - Write in first person without using "I" (like a personal journal entry)
           - 2-3 sentences maximum
           - Include specific details (app names, search topics, etc.)
@@ -53,7 +53,7 @@ enum OllamaPromptDefaults {
           "Researched React performance optimization techniques in Chrome, reading articles about useMemo patterns. Switched between documentation tabs and took notes in
            Notion about component re-rendering."
 
-          "Updated Xcode project dependencies and resolved build errors in SwiftUI views. 测试ed app on simulator while responding to client messages about timeline
+          "Updated Xcode project dependencies and resolved build errors in SwiftUI views. Tested app on simulator while responding to client messages about timeline
           changes."
 
           "Browsed Instagram and TikTok while listening to Spotify playlist. Responded to personal messages on WhatsApp about weekend plans."

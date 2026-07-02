@@ -12,7 +12,7 @@ struct DayflowEntitlement: Codable, Equatable {
   let status: String
   let source: String?
   let currentPeriodEnd: String?
-  let stripe自定义erId: String?
+  let stripeCustomerId: String?
   let stripeSubscriptionId: String?
 
   static let free = DayflowEntitlement(
@@ -20,7 +20,7 @@ struct DayflowEntitlement: Codable, Equatable {
     status: "inactive",
     source: nil,
     currentPeriodEnd: nil,
-    stripe自定义erId: nil,
+    stripeCustomerId: nil,
     stripeSubscriptionId: nil
   )
 
@@ -33,7 +33,7 @@ struct DayflowEntitlement: Codable, Equatable {
     case status
     case source
     case currentPeriodEnd = "current_period_end"
-    case stripe自定义erId = "stripe_customer_id"
+    case stripeCustomerId = "stripe_customer_id"
     case stripeSubscriptionId = "stripe_subscription_id"
   }
 }
@@ -256,13 +256,13 @@ final class DayflowAuthManager: ObservableObject {
 
   nonisolated private static let sessionService = "com.teleportlabs.dayflow.auth"
   nonisolated private static let sessionAccount = "session_token"
-  private static let remembered邮箱Key = "dayflowAccount邮箱"
+  private static let rememberedEmailKey = "dayflowAccountEmail"
   private static let pendingReferralCodeKey = "dayflowPendingReferralCode"
   private static let defaultEndpoint = "https://web-production-f3361.up.railway.app"
 
   @Published private(set) var user: DayflowAuthUser?
   @Published private(set) var entitlements = DayflowEntitlement.free
-  @Published private(set) var pending邮箱: String?
+  @Published private(set) var pendingEmail: String?
   @Published private(set) var codeExpiresAt: Date?
   @Published private(set) var statusText = "Signed out"
   @Published private(set) var errorText: String?
@@ -285,16 +285,16 @@ final class DayflowAuthManager: ObservableObject {
 
   var displayIdentity: String {
     user?.email
-      ?? UserDefaults.standard.string(forKey: Self.remembered邮箱Key)
+      ?? UserDefaults.standard.string(forKey: Self.rememberedEmailKey)
       ?? "Not signed in"
   }
 
-  var signedIn邮箱: String? {
-    user?.email ?? UserDefaults.standard.string(forKey: Self.remembered邮箱Key)
+  var signedInEmail: String? {
+    user?.email ?? UserDefaults.standard.string(forKey: Self.rememberedEmailKey)
   }
 
   var canVerifyCode: Bool {
-    pending邮箱 != nil
+    pendingEmail != nil
   }
 
   func loadStoredSessionIfNeeded() {
@@ -312,8 +312,8 @@ final class DayflowAuthManager: ObservableObject {
   @discardableResult
   func sendCode(to emailAddress: String) async -> DayflowAuthActionResult {
     let endpoint = "/v1/auth/code/start"
-    let email = normalized邮箱(emailAddress)
-    guard isLikely邮箱(email) else {
+    let email = normalizedEmail(emailAddress)
+    guard isLikelyEmail(email) else {
       errorText = "Enter a valid email address."
       return .localFailure(errorType: "invalid_email", endpoint: endpoint)
     }
@@ -324,7 +324,7 @@ final class DayflowAuthManager: ObservableObject {
       urlRequest.httpBody = try JSONEncoder().encode(request)
 
       let response: AuthStartResponse = try await send(urlRequest)
-      pending邮箱 = email
+      pendingEmail = email
       codeExpiresAt = Date().addingTimeInterval(TimeInterval(response.expiresInSeconds))
       statusText = "Code sent to \(email)."
       errorText = nil
@@ -344,12 +344,12 @@ final class DayflowAuthManager: ObservableObject {
       errorText = "Enter the 6 digit code."
       return .localFailure(errorType: "invalid_code", endpoint: endpoint)
     }
-    let explicit邮箱 = emailAddress.map(normalized邮箱)
-    guard let email = explicit邮箱 ?? pending邮箱 else {
+    let explicitEmail = emailAddress.map(normalizedEmail)
+    guard let email = explicitEmail ?? pendingEmail else {
       errorText = "Start with your email first."
       return .localFailure(errorType: "missing_email", endpoint: endpoint)
     }
-    guard isLikely邮箱(email) else {
+    guard isLikelyEmail(email) else {
       errorText = "Enter a valid email address."
       return .localFailure(errorType: "invalid_email", endpoint: endpoint)
     }
@@ -370,11 +370,11 @@ final class DayflowAuthManager: ObservableObject {
 
       user = response.user
       entitlements = response.entitlements
-      pending邮箱 = nil
+      pendingEmail = nil
       codeExpiresAt = nil
       statusText = "Signed in."
       errorText = nil
-      UserDefaults.standard.set(response.user.email, forKey: Self.remembered邮箱Key)
+      UserDefaults.standard.set(response.user.email, forKey: Self.rememberedEmailKey)
 
       if let pendingReferralCode {
         do {
@@ -387,7 +387,7 @@ final class DayflowAuthManager: ObservableObject {
         } catch {
           referralSummary = try? await fetchReferralSummary(token: response.sessionToken)
           errorText = error.localizedDescription
-          statusText = "Signed in. 推荐码 was not applied."
+          statusText = "Signed in. Referral code was not applied."
         }
       } else {
         referralSummary = try? await fetchReferralSummary(token: response.sessionToken)
@@ -400,12 +400,12 @@ final class DayflowAuthManager: ObservableObject {
   }
 
   func resendCode() async {
-    guard let email = pending邮箱 else { return }
+    guard let email = pendingEmail else { return }
     await sendCode(to: email)
   }
 
-  func useDifferent邮箱() {
-    pending邮箱 = nil
+  func useDifferentEmail() {
+    pendingEmail = nil
     codeExpiresAt = nil
     errorText = nil
     statusText = "Signed out"
@@ -427,7 +427,7 @@ final class DayflowAuthManager: ObservableObject {
       referralSummary = try? await fetchReferralSummary(token: token)
       statusText = "Signed in."
       errorText = nil
-      UserDefaults.standard.set(response.user.email, forKey: Self.remembered邮箱Key)
+      UserDefaults.standard.set(response.user.email, forKey: Self.rememberedEmailKey)
     } onAuthFailure: {
       self.deleteSessionToken()
       self.resetSignedOutState(status: "Session expired. Sign in again.")
@@ -533,7 +533,7 @@ final class DayflowAuthManager: ObservableObject {
     pendingReferralCode = normalized
     UserDefaults.standard.set(normalized, forKey: Self.pendingReferralCodeKey)
     statusText =
-      isSignedIn ? "推荐码 ready to claim." : "推荐码 saved. Sign in to claim it."
+      isSignedIn ? "Referral code ready to claim." : "Referral code saved. Sign in to claim it."
   }
 
   func clearPendingReferralCode() {
@@ -592,8 +592,8 @@ final class DayflowAuthManager: ObservableObject {
       errorText = "Sign in first."
       return
     }
-    let email = normalized邮箱(emailAddress)
-    guard isLikely邮箱(email) else {
+    let email = normalizedEmail(emailAddress)
+    guard isLikelyEmail(email) else {
       errorText = "Enter a valid email address."
       return
     }
@@ -640,7 +640,7 @@ final class DayflowAuthManager: ObservableObject {
       kSecAttrService as String: sessionService,
       kSecAttrAccount as String: sessionAccount,
       kSecReturnData as String: true,
-      kSecMatchLimit as String: kSecMatchLimit开启e,
+      kSecMatchLimit as String: kSecMatchLimitOne,
     ]
 
     var item: AnyObject?
@@ -674,7 +674,7 @@ final class DayflowAuthManager: ObservableObject {
       reason = "item not found"
     case errSecAuthFailed:
       reason = "authentication failed"
-    case errSecInteractionNot全部owed:
+    case errSecInteractionNotAllowed:
       reason = "interaction not allowed"
     case errSecNotAvailable:
       reason = "keychain not available"
@@ -721,16 +721,16 @@ final class DayflowAuthManager: ObservableObject {
     user = nil
     entitlements = .free
     referralSummary = nil
-    pending邮箱 = nil
+    pendingEmail = nil
     codeExpiresAt = nil
     statusText = status
   }
 
-  private func normalized邮箱(_ email: String) -> String {
+  private func normalizedEmail(_ email: String) -> String {
     email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
   }
 
-  private func isLikely邮箱(_ email: String) -> Bool {
+  private func isLikelyEmail(_ email: String) -> Bool {
     email.contains("@") && email.contains(".") && !email.contains(" ")
   }
 
@@ -816,7 +816,7 @@ final class DayflowAuthManager: ObservableObject {
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: Self.sessionService,
       kSecAttrAccount as String: Self.sessionAccount,
-      kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDevice开启ly,
+      kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
       kSecValueData as String: data,
     ]
     return SecItemAdd(query as CFDictionary, nil) == errSecSuccess

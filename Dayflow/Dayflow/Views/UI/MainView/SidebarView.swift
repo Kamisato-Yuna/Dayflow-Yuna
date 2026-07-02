@@ -8,8 +8,8 @@ private enum SidebarMetrics {
   static let iconSize: CGFloat = 16 * scale
   static let fallbackSymbolSize: CGFloat = 15 * scale
   static let badgeSize: CGFloat = 8 * scale
-  static let badge关闭setX: CGFloat = 10 * scale
-  static let badge关闭setY: CGFloat = -10 * scale
+  static let badgeOffsetX: CGFloat = 10 * scale
+  static let badgeOffsetY: CGFloat = -10 * scale
   static let iconContainerSize: CGFloat = 34 * scale
   static let iconLabelSpacing: CGFloat = 3
   static let labelFontSize: CGFloat = 11 * scale
@@ -147,7 +147,7 @@ struct SidebarIconButton: View {
             Circle()
               .fill(Color(hex: "F96E00"))
               .frame(width: SidebarMetrics.badgeSize, height: SidebarMetrics.badgeSize)
-              .offset(x: SidebarMetrics.badge关闭setX, y: SidebarMetrics.badge关闭setY)
+              .offset(x: SidebarMetrics.badgeOffsetX, y: SidebarMetrics.badgeOffsetY)
           }
         }
         .frame(width: SidebarMetrics.iconContainerSize, height: SidebarMetrics.iconContainerSize)

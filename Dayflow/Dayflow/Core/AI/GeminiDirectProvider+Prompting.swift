@@ -19,13 +19,13 @@ extension GeminiDirectProvider {
       lines.append("\(index + 1). \"\(descriptor.name)\"\(suffix)")
     }
 
-    if let idle = descriptors.first(w这里: { $0.isIdle }) {
+    if let idle = descriptors.first(where: { $0.isIdle }) {
       lines.append(
-        "开启ly use \"\(idle.name)\" when the user is idle for more than half of the timeframe. Otherwise pick the closest non-idle label."
+        "Only use \"\(idle.name)\" when the user is idle for more than half of the timeframe. Otherwise pick the closest non-idle label."
       )
     }
 
-    lines.append("Return the category exactly as written. 全部owed values: [\(allowed)].")
+    lines.append("Return the category exactly as written. Allowed values: [\(allowed)].")
     return lines.joined(separator: "\n")
   }
 
@@ -33,12 +33,12 @@ extension GeminiDirectProvider {
     let cleaned = raw.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !cleaned.isEmpty else { return descriptors.first?.name ?? "" }
     let normalized = cleaned.lowercased()
-    if let match = descriptors.first(w这里: {
+    if let match = descriptors.first(where: {
       $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalized
     }) {
       return match.name
     }
-    if let idle = descriptors.first(w这里: { $0.isIdle }) {
+    if let idle = descriptors.first(where: { $0.isIdle }) {
       let idleLabels = ["idle", "idle time", idle.name.lowercased()]
       if idleLabels.contains(normalized) {
         return idle.name

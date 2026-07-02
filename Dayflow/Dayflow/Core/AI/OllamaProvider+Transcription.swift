@@ -16,7 +16,7 @@ extension OllamaProvider {
     // Simple prompt focused on just describing what's happening
     let prompt = """
       Describe what you see on this computer screen in 1-2 sentences.
-      专注 on: what application/site is open, what the user is doing, and any relevant details visible.
+      Focus on: what application/site is open, what the user is doing, and any relevant details visible.
       Be specific and factual.
 
       GOOD EXAMPLES:
@@ -182,7 +182,7 @@ extension OllamaProvider {
         let gap = startSeconds - prevEnd
         if gap > 60.0 {
           print(
-            "[OLLAMA] ⚠️ 空档 of \(Int(gap))s between segments at \(String(format: "%02d:%02d", Int(prevEnd) / 60, Int(prevEnd) % 60))"
+            "[OLLAMA] ⚠️ Gap of \(Int(gap))s between segments at \(String(format: "%02d:%02d", Int(prevEnd) / 60, Int(prevEnd) % 60))"
           )
         }
       }
@@ -316,10 +316,10 @@ extension OllamaProvider {
     let basePrompt = """
       You have \(frameDescriptions.count) snapshots from a \(durationString) screen recording.
 
-      CRITICAL TASK: Group these snapshots into EXACTLY 2-5 co这里nt segments that collectively explain \(durationString) of activity. Brief interruptions (< 2 minutes) should be absorbed into the surrounding segment.
+      CRITICAL TASK: Group these snapshots into EXACTLY 2-5 coherent segments that collectively explain \(durationString) of activity. Brief interruptions (< 2 minutes) should be absorbed into the surrounding segment.
 
       <thinking>
-      Draft how you'll group the snapshots before you answer. Decide w这里 the natural breaks occur and ensure the full video is covered.
+      Draft how you'll group the snapshots before you answer. Decide where the natural breaks occur and ensure the full video is covered.
       </thinking>
 
       Here are the snapshots (timestamp → description):
@@ -499,7 +499,7 @@ extension OllamaProvider {
       )
     }
 
-    // Merge frame descriptions into co这里nt observations
+    // Merge frame descriptions into coherent observations
     let observations = try await mergeFrameDescriptions(
       frameDescriptions,
       batchStartTime: batchStartTime,

@@ -1,5 +1,5 @@
 //
-//  开启boardingPrototypePreferencesStep.swift
+//  OnboardingPrototypePreferencesStep.swift
 //  Dayflow
 //
 
@@ -7,7 +7,7 @@ import SwiftUI
 
 // MARK: - Preferences Step
 
-struct 开启boardingPrototypePreferencesStep: View {
+struct OnboardingPrototypePreferencesStep: View {
   let onContinue: (Bool) -> Void
 
   var body: some View {

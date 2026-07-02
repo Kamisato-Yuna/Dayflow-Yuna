@@ -68,11 +68,11 @@ func firstCategoryLookup(
 final class CategoryStore: ObservableObject {
   static let shared = CategoryStore()
   enum StoreKeys {
-    static let categories = "color分类"
+    static let categories = "colorCategories"
     static let hasUsedApp = "hasUsedApp"
     static let onboardingSelectedRole = "onboardingSelectedRole"
     static let onboardingAppliedCategoryPreset = "onboardingAppliedCategoryPreset"
-    static let onboarding分类自定义ized = "onboarding分类自定义ized"
+    static let onboardingCategoriesCustomized = "onboardingCategoriesCustomized"
   }
 
   @Published private(set) var categories: [TimelineCategory] = []
@@ -81,29 +81,29 @@ final class CategoryStore: ObservableObject {
     load()
   }
 
-  var editable分类: [TimelineCategory] {
+  var editableCategories: [TimelineCategory] {
     categories.filter { !$0.isSystem }.sorted { $0.order < $1.order }
   }
 
   var idleCategory: TimelineCategory? {
-    categories.first(w这里: { $0.isIdle })
+    categories.first(where: { $0.isIdle })
   }
 
-  func set开启boardingRole(_ role: String) {
+  func setOnboardingRole(_ role: String) {
     UserDefaults.standard.set(role, forKey: StoreKeys.onboardingSelectedRole)
   }
 
-  func apply开启boardingPresetIfNeeded() {
+  func applyOnboardingPresetIfNeeded() {
     let defaults = UserDefaults.standard
     guard let roleName = defaults.string(forKey: StoreKeys.onboardingSelectedRole) else {
       return
     }
 
-    if defaults.bool(forKey: StoreKeys.onboarding分类自定义ized) {
+    if defaults.bool(forKey: StoreKeys.onboardingCategoriesCustomized) {
       return
     }
 
-    let preset = 开启boardingCategoryPreset(roleName: roleName)
+    let preset = OnboardingCategoryPreset(roleName: roleName)
     let appliedPreset = defaults.string(forKey: StoreKeys.onboardingAppliedCategoryPreset)
 
     if appliedPreset == preset.rawValue && !categories.isEmpty {
@@ -113,11 +113,11 @@ final class CategoryStore: ObservableObject {
     categories = CategoryPersistence.ensureIdleCategoryPresent(in: preset.categories)
     save()
     defaults.set(preset.rawValue, forKey: StoreKeys.onboardingAppliedCategoryPreset)
-    defaults.set(false, forKey: StoreKeys.onboarding分类自定义ized)
+    defaults.set(false, forKey: StoreKeys.onboardingCategoriesCustomized)
   }
 
-  func mark开启boarding分类自定义ized() {
-    UserDefaults.standard.set(true, forKey: StoreKeys.onboarding分类自定义ized)
+  func markOnboardingCategoriesCustomized() {
+    UserDefaults.standard.set(true, forKey: StoreKeys.onboardingCategoriesCustomized)
   }
 
   func addCategory(name: String, colorHex: String? = nil) {
@@ -145,7 +145,7 @@ final class CategoryStore: ObservableObject {
   }
 
   func updateCategory(id: UUID, mutate: (inout TimelineCategory) -> Void) {
-    guard let idx = categories.firstIndex(w这里: { $0.id == id }) else { return }
+    guard let idx = categories.firstIndex(where: { $0.id == id }) else { return }
     var category = categories[idx]
     mutate(&category)
     category.updatedAt = Date()
@@ -155,8 +155,8 @@ final class CategoryStore: ObservableObject {
   }
 
   func assignColor(_ hex: String, to id: UUID) {
-    let previousHex = categories.first(w这里: { $0.id == id })?.colorHex
-    let categoryName = categories.first(w这里: { $0.id == id })?.name ?? "unknown"
+    let previousHex = categories.first(where: { $0.id == id })?.colorHex
+    let categoryName = categories.first(where: { $0.id == id })?.name ?? "unknown"
     updateCategory(id: id) { cat in
       cat.colorHex = hex
     }
@@ -186,9 +186,9 @@ final class CategoryStore: ObservableObject {
   }
 
   func removeCategory(id: UUID) {
-    guard let category = categories.first(w这里: { $0.id == id }) else { return }
+    guard let category = categories.first(where: { $0.id == id }) else { return }
     guard category.isSystem == false else { return }
-    categories.remove全部 { $0.id == id }
+    categories.removeAll { $0.id == id }
     save()
   }
 
@@ -197,8 +197,8 @@ final class CategoryStore: ObservableObject {
   }
 
   private func load() {
-    let decoded = CategoryPersistence.loadPersisted分类()
-    let effective = decoded.isEmpty ? CategoryPersistence.default分类 : decoded
+    let decoded = CategoryPersistence.loadPersistedCategories()
+    let effective = decoded.isEmpty ? CategoryPersistence.defaultCategories : decoded
     categories = CategoryPersistence.ensureIdleCategoryPresent(in: effective)
   }
 
@@ -214,8 +214,8 @@ final class CategoryStore: ObservableObject {
 
 extension CategoryStore {
   nonisolated static func descriptorsForLLM() -> [LLMCategoryDescriptor] {
-    let categories = CategoryPersistence.loadPersisted分类()
-    let effective = categories.isEmpty ? CategoryPersistence.default分类 : categories
+    let categories = CategoryPersistence.loadPersistedCategories()
+    let effective = categories.isEmpty ? CategoryPersistence.defaultCategories : categories
     return
       effective
       .sorted { $0.order < $1.order }
@@ -246,8 +246,8 @@ extension CategoryStore {
   }
 }
 
-private enum 开启boardingCategoryPreset: String {
-  case software引擎er
+private enum OnboardingCategoryPreset: String {
+  case softwareEngineer
   case founderExecutive
   case designer
   case student
@@ -257,8 +257,8 @@ private enum 开启boardingCategoryPreset: String {
 
   init(roleName: String) {
     switch roleName {
-    case "Software 引擎er":
-      self = .software引擎er
+    case "Software Engineer":
+      self = .softwareEngineer
     case "Founder / Executive":
       self = .founderExecutive
     case "Designer":
@@ -293,7 +293,7 @@ private enum 开启boardingCategoryPreset: String {
 
   private var categoryDefinitions: [(name: String, colorHex: String, details: String)] {
     switch self {
-    case .software引擎er:
+    case .softwareEngineer:
       return [
         (
           "Coding / Debugging",
@@ -330,7 +330,7 @@ private enum 开启boardingCategoryPreset: String {
     case .founderExecutive:
       return [
         (
-          "引擎ering / Product",
+          "Engineering / Product",
           "#6A7EFF",
           "Coding, design work, shipping features, and hands-on building"
         ),
@@ -456,7 +456,7 @@ private enum 开启boardingCategoryPreset: String {
           "Notebooks, statistical analysis, ML training, and data exploration"
         ),
         (
-          "Data 引擎ering",
+          "Data Engineering",
           "#56CFEE",
           "SQL queries, pipelines, data cleaning, and ETL scripts"
         ),
@@ -487,7 +487,7 @@ private enum 开启boardingCategoryPreset: String {
         (
           "Work",
           "#6A7EFF",
-          "专注ed work tasks and professional responsibilities that do not fit a more specific category"
+          "Focused work tasks and professional responsibilities that do not fit a more specific category"
         ),
         (
           "Communication",
@@ -510,7 +510,7 @@ private enum 开启boardingCategoryPreset: String {
 }
 
 enum CategoryPersistence {
-  static func loadPersisted分类() -> [TimelineCategory] {
+  static func loadPersistedCategories() -> [TimelineCategory] {
     guard let data = UserDefaults.standard.data(forKey: CategoryStore.StoreKeys.categories) else {
       return []
     }
@@ -546,7 +546,7 @@ enum CategoryPersistence {
     return []
   }
 
-  static var default分类: [TimelineCategory] {
+  static var defaultCategories: [TimelineCategory] {
     let now = Date()
     let base: [(String, String, Bool, Bool, String)] = [
       (
@@ -594,7 +594,7 @@ enum CategoryPersistence {
   }
 
   static func ensureIdleCategoryPresent(in categories: [TimelineCategory]) -> [TimelineCategory] {
-    if categories.contains(w这里: { $0.isIdle }) {
+    if categories.contains(where: { $0.isIdle }) {
       return categories.sorted { $0.order < $1.order }
     }
 
@@ -604,7 +604,7 @@ enum CategoryPersistence {
     let idle = TimelineCategory(
       name: "Idle",
       colorHex: "#A0AEC0",
-      details: "Mark sessions w这里 the user is idle for most of the time.",
+      details: "Mark sessions where the user is idle for most of the time.",
       order: order,
       isSystem: true,
       isIdle: true,

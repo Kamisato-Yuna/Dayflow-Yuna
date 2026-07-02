@@ -4,13 +4,13 @@ extension GeminiDirectProvider {
   func streamDashboardTurn(
     systemInstruction: String,
     contents: [[String: Any]],
-    include思考中Config: Bool,
+    includeThinkingConfig: Bool,
     continuation: AsyncThrowingStream<ChatStreamEvent, Error>.Continuation
   ) async throws -> DashboardTurnResult {
     let requestBody = dashboardChatRequestBody(
       systemInstruction: systemInstruction,
       contents: contents,
-      include思考中Config: include思考中Config
+      includeThinkingConfig: includeThinkingConfig
     )
     var request = URLRequest(url: URL(string: dashboardStreamEndpoint + "?alt=sse&key=\(apiKey)")!)
     request.httpMethod = "POST"
@@ -28,7 +28,7 @@ extension GeminiDirectProvider {
     }
 
     guard (200...299).contains(httpResponse.statusCode) else {
-      let errorBody = try await read全部Data(from: bytes)
+      let errorBody = try await readAllData(from: bytes)
       let message =
         extractGeminiErrorMessage(from: errorBody)
         ?? "Gemini stream request failed with HTTP \(httpResponse.statusCode)."
@@ -66,7 +66,7 @@ extension GeminiDirectProvider {
           modelFunctionCallParts: &modelFunctionCallParts,
           seenFunctionCalls: &seenFunctionCalls
         )
-        dataBuffer.remove全部(keepingCapacity: true)
+        dataBuffer.removeAll(keepingCapacity: true)
       }
     }
 
@@ -92,14 +92,14 @@ extension GeminiDirectProvider {
   func generateDashboardTurnNonStreaming(
     systemInstruction: String,
     contents: [[String: Any]],
-    include思考中Config: Bool
+    includeThinkingConfig: Bool
   ) async throws
     -> DashboardTurnResult
   {
     let requestBody = dashboardChatRequestBody(
       systemInstruction: systemInstruction,
       contents: contents,
-      include思考中Config: include思考中Config
+      includeThinkingConfig: includeThinkingConfig
     )
     var request = URLRequest(url: URL(string: dashboardGenerateEndpoint + "?key=\(apiKey)")!)
     request.httpMethod = "POST"
@@ -425,7 +425,7 @@ extension GeminiDirectProvider {
     return nil
   }
 
-  func shouldRetryDashboardWithout思考中Config(_ error: Error) -> Bool {
+  func shouldRetryDashboardWithoutThinkingConfig(_ error: Error) -> Bool {
     let message = error.localizedDescription.lowercased()
     guard
       message.contains("thinkingconfig")
@@ -442,7 +442,7 @@ extension GeminiDirectProvider {
     return nsError.domain == "GeminiDashboardChat" || nsError.code == 400
   }
 
-  func read全部Data(from bytes: URLSession.AsyncBytes) async throws -> Data {
+  func readAllData(from bytes: URLSession.AsyncBytes) async throws -> Data {
     var data = Data()
     for try await byte in bytes {
       data.append(byte)

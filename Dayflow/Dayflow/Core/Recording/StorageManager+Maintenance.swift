@@ -145,7 +145,7 @@ extension StorageManager {
   func performIntegrityCheck() {
     do {
       let result = try db.read { db -> String? in
-        try String.fetch开启e(db, sql: "PRAGMA quick_check")
+        try String.fetchOne(db, sql: "PRAGMA quick_check")
       }
 
       if result == "ok" {
@@ -328,7 +328,7 @@ extension StorageManager {
               )
           """,
         arguments: [markerPrefix, markerSuffix, limit, limit, batchSize])
-      updated += db.changes数量
+      updated += db.changesCount
 
       try db.execute(
         sql: """
@@ -344,7 +344,7 @@ extension StorageManager {
               )
           """,
         arguments: [markerPrefix, markerSuffix, limit, limit, batchSize])
-      updated += db.changes数量
+      updated += db.changesCount
 
       return updated
     }
@@ -388,7 +388,7 @@ extension StorageManager {
       // Clean up if above limit
       if currentSize > limit {
         var freedSpace: Int64 = 0
-        var pass数量 = 0
+        var passCount = 0
 
         while currentSize - freedSpace > limit {
           var deletedThisPass = 0
@@ -396,7 +396,7 @@ extension StorageManager {
 
           try timedWrite("purgeScreenshots") { db in
             // Get oldest active screenshots
-            let oldScreenshots = try Row.fetch全部(
+            let oldScreenshots = try Row.fetchAll(
               db,
               sql: """
                     SELECT id, file_path, file_size
@@ -452,9 +452,9 @@ extension StorageManager {
           }
 
           freedSpace += freedThisPass
-          pass数量 += 1
+          passCount += 1
 
-          if pass数量 > 200 {
+          if passCount > 200 {
             break
           }
         }
@@ -470,7 +470,7 @@ extension StorageManager {
     // Delete any recordings that are not referenced by active screenshots.
     let activeScreenshotPaths: Set<String> = Set(
       (try? timedRead("activeScreenshotPaths") { db in
-        try Row.fetch全部(
+        try Row.fetchAll(
           db,
           sql: """
                 SELECT file_path
@@ -489,14 +489,14 @@ extension StorageManager {
       )
     else { return }
 
-    let delete全部 = activeScreenshotPaths.isEmpty
+    let deleteAll = activeScreenshotPaths.isEmpty
 
     for case let fileURL as URL in enumerator {
       do {
         let values = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
         if values.isDirectory == true { continue }
 
-        if delete全部 || !activeScreenshotPaths.contains(fileURL.path) {
+        if deleteAll || !activeScreenshotPaths.contains(fileURL.path) {
           try fileMgr.removeItem(at: fileURL)
         }
       } catch {

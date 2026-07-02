@@ -57,7 +57,7 @@ extension GemmaBackupProvider {
     )
 
     let combinedLog =
-      "=== 汇总 GENERATION ===\n\(summaryLog)\n\n=== TITLE GENERATION ===\n\(titleLog)"
+      "=== SUMMARY GENERATION ===\n\(summaryLog)\n\n=== TITLE GENERATION ===\n\(titleLog)"
     return (payload, combinedLog)
   }
 
@@ -97,7 +97,7 @@ extension GemmaBackupProvider {
 
       Step 2 - Choose EXACTLY ONE category from the list below. Use the label exactly as written.
       \(categoryLines.joined(separator: "\n"))
-      全部owed values: [\(allowedValues)]
+      Allowed values: [\(allowedValues)]
 
       Step 3 - Identify appSites from the observations.
       Rules:
@@ -160,14 +160,14 @@ extension GemmaBackupProvider {
     let basePrompt = """
       Create a title for the given summary
 
-      汇总: "\(summary)"
+      SUMMARY: "\(summary)"
 
       TITLE GUIDELINES
       Core principle: If you read this title next week, would you know what you actually did?
       Be specific, but concise:
       Every title needs concrete details. Name the actual thing—the show, the person, the feature, the file, the game. But keep it scannable—aim for roughly 5-10 words. Extra details belong in the summary.
 
-      Bad: "Watched videos" → Good: "The 关闭ice bloopers on YouTube"
+      Bad: "Watched videos" → Good: "The Office bloopers on YouTube"
       Bad: "Worked on UI" → Good: "Fixed navbar overlap on mobile"
       Bad: "Had a call" → Good: "Call with James about venue options"
       Bad: "Did research" → Good: "Comparing gyms near the new apartment"
@@ -222,12 +222,12 @@ extension GemmaBackupProvider {
 
       "And" is okay when both parts serve the same goal:
 
-      确定: "Designed and prototyped the onboarding flow"
-      确定: "Researched and booked the Airbnb in Lisbon"
-      确定: "Drafted and sent the investor update"
+      OK: "Designed and prototyped the onboarding flow"
+      OK: "Researched and booked the Airbnb in Lisbon"
+      OK: "Drafted and sent the investor update"
 
       When it's genuinely scattered:
-      If t这里 was no main focus—just bouncing between tabs—don't force a fake throughline:
+      If there was no main focus—just bouncing between tabs—don't force a fake throughline:
 
       "YouTube and Twitter browsing"
       "Scattered browsing break"

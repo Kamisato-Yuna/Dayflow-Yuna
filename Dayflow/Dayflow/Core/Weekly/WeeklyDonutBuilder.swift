@@ -23,7 +23,7 @@ struct WeeklyDonutSnapshot: Sendable {
       WeeklyDonutItem(id: "research", name: "Research", colorHex: "93BCFF", minutes: 618),
       WeeklyDonutItem(id: "design", name: "Design", colorHex: "DE9DFC", minutes: 618),
       WeeklyDonutItem(id: "alignment", name: "Alignment", colorHex: "6CDACD", minutes: 618),
-      WeeklyDonutItem(id: "testing", name: "测试ing", colorHex: "FFA189", minutes: 618),
+      WeeklyDonutItem(id: "testing", name: "Testing", colorHex: "FFA189", minutes: 618),
       WeeklyDonutItem(id: "general", name: "General", colorHex: "BFB6AE", minutes: 621),
     ],
     totalMinutes: 2573,
@@ -32,8 +32,8 @@ struct WeeklyDonutSnapshot: Sendable {
 }
 
 enum WeeklyDonutBuilder {
-  private static let calendar: 日历 = {
-    var calendar = 日历(identifier: .gregorian)
+  private static let calendar: Calendar = {
+    var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = .autoupdatingCurrent
     calendar.firstWeekday = 2
     calendar.minimumDaysInFirstWeek = 4
@@ -51,12 +51,12 @@ enum WeeklyDonutBuilder {
     categories: [TimelineCategory],
     weekRange: WeeklyDateRange
   ) -> WeeklyDonutSnapshot {
-    let ordered分类 =
+    let orderedCategories =
       categories
       .sorted { $0.order < $1.order }
 
     let categoryLookup = firstCategoryLookup(
-      from: ordered分类,
+      from: orderedCategories,
       normalizedKey: normalizedCategoryKey
     )
 

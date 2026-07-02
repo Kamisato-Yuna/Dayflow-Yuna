@@ -59,7 +59,7 @@ struct WeeklyContextChartsSection: View {
   var body: some View {
     VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: Design.chartTopSpacing) {
-        Text("上下文切换与分心对比")
+        Text("Context shift and distractions comparison")
           .font(.custom("InstrumentSerif-Regular", size: 20))
           .foregroundStyle(Color(hex: "B46531"))
           .lineLimit(1)
@@ -110,7 +110,7 @@ struct WeeklyContextChartsSection: View {
 
   private var chartColumn: some View {
     VStack(alignment: .leading, spacing: Design.xAxisTopSpacing) {
-      Text("数量")
+      Text("Count")
         .font(.custom("Figtree-Regular", size: 12))
         .foregroundStyle(Design.labelColor)
 
@@ -137,7 +137,7 @@ struct WeeklyContextChartsSection: View {
         ForEach(Array(item.values.enumerated()), id: \.offset) { index, value in
           LineMark(
             x: .value("Day", index),
-            y: .value("数量", value),
+            y: .value("Count", value),
             series: .value("Series", item.id)
           )
           .interpolationMethod(.catmullRom)
@@ -146,7 +146,7 @@ struct WeeklyContextChartsSection: View {
 
           PointMark(
             x: .value("Day", index),
-            y: .value("数量", value)
+            y: .value("Count", value)
           )
           .symbolSize(Design.pointSize)
           .foregroundStyle(Color(hex: item.colorHex))
@@ -232,7 +232,7 @@ private struct WeeklyContextDistributionCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text("上下文切换与分心分布")
+      Text("Context shift and distractions distribution")
         .font(.custom("InstrumentSerif-Regular", size: 18))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.leading, 25)
@@ -365,7 +365,7 @@ private struct WeeklyContextComparisonBarCard: View {
   var body: some View {
     VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: 0) {
-        Text("上下文切换与分心对比")
+        Text("Context shift and distractions comparison")
           .font(.custom("InstrumentSerif-Regular", size: 18))
           .foregroundStyle(Color(hex: "B46531"))
           .padding(.top, 22)

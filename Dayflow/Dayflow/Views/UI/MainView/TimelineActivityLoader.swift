@@ -67,9 +67,9 @@ enum TimelineActivityLoader {
   }
 
   static func buildActivities(from cards: [TimelineCard]) -> [TimelineActivity] {
-    let calendar = 日历.current
+    let calendar = Calendar.current
     var results: [TimelineActivity] = []
-    var id数量s: [String: Int] = [:]
+    var idCounts: [String: Int] = [:]
     results.reserveCapacity(cards.count)
 
     for card in cards {
@@ -128,9 +128,9 @@ enum TimelineActivityLoader {
         subcategory: card.subcategory
       )
 
-      let seen数量 = id数量s[baseId, default: 0]
-      id数量s[baseId] = seen数量 + 1
-      let finalId = seen数量 == 0 ? baseId : "\(baseId)-\(seen数量)"
+      let seenCount = idCounts[baseId, default: 0]
+      idCounts[baseId] = seenCount + 1
+      let finalId = seenCount == 0 ? baseId : "\(baseId)-\(seenCount)"
 
       results.append(
         TimelineActivity(

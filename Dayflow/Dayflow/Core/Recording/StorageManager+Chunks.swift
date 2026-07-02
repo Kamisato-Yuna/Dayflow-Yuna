@@ -53,9 +53,9 @@ extension StorageManager {
     }
   }
 
-  func fetchUnprocessedChunks(olderThan oldest全部owed: Int) -> [RecordingChunk] {
+  func fetchUnprocessedChunks(olderThan oldestAllowed: Int) -> [RecordingChunk] {
     (try? timedRead("fetchUnprocessedChunks") { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT * FROM chunks
@@ -64,7 +64,7 @@ extension StorageManager {
                 AND (is_deleted = 0 OR is_deleted IS NULL)
                 AND id NOT IN (SELECT chunk_id FROM batch_chunks)
               ORDER BY start_ts ASC
-          """, arguments: [oldest全部owed]
+          """, arguments: [oldestAllowed]
       )
       .map { row in
         RecordingChunk(
@@ -129,7 +129,7 @@ extension StorageManager {
     decoder.dateDecodingStrategy = .iso8601
     return
       (try? timedRead("fetchBatchLLMMetadata") { db in
-        if let row = try Row.fetch开启e(
+        if let row = try Row.fetchOne(
           db, sql: "SELECT llm_metadata FROM analysis_batches WHERE id = ?", arguments: [batchId]),
           let json: String = row["llm_metadata"],
           let data = json.data(using: .utf8)
@@ -143,7 +143,7 @@ extension StorageManager {
   /// Chunks that belong to one batch, already sorted.
   func chunksForBatch(_ batchId: Int64) -> [RecordingChunk] {
     (try? db.read { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
           SELECT c.* FROM batch_chunks bc
@@ -163,7 +163,7 @@ extension StorageManager {
   /// Helper to get the batch start timestamp for date calculations
   func getBatchStartTimestamp(batchId: Int64) -> Int? {
     return try? db.read { db in
-      try Int.fetch开启e(
+      try Int.fetchOne(
         db,
         sql: """
               SELECT batch_start_ts FROM analysis_batches WHERE id = ?
@@ -174,7 +174,7 @@ extension StorageManager {
   /// Fetch chunks that overlap with a specific time range
   func fetchChunksInTimeRange(startTs: Int, endTs: Int) -> [RecordingChunk] {
     (try? timedRead("fetchChunksInTimeRange") { db in
-      try Row.fetch全部(
+      try Row.fetchAll(
         db,
         sql: """
               SELECT * FROM chunks

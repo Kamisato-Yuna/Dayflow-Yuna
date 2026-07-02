@@ -1,6 +1,6 @@
 import Foundation
 
-enum Local引擎: String, CaseIterable, Identifiable, Codable {
+enum LocalEngine: String, CaseIterable, Identifiable, Codable {
   case ollama
   case lmstudio
   case custom
@@ -11,7 +11,7 @@ enum Local引擎: String, CaseIterable, Identifiable, Codable {
     switch self {
     case .ollama: return "Ollama"
     case .lmstudio: return "LM Studio"
-    case .custom: return "自定义"
+    case .custom: return "Custom"
     }
   }
 

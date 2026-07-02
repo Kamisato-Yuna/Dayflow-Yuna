@@ -261,12 +261,12 @@ enum LLMProviderRoutingPreferences {
 
 struct BatchingConfig {
   let targetDuration: TimeInterval
-  let max空档: TimeInterval
+  let maxGap: TimeInterval
   let cardLookbackDuration: TimeInterval
 
   static let standard = BatchingConfig(
     targetDuration: 15 * 60,  // 15-minute analysis batches
-    max空档: 2 * 60,  // Split batches if gap exceeds 2 minutes
+    maxGap: 2 * 60,  // Split batches if gap exceeds 2 minutes
     cardLookbackDuration: 45 * 60  // Build cards with a 45-minute lookback window
   )
 }

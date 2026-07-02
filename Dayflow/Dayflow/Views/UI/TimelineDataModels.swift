@@ -96,14 +96,14 @@ struct DatePickerSheet: View {
 
   var body: some View {
     VStack(spacing: 20) {
-      Text("选择日期")
+      Text("Select Date")
         .font(.title2)
         .fontWeight(.semibold)
 
       DatePicker(
         "",
         selection: $selectedDate,
-        in: ...Date(),  // 开启ly allow past dates and today
+        in: ...Date(),  // Only allow past dates and today
         displayedComponents: .date
       )
       .datePickerStyle(.graphical)

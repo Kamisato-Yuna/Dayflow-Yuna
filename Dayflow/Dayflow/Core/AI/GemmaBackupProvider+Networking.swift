@@ -66,7 +66,7 @@ extension GemmaBackupProvider {
     let status = httpResponse?.statusCode
     let responseHeaders: [String: String]? = httpResponse?.allHeaderFields.reduce(into: [:]) {
       acc, kv in
-      if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+      if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
         acc[k] = v.description
       }
     }
@@ -153,7 +153,7 @@ extension GemmaBackupProvider {
     }
   }
 
-  func frameDescriptionPrompt(frame数量: Int) -> String {
+  func frameDescriptionPrompt(frameCount: Int) -> String {
     """
     You are a precise activity logger analyzing screenshots from a screen recording. For each screenshot, describe EXACTLY what the user is doing with hyper-specific detail.
 
@@ -177,7 +177,7 @@ extension GemmaBackupProvider {
       ]
     }
 
-    Analyze these \(frame数量) screenshots with maximum specificity:
+    Analyze these \(frameCount) screenshots with maximum specificity:
     """
   }
 
@@ -231,12 +231,12 @@ extension GemmaBackupProvider {
     let cleaned = raw.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !cleaned.isEmpty else { return categories.first?.name ?? "" }
     let normalized = cleaned.lowercased()
-    if let match = categories.first(w这里: {
+    if let match = categories.first(where: {
       $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == normalized
     }) {
       return match.name
     }
-    if let idle = categories.first(w这里: { $0.isIdle }) {
+    if let idle = categories.first(where: { $0.isIdle }) {
       let idleLabels = [
         "idle", "idle time", idle.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
       ]
@@ -318,11 +318,11 @@ extension GemmaBackupProvider {
     let targetSize = NSSize(width: originalSize.width * scale, height: originalSize.height * scale)
 
     let resized = NSImage(size: targetSize)
-    resized.lock专注()
+    resized.lockFocus()
     image.draw(
       in: NSRect(origin: .zero, size: targetSize), from: NSRect(origin: .zero, size: originalSize),
       operation: .copy, fraction: 1.0)
-    resized.unlock专注()
+    resized.unlockFocus()
 
     guard let tiff = resized.tiffRepresentation,
       let rep = NSBitmapImageRep(data: tiff)

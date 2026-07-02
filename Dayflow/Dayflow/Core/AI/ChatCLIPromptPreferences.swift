@@ -45,7 +45,7 @@ enum ChatCLIPromptDefaults {
     Be specific, but concise:
     Every title needs concrete details. Name the actual thing—the show, the person, the feature, the file, the game. But keep it scannable—aim for roughly 5-10 words. Extra details belong in the summary.
 
-    Bad: "Watched videos" → Good: "The 关闭ice bloopers on YouTube"
+    Bad: "Watched videos" → Good: "The Office bloopers on YouTube"
     Bad: "Worked on UI" → Good: "Fixed navbar overlap on mobile"
     Bad: "Had a call" → Good: "Call with James about venue options"
     Bad: "Did research" → Good: "Comparing gyms near the new apartment"
@@ -100,12 +100,12 @@ enum ChatCLIPromptDefaults {
 
     "And" is okay when both parts serve the same goal:
 
-    确定: "Designed and prototyped the onboarding flow"
-    确定: "Researched and booked the Airbnb in Lisbon"
-    确定: "Drafted and sent the investor update"
+    OK: "Designed and prototyped the onboarding flow"
+    OK: "Researched and booked the Airbnb in Lisbon"
+    OK: "Drafted and sent the investor update"
 
     When it's genuinely scattered:
-    If t这里 was no main focus—just bouncing between tabs—don't force a fake throughline:
+    If there was no main focus—just bouncing between tabs—don't force a fake throughline:
 
     "YouTube and Twitter browsing"
     "Scattered browsing break"
@@ -136,7 +136,7 @@ enum ChatCLIPromptDefaults {
     """
 
   static let detailedSummaryBlock = """
-    详细摘要
+    DETAILED SUMMARY
 
     Granular activity log. This is the "show me exactly what happened" view.
 

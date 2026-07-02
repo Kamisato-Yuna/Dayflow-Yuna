@@ -55,8 +55,8 @@ struct ThumbRatingButtons: View {
     .buttonStyle(.plain)
     .contentShape(Rectangle())
     .hoverScaleEffect(enabled: isEnabled, scale: 1.02)
-    .pointingHandCursor开启Hover(enabled: isEnabled, reassert开启PressEnd: true)
-    .accessibilityLabel(direction == .up ? Text("点赞") : Text("踩"))
+    .pointingHandCursorOnHover(enabled: isEnabled, reassertOnPressEnd: true)
+    .accessibilityLabel(direction == .up ? Text("Thumbs up") : Text("Thumbs down"))
   }
 }
 
@@ -70,7 +70,7 @@ struct TimelineRateSummaryView: View {
 
   @State private var selectedDirection: TimelineRatingDirection? = nil
   @State private var deleteButtonState: TimelineDeleteButtonState = .idle
-  @State private var delete重置Task: Task<Void, Never>? = nil
+  @State private var deleteResetTask: Task<Void, Never>? = nil
 
   private var canDelete: Bool {
     isEnabled && onDelete != nil && deleteButtonState != .deleting
@@ -114,11 +114,11 @@ struct TimelineRateSummaryView: View {
     .opacity(isEnabled ? 1 : 0.6)
     .onChange(of: activityID) {
       selectedDirection = nil
-      delete重置Task?.cancel()
+      deleteResetTask?.cancel()
       deleteButtonState = .idle
     }
     .onDisappear {
-      delete重置Task?.cancel()
+      deleteResetTask?.cancel()
     }
   }
 
@@ -173,7 +173,7 @@ struct TimelineRateSummaryView: View {
     .buttonStyle(.plain)
     .disabled(!canDelete)
     .hoverScaleEffect(enabled: canDelete, scale: 1.02)
-    .pointingHandCursor开启Hover(enabled: canDelete, reassert开启PressEnd: true)
+    .pointingHandCursorOnHover(enabled: canDelete, reassertOnPressEnd: true)
     .animation(.easeInOut(duration: 0.22), value: deleteButtonState)
     .accessibilityLabel(
       Text(
@@ -187,14 +187,14 @@ struct TimelineRateSummaryView: View {
   private func handleDeleteTap() {
     guard onDelete != nil, isEnabled else { return }
 
-    delete重置Task?.cancel()
+    deleteResetTask?.cancel()
 
     switch deleteButtonState {
     case .idle:
       withAnimation(.easeInOut(duration: 0.22)) {
         deleteButtonState = .confirming
       }
-      delete重置Task = Task {
+      deleteResetTask = Task {
         try? await Task.sleep(nanoseconds: 2_000_000_000)
         guard !Task.isCancelled else { return }
         await MainActor.run {
@@ -209,7 +209,7 @@ struct TimelineRateSummaryView: View {
         deleteButtonState = .deleting
       }
       onDelete?()
-      delete重置Task = Task {
+      deleteResetTask = Task {
         try? await Task.sleep(nanoseconds: 1_500_000_000)
         guard !Task.isCancelled else { return }
         await MainActor.run {

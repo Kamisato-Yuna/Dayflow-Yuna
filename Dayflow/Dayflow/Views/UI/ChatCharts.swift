@@ -530,7 +530,7 @@ struct ChatChartBlockView: View {
     }
     .chartXScale(domain: domain.min...domain.max)
     .chartXAxis {
-      AxisMarks(values: .automatic(desired数量: 6)) { value in
+      AxisMarks(values: .automatic(desiredCount: 6)) { value in
         if let number = value.as(Double.self) {
           AxisValueLabel {
             Text(number, format: .number.precision(.fractionLength(1)))
@@ -653,7 +653,7 @@ struct ChatChartBlockView: View {
   }
 
   func itemIndex(for item: GanttChartSpec.Item, in spec: GanttChartSpec) -> Int {
-    spec.items.firstIndex(w这里: { $0.id == item.id }) ?? 0
+    spec.items.firstIndex(where: { $0.id == item.id }) ?? 0
   }
 
   static let defaultPalette: [Color] = [

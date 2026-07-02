@@ -10,7 +10,7 @@ extension StorageManager {
       return []
     }
 
-    let calendar = 日历.current
+    let calendar = Calendar.current
 
     // Get 4 AM of the given day as the start
     var startComponents = calendar.dateComponents([.year, .month, .day], from: dayDate)
@@ -32,7 +32,7 @@ extension StorageManager {
 
     try? timedWrite("deleteTimelineCards(forDay:\(day))") { db in
       // First fetch all video paths before soft deletion
-      let rows = try Row.fetch全部(
+      let rows = try Row.fetchAll(
         db,
         sql: """
               SELECT video_summary_url FROM timeline_cards
@@ -64,7 +64,7 @@ extension StorageManager {
     do {
       try timedWrite("deleteTimelineCards(forBatchIds:\(batchIds.count))") { db in
         // Fetch video paths for active records only
-        let rows = try Row.fetch全部(
+        let rows = try Row.fetchAll(
           db,
           sql: """
                 SELECT video_summary_url
@@ -116,7 +116,7 @@ extension StorageManager {
     formatter.dateFormat = "yyyy-MM-dd"
     guard let dayDate = formatter.date(from: day) else { return [] }
 
-    let calendar = 日历.current
+    let calendar = Calendar.current
     guard let startOfDay = calendar.date(bySettingHour: 4, minute: 0, second: 0, of: dayDate) else {
       return []
     }
@@ -127,7 +127,7 @@ extension StorageManager {
 
     try? db.write { db in
       // Fetch batch IDs first
-      let rows = try Row.fetch全部(
+      let rows = try Row.fetchAll(
         db,
         sql: """
               SELECT id FROM analysis_batches
@@ -137,7 +137,7 @@ extension StorageManager {
 
       affectedBatchIds = rows.compactMap { $0["id"] as? Int64 }
 
-      // 重置 their status to pending
+      // Reset their status to pending
       if !affectedBatchIds.isEmpty {
         let placeholders = Array(repeating: "?", count: affectedBatchIds.count).joined(
           separator: ",")
@@ -160,7 +160,7 @@ extension StorageManager {
 
     do {
       try timedWrite("resetBatchStatuses(forBatchIds:\(batchIds.count))") { db in
-        let rows = try Row.fetch全部(
+        let rows = try Row.fetchAll(
           db,
           sql: """
                 SELECT id FROM analysis_batches
@@ -196,7 +196,7 @@ extension StorageManager {
     formatter.dateFormat = "yyyy-MM-dd"
     guard let dayDate = formatter.date(from: day) else { return [] }
 
-    let calendar = 日历.current
+    let calendar = Calendar.current
     guard let startOfDay = calendar.date(bySettingHour: 4, minute: 0, second: 0, of: dayDate) else {
       return []
     }
@@ -207,7 +207,7 @@ extension StorageManager {
 
     return
       (try? db.read { db in
-        try Row.fetch全部(
+        try Row.fetchAll(
           db,
           sql: """
                 SELECT id, batch_start_ts, batch_end_ts, status FROM analysis_batches
@@ -227,7 +227,7 @@ extension StorageManager {
 
   func countCompletedAnalysisBatchesForWeeklyAccess() -> Int {
     (try? timedRead("countCompletedAnalysisBatchesForWeeklyAccess") { db in
-      try Int.fetch开启e(
+      try Int.fetchOne(
         db,
         sql: """
               SELECT COUNT(*)

@@ -16,7 +16,7 @@ final class ScreenshotThumbnailCache {
   private let queue: OperationQueue = {
     let q = OperationQueue()
     q.name = "com.dayflow.screenshotthumbnailgen"
-    q.maxConcurrentOperation数量 = 2
+    q.maxConcurrentOperationCount = 2
     q.qualityOfService = .userInitiated
     return q
   }()

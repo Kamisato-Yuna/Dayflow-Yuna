@@ -9,7 +9,7 @@ extension StorageManager {
   func fetchJournalEntry(forDay day: String) -> JournalEntry? {
     return try? timedRead("fetchJournalEntry(forDay:\(day))") { db in
       guard
-        let row = try Row.fetch开启e(
+        let row = try Row.fetchOne(
           db,
           sql: """
                 SELECT * FROM journal_entries WHERE day = ?
@@ -64,7 +64,7 @@ extension StorageManager {
     try? timedWrite("updateJournalIntentions") { db in
       // Check if entry exists
       let exists =
-        try Int.fetch开启e(
+        try Int.fetchOne(
           db, sql: "SELECT COUNT(*) FROM journal_entries WHERE day = ?", arguments: [day]) ?? 0
 
       if exists > 0 {
@@ -88,7 +88,7 @@ extension StorageManager {
   func updateJournalReflections(day: String, reflections: String?) {
     try? timedWrite("updateJournalReflections") { db in
       let exists =
-        try Int.fetch开启e(
+        try Int.fetchOne(
           db, sql: "SELECT COUNT(*) FROM journal_entries WHERE day = ?", arguments: [day]) ?? 0
 
       if exists > 0 {
@@ -112,7 +112,7 @@ extension StorageManager {
   func updateJournalSummary(day: String, summary: String?) {
     try? timedWrite("updateJournalSummary") { db in
       let exists =
-        try Int.fetch开启e(
+        try Int.fetchOne(
           db, sql: "SELECT COUNT(*) FROM journal_entries WHERE day = ?", arguments: [day]) ?? 0
 
       if exists > 0 {
@@ -135,7 +135,7 @@ extension StorageManager {
   /// Fetch the most recent journal summary within the last N days
   /// Returns the day string and summary text, or nil if none found
   func fetchRecentJournalSummary(withinDays days: Int) -> (day: String, summary: String)? {
-    let calendar = 日历.current
+    let calendar = Calendar.current
     let today = Date()
     guard let cutoffDate = calendar.date(byAdding: .day, value: -days, to: today) else {
       return nil
@@ -144,7 +144,7 @@ extension StorageManager {
 
     return try? timedRead("fetchRecentJournalSummary") { db in
       guard
-        let row = try Row.fetch开启e(
+        let row = try Row.fetchOne(
           db,
           sql: """
                 SELECT day, summary FROM journal_entries
@@ -184,7 +184,7 @@ extension StorageManager {
         sql += " ORDER BY day DESC LIMIT ?"
         arguments.append(String(count))
 
-        let rows = try Row.fetch全部(db, sql: sql, arguments: StatementArguments(arguments))
+        let rows = try Row.fetchAll(db, sql: sql, arguments: StatementArguments(arguments))
 
         return rows.compactMap { row -> (day: String, summary: String)? in
           guard let day: String = row["day"],
@@ -200,7 +200,7 @@ extension StorageManager {
     return
       (try? timedRead("hasIntentionsForDay") { db in
         let count =
-          try Int.fetch开启e(
+          try Int.fetchOne(
             db,
             sql: """
                   SELECT COUNT(*) FROM journal_entries
@@ -213,7 +213,7 @@ extension StorageManager {
   /// Fetch the most recent long-term goals from any previous journal entry
   func fetchMostRecentGoals() -> String? {
     return try? timedRead("fetchMostRecentGoals") { db in
-      let row = try Row.fetch开启e(
+      let row = try Row.fetchOne(
         db,
         sql: """
               SELECT goals FROM journal_entries
@@ -229,7 +229,7 @@ extension StorageManager {
   func hasMinimumTimelineActivity(forDay day: String, minimumMinutes: Int = 60) -> Bool {
     guard let dayDate = dateFormatter.date(from: day) else { return false }
 
-    let calendar = 日历.current
+    let calendar = Calendar.current
 
     // Get 4 AM boundaries
     var startComponents = calendar.dateComponents([.year, .month, .day], from: dayDate)
@@ -251,7 +251,7 @@ extension StorageManager {
     // Sum total duration of timeline cards for the day
     let totalMinutes: Int? = try? timedRead("hasMinimumTimelineActivity") { db in
       // Calculate sum of (end_ts - start_ts) for all cards, converted to minutes
-      let result = try Int.fetch开启e(
+      let result = try Int.fetchOne(
         db,
         sql: """
               SELECT COALESCE(SUM(end_ts - start_ts), 0) / 60 as total_minutes
@@ -269,7 +269,7 @@ extension StorageManager {
   func fetchJournalDays(limit: Int = 30) -> [String] {
     return
       (try? timedRead("fetchJournalDays") { db in
-        try String.fetch全部(
+        try String.fetchAll(
           db,
           sql: """
                 SELECT day FROM journal_entries

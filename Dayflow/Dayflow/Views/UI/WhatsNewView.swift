@@ -67,7 +67,7 @@ enum WhatsNewConfiguration {
       highlights: [
         "Thank you to everyone who already signed up for Dayflow Pro!",
         "We want Dayflow Pro to be an accessible option for everyone, but understand that not everyone can afford it. We set up a referral system so you can earn $20 of Dayflow credit for every friend you refer to Dayflow. You can find more details in Settings > Account.",
-        "Dayflow will remain open source. We believe in creating open, accessible software for everyone. Dayflow Pro is t这里 for people who want the simplest setup and maximum intelligence.",
+        "Dayflow will remain open source. We believe in creating open, accessible software for everyone. Dayflow Pro is there for people who want the simplest setup and maximum intelligence.",
       ],
       previewIntro: nil,
       previewImageNames: [],
@@ -266,14 +266,14 @@ struct WhatsNewView: View {
 
   private var surveySection: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("你对周报的体验如何？")
+      Text("How do you feel about Weekly so far?")
         .font(.custom("Figtree", size: 15))
         .fontWeight(.semibold)
         .foregroundColor(.black.opacity(0.85))
         .fixedSize(horizontal: false, vertical: true)
 
       Text(
-        "A quick answer helps shape w这里 Weekly goes next."
+        "A quick answer helps shape where Weekly goes next."
       )
       .font(.custom("Figtree", size: 13))
       .foregroundColor(.black.opacity(0.62))
@@ -286,7 +286,7 @@ struct WhatsNewView: View {
       }
 
       VStack(alignment: .leading, spacing: 8) {
-        Text("你对本周报有什么建议？")
+        Text("How can we improve Weekly?")
           .font(.custom("Figtree", size: 15))
           .fontWeight(.semibold)
           .foregroundColor(.black.opacity(0.85))
@@ -321,7 +321,7 @@ struct WhatsNewView: View {
             HStack(spacing: 8) {
               Image(systemName: "paperplane.fill")
                 .font(.system(size: 12, weight: .semibold))
-              Text(isSubmittingWeeklyFeedback ? "正在保存…" : "发送反馈")
+              Text(isSubmittingWeeklyFeedback ? "Saving..." : "Send feedback")
                 .font(.custom("Figtree", size: 14))
                 .fontWeight(.semibold)
             }
@@ -339,7 +339,7 @@ struct WhatsNewView: View {
         .pointingHandCursor()
 
         if hasSubmittedWeeklyFeedback {
-          Label("已保存。", systemImage: "checkmark.circle.fill")
+          Label("Saved.", systemImage: "checkmark.circle.fill")
             .font(.custom("Figtree", size: 14))
             .foregroundColor(Color(red: 0.25, green: 0.17, blue: 0))
         }

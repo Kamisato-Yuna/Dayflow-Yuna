@@ -67,7 +67,7 @@ final class GemmaBackupProvider {
           batchStartTime: batchStartTime,
           videoDuration: durationSeconds,
           batchId: batchId,
-          time关闭set: 0,
+          timeOffset: 0,
           targetSegments: 1
         )
       } else {
@@ -81,7 +81,7 @@ final class GemmaBackupProvider {
           batchStartTime: batchStartTime,
           videoDuration: midpoint,
           batchId: batchId,
-          time关闭set: 0,
+          timeOffset: 0,
           targetSegments: 1
         )
 
@@ -90,7 +90,7 @@ final class GemmaBackupProvider {
           batchStartTime: batchStartTime,
           videoDuration: durationSeconds - midpoint,
           batchId: batchId,
-          time关闭set: midpoint,
+          timeOffset: midpoint,
           targetSegments: 1
         )
 
@@ -102,7 +102,7 @@ final class GemmaBackupProvider {
         batchStartTime: batchStartTime,
         videoDuration: durationSeconds,
         batchId: batchId,
-        time关闭set: 0,
+        timeOffset: 0,
         targetSegments: 1
       )
     }

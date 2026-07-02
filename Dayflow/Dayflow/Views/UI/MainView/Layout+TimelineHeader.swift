@@ -26,11 +26,11 @@ extension View {
     )
   }
 
-  fileprivate func trackTimeline日历ButtonFrame() -> some View {
+  fileprivate func trackTimelineCalendarButtonFrame() -> some View {
     background(
       GeometryReader { proxy in
         Color.clear.preference(
-          key: Timeline日历ButtonFramePreferenceKey.self,
+          key: TimelineCalendarButtonFramePreferenceKey.self,
           value: proxy.frame(in: .named("TimelinePanel"))
         )
       }
@@ -89,7 +89,7 @@ private struct TimelineNavigationButton: View {
         isHovering = false
       }
     }
-    .pointingHandCursor开启Hover(enabled: isEnabled, reassert开启PressEnd: true)
+    .pointingHandCursorOnHover(enabled: isEnabled, reassertOnPressEnd: true)
   }
 }
 
@@ -156,7 +156,7 @@ extension MainView {
     let calendarWidth: CGFloat = 36
     let dayWeekWidth: CGFloat = 104
     let todayWidth: CGFloat = 56
-    let gap = TimelineNavigationLayout.calendar空档
+    let gap = TimelineNavigationLayout.calendarGap
     let datePad: CGFloat = 10
 
     var used = chevronsWidth + gap + calendarWidth
@@ -183,8 +183,8 @@ extension MainView {
     // text. Threshold of 100pt safely partitions compact (idle 73, paused
     // 84) from expanded (menu 250+, paused+status 290).
     let trailingIsCompact = timelineHeaderTrailingWidth < 100
-    let dateLiberal全部owance: CGFloat = trailingIsCompact ? 55 : 0
-    if used + datePad + measuredDateLabelWidth <= usable + dateLiberal全部owance {
+    let dateLiberalAllowance: CGFloat = trailingIsCompact ? 55 : 0
+    if used + datePad + measuredDateLabelWidth <= usable + dateLiberalAllowance {
       vis.showInlineDate = true
     }
     return vis
@@ -193,7 +193,7 @@ extension MainView {
   // Single-variant rendering. Every optional element is gated by the
   // visibility flags computed in `computeHeaderVisibility`. No
   // `.fixedSize(horizontal:)` — element widths are all explicit (see the
-  // in-file comments on `timelineModeSwitch` and `timeline日历Button`
+  // in-file comments on `timelineModeSwitch` and `timelineCalendarButton`
   // for the history of that decision).
   //
   // `.frame(height: 30)` on the HStack pins its vertical dimension to the
@@ -201,9 +201,9 @@ extension MainView {
   // at InstrumentSerif 26pt) can't grow the HStack when it appears. Without
   // this pin, the pills visibly shifted by ~0.5pt when the date entered.
   private func timelineLeadingControls(visibility: TimelineHeaderVisibility) -> some View {
-    HStack(spacing: TimelineNavigationLayout.calendar空档) {
+    HStack(spacing: TimelineNavigationLayout.calendarGap) {
       timelineNavigationButtons
-      timeline日历Button
+      timelineCalendarButton
 
       if visibility.showDayWeekToggle {
         timelineModeSwitch
@@ -220,7 +220,7 @@ extension MainView {
       }
     }
     .frame(height: 30)
-    .offset(x: timeline关闭set + TimelineAlignment.pickerRow关闭set)
+    .offset(x: timelineOffset + TimelineAlignment.pickerRowOffset)
     .opacity(timelineOpacity)
   }
 
@@ -254,33 +254,33 @@ extension MainView {
     }
   }
 
-  // 日历 pill — Figma 1:1 visuals (fill #FFA777, icon 16×16, h=30, border
+  // Calendar pill — Figma 1:1 visuals (fill #FFA777, icon 16×16, h=30, border
   // #F2D2BD). The arrowless card itself is rendered at the panel level so it
   // can own outside-click dismissal without taps leaking through to the
   // timeline below.
-  private var timeline日历Button: some View {
+  private var timelineCalendarButton: some View {
     Button(action: {
-      if showTimeline日历Popover {
-        closeTimeline日历Popover()
+      if showTimelineCalendarPopover {
+        closeTimelineCalendarPopover()
       } else {
-        openTimeline日历Popover()
+        openTimelineCalendarPopover()
       }
     }) {
       ZStack {
         Capsule(style: .continuous)
-          .fill(timeline日历ButtonFillColor)
+          .fill(timelineCalendarButtonFillColor)
           .overlay(
             Capsule(style: .continuous)
-              .stroke(timeline日历ButtonBorderColor, lineWidth: 1)
+              .stroke(timelineCalendarButtonBorderColor, lineWidth: 1)
           )
           .shadow(
-            color: timeline日历ButtonShadowColor,
-            radius: showTimeline日历Popover ? 8 : 0,
+            color: timelineCalendarButtonShadowColor,
+            radius: showTimelineCalendarPopover ? 8 : 0,
             x: 0,
-            y: showTimeline日历Popover ? 2 : 0
+            y: showTimelineCalendarPopover ? 2 : 0
           )
 
-        Image("日历Icon")
+        Image("CalendarIcon")
           .resizable()
           .scaledToFit()
           .frame(width: 16, height: 16)
@@ -294,83 +294,83 @@ extension MainView {
         animation: .spring(response: 0.18, dampingFraction: 0.88)
       )
     )
-    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
-    .animation(timeline日历ButtonStateAnimation, value: showTimeline日历Popover)
-    .trackTimeline日历ButtonFrame()
+    .pointingHandCursorOnHover(reassertOnPressEnd: true)
+    .animation(timelineCalendarButtonStateAnimation, value: showTimelineCalendarPopover)
+    .trackTimelineCalendarButtonFrame()
   }
 
-  private var timeline日历ButtonFillColor: Color {
-    showTimeline日历Popover ? Color(hex: "FFB38E") : Color(hex: "FFA777")
+  private var timelineCalendarButtonFillColor: Color {
+    showTimelineCalendarPopover ? Color(hex: "FFB38E") : Color(hex: "FFA777")
   }
 
-  private var timeline日历ButtonBorderColor: Color {
-    showTimeline日历Popover ? Color(hex: "E8BDA1") : Color(hex: "F2D2BD")
+  private var timelineCalendarButtonBorderColor: Color {
+    showTimelineCalendarPopover ? Color(hex: "E8BDA1") : Color(hex: "F2D2BD")
   }
 
-  private var timeline日历ButtonShadowColor: Color {
-    showTimeline日历Popover ? .black.opacity(0.10) : .clear
+  private var timelineCalendarButtonShadowColor: Color {
+    showTimelineCalendarPopover ? .black.opacity(0.10) : .clear
   }
 
-  private var timeline日历ButtonStateAnimation: Animation {
+  private var timelineCalendarButtonStateAnimation: Animation {
     reduceMotion ? .linear(duration: 0.01) : .easeOut(duration: 0.14)
   }
 
-  private var timeline日历PopoverOpenAnimation: Animation {
+  private var timelineCalendarPopoverOpenAnimation: Animation {
     reduceMotion ? .linear(duration: 0.01) : .easeOut(duration: 0.18)
   }
 
-  private var timeline日历PopoverCloseAnimation: Animation {
+  private var timelineCalendarPopoverCloseAnimation: Animation {
     reduceMotion ? .linear(duration: 0.01) : .easeOut(duration: 0.12)
   }
 
-  private var timeline日历PopoverTransition: AnyTransition {
+  private var timelineCalendarPopoverTransition: AnyTransition {
     guard !reduceMotion else { return .opacity }
 
     return .asymmetric(
       insertion: .opacity
         .combined(with: .offset(y: -6))
-        .animation(timeline日历PopoverOpenAnimation),
+        .animation(timelineCalendarPopoverOpenAnimation),
       removal: .opacity
         .combined(with: .offset(y: -4))
-        .animation(timeline日历PopoverCloseAnimation)
+        .animation(timelineCalendarPopoverCloseAnimation)
     )
   }
 
-  private func openTimeline日历Popover() {
-    withAnimation(timeline日历PopoverOpenAnimation) {
-      showTimeline日历Popover = true
+  private func openTimelineCalendarPopover() {
+    withAnimation(timelineCalendarPopoverOpenAnimation) {
+      showTimelineCalendarPopover = true
     }
   }
 
-  private func closeTimeline日历Popover() {
-    withAnimation(timeline日历PopoverCloseAnimation) {
-      showTimeline日历Popover = false
+  private func closeTimelineCalendarPopover() {
+    withAnimation(timelineCalendarPopoverCloseAnimation) {
+      showTimelineCalendarPopover = false
     }
   }
 
-  func timeline日历PopoverOverlay(panelWidth: CGFloat) -> some View {
-    let cardWidth = Timeline日历Popover.preferredWidth
+  func timelineCalendarPopoverOverlay(panelWidth: CGFloat) -> some View {
+    let cardWidth = TimelineCalendarPopover.preferredWidth
     let horizontalPadding: CGFloat = 12
     let maxX = max(
       horizontalPadding,
       panelWidth - cardWidth - horizontalPadding
     )
     let cardX = min(
-      max(horizontalPadding, timeline日历ButtonFrame.midX - (cardWidth / 2)),
+      max(horizontalPadding, timelineCalendarButtonFrame.midX - (cardWidth / 2)),
       maxX
     )
 
     return ZStack(alignment: .topLeading) {
-      if showTimeline日历Popover {
+      if showTimelineCalendarPopover {
         Rectangle()
           .fill(Color.black.opacity(0.001))
           .contentShape(Rectangle())
           .onTapGesture {
-            closeTimeline日历Popover()
+            closeTimelineCalendarPopover()
           }
 
-        Timeline日历Popover(
-          isPresented: $showTimeline日历Popover,
+        TimelineCalendarPopover(
+          isPresented: $showTimelineCalendarPopover,
           selectedDate: selectedDate,
           canSelectFutureDates: false,
           highlightsSelectedWeek: timelineMode == .week,
@@ -390,16 +390,16 @@ extension MainView {
             )
             navigateTimeline(to: date, method: "picker")
             DispatchQueue.main.async {
-              closeTimeline日历Popover()
+              closeTimelineCalendarPopover()
             }
           }
         )
-        .offset(x: cardX, y: timeline日历ButtonFrame.maxY + 55)
-        .transition(timeline日历PopoverTransition)
+        .offset(x: cardX, y: timelineCalendarButtonFrame.maxY + 55)
+        .transition(timelineCalendarPopoverTransition)
         .zIndex(1)
       }
     }
-    .allowsHit测试ing(showTimeline日历Popover)
+    .allowsHitTesting(showTimelineCalendarPopover)
   }
 
   private var timelineModeSwitch: some View {
@@ -452,7 +452,7 @@ extension MainView {
         // the accepted tradeoff for a correctly-behaving matched slide.
         .buttonStyle(PlainButtonStyle())
         .hoverScaleEffect(scale: 1.01)
-        .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+        .pointingHandCursorOnHover(reassertOnPressEnd: true)
       }
     }
     .frame(width: 104, height: 30)
@@ -488,7 +488,7 @@ extension MainView {
     }
     .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
     .hoverScaleEffect(scale: 1.02)
-    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+    .pointingHandCursorOnHover(reassertOnPressEnd: true)
   }
 
   private var timelineHeaderDateLabel: some View {

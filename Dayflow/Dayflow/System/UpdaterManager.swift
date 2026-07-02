@@ -52,7 +52,7 @@ final class UpdaterManager: NSObject, ObservableObject {
 
     do {
       try updater.start()
-      print("[Sparkle] updater.start() 确定")
+      print("[Sparkle] updater.start() OK")
       print("[Sparkle] feedURL=\(updater.feedURL?.absoluteString ?? "nil")")
       print("[Sparkle] autoChecks=\(updater.automaticallyChecksForUpdates)")
       print("[Sparkle] autoDownloads=\(updater.automaticallyDownloadsUpdates)")
@@ -151,7 +151,7 @@ extension UpdaterManager: SPUUpdaterDelegate {
 
   nonisolated func updater(
     _ updater: SPUUpdater,
-    willInstallUpdate开启Quit item: SUAppcastItem,
+    willInstallUpdateOnQuit item: SUAppcastItem,
     immediateInstallationBlock immediateInstallHandler: @escaping () -> Void
   ) -> Bool {
     // Convert Sparkle's deferred "install on quit" into an immediate install
@@ -255,7 +255,7 @@ extension UpdaterManager: SPUUpdaterDelegate {
         4001,  // SUAuthenticationFailure
         4008,  // SUInstallationAuthorizeLaterError
         4011,  // SUInstallationRootInteractiveError
-        4012,  // SUInstallationWriteNo权限Error
+        4012,  // SUInstallationWriteNoPermissionError
       ].contains(code)
 
     Task { @MainActor in

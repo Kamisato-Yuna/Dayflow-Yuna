@@ -9,8 +9,8 @@ import SwiftUI
     .frame(width: 400, height: 600)
 }
 
-#Preview("思考中 Indicator") {
-  思考中Indicator()
+#Preview("Thinking Indicator") {
+  ThinkingIndicator()
     .padding()
     .background(Color(hex: "FFFAF5"))
 }

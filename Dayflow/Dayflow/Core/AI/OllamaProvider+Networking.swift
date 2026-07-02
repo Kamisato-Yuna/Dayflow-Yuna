@@ -81,7 +81,7 @@ extension OllamaProvider {
           batchId: batchId,
           callGroupId: callGroupId,
           attempt: attempt + 1,
-          provider: local引擎,  // Track actual engine: ollama, lmstudio, or custom
+          provider: localEngine,  // Track actual engine: ollama, lmstudio, or custom
           model: request.model,
           operation: operation,
           requestMethod: urlRequest.httpMethod,
@@ -108,7 +108,7 @@ extension OllamaProvider {
           // Log failure with response body via centralized logger
           let responseHeaders: [String: String] = httpResponse.allHeaderFields.reduce(into: [:]) {
             acc, kv in
-            if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+            if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
               acc[k] = v.description
             }
           }
@@ -136,7 +136,7 @@ extension OllamaProvider {
           // Centralized success log
           let responseHeaders: [String: String] = httpResponse.allHeaderFields.reduce(into: [:]) {
             acc, kv in
-            if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+            if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
               acc[k] = v.description
             }
           }
@@ -152,7 +152,7 @@ extension OllamaProvider {
           // Centralized parse failure
           let responseHeaders: [String: String] = httpResponse.allHeaderFields.reduce(into: [:]) {
             acc, kv in
-            if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+            if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
               acc[k] = v.description
             }
           }
@@ -198,7 +198,7 @@ extension OllamaProvider {
               batchId: batchId,
               callGroupId: callGroupId,
               attempt: attempt + 1,
-              provider: local引擎,  // Track actual engine: ollama, lmstudio, or custom
+              provider: localEngine,  // Track actual engine: ollama, lmstudio, or custom
               model: request.model,
               operation: operation,
               requestMethod: "POST",
@@ -260,7 +260,7 @@ extension OllamaProvider {
   private func applyAuthorizationHeader(to request: inout URLRequest) {
     if isLMStudio {
       request.setValue("Bearer lm-studio", forHTTPHeaderField: "Authorization")
-    } else if is自定义引擎, let token = customAPIKey {
+    } else if isCustomEngine, let token = customAPIKey {
       request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     }
   }

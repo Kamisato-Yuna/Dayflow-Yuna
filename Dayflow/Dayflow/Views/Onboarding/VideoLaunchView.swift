@@ -28,14 +28,14 @@ struct VideoLaunchView: View {
   var body: some View {
     ZStack {
       if let player = player {
-        // 自定义 AVPlayer view without controls
+        // Custom AVPlayer view without controls
         AVPlayerControllerRepresented(player: player)
           .ignoresSafeArea()
       }
     }
     .onAppear {
       setupVideo()
-      // 专注 the window
+      // Focus the window
       NSApp.activate(ignoringOtherApps: true)
     }
     .onDisappear {
@@ -161,7 +161,7 @@ struct VideoLaunchView: View {
   }
 }
 
-// 自定义 AVPlayer view without controls
+// Custom AVPlayer view without controls
 struct AVPlayerControllerRepresented: NSViewRepresentable {
   let player: AVPlayer
 
@@ -183,9 +183,9 @@ struct AVPlayerControllerRepresented: NSViewRepresentable {
   func updateNSView(_ nsView: NonInteractiveAVPlayerView, context: Context) {}
 }
 
-// 自定义 AVPlayerView that prevents all user interactions
+// Custom AVPlayerView that prevents all user interactions
 class NonInteractiveAVPlayerView: AVPlayerView {
-  override func hit测试(_ point: NSPoint) -> NSView? {
+  override func hitTest(_ point: NSPoint) -> NSView? {
     // Prevent all mouse interactions
     return nil
   }

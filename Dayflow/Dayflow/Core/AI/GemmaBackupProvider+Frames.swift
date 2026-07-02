@@ -46,7 +46,7 @@ extension GemmaBackupProvider {
   func describeFramesInSingleBatch(_ frames: [FrameData], batchId: Int64?) async throws
     -> [(timestamp: TimeInterval, description: String)]
   {
-    let prompt = frameDescriptionPrompt(frame数量: frames.count)
+    let prompt = frameDescriptionPrompt(frameCount: frames.count)
     var parts: [[String: Any]] = [["text": prompt]]
     for frame in frames {
       parts.append([
@@ -79,7 +79,7 @@ extension GemmaBackupProvider {
     while startIndex < frames.count {
       let endIndex = min(frames.count, startIndex + batchSize)
       let subset = Array(frames[startIndex..<endIndex])
-      let prompt = frameDescriptionPrompt(frame数量: subset.count)
+      let prompt = frameDescriptionPrompt(frameCount: subset.count)
       var parts: [[String: Any]] = [["text": prompt]]
       for frame in subset {
         parts.append([
@@ -138,7 +138,7 @@ extension GemmaBackupProvider {
     batchStartTime: Date,
     videoDuration: TimeInterval,
     batchId: Int64?,
-    time关闭set: TimeInterval,
+    timeOffset: TimeInterval,
     targetSegments: Int
   ) async throws -> [Observation] {
     let durationMinutes = Int(videoDuration / 60)
@@ -169,7 +169,7 @@ extension GemmaBackupProvider {
           batchStartTime: batchStartTime,
           videoDuration: videoDuration,
           durationString: durationString,
-          time关闭set: time关闭set,
+          timeOffset: timeOffset,
           expectedSegments: targetSegments
         )
 
@@ -183,14 +183,14 @@ extension GemmaBackupProvider {
         if attempt == maxAttempts {
           return try observationsFromFrames(
             frameDescriptions, batchStartTime: batchStartTime, videoDuration: videoDuration,
-            time关闭set: time关闭set)
+            timeOffset: timeOffset)
         }
       } catch {
         lastError = error
         if attempt == maxAttempts {
           return try observationsFromFrames(
             frameDescriptions, batchStartTime: batchStartTime, videoDuration: videoDuration,
-            time关闭set: time关闭set)
+            timeOffset: timeOffset)
         }
       }
     }
@@ -206,7 +206,7 @@ extension GemmaBackupProvider {
     batchStartTime: Date,
     videoDuration: TimeInterval,
     durationString: String,
-    time关闭set: TimeInterval,
+    timeOffset: TimeInterval,
     expectedSegments: Int
   ) throws -> (observations: [Observation], coverage: Double) {
     var observations: [Observation] = []
@@ -228,7 +228,7 @@ extension GemmaBackupProvider {
       if let prevEnd = lastEndTime {
         let gap = startSeconds - prevEnd
         if gap > 60 {
-          print("[GEMMA] ⚠️ 空档 of \(Int(gap))s between segments")
+          print("[GEMMA] ⚠️ Gap of \(Int(gap))s between segments")
         }
       }
 
@@ -236,8 +236,8 @@ extension GemmaBackupProvider {
       totalDuration += clampedDuration
       lastEndTime = endSeconds
 
-      let startDate = batchStartTime.addingTimeInterval(startSeconds + time关闭set)
-      let endDate = batchStartTime.addingTimeInterval(endSeconds + time关闭set)
+      let startDate = batchStartTime.addingTimeInterval(startSeconds + timeOffset)
+      let endDate = batchStartTime.addingTimeInterval(endSeconds + timeOffset)
 
       observations.append(
         Observation(
@@ -276,7 +276,7 @@ extension GemmaBackupProvider {
     _ frameDescriptions: [(timestamp: TimeInterval, description: String)],
     batchStartTime: Date,
     videoDuration: TimeInterval,
-    time关闭set: TimeInterval
+    timeOffset: TimeInterval
   ) throws -> [Observation] {
     guard !frameDescriptions.isEmpty else {
       throw NSError(
@@ -289,21 +289,21 @@ extension GemmaBackupProvider {
     var observations: [Observation] = []
 
     for (index, frame) in sortedFrames.enumerated() {
-      let startSeconds = max(0, frame.timestamp) + time关闭set
+      let startSeconds = max(0, frame.timestamp) + timeOffset
       var endSeconds = startSeconds + screenshotInterval
 
       if index + 1 < sortedFrames.count {
-        endSeconds = min(endSeconds, sortedFrames[index + 1].timestamp + time关闭set)
+        endSeconds = min(endSeconds, sortedFrames[index + 1].timestamp + timeOffset)
       }
 
       if let cap = durationCap {
-        endSeconds = min(endSeconds, cap + time关闭set)
+        endSeconds = min(endSeconds, cap + timeOffset)
       }
 
       if endSeconds <= startSeconds {
         endSeconds = startSeconds + max(1, screenshotInterval)
         if let cap = durationCap {
-          endSeconds = min(endSeconds, cap + time关闭set)
+          endSeconds = min(endSeconds, cap + timeOffset)
         }
       }
 

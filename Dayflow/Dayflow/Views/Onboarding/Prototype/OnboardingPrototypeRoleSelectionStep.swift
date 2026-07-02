@@ -1,15 +1,15 @@
 //
-//  开启boardingPrototypeRoleSelectionStep.swift
+//  OnboardingPrototypeRoleSelectionStep.swift
 //  Dayflow
 //
 
 import SwiftUI
 
-struct 开启boardingPrototypeRoleSelectionStep: View {
+struct OnboardingPrototypeRoleSelectionStep: View {
   let onContinue: (String) -> Void
 
   private let roles = [
-    "Software 引擎er", "Founder / Executive", "Designer", "Student", "Product Manager",
+    "Software Engineer", "Founder / Executive", "Designer", "Student", "Product Manager",
     "Data Scientist", "Other",
   ]
   @State private var selectedRole: String?
@@ -43,7 +43,7 @@ struct 开启boardingPrototypeRoleSelectionStep: View {
 
       VStack(spacing: 24) {
         VStack(spacing: 4) {
-          Text("你的工作是什么？")
+          Text("What do you do for work?")
             .font(.custom("Figtree", size: 20))
             .foregroundColor(Color(hex: "89380E"))
 
@@ -69,7 +69,7 @@ struct 开启boardingPrototypeRoleSelectionStep: View {
 
       if selectedRole == "Other" {
         VStack(spacing: 16) {
-          Text("请说明")
+          Text("Please specify")
             .font(.custom("Figtree", size: 20))
             .foregroundColor(Color(hex: "89380E"))
 
@@ -117,7 +117,7 @@ struct 开启boardingPrototypeRoleSelectionStep: View {
         showOverlayStroke: true
       )
       .opacity(resolvedRole == nil ? 0.4 : 1.0)
-      .allowsHit测试ing(resolvedRole != nil)
+      .allowsHitTesting(resolvedRole != nil)
       .animation(.easeInOut(duration: 0.2), value: resolvedRole)
 
       Spacer()

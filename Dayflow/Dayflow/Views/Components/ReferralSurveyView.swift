@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Reusable "W这里 did you find Dayflow?" survey component.
+/// Reusable "Where did you find Dayflow?" survey component.
 struct ReferralSurveyView: View {
   let prompt: String
   let submitLabel: String
@@ -9,7 +9,7 @@ struct ReferralSurveyView: View {
   let onSubmit: (_ option: ReferralOption, _ detail: String?) -> Void
 
   @State private var internalSelectedReferral: ReferralOption? = nil
-  @State private var internal自定义Referral: String = ""
+  @State private var internalCustomReferral: String = ""
   @State private var randomizedOptions = ReferralOption.randomizedConcreteOptions()
   @State private var hasSubmitted = false
 
@@ -36,7 +36,7 @@ struct ReferralSurveyView: View {
       _customReferral = customReferral
     } else {
       _selectedReferral = _internalSelectedReferral.projectedValue
-      _customReferral = _internal自定义Referral.projectedValue
+      _customReferral = _internalCustomReferral.projectedValue
     }
   }
 
@@ -64,7 +64,7 @@ struct ReferralSurveyView: View {
       detailField
 
       if showsThankYou && hasSubmitted {
-        Label("感谢你的反馈！", systemImage: "checkmark.circle.fill")
+        Label("Thanks for letting me know!", systemImage: "checkmark.circle.fill")
           .font(.custom("Figtree", size: 14))
           .foregroundColor(Color(red: 0.25, green: 0.17, blue: 0))
           .padding(.top, 4)
@@ -169,7 +169,7 @@ struct ReferralSurveyView: View {
       .font(.custom("Figtree", size: 13))
       .opacity(selectedReferral?.requiresDetail == true ? 1 : 0)
       .disabled(selectedReferral?.requiresDetail != true)
-      .allowsHit测试ing(selectedReferral?.requiresDetail == true)
+      .allowsHitTesting(selectedReferral?.requiresDetail == true)
       .frame(height: 44)
       .frame(maxWidth: .infinity)
       .padding(.horizontal, 12)
@@ -177,7 +177,7 @@ struct ReferralSurveyView: View {
   }
 
   private var currentDetailPlaceholder: String {
-    selectedReferral?.detailPlaceholder ?? "告诉我更多"
+    selectedReferral?.detailPlaceholder ?? "Tell me more"
   }
 
   private func handleSubmit() {
@@ -245,7 +245,7 @@ enum ReferralOption: CaseIterable, Identifiable, Hashable {
     case .youtube:
       return "Which channel?"
     case .other:
-      return "W这里 did you hear about Dayflow?"
+      return "Where did you hear about Dayflow?"
     default:
       return ""
     }

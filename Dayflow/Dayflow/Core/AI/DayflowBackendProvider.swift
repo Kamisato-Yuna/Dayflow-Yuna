@@ -288,7 +288,7 @@ final class DayflowBackendProvider {
     AnalyticsService.shared.capture("daily_generation_request_started", baseProps)
 
     var httpStatusCode: Int? = nil
-    var responseByte数量 = 0
+    var responseByteCount = 0
 
     do {
       guard let url = URL(string: "\(normalizedEndpoint)/v1/daily") else {
@@ -310,9 +310,9 @@ final class DayflowBackendProvider {
           + "url=\(url.absoluteString) endpoint_host=\(endpointHost) auth_id_length=\(token.count)"
       )
 
-      let requestByte数量 = urlRequest.httpBody?.count ?? 0
+      let requestByteCount = urlRequest.httpBody?.count ?? 0
       let (data, response) = try await URLSession.shared.data(for: urlRequest)
-      responseByte数量 = data.count
+      responseByteCount = data.count
 
       guard let httpResponse = response as? HTTPURLResponse else {
         throw NSError(
@@ -366,8 +366,8 @@ final class DayflowBackendProvider {
       var successProps = baseProps
       successProps["latency_ms"] = Int(Date().timeIntervalSince(startedAt) * 1000)
       successProps["http_status"] = httpResponse.statusCode
-      successProps["request_bytes"] = requestByte数量
-      successProps["response_bytes"] = responseByte数量
+      successProps["request_bytes"] = requestByteCount
+      successProps["response_bytes"] = responseByteCount
       successProps["highlights_count"] = decoded.highlights.count
       successProps["unfinished_count"] = decoded.unfinished.count
       successProps["blockers_count"] = decoded.blockers.count
@@ -378,7 +378,7 @@ final class DayflowBackendProvider {
       let nsError = error as NSError
       var failureProps = baseProps
       failureProps["latency_ms"] = Int(Date().timeIntervalSince(startedAt) * 1000)
-      failureProps["response_bytes"] = responseByte数量
+      failureProps["response_bytes"] = responseByteCount
       failureProps["error_domain"] = nsError.domain
       failureProps["error_code"] = nsError.code
       failureProps["error_message"] = String(nsError.localizedDescription.prefix(500))
@@ -459,7 +459,7 @@ final class DayflowBackendProvider {
     )
 
     var httpStatusCode: Int? = nil
-    var responseByte数量 = 0
+    var responseByteCount = 0
 
     do {
       var urlRequest = URLRequest(url: url)
@@ -469,9 +469,9 @@ final class DayflowBackendProvider {
       urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
       urlRequest.httpBody = try JSONEncoder().encode(payload)
 
-      let requestByte数量 = urlRequest.httpBody?.count ?? 0
+      let requestByteCount = urlRequest.httpBody?.count ?? 0
       let (data, response) = try await URLSession.shared.data(for: urlRequest)
-      responseByte数量 = data.count
+      responseByteCount = data.count
 
       guard let httpResponse = response as? HTTPURLResponse else {
         throw NSError(
@@ -486,7 +486,7 @@ final class DayflowBackendProvider {
       httpStatusCode = httpResponse.statusCode
       print(
         "🌐 [DayflowBackendProvider] transcribe response request_id=\(requestId) "
-          + "status=\(httpResponse.statusCode) bytes=\(responseByte数量)"
+          + "status=\(httpResponse.statusCode) bytes=\(responseByteCount)"
       )
       guard (200...299).contains(httpResponse.statusCode) else {
         let responseBody = String(data: data, encoding: .utf8) ?? ""
@@ -534,8 +534,8 @@ final class DayflowBackendProvider {
       var successProps = baseProps
       successProps["latency_ms"] = Int(Date().timeIntervalSince(startedAt) * 1000)
       successProps["http_status"] = httpResponse.statusCode
-      successProps["request_bytes"] = requestByte数量
-      successProps["response_bytes"] = responseByte数量
+      successProps["request_bytes"] = requestByteCount
+      successProps["response_bytes"] = responseByteCount
       successProps["observations_count"] = observations.count
       successProps["provider"] = decoded.provider
       successProps["model"] = decoded.model
@@ -556,7 +556,7 @@ final class DayflowBackendProvider {
       let nsError = error as NSError
       var failureProps = baseProps
       failureProps["latency_ms"] = Int(Date().timeIntervalSince(startedAt) * 1000)
-      failureProps["response_bytes"] = responseByte数量
+      failureProps["response_bytes"] = responseByteCount
       failureProps["error_domain"] = nsError.domain
       failureProps["error_code"] = nsError.code
       failureProps["error_message"] = String(nsError.localizedDescription.prefix(500))
@@ -621,7 +621,7 @@ final class DayflowBackendProvider {
     )
 
     var httpStatusCode: Int? = nil
-    var responseByte数量 = 0
+    var responseByteCount = 0
 
     do {
       var urlRequest = URLRequest(url: url)
@@ -631,9 +631,9 @@ final class DayflowBackendProvider {
       urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
       urlRequest.httpBody = try JSONEncoder().encode(payload)
 
-      let requestByte数量 = urlRequest.httpBody?.count ?? 0
+      let requestByteCount = urlRequest.httpBody?.count ?? 0
       let (data, response) = try await URLSession.shared.data(for: urlRequest)
-      responseByte数量 = data.count
+      responseByteCount = data.count
 
       guard let httpResponse = response as? HTTPURLResponse else {
         throw NSError(
@@ -648,7 +648,7 @@ final class DayflowBackendProvider {
       httpStatusCode = httpResponse.statusCode
       print(
         "🌐 [DayflowBackendProvider] cards response request_id=\(requestId) "
-          + "status=\(httpResponse.statusCode) bytes=\(responseByte数量)"
+          + "status=\(httpResponse.statusCode) bytes=\(responseByteCount)"
       )
       guard (200...299).contains(httpResponse.statusCode) else {
         let responseBody = String(data: data, encoding: .utf8) ?? ""
@@ -683,8 +683,8 @@ final class DayflowBackendProvider {
       var successProps = baseProps
       successProps["latency_ms"] = Int(Date().timeIntervalSince(startedAt) * 1000)
       successProps["http_status"] = httpResponse.statusCode
-      successProps["request_bytes"] = requestByte数量
-      successProps["response_bytes"] = responseByte数量
+      successProps["request_bytes"] = requestByteCount
+      successProps["response_bytes"] = responseByteCount
       successProps["cards_count"] = decoded.cards.count
       successProps["provider"] = decoded.provider
       successProps["model"] = decoded.model
@@ -705,7 +705,7 @@ final class DayflowBackendProvider {
       let nsError = error as NSError
       var failureProps = baseProps
       failureProps["latency_ms"] = Int(Date().timeIntervalSince(startedAt) * 1000)
-      failureProps["response_bytes"] = responseByte数量
+      failureProps["response_bytes"] = responseByteCount
       failureProps["error_domain"] = nsError.domain
       failureProps["error_code"] = nsError.code
       failureProps["error_message"] = String(nsError.localizedDescription.prefix(500))

@@ -80,31 +80,31 @@ struct DailyAccessIntroView: View {
   }
 }
 
-struct DailyNotification开启boardingView: View {
-  let notification权限Message: String
-  let notification权限ButtonTitle: String
-  let isNotification权限ButtonDisabled: Bool
+struct DailyNotificationOnboardingView: View {
+  let notificationPermissionMessage: String
+  let notificationPermissionButtonTitle: String
+  let isNotificationPermissionButtonDisabled: Bool
   let isNotificationRecheckButtonDisabled: Bool
-  let onNotification权限Action: () -> Void
-  let onRecheck权限s: () -> Void
+  let onNotificationPermissionAction: () -> Void
+  let onRecheckPermissions: () -> Void
 
   var body: some View {
     VStack(spacing: 18) {
       DailyAccessHeaderView()
 
-      DailyNotification权限PanelView(
-        notification权限Message: notification权限Message,
-        notification权限ButtonTitle: notification权限ButtonTitle,
-        isNotification权限ButtonDisabled: isNotification权限ButtonDisabled,
+      DailyNotificationPermissionPanelView(
+        notificationPermissionMessage: notificationPermissionMessage,
+        notificationPermissionButtonTitle: notificationPermissionButtonTitle,
+        isNotificationPermissionButtonDisabled: isNotificationPermissionButtonDisabled,
         isNotificationRecheckButtonDisabled: isNotificationRecheckButtonDisabled,
-        onNotification权限Action: onNotification权限Action,
-        onRecheck权限s: onRecheck权限s
+        onNotificationPermissionAction: onNotificationPermissionAction,
+        onRecheckPermissions: onRecheckPermissions
       )
     }
   }
 }
 
-struct DailyProvider开启boardingView: View {
+struct DailyProviderOnboardingView: View {
   let selectedProvider: DailyRecapProvider
   let providerAvailability: [DailyRecapProvider: DailyRecapProviderAvailability]
   let isRefreshingProviderAvailability: Bool
@@ -118,7 +118,7 @@ struct DailyProvider开启boardingView: View {
 
       VStack(spacing: 12) {
         VStack(spacing: 6) {
-          Text("选择你的 Daily 提供商")
+          Text("Pick your Daily provider")
             .font(.custom("InstrumentSerif-Regular", size: 24))
             .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
             .multilineTextAlignment(.center)
@@ -199,7 +199,7 @@ struct DailyProvider开启boardingView: View {
         DayflowSurfaceButton(
           action: onContinue,
           content: {
-            Text("继续进入每日复盘")
+            Text("Continue to Daily")
               .font(.custom("Figtree", size: 14))
               .fontWeight(.semibold)
           },
@@ -246,7 +246,7 @@ private struct DailyAccessHeaderView: View {
         .font(.custom("InstrumentSerif-Italic", size: 38))
         .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
 
-      Text("测试版")
+      Text("BETA")
         .font(.custom("Figtree-Bold", size: 11))
         .foregroundColor(.white)
         .padding(.horizontal, 8)
@@ -342,13 +342,13 @@ private struct DailyAnimatedRequestAccessButton: View {
   }
 }
 
-private struct DailyNotification权限PanelView: View {
-  let notification权限Message: String
-  let notification权限ButtonTitle: String
-  let isNotification权限ButtonDisabled: Bool
+private struct DailyNotificationPermissionPanelView: View {
+  let notificationPermissionMessage: String
+  let notificationPermissionButtonTitle: String
+  let isNotificationPermissionButtonDisabled: Bool
   let isNotificationRecheckButtonDisabled: Bool
-  let onNotification权限Action: () -> Void
-  let onRecheck权限s: () -> Void
+  let onNotificationPermissionAction: () -> Void
+  let onRecheckPermissions: () -> Void
 
   var body: some View {
     VStack(spacing: 16) {
@@ -363,7 +363,7 @@ private struct DailyNotification权限PanelView: View {
         .multilineTextAlignment(.center)
         .frame(maxWidth: 420)
 
-      Text(notification权限Message)
+      Text(notificationPermissionMessage)
         .font(.custom("Figtree-Regular", size: 14))
         .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12).opacity(0.8))
         .multilineTextAlignment(.center)
@@ -371,9 +371,9 @@ private struct DailyNotification权限PanelView: View {
 
       VStack(spacing: 10) {
         DayflowSurfaceButton(
-          action: onNotification权限Action,
+          action: onNotificationPermissionAction,
           content: {
-            Text(notification权限ButtonTitle)
+            Text(notificationPermissionButtonTitle)
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           },
@@ -385,13 +385,13 @@ private struct DailyNotification权限PanelView: View {
           verticalPadding: 12,
           showOverlayStroke: true
         )
-        .disabled(isNotification权限ButtonDisabled)
-        .pointingHandCursor(enabled: !isNotification权限ButtonDisabled)
+        .disabled(isNotificationPermissionButtonDisabled)
+        .pointingHandCursor(enabled: !isNotificationPermissionButtonDisabled)
 
         DayflowSurfaceButton(
-          action: onRecheck权限s,
+          action: onRecheckPermissions,
           content: {
-            Text("重检权限")
+            Text("Recheck permissions")
               .font(.custom("Figtree", size: 14))
               .fontWeight(.semibold)
           },

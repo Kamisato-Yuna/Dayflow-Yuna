@@ -19,7 +19,7 @@ struct WeeklyHighlightsSection: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text("重要亮点")
+      Text("Top Highlights")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Design.titleColor)
 
@@ -97,7 +97,7 @@ struct WeeklyHighlight: Identifiable {
   let text: String
 }
 
-#Preview("重要亮点", traits: .fixedLayout(width: 470, height: 298)) {
+#Preview("Top Highlights", traits: .fixedLayout(width: 470, height: 298)) {
   WeeklyHighlightsSection(snapshot: .figmaPreview)
     .padding(24)
     .background(Color(hex: "FBF6EF"))

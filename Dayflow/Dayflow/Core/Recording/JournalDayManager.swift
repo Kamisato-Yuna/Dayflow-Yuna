@@ -110,7 +110,7 @@ final class JournalDayManager: ObservableObject {
     guard !isLoading else { return }
 
     guard let date = dateFromDayString(currentDay),
-      let previousDate = 日历.current.date(byAdding: .day, value: -1, to: date)
+      let previousDate = Calendar.current.date(byAdding: .day, value: -1, to: date)
     else {
       return
     }
@@ -125,7 +125,7 @@ final class JournalDayManager: ObservableObject {
     guard !isLoading else { return }
 
     guard let date = dateFromDayString(currentDay),
-      let nextDate = 日历.current.date(byAdding: .day, value: 1, to: date)
+      let nextDate = Calendar.current.date(byAdding: .day, value: 1, to: date)
     else {
       return
     }
@@ -172,7 +172,7 @@ final class JournalDayManager: ObservableObject {
         "goals_chars": normalizedGoals.count,
       ])
 
-    // 重新加载 entry
+    // Reload entry
     entry = storage.fetchJournalEntry(forDay: currentDay)
     syncFormDataFromEntry()
 
@@ -196,7 +196,7 @@ final class JournalDayManager: ObservableObject {
         "reflections_chars": trimmedReflections.count
       ])
 
-    // 重新加载 entry
+    // Reload entry
     entry = storage.fetchJournalEntry(forDay: currentDay)
     syncFormDataFromEntry()
 
@@ -220,7 +220,7 @@ final class JournalDayManager: ObservableObject {
   private func saveSummary(_ summary: String, forDay day: String) {
     storage.updateJournalSummary(day: day, summary: summary)
 
-    // 开启ly reload entry and sync form if we're still on the same day
+    // Only reload entry and sync form if we're still on the same day
     if currentDay == day {
       entry = storage.fetchJournalEntry(forDay: day)
       syncFormDataFromEntry()
@@ -236,7 +236,7 @@ final class JournalDayManager: ObservableObject {
 
   /// Go back from intentions edit
   func cancelEditingIntentions() {
-    // 重置 form to entry data
+    // Reset form to entry data
     syncFormDataFromEntry()
     flowState = determineInitialFlowState()
   }
@@ -272,7 +272,7 @@ final class JournalDayManager: ObservableObject {
     if entry?.status == "intentions_set" || entry?.status == "complete" {
       return "Edit intentions"
     }
-    return "设置今日意图"
+    return "Set today's intentions"
   }
 
   /// Intentions as a list of strings (for display)
@@ -295,10 +295,10 @@ final class JournalDayManager: ObservableObject {
   private func dateFromDayString(_ day: String) -> Date? {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
-    formatter.timeZone = 日历.current.timeZone
+    formatter.timeZone = Calendar.current.timeZone
     guard let date = formatter.date(from: day) else { return nil }
     // Use noon to avoid 4AM boundary issues when doing date arithmetic
-    return 日历.current.date(bySettingHour: 12, minute: 0, second: 0, of: date)
+    return Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: date)
   }
 
   private func syncFormDataFromEntry() {
@@ -332,7 +332,7 @@ final class JournalDayManager: ObservableObject {
     case "intentions_set":
       if isToday {
         // Check if it's evening (after 4 PM) to prompt reflection
-        let hour = 日历.current.component(.hour, from: Date())
+        let hour = Calendar.current.component(.hour, from: Date())
         if hour >= 16 {
           // Check if reflections already exist
           if let reflections = entry.reflections, !reflections.isEmpty {
@@ -358,7 +358,7 @@ final class JournalDayManager: ObservableObject {
   private func determinePostIntentionsState() -> JournalFlowState {
     // After saving intentions, check time of day
     if isToday {
-      let hour = 日历.current.component(.hour, from: Date())
+      let hour = Calendar.current.component(.hour, from: Date())
       if hour >= 16 {
         return .reflectionPrompt
       }
@@ -372,7 +372,7 @@ final class JournalDayManager: ObservableObject {
 
   private func splitLines(_ text: String) -> [String] {
     text
-      .split(w这里Separator: \.isNewline)
+      .split(whereSeparator: \.isNewline)
       .map { $0.trimmingCharacters(in: .whitespaces) }
       .filter { !$0.isEmpty }
   }
@@ -425,7 +425,7 @@ final class JournalDayManager: ObservableObject {
           "summary_chars": cleanedSummary.count,
         ])
 
-      // 7. 开启ly update UI if we're still on the same day
+      // 7. Only update UI if we're still on the same day
       if currentDay == dayToSave {
         flowState = .boardComplete
       }

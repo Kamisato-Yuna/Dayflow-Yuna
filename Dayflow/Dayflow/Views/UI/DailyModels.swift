@@ -76,15 +76,15 @@ struct DailyWorkflowGridRow: Identifiable, Sendable {
   let slotOccupancies: [Double]
   let slotCardInfos: [DailyWorkflowSlotCardInfo?]
 
-  static func placeholderRows(slot数量: Int) -> [DailyWorkflowGridRow] {
+  static func placeholderRows(slotCount: Int) -> [DailyWorkflowGridRow] {
     DailyGridConfig.fallbackCategoryNames.enumerated().map { index, name in
       DailyWorkflowGridRow(
         id: "placeholder-\(index)",
         name: name,
         colorHex: DailyGridConfig.fallbackColorHexes[
           index % DailyGridConfig.fallbackColorHexes.count],
-        slotOccupancies: Array(repeating: 0, count: max(1, slot数量)),
-        slotCardInfos: Array(repeating: nil, count: max(1, slot数量))
+        slotOccupancies: Array(repeating: 0, count: max(1, slotCount)),
+        slotCardInfos: Array(repeating: nil, count: max(1, slotCount))
       )
     }
   }
@@ -127,7 +127,7 @@ struct DailyWorkflowStatChip: Identifiable, Sendable {
   static let placeholder: [DailyWorkflowStatChip] = [
     DailyWorkflowStatChip(id: "context-switched", title: "Context switched", value: "0 times"),
     DailyWorkflowStatChip(id: "interrupted", title: "Interrupted", value: "0 times"),
-    DailyWorkflowStatChip(id: "focused-for", title: "专注ed for", value: "0m"),
+    DailyWorkflowStatChip(id: "focused-for", title: "Focused for", value: "0m"),
     DailyWorkflowStatChip(id: "distracted-for", title: "Distracted for", value: "0m"),
     DailyWorkflowStatChip(id: "transitioning-time", title: "Transitioning time", value: "0m"),
   ]
@@ -150,7 +150,7 @@ struct DailyWorkflowTimelineWindow: Sendable {
     return Array(startHour...adjustedEndHour)
   }
 
-  var slot数量: Int {
+  var slotCount: Int {
     guard endMinute > startMinute else {
       let fallbackDuration = DailyGridConfig.visibleEndMinute - DailyGridConfig.visibleStartMinute
       return max(1, Int((fallbackDuration / DailyGridConfig.slotDurationMinutes).rounded()))

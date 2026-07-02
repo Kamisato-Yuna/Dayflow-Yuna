@@ -28,7 +28,7 @@ private func hslToHex(_ h: Double, _ s: Double, _ l: Double) -> String {
 }
 
 extension Color {
-  // Keep only HSL helper to avoid redeclaring `init(hex:)` (already defined elsew这里)
+  // Keep only HSL helper to avoid redeclaring `init(hex:)` (already defined elsewhere)
   static func fromHSL(h: Double, s: Double, l: Double) -> Color {
     let (r, g, b) = hslToRGB(h, s, l)
     return Color(.sRGB, red: r, green: g, blue: b, opacity: 1)
@@ -59,7 +59,7 @@ private func makeColorWheelCGImage(
   else { return nil }
 
   guard let data = ctx.data else { return nil }
-  let ptr = data.bind记忆(to: UInt8.self, capacity: pixelW * pixelH * 4)
+  let ptr = data.bindMemory(to: UInt8.self, capacity: pixelW * pixelH * 4)
 
   let cx = Double(pixelW) / 2.0
   let cy = Double(pixelH) / 2.0
@@ -129,7 +129,7 @@ private struct DotPattern: View {
         )
       )
     }
-    .allowsHit测试ing(false)
+    .allowsHitTesting(false)
     .zIndex(10)
   }
 }
@@ -239,7 +239,7 @@ private struct ColorPickerView: View {
           )
           .frame(width: size, height: size)
       }
-      .allowsHit测试ing(true)
+      .allowsHitTesting(true)
 
       // Bullets
       let bx = size / 2 + CGFloat(cos(angle)) * radius
@@ -272,7 +272,7 @@ private struct ColorPickerView: View {
           )
           .opacity(0.9)
           .zIndex(20)
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
       }
       // Primary draggable bullet
       Circle()
@@ -299,7 +299,7 @@ private struct ColorPickerView: View {
           )
           .opacity(0.9)
           .zIndex(20)
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
       }
       if numPoints >= 4 {
         Circle()
@@ -310,7 +310,7 @@ private struct ColorPickerView: View {
           .position(x: bx3, y: by3)
           .opacity(0.8)
           .zIndex(15)
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
       }
       if numPoints >= 5 {
         Circle()
@@ -321,7 +321,7 @@ private struct ColorPickerView: View {
           .position(x: bx4, y: by4)
           .opacity(0.8)
           .zIndex(15)
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
       }
     }
     .frame(width: size, height: size)
@@ -366,7 +366,7 @@ private struct ColorSwatch: View {
         .animation(.easeInOut(duration: 0.15), value: hovering)
 
       if showHint && hovering {
-        Text("拖到分类")
+        Text("Drag to category")
           .font(.system(size: 11))
           .foregroundColor(.white)
           .padding(.vertical, 4)
@@ -374,7 +374,7 @@ private struct ColorSwatch: View {
           .background(Color.black.opacity(0.8))
           .clipShape(RoundedRectangle(cornerRadius: 4))
           .offset(y: -30)
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
       }
     }
     .onHover { hovering in self.hovering = hovering }
@@ -399,7 +399,7 @@ private struct EditableCategoryCard: View {
   var onSave: () -> Void
   var onDelete: () -> Void
 
-  @专注State private var focusedField: Field?
+  @FocusState private var focusedField: Field?
 
   var body: some View {
     Group {
@@ -436,10 +436,10 @@ private struct EditableCategoryCard: View {
           focusedField = nil
           onSave()
         } label: {
-          Image("分类Checkmark")
+          Image("CategoriesCheckmark")
             .resizable()
             .frame(width: 20, height: 20)
-            .accessibilityLabel("保存分类修改")
+            .accessibilityLabel("Save category edits")
         }
         .buttonStyle(.plain)
 
@@ -447,7 +447,7 @@ private struct EditableCategoryCard: View {
 
       ZStack(alignment: .topLeading) {
         if draftDetails.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-          Text("专业、学习或职业任务（编码、设计、会议）。")
+          Text("Professional, school, or career-focused tasks (coding, design, meetings).")
             .font(Font.custom("Figtree", size: 12).weight(.medium))
             .foregroundColor(Color.black.opacity(0.35))
             .padding(.horizontal, 12)
@@ -506,10 +506,10 @@ private struct EditableCategoryCard: View {
         Button {
           onStartEdit()
         } label: {
-          Image("分类Edit")
+          Image("CategoriesEdit")
             .resizable()
             .frame(width: 20, height: 20)
-            .accessibilityLabel("编辑分类")
+            .accessibilityLabel("Edit category")
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -517,10 +517,10 @@ private struct EditableCategoryCard: View {
         Button {
           onDelete()
         } label: {
-          Image("分类Delete")
+          Image("CategoriesDelete")
             .resizable()
             .frame(width: 20, height: 20)
-            .accessibilityLabel("删除分类")
+            .accessibilityLabel("Delete category")
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -634,7 +634,7 @@ struct ColorOrganizerRoot: View {
 
   enum FlowMode {
     case detailsAndColors
-    case colors开启ly
+    case colorsOnly
   }
 
   var presentationStyle: PresentationStyle = .embedded
@@ -664,11 +664,11 @@ struct ColorOrganizerRoot: View {
   @State private var pendingScrollTarget: UUID? = nil
   @State private var isAddButtonHovered: Bool = false
   @State private var trackedStages: Set<CategorySetupStage> = []
-  @State private var add数量 = 0
-  @State private var delete数量 = 0
-  @State private var rename数量 = 0
-  @State private var detailsUpdate数量 = 0
-  @State private var colorChange数量 = 0
+  @State private var addCount = 0
+  @State private var deleteCount = 0
+  @State private var renameCount = 0
+  @State private var detailsUpdateCount = 0
+  @State private var colorChangeCount = 0
   @State private var didAdjustPalette = false
 
   init(
@@ -687,14 +687,14 @@ struct ColorOrganizerRoot: View {
     self.completionButtonTitle = completionButtonTitle
     self.showsTitles = showsTitles
     self.analyticsSurface = analyticsSurface
-    _stage = State(initialValue: flowMode == .colors开启ly ? .colors : .details)
+    _stage = State(initialValue: flowMode == .colorsOnly ? .colors : .details)
   }
 
   private var categories: [TimelineCategory] {
-    categoryStore.editable分类
+    categoryStore.editableCategories
   }
 
-  private var is开启boardingAnalyticsEnabled: Bool {
+  private var isOnboardingAnalyticsEnabled: Bool {
     analyticsSurface == "onboarding"
   }
 
@@ -714,8 +714,8 @@ struct ColorOrganizerRoot: View {
 
   private var spectrumColors: [String] {
     (0..<8).map { i in
-      let angle关闭set = Double(i) * (.pi * 2) / 8.0
-      let angle = currentAngle + angle关闭set
+      let angleOffset = Double(i) * (.pi * 2) / 8.0
+      let angle = currentAngle + angleOffset
       let hue = angle * 180.0 / .pi
       let lightness = 15 + 75 * normalizedRadius
       return hslToHex(hue, 100, lightness)
@@ -749,7 +749,7 @@ struct ColorOrganizerRoot: View {
 
       VStack(spacing: verticalSpacing) {
         if stage == .details && showsTitles {
-          Text("自定义你的分类")
+          Text("Customize your categories")
             .font(Font.custom("Instrument Serif", size: 44))
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .center)
@@ -798,12 +798,12 @@ struct ColorOrganizerRoot: View {
     VStack(alignment: .leading, spacing: showTitles ? 20 : 16) {
       if showTitles {
         VStack(alignment: .leading, spacing: 6) {
-          Text("第一部分，共 2")
+          Text("Part 1 of 2")
             .font(Font.custom("Figtree", size: 14).weight(.bold))
             .foregroundColor(Color(red: 0.98, green: 0.43, blue: 0))
             .frame(maxWidth: .infinity, alignment: .leading)
 
-          Text("编辑标题和描述")
+          Text("Edit title and description")
             .font(Font.custom("Instrument Serif", size: 30))
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -812,14 +812,14 @@ struct ColorOrganizerRoot: View {
 
       VStack(alignment: .leading, spacing: 16) {
         instructionRow(
-          icon: "分类Organize",
+          icon: "CategoriesOrganize",
           text:
             "Dayflow organizes your activities by the category titles and descriptions you provide."
         )
         .frame(maxWidth: isCompact ? .infinity : 280, alignment: .leading)
 
         instructionRow(
-          icon: "分类TextSelect",
+          icon: "CategoriesTextSelect",
           text:
             "Try to provide as much details in the descriptions as you can to help Dayflow understand your workflow and habits."
         )
@@ -852,12 +852,12 @@ struct ColorOrganizerRoot: View {
     VStack(alignment: .leading, spacing: 24) {
       if showTitles {
         VStack(alignment: .leading, spacing: 6) {
-          Text("第二部分，共 2")
+          Text("Part 2 of 2")
             .font(Font.custom("Figtree", size: 14).weight(.bold))
             .foregroundColor(Color(red: 0.98, green: 0.43, blue: 0))
             .frame(maxWidth: .infinity, alignment: .leading)
 
-          Text("编辑颜色")
+          Text("Edit colors")
             .font(Font.custom("Instrument Serif", size: 30))
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -922,7 +922,7 @@ struct ColorOrganizerRoot: View {
     }
   }
 
-  private var canAddMore分类: Bool {
+  private var canAddMoreCategories: Bool {
     categories.count < 20
   }
 
@@ -935,7 +935,7 @@ struct ColorOrganizerRoot: View {
           .font(.system(size: 10, weight: .bold))
           .foregroundColor(Color(red: 0.49, green: 0.33, blue: 0.16))
 
-        Text("新建分类")
+        Text("Create a new category")
           .font(Font.custom("Figtree", size: 14).weight(.bold))
           .foregroundColor(Color(red: 0.49, green: 0.33, blue: 0.16))
       }
@@ -957,10 +957,10 @@ struct ColorOrganizerRoot: View {
           .inset(by: 0.5)
           .stroke(Color(red: 0.95, green: 0.71, blue: 0.56), lineWidth: 1)
       )
-      .opacity(canAddMore分类 ? 1 : 0.45)
+      .opacity(canAddMoreCategories ? 1 : 0.45)
     }
     .buttonStyle(.plain)
-    .disabled(!canAddMore分类)
+    .disabled(!canAddMoreCategories)
     .scaleEffect(isAddButtonHovered ? 1.02 : 1.0)
     .animation(.easeOut(duration: 0.18), value: isAddButtonHovered)
     .shadow(
@@ -968,13 +968,13 @@ struct ColorOrganizerRoot: View {
       radius: isAddButtonHovered ? 6 : 3, x: 0, y: isAddButtonHovered ? 3 : 1
     )
     .onHover { hovering in
-      if canAddMore分类 {
+      if canAddMoreCategories {
         isAddButtonHovered = hovering
       } else {
         isAddButtonHovered = false
       }
     }
-    .pointingHandCursor(enabled: canAddMore分类)
+    .pointingHandCursor(enabled: canAddMoreCategories)
   }
 
   private func colorAssignmentPanel(isCompact: Bool) -> some View {
@@ -1117,7 +1117,7 @@ struct ColorOrganizerRoot: View {
   }
 
   private var emptyState: some View {
-    Text("先添加一个分类开始使用。")
+    Text("Add a category to get started.")
       .font(Font.custom("Figtree", size: 13).weight(.medium))
       .foregroundColor(Color(red: 0.35, green: 0.35, blue: 0.35))
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -1197,7 +1197,7 @@ struct ColorOrganizerRoot: View {
   }
 
   private func createNewCategory() {
-    guard canAddMore分类 else { return }
+    guard canAddMoreCategories else { return }
 
     withAnimation(.easeInOut(duration: 0.25)) {
       if stage != .details {
@@ -1215,17 +1215,17 @@ struct ColorOrganizerRoot: View {
         suffix += 1
       }
 
-      categoryStore.mark开启boarding分类自定义ized()
+      categoryStore.markOnboardingCategoriesCustomized()
       categoryStore.addCategory(name: candidate)
-      add数量 += 1
-      capture开启boardingEvent(
+      addCount += 1
+      captureOnboardingEvent(
         "onboarding_category_added",
         [
           "category_name": candidate,
-          "total_count": categoryStore.editable分类.count,
+          "total_count": categoryStore.editableCategories.count,
           "stage": CategorySetupStage.details.rawValue,
         ])
-      let editable = categoryStore.editable分类
+      let editable = categoryStore.editableCategories
       if let newlyCreated = editable.last {
         editingCategoryID = newlyCreated.id
         draftName = newlyCreated.name
@@ -1257,13 +1257,13 @@ struct ColorOrganizerRoot: View {
     let previousDetails = category.details
 
     if didRename || didUpdateDetails {
-      categoryStore.mark开启boarding分类自定义ized()
+      categoryStore.markOnboardingCategoriesCustomized()
     }
 
     if didRename {
       categoryStore.renameCategory(id: category.id, to: trimmedName)
-      rename数量 += 1
-      capture开启boardingEvent(
+      renameCount += 1
+      captureOnboardingEvent(
         "onboarding_category_renamed",
         [
           "category_name": trimmedName,
@@ -1273,8 +1273,8 @@ struct ColorOrganizerRoot: View {
     }
     categoryStore.updateDetails(draftDetails, for: category.id)
     if didUpdateDetails {
-      detailsUpdate数量 += 1
-      capture开启boardingEvent(
+      detailsUpdateCount += 1
+      captureOnboardingEvent(
         "onboarding_category_details_updated",
         [
           "category_name": didRename ? trimmedName : previousName,
@@ -1291,14 +1291,14 @@ struct ColorOrganizerRoot: View {
       if editingCategoryID == category.id {
         endEditing()
       }
-      categoryStore.mark开启boarding分类自定义ized()
+      categoryStore.markOnboardingCategoriesCustomized()
       categoryStore.removeCategory(id: category.id)
-      delete数量 += 1
-      capture开启boardingEvent(
+      deleteCount += 1
+      captureOnboardingEvent(
         "onboarding_category_deleted",
         [
           "category_name": category.name,
-          "remaining_count": categoryStore.editable分类.count,
+          "remaining_count": categoryStore.editableCategories.count,
           "stage": stage.rawValue,
         ])
     }
@@ -1306,13 +1306,13 @@ struct ColorOrganizerRoot: View {
 
   private func assignColor(_ hex: String, to category: TimelineCategory) {
     let previousHex = category.colorHex
-    categoryStore.mark开启boarding分类自定义ized()
+    categoryStore.markOnboardingCategoriesCustomized()
     categoryStore.assignColor(hex, to: category.id)
 
     guard hex != previousHex else { return }
 
-    colorChange数量 += 1
-    capture开启boardingEvent(
+    colorChangeCount += 1
+    captureOnboardingEvent(
       "onboarding_category_color_changed",
       [
         "category_name": category.name,
@@ -1337,7 +1337,7 @@ struct ColorOrganizerRoot: View {
   }
 
   private func trackStageViewIfNeeded(_ stage: CategorySetupStage) {
-    guard is开启boardingAnalyticsEnabled else { return }
+    guard isOnboardingAnalyticsEnabled else { return }
     guard trackedStages.contains(stage) == false else { return }
 
     trackedStages.insert(stage)
@@ -1345,35 +1345,35 @@ struct ColorOrganizerRoot: View {
   }
 
   private func trackDetailsCompletion() {
-    capture开启boardingEvent(
+    captureOnboardingEvent(
       "onboarding_categories_details_completed",
       [
         "stage": CategorySetupStage.details.rawValue,
-        "added_count": add数量,
-        "renamed_count": rename数量,
-        "details_updated_count": detailsUpdate数量,
-        "deleted_count": delete数量,
+        "added_count": addCount,
+        "renamed_count": renameCount,
+        "details_updated_count": detailsUpdateCount,
+        "deleted_count": deleteCount,
       ])
   }
 
   private func trackColorsCompletion() {
-    capture开启boardingEvent(
+    captureOnboardingEvent(
       "onboarding_categories_colors_completed",
       [
         "stage": CategorySetupStage.colors.rawValue,
-        "added_count": add数量,
-        "renamed_count": rename数量,
-        "details_updated_count": detailsUpdate数量,
-        "deleted_count": delete数量,
-        "color_changed_count": colorChange数量,
+        "added_count": addCount,
+        "renamed_count": renameCount,
+        "details_updated_count": detailsUpdateCount,
+        "deleted_count": deleteCount,
+        "color_changed_count": colorChangeCount,
         "did_adjust_palette": didAdjustPalette,
         "palette_radius": normalizedRadius,
         "palette_angle": currentAngle,
       ])
   }
 
-  private func capture开启boardingEvent(_ name: String, _ extra: [String: Any]) {
-    guard is开启boardingAnalyticsEnabled else { return }
+  private func captureOnboardingEvent(_ name: String, _ extra: [String: Any]) {
+    guard isOnboardingAnalyticsEnabled else { return }
 
     var payload: [String: Any] = [
       "surface": analyticsSurface ?? "unknown",
@@ -1391,7 +1391,7 @@ struct ColorOrganizerRoot: View {
 
   private func commitPendingEditsIfNeeded() {
     guard let editingID = editingCategoryID,
-      let category = categories.first(w这里: { $0.id == editingID })
+      let category = categories.first(where: { $0.id == editingID })
     else { return }
     saveEdits(for: category)
   }

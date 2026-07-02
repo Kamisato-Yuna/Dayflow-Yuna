@@ -11,7 +11,7 @@ struct WeeklyDashboardSnapshot {
   let treemap: WeeklyTreemapSnapshot
   let sankey: WeeklySankeySnapshot
   let workflow: WeeklyWorkflowSnapshot
-  let heatmap: Weekly专注HeatmapSnapshot
+  let heatmap: WeeklyFocusHeatmapSnapshot
   let contextCharts: WeeklyContextChartsSnapshot
   let applicationInteractions: WeeklyApplicationInteractionsSnapshot
 }
@@ -27,7 +27,7 @@ struct WeeklySankeySnapshot {
   static func empty(sourceName: String) -> WeeklySankeySnapshot {
     WeeklySankeySnapshot(
       id: "empty-weekly-sankey",
-      seedLabel: "时间线数据",
+      seedLabel: "Timeline data",
       sourceName: sourceName,
       categories: [],
       apps: [],

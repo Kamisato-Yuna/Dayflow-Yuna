@@ -25,11 +25,11 @@ extension MainView {
       .background(Color.clear)
       .ignoresSafeArea()
       .blur(radius: goalFlowPresentation == nil ? 0 : 10)
-      .allowsHit测试ing(goalFlowPresentation == nil)
+      .allowsHitTesting(goalFlowPresentation == nil)
       // Hero animation overlay for video expansion (Emil Kowalski: shared element transitions)
       .overlay { overlayContent }
       .overlay(alignment: .bottomTrailing) { timelineFailureToastOverlayContent }
-      .overlay(alignment: .bottomTrailing) { screenRecording权限NoticeOverlayContent }
+      .overlay(alignment: .bottomTrailing) { screenRecordingPermissionNoticeOverlayContent }
       .overlay { categoryEditorOverlay }
   }
 
@@ -48,11 +48,11 @@ extension MainView {
           isPresented: $showDatePicker
         )
       }
-      .onAppear(perform: performMainLayout开启Appear)
-      .onDisappear(perform: performMainLayout开启Disappear)
-      .onChange(of: inactivity.pending重置) { _, fired in
+      .onAppear(perform: performMainLayoutOnAppear)
+      .onDisappear(perform: performMainLayoutOnDisappear)
+      .onChange(of: inactivity.pendingReset) { _, fired in
         if fired, selectedIcon != .settings {
-          performIdle重置AndScroll()
+          performIdleResetAndScroll()
           InactivityMonitor.shared.markHandledIfPending()
         }
       }
@@ -63,7 +63,7 @@ extension MainView {
         handleSelectedDateChange(newDate)
       }
       .onChange(of: refreshActivitiesTrigger) {
-        updateCardsToReview数量()
+        updateCardsToReviewCount()
         loadWeeklyTrackedMinutes()
       }
       .onChange(of: selectedActivity?.id) {
@@ -73,8 +73,8 @@ extension MainView {
       // reset was pending, perform it once. SwiftUI allows multiple onChange
       // handlers for the same value — they fire in declaration order.
       .onChange(of: selectedIcon) { _, newIcon in
-        if newIcon != .settings, inactivity.pending重置 {
-          performIdle重置AndScroll()
+        if newIcon != .settings, inactivity.pendingReset {
+          performIdleResetAndScroll()
           InactivityMonitor.shared.markHandledIfPending()
         }
       }
@@ -91,8 +91,8 @@ extension MainView {
       .onReceive(NotificationCenter.default.publisher(for: .showTimelineFailureToast)) {
         handleShowTimelineFailureToastNotification($0)
       }
-      .onReceive(NotificationCenter.default.publisher(for: .showScreenRecording权限Notice)) {
-        handleShowScreenRecording权限NoticeNotification($0)
+      .onReceive(NotificationCenter.default.publisher(for: .showScreenRecordingPermissionNotice)) {
+        handleShowScreenRecordingPermissionNoticeNotification($0)
       }
       .onReceive(NotificationCenter.default.publisher(for: .timelineDataUpdated)) {
         handleTimelineDataUpdatedNotification($0)
@@ -128,11 +128,11 @@ extension MainView {
   }
 
   @ViewBuilder
-  private var screenRecording权限NoticeOverlayContent: some View {
-    if showScreenRecording权限Notice {
-      ScreenRecording权限NoticeView(
-        onOpenSettings: handleScreenRecording权限NoticeOpenSettings,
-        onDismiss: handleScreenRecording权限NoticeDismiss
+  private var screenRecordingPermissionNoticeOverlayContent: some View {
+    if showScreenRecordingPermissionNotice {
+      ScreenRecordingPermissionNoticeView(
+        onOpenSettings: handleScreenRecordingPermissionNoticeOpenSettings,
+        onDismiss: handleScreenRecordingPermissionNoticeDismiss
       )
       .padding(.trailing, 24)
       .padding(.bottom, 24)
@@ -140,7 +140,7 @@ extension MainView {
     }
   }
 
-  private func performMainLayout开启Appear() {
+  private func performMainLayoutOnAppear() {
     syncCurrentUIContext()
 
     // screen viewed and initial timeline view
@@ -156,11 +156,11 @@ extension MainView {
       logoOpacity = 1
     }
     withAnimation(.spring(response: 0.5, dampingFraction: 0.8, blendDuration: 0).delay(0.1)) {
-      timeline关闭set = 0
+      timelineOffset = 0
       timelineOpacity = 1
     }
     withAnimation(.spring(response: 0.5, dampingFraction: 0.8, blendDuration: 0).delay(0.15)) {
-      sidebar关闭set = 0
+      sidebarOffset = 0
       sidebarOpacity = 1
     }
     withAnimation(.spring(response: 0.5, dampingFraction: 0.8, blendDuration: 0).delay(0.2)) {
@@ -173,21 +173,21 @@ extension MainView {
     showScreenRecordingNoticeIfNeeded()
     startDayChangeTimer()
     loadWeeklyTrackedMinutes()
-    updateCardsToReview数量()
+    updateCardsToReviewCount()
     requestDailyGoalPromptIfNeeded()
   }
 
-  private func performMainLayout开启Disappear() {
+  private func performMainLayoutOnDisappear() {
     // Safety: stop timer if view disappears
     stopDayChangeTimer()
-    review数量Task?.cancel()
-    review数量Task = nil
+    reviewCountTask?.cancel()
+    reviewCountTask = nil
     copyTimelineTask?.cancel()
     deleteTimelineTask?.cancel()
   }
 
   private func handleTabSelectionChange(_ newIcon: SidebarIcon) {
-    // 清除 tab-specific notification badges once the user visits the destination.
+    // Clear tab-specific notification badges once the user visits the destination.
     if newIcon == .journal {
       NotificationBadgeManager.shared.clearJournalBadge()
     } else if newIcon == .daily {
@@ -220,7 +220,7 @@ extension MainView {
         AnalyticsService.shared.capture(
           "timeline_viewed", ["date_bucket": dayString(selectedDate)])
       }
-      updateCardsToReview数量()
+      updateCardsToReviewCount()
       loadWeeklyTrackedMinutes()
     } else {
       showTimelineReview = false
@@ -258,7 +258,7 @@ extension MainView {
     )
 
     cachedTimelineWeekRange = newWeekRange
-    updateCardsToReview数量(trigger: "selectedDateChange")
+    updateCardsToReviewCount(trigger: "selectedDateChange")
     if weekRangeChanged {
       loadWeeklyTrackedMinutes(trigger: "selectedDateChange")
     }
@@ -290,7 +290,7 @@ extension MainView {
       )
       guard refreshedDay == selectedTimelineDay else { return }
     }
-    updateCardsToReview数量()
+    updateCardsToReviewCount()
     loadWeeklyTrackedMinutes()
   }
 
@@ -305,27 +305,27 @@ extension MainView {
     }
   }
 
-  private func handleShowScreenRecording权限NoticeNotification(_ notification: Notification) {
+  private func handleShowScreenRecordingPermissionNoticeNotification(_ notification: Notification) {
     showScreenRecordingNoticeIfNeeded()
   }
 
   private func showScreenRecordingNoticeIfNeeded() {
-    guard !didDismissScreenRecording权限NoticeThisSession else { return }
-    guard !ScreenRecording权限Notice.isGranted else {
-      showScreenRecording权限Notice = false
+    guard !didDismissScreenRecordingPermissionNoticeThisSession else { return }
+    guard !ScreenRecordingPermissionNotice.isGranted else {
+      showScreenRecordingPermissionNotice = false
       return
     }
     guard AppState.shared.getSavedPreference() == true || appState.isRecording else { return }
 
     withAnimation(.spring(response: 0.28, dampingFraction: 0.9)) {
-      showScreenRecording权限Notice = true
+      showScreenRecordingPermissionNotice = true
     }
   }
 
   private func handleAppDidBecomeActive() {
-    if ScreenRecording权限Notice.isGranted {
-      showScreenRecording权限Notice = false
-      didDismissScreenRecording权限NoticeThisSession = false
+    if ScreenRecordingPermissionNotice.isGranted {
+      showScreenRecordingPermissionNotice = false
+      didDismissScreenRecordingPermissionNoticeThisSession = false
     }
 
     // Check if day changed while app was backgrounded
@@ -360,20 +360,20 @@ extension MainView {
     }
   }
 
-  private func handleScreenRecording权限NoticeOpenSettings() {
+  private func handleScreenRecordingPermissionNoticeOpenSettings() {
     AnalyticsService.shared.capture("screen_permission_notice_clicked_settings")
-    didDismissScreenRecording权限NoticeThisSession = true
+    didDismissScreenRecordingPermissionNoticeThisSession = true
     withAnimation(.spring(response: 0.25, dampingFraction: 0.92)) {
-      showScreenRecording权限Notice = false
+      showScreenRecordingPermissionNotice = false
     }
-    ScreenRecording权限Notice.openSystemSettings()
+    ScreenRecordingPermissionNotice.openSystemSettings()
   }
 
-  private func handleScreenRecording权限NoticeDismiss() {
+  private func handleScreenRecordingPermissionNoticeDismiss() {
     AnalyticsService.shared.capture("screen_permission_notice_dismissed")
-    didDismissScreenRecording权限NoticeThisSession = true
+    didDismissScreenRecordingPermissionNoticeThisSession = true
     withAnimation(.spring(response: 0.25, dampingFraction: 0.92)) {
-      showScreenRecording权限Notice = false
+      showScreenRecordingPermissionNotice = false
     }
   }
 
@@ -389,7 +389,7 @@ extension MainView {
           isPresented: $showTimelineReview,
           selectedDate: selectedDate
         ) {
-          updateCardsToReview数量()
+          updateCardsToReviewCount()
           reviewSummaryRefreshToken &+= 1
         }
         .environmentObject(categoryStore)
@@ -428,7 +428,7 @@ private struct TimelineFailureToastView: View {
           .foregroundColor(Color(hex: "C04A00"))
           .padding(.top, 2)
 
-        // Mirrors ScreenRecording权限NoticeView: semibold title with a
+        // Mirrors ScreenRecordingPermissionNoticeView: semibold title with a
         // quieter body. Untitled (generic fallback) toasts keep the old look.
         VStack(alignment: .leading, spacing: 3) {
           if let title {
@@ -452,7 +452,7 @@ private struct TimelineFailureToastView: View {
         }
         .buttonStyle(.plain)
         .hoverScaleEffect(scale: 1.02)
-        .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+        .pointingHandCursorOnHover(reassertOnPressEnd: true)
       }
 
       DayflowSurfaceButton(
@@ -487,7 +487,7 @@ private struct TimelineFailureToastView: View {
   }
 }
 
-private struct ScreenRecording权限NoticeView: View {
+private struct ScreenRecordingPermissionNoticeView: View {
   let onOpenSettings: () -> Void
   let onDismiss: () -> Void
 
@@ -500,7 +500,7 @@ private struct ScreenRecording权限NoticeView: View {
           .padding(.top, 2)
 
         VStack(alignment: .leading, spacing: 3) {
-          Text("需要屏幕录制权限")
+          Text("Screen recording access needed")
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.86))
@@ -519,7 +519,7 @@ private struct ScreenRecording权限NoticeView: View {
         }
         .buttonStyle(.plain)
         .hoverScaleEffect(scale: 1.02)
-        .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+        .pointingHandCursorOnHover(reassertOnPressEnd: true)
       }
 
       DayflowSurfaceButton(

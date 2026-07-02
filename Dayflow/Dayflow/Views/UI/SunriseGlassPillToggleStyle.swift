@@ -16,28 +16,28 @@ struct SunriseGlassPillToggleStyle: ToggleStyle {
   @Environment(\.colorScheme) private var scheme
 
   func makeBody(configuration: Configuration) -> some View {
-    let is开启 = configuration.is开启
+    let isOn = configuration.isOn
     Button {
       withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
-        configuration.is开启.toggle()
+        configuration.isOn.toggle()
         #if os(iOS)
           UIImpactFeedbackGenerator(style: .light).impactOccurred()
         #endif
       }
     } label: {
-      ZStack(alignment: is开启 ? .trailing : .leading) {
+      ZStack(alignment: isOn ? .trailing : .leading) {
 
         // Track
         Capsule()
           .fill(
             LinearGradient(
-              colors: is开启 ? onColors : offColors,
+              colors: isOn ? onColors : offColors,
               startPoint: .topLeading, endPoint: .bottomTrailing
             )
           )
           .overlay(
             Capsule()
-              .strokeBorder(.white.opacity(is开启 ? 0.35 : 0.45), lineWidth: 1)
+              .strokeBorder(.white.opacity(isOn ? 0.35 : 0.45), lineWidth: 1)
               .blendMode(.overlay)
           )
           .overlay(
@@ -46,9 +46,9 @@ struct SunriseGlassPillToggleStyle: ToggleStyle {
               .opacity(0.9)
           )
           .overlay(
-            // 轻微 top highlight to match chips/date pill gloss
+            // Subtle top highlight to match chips/date pill gloss
             Capsule()
-              .fill(.white.opacity(is开启 ? 0.18 : 0.12))
+              .fill(.white.opacity(isOn ? 0.18 : 0.12))
               .frame(height: trackHeight * 0.55)
               .offset(y: -trackHeight * 0.22)
               .blur(radius: 2)
@@ -73,7 +73,7 @@ struct SunriseGlassPillToggleStyle: ToggleStyle {
           .padding(2)
       }
       .accessibilityElement(children: .ignore)
-      .accessibilityValue(Text(is开启 ? "开启" : "关闭"))
+      .accessibilityValue(Text(isOn ? "On" : "Off"))
     }
     .buttonStyle(.plain)
     .pointingHandCursor()

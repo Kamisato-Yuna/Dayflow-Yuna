@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ToolCallBubble: View {
   let message: ChatMessage
-  @State private var shimmer关闭set: CGFloat = -1.0
+  @State private var shimmerOffset: CGFloat = -1.0
   @State private var spinnerRotation: Double = 0
   @State private var appearScale: CGFloat = 0.8
   @State private var appearOpacity: Double = 0
@@ -37,7 +37,7 @@ struct ToolCallBubble: View {
       startAnimationsIfNeeded()
     }
     .onChange(of: message.toolStatus) {
-      // 轻微 bounce when status changes
+      // Subtle bounce when status changes
       withAnimation(.spring(response: 0.25, dampingFraction: 0.6)) {
         appearScale = 1.03
       }
@@ -124,7 +124,7 @@ struct ToolCallBubble: View {
 
         // Shimmer overlay
         if !reduceMotion {
-          ShimmerOverlay(offset: shimmer关闭set)
+          ShimmerOverlay(offset: shimmerOffset)
             .blendMode(.softLight)
         }
       }
@@ -199,7 +199,7 @@ struct ToolCallBubble: View {
 
     // Continuous shimmer animation
     withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: false)) {
-      shimmer关闭set = 1.0
+      shimmerOffset = 1.0
     }
   }
 }

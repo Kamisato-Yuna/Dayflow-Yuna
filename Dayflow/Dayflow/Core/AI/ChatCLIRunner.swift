@@ -21,7 +21,7 @@ enum ChatCLITool: String, Codable {
 enum ChatStreamEvent: Sendable {
   /// Session started with ID (for session persistence)
   case sessionStarted(id: String)
-  /// 思考中/reasoning content (shown in collapsible UI)
+  /// Thinking/reasoning content (shown in collapsible UI)
   case thinking(String)
   /// Tool/command execution started
   case toolStart(command: String)

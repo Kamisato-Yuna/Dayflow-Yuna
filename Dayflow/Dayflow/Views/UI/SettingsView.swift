@@ -68,7 +68,7 @@ struct SettingsView: View {
       .sheet(isPresented: $providersViewModel.isShowingLocalModelUpgradeSheet) {
         LocalModelUpgradeSheet(
           preset: .qwen3VL4B,
-          initial引擎: providersViewModel.local引擎,
+          initialEngine: providersViewModel.localEngine,
           initialBaseURL: providersViewModel.localBaseURL,
           initialModelId: providersViewModel.localModelId,
           initialAPIKey: providersViewModel.localAPIKey,
@@ -90,7 +90,7 @@ struct SettingsView: View {
     }
     .onAppear {
       DayflowAuthManager.shared.loadStoredSessionIfNeeded()
-      providersViewModel.handle开启Appear()
+      providersViewModel.handleOnAppear()
       otherViewModel.refreshAnalyticsState()
       storageViewModel.refreshStorageIfNeeded(isStorageTab: selectedTab == .storage)
       AnalyticsService.shared.capture("settings_opened")
@@ -100,7 +100,7 @@ struct SettingsView: View {
       if newValue == .storage {
         storageViewModel.refreshStorageIfNeeded(isStorageTab: true)
       } else if newValue == .privacy {
-        privacyViewModel.handle开启Appear()
+        privacyViewModel.handleOnAppear()
       }
     }
     .onReceive(NotificationCenter.default.publisher(for: .openProvidersSettings)) { _ in
@@ -233,7 +233,7 @@ struct SettingsView: View {
   @ViewBuilder
   private var tabContent: some View {
     // Content swap is a pure fade. The sidebar pill's matchedGeometryEffect
-    // carries the "w这里 you went" signal — the content doesn't need to
+    // carries the "where you went" signal — the content doesn't need to
     // redundantly slide horizontally, which implied a carousel that doesn't
     // actually exist (the sidebar is vertical, not left/right tabs).
     Group {

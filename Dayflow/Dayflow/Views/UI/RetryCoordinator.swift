@@ -22,13 +22,13 @@ final class RetryCoordinator: ObservableObject {
 
     switch status {
     case .queued(let position, let total):
-      return "状态：排队中（第 \(position) 步，共 \(total) 步）"
+      return "Status: Queued (\(position) of \(total))"
     case .running(let step):
-      return "状态：重处理中 - 步骤：\(stepLabel(step))\(dots)"
+      return "Status: Reprocessing - Step: \(stepLabel(step))\(dots)"
     case .failed:
-      return "状态：失败 - 已停止重试"
+      return "Status: Failed - retry stopped"
     case .stopped:
-      return "状态：已停止 - 前序批次处理失败"
+      return "Status: Stopped - earlier batch failed"
     case .done:
       return nil
     }

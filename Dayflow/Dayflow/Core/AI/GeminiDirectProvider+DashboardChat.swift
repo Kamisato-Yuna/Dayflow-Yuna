@@ -167,18 +167,18 @@ extension GeminiDirectProvider {
     contents: [[String: Any]],
     continuation: AsyncThrowingStream<ChatStreamEvent, Error>.Continuation
   ) async throws -> DashboardTurnResult {
-    var include思考中Config = true
+    var includeThinkingConfig = true
 
     do {
       return try await streamDashboardTurn(
         systemInstruction: systemInstruction,
         contents: contents,
-        include思考中Config: include思考中Config,
+        includeThinkingConfig: includeThinkingConfig,
         continuation: continuation
       )
     } catch {
-      if shouldRetryDashboardWithout思考中Config(error) {
-        include思考中Config = false
+      if shouldRetryDashboardWithoutThinkingConfig(error) {
+        includeThinkingConfig = false
         print("🔎 GEMINI DEBUG: dashboard_chat retrying without thinkingConfig")
       }
       logGeminiFailure(
@@ -193,7 +193,7 @@ extension GeminiDirectProvider {
       return try await streamDashboardTurn(
         systemInstruction: systemInstruction,
         contents: contents,
-        include思考中Config: include思考中Config,
+        includeThinkingConfig: includeThinkingConfig,
         continuation: continuation
       )
     } catch {
@@ -208,7 +208,7 @@ extension GeminiDirectProvider {
     return try await generateDashboardTurnNonStreaming(
       systemInstruction: systemInstruction,
       contents: contents,
-      include思考中Config: include思考中Config
+      includeThinkingConfig: includeThinkingConfig
     )
   }
 
@@ -232,7 +232,7 @@ extension GeminiDirectProvider {
             "limit": [
               "type": "NUMBER",
               "description":
-                "可选 row cap. If omitted, returns all matching rows.",
+                "Optional row cap. If omitted, returns all matching rows.",
             ],
           ],
         ],
@@ -250,7 +250,7 @@ extension GeminiDirectProvider {
             "limit": [
               "type": "NUMBER",
               "description":
-                "可选 row cap. If omitted, returns all matching rows.",
+                "Optional row cap. If omitted, returns all matching rows.",
             ],
           ],
         ],
@@ -261,13 +261,13 @@ extension GeminiDirectProvider {
   func dashboardChatRequestBody(
     systemInstruction: String,
     contents: [[String: Any]],
-    include思考中Config: Bool
+    includeThinkingConfig: Bool
   ) -> [String: Any] {
     var generationConfig: [String: Any] = [
       "temperature": 0.2,
       "maxOutputTokens": 8192,
     ]
-    if include思考中Config {
+    if includeThinkingConfig {
       generationConfig["thinkingConfig"] = [
         "thinkingLevel": "medium"
       ]

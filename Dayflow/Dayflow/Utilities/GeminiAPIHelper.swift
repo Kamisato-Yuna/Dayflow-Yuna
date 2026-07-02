@@ -36,7 +36,7 @@ class GeminiAPIHelper {
     }
   }
 
-  // 测试 the API connection with a simple request
+  // Test the API connection with a simple request
   func testConnection(apiKey: String) async throws -> String {
     let cleanedAPIKey = apiKey.components(separatedBy: .whitespacesAndNewlines).joined()
     guard !cleanedAPIKey.isEmpty else {
@@ -87,7 +87,7 @@ class GeminiAPIHelper {
     )
     if let http = response as? HTTPURLResponse {
       let headers: [String: String] = http.allHeaderFields.reduce(into: [:]) { acc, kv in
-        if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+        if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
           acc[k] = v.description
         }
       }
@@ -110,7 +110,7 @@ class GeminiAPIHelper {
         ctx: ctx,
         http: (response as? HTTPURLResponse).map { http in
           let headers: [String: String] = http.allHeaderFields.reduce(into: [:]) { acc, kv in
-            if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+            if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
               acc[k] = v.description
             }
           }
@@ -132,7 +132,7 @@ class GeminiAPIHelper {
           http: LLMHTTPInfo(
             httpStatus: httpResponse.statusCode,
             responseHeaders: httpResponse.allHeaderFields.reduce(into: [:]) { acc, kv in
-              if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+              if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
                 acc[k] = v.description
               }
             }, responseBody: data),
@@ -155,7 +155,7 @@ class GeminiAPIHelper {
         http: LLMHTTPInfo(
           httpStatus: httpResponse.statusCode,
           responseHeaders: httpResponse.allHeaderFields.reduce(into: [:]) { acc, kv in
-            if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+            if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
               acc[k] = v.description
             }
           }, responseBody: data),
@@ -180,7 +180,7 @@ class GeminiAPIHelper {
           http: LLMHTTPInfo(
             httpStatus: httpResponse.statusCode,
             responseHeaders: httpResponse.allHeaderFields.reduce(into: [:]) { acc, kv in
-              if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+              if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
                 acc[k] = v.description
               }
             }, responseBody: data),
@@ -203,7 +203,7 @@ class GeminiAPIHelper {
         http: LLMHTTPInfo(
           httpStatus: httpResponse.statusCode,
           responseHeaders: httpResponse.allHeaderFields.reduce(into: [:]) { acc, kv in
-            if let k = kv.key as? String, let v = kv.value as? 自定义StringConvertible {
+            if let k = kv.key as? String, let v = kv.value as? CustomStringConvertible {
               acc[k] = v.description
             }
           }, responseBody: data),

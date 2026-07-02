@@ -58,15 +58,15 @@ struct WeeklySankeySection: View {
 
       Spacer(minLength: 12)
 
-      controlButton("时间线数据", dataset: .timeline) {
+      controlButton("Timeline data", dataset: .timeline) {
         dataset = .timeline
       }
 
-      controlButton("Figma 基线", dataset: .figma) {
+      controlButton("Figma baseline", dataset: .figma) {
         dataset = .figma
       }
 
-      controlButton("随机干扰", dataset: .random) {
+      controlButton("Random stress", dataset: .random) {
         dataset = .random
         randomSeed = nextRandomSeed()
       }
@@ -105,7 +105,7 @@ struct WeeklySankeySection: View {
     }
     .buttonStyle(.plain)
     .hoverScaleEffect(scale: 1.02)
-    .pointingHandCursor开启Hover(reassert开启PressEnd: true)
+    .pointingHandCursorOnHover(reassertOnPressEnd: true)
   }
 
   private func nextRandomSeed() -> Int {
@@ -194,7 +194,7 @@ private struct WeeklySankeyCard: View {
           .onTapGesture { togglePinned(app.id) }
       }
 
-      Text("周报分解")
+      Text("Weekly breakdown")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Color(hex: "B46531"))
         .offset(
@@ -937,7 +937,7 @@ private enum WeeklySankeyModelFactory {
 
     return build(
       id: "dayflow-timeline-apr20-apr24",
-      seedLabel: "时间线数据",
+      seedLabel: "Timeline data",
       sourceName: "Apr 20-24",
       categories: categories,
       apps: apps,
@@ -954,9 +954,9 @@ private enum WeeklySankeyModelFactory {
       WeeklySankeyCategoryInput(
         id: "design", name: "Design", minutes: 720, barColorHex: "DE9DFC"),
       WeeklySankeyCategoryInput(
-        id: "testing", name: "测试ing", minutes: 240, barColorHex: "FFA189"),
+        id: "testing", name: "Testing", minutes: 240, barColorHex: "FFA189"),
       WeeklySankeyCategoryInput(
-        id: "distractions", name: "分心", minutes: 150, barColorHex: "FF5950"),
+        id: "distractions", name: "Distractions", minutes: 150, barColorHex: "FF5950"),
       WeeklySankeyCategoryInput(
         id: "personal", name: "Personal", minutes: 180, barColorHex: "FFC6B7"),
     ]
@@ -981,7 +981,7 @@ private enum WeeklySankeyModelFactory {
 
     return build(
       id: "figma-baseline",
-      seedLabel: "Figma 基线",
+      seedLabel: "Figma baseline",
       sourceName: "周报",
       categories: categoryTemplates,
       apps: apps,
@@ -1001,9 +1001,9 @@ private enum WeeklySankeyModelFactory {
       WeeklySankeyCategoryInput(
         id: "general", name: "General", minutes: 0, barColorHex: "BFB6AE"),
       WeeklySankeyCategoryInput(
-        id: "testing", name: "测试ing", minutes: 0, barColorHex: "FFA189"),
+        id: "testing", name: "Testing", minutes: 0, barColorHex: "FFA189"),
       WeeklySankeyCategoryInput(
-        id: "distractions", name: "分心", minutes: 0, barColorHex: "FF5950"),
+        id: "distractions", name: "Distractions", minutes: 0, barColorHex: "FF5950"),
       WeeklySankeyCategoryInput(
         id: "personal", name: "Personal", minutes: 0, barColorHex: "FFC6B7"),
     ]
@@ -1032,8 +1032,8 @@ private enum WeeklySankeyModelFactory {
       }
       .sorted { $0.score > $1.score }
 
-      let visible数量 = 2 + Int(floor(random.next() * 4))
-      let chosenApps = Array(rankedApps.prefix(visible数量))
+      let visibleCount = 2 + Int(floor(random.next() * 4))
+      let chosenApps = Array(rankedApps.prefix(visibleCount))
       let shares = chosenApps.map { _ in 0.35 + pow(random.next(), 1.6) * 1.85 }
       let shareTotal = shares.reduce(0, +)
       var assignedMinutes = 0
@@ -1078,12 +1078,12 @@ private enum WeeklySankeyModelFactory {
     id: String,
     seedLabel: String,
     sourceName: String,
-    categories raw分类: [WeeklySankeyCategoryInput],
+    categories rawCategories: [WeeklySankeyCategoryInput],
     apps rawApps: [WeeklySankeyAppInput],
     links: [WeeklySankeyLinkInput]
   ) -> WeeklySankeyModel {
     let layout = WeeklySankeyLayout.base
-    let totalMinutes = raw分类.reduce(0) { $0 + $1.minutes }
+    let totalMinutes = rawCategories.reduce(0) { $0 + $1.minutes }
     let appsWithTotals = rawApps.map { app in
       let linkedMinutes =
         links
@@ -1099,7 +1099,7 @@ private enum WeeklySankeyModelFactory {
     }
 
     let categoryBands = allocateBands(
-      items: raw分类,
+      items: rawCategories,
       layout: layout.categories
     )
     let categoryBandByID = Dictionary(uniqueKeysWithValues: categoryBands.map { ($0.id, $0) })

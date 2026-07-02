@@ -57,24 +57,24 @@ struct HowItWorksCard_Previews: PreviewProvider {
   static var previews: some View {
     VStack(spacing: 20) {
       HowItWorksCard(
-        iconImage: "开启boardingHow",
+        iconImage: "OnboardingHow",
         title: "Install and Forget",
         description:
           "Dayflow takes periodic screen captures to understand what you're working on - all stored privately on your device."
       )
 
       HowItWorksCard(
-        iconImage: "开启boardingSecurity",
+        iconImage: "OnboardingSecurity",
         title: "AI-Powered Insights",
         description:
           "Local AI analyzes your activities to create a timeline of your day without sending data to the cloud."
       )
 
       HowItWorksCard(
-        iconImage: "开启boardingUnderstanding",
+        iconImage: "OnboardingUnderstanding",
         title: "Review Your Day",
         description:
-          "See w这里 your time went with beautiful visualizations and actionable insights about your productivity."
+          "See where your time went with beautiful visualizations and actionable insights about your productivity."
       )
     }
     .padding(40)

@@ -40,7 +40,7 @@ extension WeeklyDashboardBuilder {
       }
 
       let distractionTimes = dayFacts.flatMap(distractionStartMinutes)
-      for minute in distractionTimes w这里 isDistributionMinute(minute) {
+      for minute in distractionTimes where isDistributionMinute(minute) {
         distributionEvents.append(
           WeeklyContextDistributionEvent(
             day: descriptor.label,
@@ -87,8 +87,8 @@ extension WeeklyDashboardBuilder {
     let nodeByKey = Dictionary(uniqueKeysWithValues: visibleApps.map { ($0.key, $0) })
     let nodes = applicationNodes(from: visibleApps)
     let transitions = appTransitions(from: appFacts, visibleKeys: visibleKeys)
-    let maxTransition数量 = max(transitions.map(\.count).max() ?? 1, 1)
-    let curve关闭sets: [CGFloat] = [-42, 24, -55, -22, 52, -14, 30, -30, 18, -62]
+    let maxTransitionCount = max(transitions.map(\.count).max() ?? 1, 1)
+    let curveOffsets: [CGFloat] = [-42, 24, -55, -22, 52, -14, 30, -30, 18, -62]
 
     let edges = transitions.prefix(18).enumerated().compactMap {
       index, transition -> WeeklyApplicationEdge? in
@@ -99,15 +99,15 @@ extension WeeklyDashboardBuilder {
         from: from.key,
         to: to.key,
         kind: edgeKind(from: from.kind, to: to.kind),
-        weight: Double(transition.count) / Double(maxTransition数量),
-        curve关闭set: curve关闭sets[index % curve关闭sets.count]
+        weight: Double(transition.count) / Double(maxTransitionCount),
+        curveOffset: curveOffsets[index % curveOffsets.count]
       )
     }
 
     let patterns = workPatterns(
       from: transitions,
       aggregates: nodeByKey,
-      activeDay数量: max(Set(appFacts.map(\.dayString)).count, 1)
+      activeDayCount: max(Set(appFacts.map(\.dayString)).count, 1)
     )
     let rabbitHole = rabbitHoleSnapshot(
       from: transitions, aggregates: nodeByKey, visibleApps: visibleApps)
@@ -220,7 +220,7 @@ extension WeeklyDashboardBuilder {
   private static func workPatterns(
     from transitions: [WeeklyAppTransition],
     aggregates: [String: WeeklyAppAggregate],
-    activeDay数量: Int
+    activeDayCount: Int
   ) -> [WeeklyWorkPattern] {
     transitions.compactMap { transition -> WeeklyWorkPattern? in
       guard let from = aggregates[transition.from],
@@ -231,15 +231,15 @@ extension WeeklyDashboardBuilder {
         return nil
       }
 
-      let average数量 = max(1, Int((Double(transition.count) / Double(activeDay数量)).rounded()))
+      let averageCount = max(1, Int((Double(transition.count) / Double(activeDayCount)).rounded()))
       return WeeklyWorkPattern(
         id: "\(from.key)-\(to.key)",
         from: patternApp(from),
         via: nil,
         to: patternApp(to),
-        count: average数量,
+        count: averageCount,
         description:
-          "Moves from \(from.name) to \(to.name) an average of \(average数量) times per active day."
+          "Moves from \(from.name) to \(to.name) an average of \(averageCount) times per active day."
       )
     }
     .prefixArray(2)
@@ -352,10 +352,10 @@ extension WeeklyDashboardBuilder {
   }
 
   private static func resolvedAppKind(from facts: [WeeklyCardFact]) -> WeeklyApplicationKind {
-    if facts.contains(w这里: { $0.appKind == .distraction }) {
+    if facts.contains(where: { $0.appKind == .distraction }) {
       return .distraction
     }
-    if facts.contains(w这里: { $0.appKind == .personal }) {
+    if facts.contains(where: { $0.appKind == .personal }) {
       return .personal
     }
     return .work
@@ -379,7 +379,7 @@ extension WeeklyDashboardBuilder {
 
   private static func averageDurationText(minutes: Int, visits: Int) -> String {
     let averageMinutes = max(1, Int((Double(minutes) / Double(max(visits, 1))).rounded()))
-    return "平均\(durationText(averageMinutes))"
+    return "\(durationText(averageMinutes)) avg"
   }
 
   private static func clockTime(from minute: Double) -> String {

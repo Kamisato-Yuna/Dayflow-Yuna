@@ -111,9 +111,9 @@ struct AppRootView: View {
 @main
 struct DayflowApp: App {
   @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
-  @AppStorage("did开启board") private var did开启board = false
+  @AppStorage("didOnboard") private var didOnboard = false
   @AppStorage("useBlankUI") private var useBlankUI = false
-  @AppStorage("hasCompletedJournal开启boarding") private var hasCompletedJournal开启boarding = false
+  @AppStorage("hasCompletedJournalOnboarding") private var hasCompletedJournalOnboarding = false
   @State private var showVideoLaunch = true
   @State private var contentOpacity = 0.0
   @State private var contentScale = 0.98
@@ -122,7 +122,7 @@ struct DayflowApp: App {
 
   init() {
     // Comment out for production - only use for testing onboarding
-    // UserDefaults.standard.set(false, forKey: "did开启board")
+    // UserDefaults.standard.set(false, forKey: "didOnboard")
   }
 
   // Sparkle updater manager
@@ -133,14 +133,14 @@ struct DayflowApp: App {
       ZStack {
         // Main app UI or onboarding with entrance animation
         Group {
-          if did开启board {
+          if didOnboard {
             // Show UI after onboarding
             AppRootView()
               .environmentObject(categoryStore)
               .environmentObject(updaterManager)
               .environmentObject(journalCoordinator)
           } else if !showVideoLaunch {
-            开启boardingFlow()
+            OnboardingFlow()
               .environmentObject(AppState.shared)
               .environmentObject(categoryStore)
               .environmentObject(updaterManager)
@@ -186,11 +186,11 @@ struct DayflowApp: App {
         }
 
         // Journal onboarding video (full window coverage, above sidebar)
-        if journalCoordinator.show开启boardingVideo {
-          Journal开启boardingVideoView(onComplete: {
+        if journalCoordinator.showOnboardingVideo {
+          JournalOnboardingVideoView(onComplete: {
             withAnimation(.easeOut(duration: 0.3)) {
-              journalCoordinator.show开启boardingVideo = false
-              hasCompletedJournal开启boarding = true
+              journalCoordinator.showOnboardingVideo = false
+              hasCompletedJournalOnboarding = true
             }
           })
           .ignoresSafeArea()
@@ -201,7 +201,7 @@ struct DayflowApp: App {
       .background {
         MainWindowRegistrationView()
 
-        if did开启board {
+        if didOnboard {
           ZStack {
             Image("MainUIBackground")
               .resizable()
@@ -211,7 +211,7 @@ struct DayflowApp: App {
               .opacity(0.4)
           }
           .ignoresSafeArea()
-          .allowsHit测试ing(false)
+          .allowsHitTesting(false)
           .accessibilityHidden(true)
         }
       }
@@ -241,17 +241,17 @@ struct DayflowApp: App {
       CommandGroup(after: .appInfo) {
         Divider()
         Button("重置新手引导") {
-          // 重置 the onboarding flag
-          UserDefaults.standard.set(false, forKey: "did开启board")
-          // 重置 the saved onboarding step to start from beginning
+          // Reset the onboarding flag
+          UserDefaults.standard.set(false, forKey: "didOnboard")
+          // Reset the saved onboarding step to start from beginning
           UserDefaults.standard.set(0, forKey: "onboardingStep")
           UserDefaults.standard.removeObject(forKey: "onboardingHasPaidAI")
           UserDefaults.standard.removeObject(forKey: CategoryStore.StoreKeys.onboardingSelectedRole)
           UserDefaults.standard.removeObject(
             forKey: CategoryStore.StoreKeys.onboardingAppliedCategoryPreset)
           UserDefaults.standard.removeObject(
-            forKey: CategoryStore.StoreKeys.onboarding分类自定义ized)
-          // 重置 the selected LLM provider to default
+            forKey: CategoryStore.StoreKeys.onboardingCategoriesCustomized)
+          // Reset the selected LLM provider to default
           UserDefaults.standard.set("gemini", forKey: "selectedLLMProvider")
           // Force quit and restart the app to show onboarding
           Task { @MainActor in
@@ -294,7 +294,7 @@ struct DayflowApp: App {
       AppDelegate.pendingNotificationNavigationDestination = nil
 
       switch destination {
-      case .daily(let day) w这里 day?.isEmpty == false:
+      case .daily(let day) where day?.isEmpty == false:
         NotificationCenter.default.post(
           name: .navigateToDaily,
           object: nil,
@@ -321,8 +321,8 @@ extension Notification.Name {
   static let navigateToWeekly = Notification.Name("navigateToWeekly")
   static let timelineDataUpdated = Notification.Name("timelineDataUpdated")
   static let showTimelineFailureToast = Notification.Name("showTimelineFailureToast")
-  static let showScreenRecording权限Notice = Notification.Name(
-    "showScreenRecording权限Notice")
+  static let showScreenRecordingPermissionNotice = Notification.Name(
+    "showScreenRecordingPermissionNotice")
   static let openProvidersSettings = Notification.Name("openProvidersSettings")
   static let openAccountSettings = Notification.Name("openAccountSettings")
 }

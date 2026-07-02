@@ -6,11 +6,11 @@ final class InactivityMonitor: ObservableObject {
   static let shared = InactivityMonitor()
 
   // Published so views can react when an idle reset is pending
-  @Published var pending重置: Bool = false
+  @Published var pendingReset: Bool = false
 
   // Config
-  private let secondsOverrideKey = "idle重置SecondsOverride"
-  private let legacyMinutesKey = "idle重置Minutes"
+  private let secondsOverrideKey = "idleResetSecondsOverride"
+  private let legacyMinutesKey = "idleResetMinutes"
   private let defaultThresholdSeconds: TimeInterval = 15 * 60
 
   var thresholdSeconds: TimeInterval {
@@ -27,7 +27,7 @@ final class InactivityMonitor: ObservableObject {
 
   // State
   private var lastInteractionAt: Date = Date()
-  private var last重置At: Date? = nil
+  private var lastResetAt: Date? = nil
   private var checkTimer: Timer?
   private var eventMonitors: [Any] = []
   private var observers: [NSObjectProtocol] = []
@@ -38,7 +38,7 @@ final class InactivityMonitor: ObservableObject {
     setupEventMonitors()
     setupAppLifecycleObservers()
 
-    // 开启ly check while active; we'll also check immediately before activation.
+    // Only check while active; we'll also check immediately before activation.
     if NSApp.isActive {
       startTimer()
     }
@@ -51,8 +51,8 @@ final class InactivityMonitor: ObservableObject {
   }
 
   func markHandledIfPending() {
-    if pending重置 {
-      pending重置 = false
+    if pendingReset {
+      pendingReset = false
     }
   }
 
@@ -81,7 +81,7 @@ final class InactivityMonitor: ObservableObject {
     for monitor in eventMonitors {
       NSEvent.removeMonitor(monitor)
     }
-    eventMonitors.remove全部()
+    eventMonitors.removeAll()
   }
 
   private func setupAppLifecycleObservers() {
@@ -128,12 +128,12 @@ final class InactivityMonitor: ObservableObject {
     for observer in observers {
       center.removeObserver(observer)
     }
-    observers.remove全部()
+    observers.removeAll()
   }
 
   private func handleInteraction() {
     lastInteractionAt = Date()
-    last重置At = nil
+    lastResetAt = nil
   }
 
   private func startTimer() {
@@ -152,17 +152,17 @@ final class InactivityMonitor: ObservableObject {
   }
 
   private func checkIdle() {
-    guard !pending重置 else { return }
+    guard !pendingReset else { return }
 
     let threshold = thresholdSeconds
     let now = Date()
     guard now.timeIntervalSince(lastInteractionAt) >= threshold else { return }
 
-    if let last重置At, now.timeIntervalSince(last重置At) < threshold {
+    if let lastResetAt, now.timeIntervalSince(lastResetAt) < threshold {
       return
     }
 
-    pending重置 = true
-    last重置At = now
+    pendingReset = true
+    lastResetAt = now
   }
 }

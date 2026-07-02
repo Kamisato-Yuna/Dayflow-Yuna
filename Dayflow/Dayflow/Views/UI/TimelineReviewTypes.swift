@@ -26,7 +26,7 @@ final class TimelineReviewTimeCache {
     }
     // Prevent unbounded memory growth over long app sessions
     if cache.count > 500 {
-      cache.remove全部(keepingCapacity: true)
+      cache.removeAll(keepingCapacity: true)
     }
     let str = formatter.string(from: date)
     cache[minute] = str
@@ -54,7 +54,7 @@ enum TimelineReviewRating: String, CaseIterable, Identifiable {
     switch self {
     case .distracted: return "Distracted"
     case .neutral: return "Neutral"
-    case .focused: return "专注ed"
+    case .focused: return "Focused"
     }
   }
 
@@ -115,7 +115,7 @@ enum TimelineReviewRating: String, CaseIterable, Identifiable {
     }
   }
 
-  var swipe关闭set: CGSize {
+  var swipeOffset: CGSize {
     switch self {
     case .distracted: return CGSize(width: -560, height: 40)
     case .neutral: return CGSize(width: 0, height: -560)
@@ -162,11 +162,11 @@ struct TimelineReviewSummary {
 func makeTimelineActivities(from cards: [TimelineCard], for date: Date)
   -> [TimelineActivity]
 {
-  let calendar = 日历.current
+  let calendar = Calendar.current
   let baseDate = calendar.startOfDay(for: date)
 
   var results: [TimelineActivity] = []
-  var id数量s: [String: Int] = [:]
+  var idCounts: [String: Int] = [:]
   results.reserveCapacity(cards.count)
 
   let timeFormatter = DateFormatter()
@@ -215,9 +215,9 @@ func makeTimelineActivities(from cards: [TimelineCard], for date: Date)
       subcategory: card.subcategory
     )
 
-    let seen数量 = id数量s[baseId, default: 0]
-    id数量s[baseId] = seen数量 + 1
-    let finalId = seen数量 == 0 ? baseId : "\(baseId)-\(seen数量)"
+    let seenCount = idCounts[baseId, default: 0]
+    idCounts[baseId] = seenCount + 1
+    let finalId = seenCount == 0 ? baseId : "\(baseId)-\(seenCount)"
 
     results.append(
       TimelineActivity(

@@ -2,7 +2,7 @@ import AppKit
 import CoreGraphics
 import Foundation
 
-enum ScreenRecording权限Notice {
+enum ScreenRecordingPermissionNotice {
   static var isGranted: Bool {
     CGPreflightScreenCaptureAccess()
   }
@@ -10,7 +10,7 @@ enum ScreenRecording权限Notice {
   static func post(reason: String) {
     let notification = {
       NotificationCenter.default.post(
-        name: .showScreenRecording权限Notice,
+        name: .showScreenRecordingPermissionNotice,
         object: nil,
         userInfo: ["reason": reason]
       )

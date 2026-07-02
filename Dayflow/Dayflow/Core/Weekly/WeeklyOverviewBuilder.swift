@@ -29,7 +29,7 @@ struct WeeklyOverviewLegendItem: Identifiable, Sendable {
   let colorHex: String
 }
 
-struct WeeklyOverview专注Summary: Sendable {
+struct WeeklyOverviewFocusSummary: Sendable {
   let weekdayName: String
   let minutes: Int
 }
@@ -45,24 +45,24 @@ struct WeeklyOverviewSnapshot: Sendable {
   let legendItems: [WeeklyOverviewLegendItem]
   let contextSwitchTotal: Int
   let contextSwitchAverage: Int
-  let total专注Minutes: Int
-  let longest专注: WeeklyOverview专注Summary?
-  let primary专注: WeeklyOverviewCategorySummary?
+  let totalFocusMinutes: Int
+  let longestFocus: WeeklyOverviewFocusSummary?
+  let primaryFocus: WeeklyOverviewCategorySummary?
 
   static let empty = WeeklyOverviewSnapshot(
     rows: WeeklyOverviewRow.placeholder,
     legendItems: [],
     contextSwitchTotal: 0,
     contextSwitchAverage: 0,
-    total专注Minutes: 0,
-    longest专注: nil,
-    primary专注: nil
+    totalFocusMinutes: 0,
+    longestFocus: nil,
+    primaryFocus: nil
   )
 }
 
 enum WeeklyOverviewBuilder {
-  private static let calendar: 日历 = {
-    var calendar = 日历(identifier: .gregorian)
+  private static let calendar: Calendar = {
+    var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = .autoupdatingCurrent
     calendar.firstWeekday = 2
     calendar.minimumDaysInFirstWeek = 4
@@ -73,7 +73,7 @@ enum WeeklyOverviewBuilder {
   private static let otherCategoryKey = "other"
   private static let otherColorHex = "BFB6AE"
   private static let maxLegendItems = 5
-  private static let focusMerge空档Minutes = 5.0
+  private static let focusMergeGapMinutes = 5.0
   private static let visibleStartMinute = 9.0 * 60.0
   private static let visibleEndMinute = 18.0 * 60.0
   private static let weekdayTemplates: [(short: String, full: String)] = [
@@ -91,13 +91,13 @@ enum WeeklyOverviewBuilder {
     categories: [TimelineCategory],
     weekRange: WeeklyDateRange
   ) -> WeeklyOverviewSnapshot {
-    let ordered分类 =
+    let orderedCategories =
       categories
       .sorted { $0.order < $1.order }
       .filter { normalizedCategoryKey($0.name) != systemCategoryKey }
 
     let categoryLookup = firstCategoryLookup(
-      from: ordered分类,
+      from: orderedCategories,
       normalizedKey: normalizedCategoryKey
     )
 
@@ -152,20 +152,20 @@ enum WeeklyOverviewBuilder {
     let legendItems = legendItems(from: categorySummaries, visibleCategoryKeys: visibleCategoryKeys)
     let contextSwitchTotal = weekDays.reduce(0) { partial, weekDay in
       partial
-        + contextSwitch数量(
+        + contextSwitchCount(
           for: weeklyCards.filter { $0.day == weekDay.dayString }
         )
     }
 
     let focusSummaries = categorySummaries.filter { !$0.isIdle }
-    let total专注Minutes = Int(focusSummaries.reduce(0) { $0 + $1.minutes }.rounded())
-    let longest专注 = longest专注Summary(
+    let totalFocusMinutes = Int(focusSummaries.reduce(0) { $0 + $1.minutes }.rounded())
+    let longestFocus = longestFocusSummary(
       cardsByDay: weekDays.map { weekDay in
         (weekDay: weekDay, cards: weeklyCards.filter { $0.day == weekDay.dayString })
       },
       categories: categoryLookup
     )
-    let primary专注 =
+    let primaryFocus =
       focusSummaries
       .sorted(by: focusCategorySort)
       .first
@@ -187,9 +187,9 @@ enum WeeklyOverviewBuilder {
       legendItems: legendItems,
       contextSwitchTotal: contextSwitchTotal,
       contextSwitchAverage: contextSwitchAverage,
-      total专注Minutes: total专注Minutes,
-      longest专注: longest专注,
-      primary专注: primary专注
+      totalFocusMinutes: totalFocusMinutes,
+      longestFocus: longestFocus,
+      primaryFocus: primaryFocus
     )
   }
 
@@ -241,7 +241,7 @@ enum WeeklyOverviewBuilder {
     return mergeAdjacentSegments(segments)
   }
 
-  private static func contextSwitch数量(for cards: [TimelineCard]) -> Int {
+  private static func contextSwitchCount(for cards: [TimelineCard]) -> Int {
     let segments = cards.compactMap { card -> SortableSegment? in
       guard var startMinute = parseCardMinute(card.startTimestamp),
         var endMinute = parseCardMinute(card.endTimestamp)
@@ -279,11 +279,11 @@ enum WeeklyOverviewBuilder {
     return switches
   }
 
-  private static func longest专注Summary(
+  private static func longestFocusSummary(
     cardsByDay: [(weekDay: WeeklyOverviewDay, cards: [TimelineCard])],
     categories: [String: TimelineCategory]
-  ) -> WeeklyOverview专注Summary? {
-    var bestSummary: WeeklyOverview专注Summary? = nil
+  ) -> WeeklyOverviewFocusSummary? {
+    var bestSummary: WeeklyOverviewFocusSummary? = nil
 
     for entry in cardsByDay {
       let ranges = entry.cards.compactMap { card -> MinuteRange? in
@@ -306,7 +306,7 @@ enum WeeklyOverviewBuilder {
       }
       .sorted { $0.start < $1.start }
 
-      let mergedRanges = merge专注Ranges(ranges)
+      let mergedRanges = mergeFocusRanges(ranges)
 
       for range in mergedRanges {
         let minutes = Int((range.end - range.start).rounded())
@@ -315,7 +315,7 @@ enum WeeklyOverviewBuilder {
         if let currentBest = bestSummary, minutes <= currentBest.minutes {
           continue
         } else {
-          bestSummary = WeeklyOverview专注Summary(
+          bestSummary = WeeklyOverviewFocusSummary(
             weekdayName: entry.weekDay.weekdayName,
             minutes: minutes
           )
@@ -326,14 +326,14 @@ enum WeeklyOverviewBuilder {
     return bestSummary
   }
 
-  private static func merge专注Ranges(_ ranges: [MinuteRange]) -> [MinuteRange] {
+  private static func mergeFocusRanges(_ ranges: [MinuteRange]) -> [MinuteRange] {
     guard var current = ranges.first else { return [] }
 
     var merged: [MinuteRange] = []
 
     for next in ranges.dropFirst() {
       let gap = next.start - current.end
-      if gap < focusMerge空档Minutes {
+      if gap < focusMergeGapMinutes {
         current.end = max(current.end, next.end)
       } else {
         merged.append(current)

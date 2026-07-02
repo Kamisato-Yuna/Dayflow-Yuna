@@ -32,7 +32,7 @@ struct TimelineReviewDisplayLinkDriver: View {
 
   var body: some View {
     TimelineReviewDisplayLinkView(
-      is已暂停: !isEnabled || playbackState.isPlaying == false,
+      isPaused: !isEnabled || playbackState.isPlaying == false,
       onTick: onTick
     )
     .frame(width: 0, height: 0)
@@ -40,7 +40,7 @@ struct TimelineReviewDisplayLinkDriver: View {
 }
 
 struct TimelineReviewDisplayLinkView: NSViewRepresentable {
-  let is已暂停: Bool
+  let isPaused: Bool
   let onTick: (CADisplayLink) -> Void
 
   func makeCoordinator() -> Coordinator { Coordinator(onTick: onTick) }
@@ -48,14 +48,14 @@ struct TimelineReviewDisplayLinkView: NSViewRepresentable {
   func makeNSView(context: Context) -> HostView {
     let view = HostView()
     context.coordinator.attach(to: view)
-    context.coordinator.set已暂停(is已暂停)
+    context.coordinator.setPaused(isPaused)
     return view
   }
 
   func updateNSView(_ nsView: HostView, context: Context) {
     context.coordinator.onTick = onTick
     context.coordinator.attach(to: nsView)
-    context.coordinator.set已暂停(is已暂停)
+    context.coordinator.setPaused(isPaused)
   }
 
   static func dismantleNSView(_ nsView: HostView, coordinator: Coordinator) {
@@ -75,7 +75,7 @@ struct TimelineReviewDisplayLinkView: NSViewRepresentable {
       rebuildDisplayLink()
     }
 
-    func set已暂停(_ paused: Bool) { displayLink?.is已暂停 = paused }
+    func setPaused(_ paused: Bool) { displayLink?.isPaused = paused }
     func invalidate() {
       displayLink?.invalidate()
       displayLink = nil
@@ -161,7 +161,7 @@ struct TimelineReviewTimeRangePill: View {
 }
 
 struct TimelineReviewRatingRow: View {
-  let on撤销: () -> Void
+  let onUndo: () -> Void
   let onSelect: (TimelineReviewRating) -> Void
 
   var body: some View {
@@ -175,11 +175,11 @@ struct TimelineReviewRatingRow: View {
 
   private var undoButton: some View {
     Button {
-      on撤销()
+      onUndo()
     } label: {
       VStack(spacing: 6) {
-        Z撤销Icon(size: 16)
-        Text("撤销")
+        ZUndoIcon(size: 16)
+        Text("Undo")
           .font(.custom("Figtree", size: 12).weight(.medium))
           .foregroundColor(Color(hex: "98806D"))
       }
@@ -204,7 +204,7 @@ struct TimelineReviewRatingRow: View {
   }
 }
 
-struct Z撤销Icon: View {
+struct ZUndoIcon: View {
   let size: CGFloat
   var body: some View {
     ZStack {
