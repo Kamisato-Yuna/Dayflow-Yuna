@@ -111,13 +111,11 @@ struct DayGoalPlan: Equatable, Sendable {
       .sorted { $0.order < $1.order }
 
     let distraction = selectable.filter {
-      let normalized = $0.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-      return normalized == "distraction" || normalized == "distractions"
+      isDistractionCategoryName($0.name)
     }
 
     let focusCandidates = selectable.filter { category in
-      let normalized = category.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-      return normalized != "distraction" && normalized != "distractions"
+      !isDistractionCategoryName(category.name)
     }
 
     return DayGoalPlan(
@@ -162,6 +160,11 @@ struct DayGoalPlan: Equatable, Sendable {
 
   private static func normalizedCategoryName(_ name: String) -> String {
     name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+  }
+
+  static func isDistractionCategoryName(_ name: String) -> Bool {
+    let normalized = normalizedCategoryName(name)
+    return normalized == "distraction" || normalized == "distractions" || normalized == "分心"
   }
 }
 

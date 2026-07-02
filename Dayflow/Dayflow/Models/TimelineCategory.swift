@@ -226,7 +226,7 @@ extension CategoryStore {
           colorHex: category.colorHex,
           description: {
             if category.isIdle {
-              return "Use when the user is idle for more than half of this period."
+              return "当用户在该时间段里超过一半时间处于空闲状态时使用。"
             }
             let trimmed = category.details.trimmingCharacters(in: .whitespacesAndNewlines)
             return trimmed.isEmpty ? nil : trimmed
@@ -296,213 +296,213 @@ private enum OnboardingCategoryPreset: String {
     case .softwareEngineer:
       return [
         (
-          "Coding / Debugging",
+          "编码与调试",
           "#6A7EFF",
-          "Writing, refactoring, and fixing code in an IDE or terminal"
+          "在 IDE 或终端中编写、重构并修复代码"
         ),
         (
-          "Code Review",
+          "代码审查",
           "#56CFEE",
-          "Reviewing PRs, reading diffs, and leaving comments"
+          "审查 PR、阅读代码差异并留下评审意见"
         ),
         (
-          "Research",
+          "研究",
           "#C787F7",
-          "Reading docs, Stack Overflow, exploring tools and APIs, and writing design docs or technical specs"
+          "阅读文档、Stack Overflow、探索工具和 API，并撰写设计文档或技术说明"
         ),
         (
-          "Communication",
+          "沟通",
           "#FFAE8C",
-          "Meetings, standups, Slack, email, video calls, messaging, and syncs"
+          "会议、站会、Slack、邮件、视频通话、消息同步与群聊"
         ),
         (
-          "Distraction",
+          "分心",
           "#FF4721",
-          "Unfocused browsing and passive content consumption: social media feeds, random videos, idle scrolling, entertainment with no clear intent, and gaming"
+          "无目的的浏览与被动消费：社媒动态、随机视频、刷屏浏览、缺乏明确目标的娱乐和游戏"
         ),
         (
-          "Personal",
+          "个人",
           "#ADE3E3",
-          "Intentional non-work activity with a purpose: messaging friends and family, managing finances, booking travel, errands, life admin, and hobbies"
+          "有目的的非工作活动，如与朋友和家人交流、管理财务、订票、跑腿、生活事务与兴趣爱好"
         ),
       ]
 
     case .founderExecutive:
       return [
         (
-          "Engineering / Product",
+          "工程与产品",
           "#6A7EFF",
-          "Coding, design work, shipping features, and hands-on building"
+          "编写代码、设计工作、交付功能并动手实现"
         ),
         (
-          "Research & Strategy",
+          "研究与策略",
           "#56CFEE",
-          "Competitive research, positioning, long-form thinking, and investor prep"
+          "竞品研究、市场定位、深度思考与投资人材料准备"
         ),
         (
-          "Data & Insights",
+          "数据与洞察",
           "#C787F7",
-          "Dashboards, retention data, funnels, and financials"
+          "仪表盘、留存数据、漏斗与财务数据"
         ),
         (
-          "Communication",
+          "沟通",
           "#FFAE8C",
-          "Team syncs, investor calls, user demos, and hiring"
+          "团队同步、投资人通话、用户演示与招聘"
         ),
         (
-          "Distraction",
+          "分心",
           "#FF4721",
-          "Unfocused browsing and passive content consumption: social media feeds, random videos, idle scrolling, entertainment with no clear intent, and gaming"
+          "无目的的浏览与被动消费：社媒动态、随机视频、刷屏浏览、缺乏明确目标的娱乐和游戏"
         ),
         (
-          "Personal",
+          "个人",
           "#ADE3E3",
-          "Intentional non-work activity with a purpose: messaging friends and family, managing finances, booking travel, errands, life admin, and hobbies"
+          "有目的的非工作活动，如与朋友和家人交流、管理财务、订票、跑腿、生活事务与兴趣爱好"
         ),
       ]
 
     case .designer:
       return [
         (
-          "Design",
+          "设计",
           "#6A7EFF",
-          "Prototyping, UI components, user flows, visual design, and handoff specs"
+          "制作原型、UI 组件、用户流程、视觉设计与交付规范"
         ),
         (
-          "Research",
+          "研究",
           "#56CFEE",
-          "Browsing patterns, competitive audits, user studies, and reviewing metrics"
+          "观察浏览模式、竞品审计、用户研究并复盘指标"
         ),
         (
-          "Communication",
+          "沟通",
           "#FFAE8C",
-          "Design reviews, standups, critique sessions, and presenting concepts"
+          "设计评审、站会、评审讨论与概念展示"
         ),
         (
-          "Distraction",
+          "分心",
           "#FF4721",
-          "Unfocused browsing and passive content consumption: social media feeds, random videos, idle scrolling, entertainment with no clear intent, and gaming"
+          "无目的的浏览与被动消费：社媒动态、随机视频、刷屏浏览、缺乏明确目标的娱乐和游戏"
         ),
         (
-          "Personal",
+          "个人",
           "#ADE3E3",
-          "Intentional non-work activity with a purpose: messaging friends and family, managing finances, booking travel, errands, life admin, and hobbies"
+          "有目的的非工作活动，如与朋友和家人交流、管理财务、订票、跑腿、生活事务与兴趣爱好"
         ),
       ]
 
     case .student:
       return [
         (
-          "Studying",
+          "学习",
           "#6A7EFF",
-          "Lectures, reading, reviewing slides, flashcards, and course material"
+          "听课、阅读、复盘幻灯片、刷题卡与课程资料"
         ),
         (
-          "Assignments",
+          "作业",
           "#56CFEE",
-          "Papers, problem sets, coding projects, and lab reports"
+          "论文、问题集、编程项目与实验报告"
         ),
         (
-          "Communication",
+          "沟通",
           "#FFAE8C",
-          "Study groups, office hours, group chats, and emailing professors"
+          "学习小组、助教答疑、群聊和给老师发邮件"
         ),
         (
-          "Distraction",
+          "分心",
           "#FF4721",
-          "Unfocused browsing and passive content consumption: social media feeds, random videos, idle scrolling, entertainment with no clear intent, and gaming"
+          "无目的的浏览与被动消费：社媒动态、随机视频、刷屏浏览、缺乏明确目标的娱乐和游戏"
         ),
         (
-          "Personal",
+          "个人",
           "#ADE3E3",
-          "Intentional non-work activity with a purpose: messaging friends and family, managing finances, booking travel, errands, life admin, and hobbies"
+          "有目的的非工作活动，如与朋友和家人交流、管理财务、订票、跑腿、生活事务与兴趣爱好"
         ),
       ]
 
     case .productManager:
       return [
         (
-          "Specs & Planning",
+          "方案与规划",
           "#6A7EFF",
-          "PRDs, roadmaps, backlog grooming, sprint planning, and tickets"
+          "PRD、路线图、待办梳理、冲刺规划与工单"
         ),
         (
-          "Research & Analysis",
+          "研究与分析",
           "#56CFEE",
-          "User research, metrics review, competitive analysis, and A/B tests"
+          "用户研究、指标复盘、竞品分析与 A/B 测试"
         ),
         (
-          "Communication",
+          "沟通",
           "#FFAE8C",
-          "Standups, stakeholder syncs, design reviews, and engineering check-ins"
+          "站会、利益相关人同步、设计评审与工程对齐"
         ),
         (
-          "Distraction",
+          "分心",
           "#FF4721",
-          "Unfocused browsing and passive content consumption: social media feeds, random videos, idle scrolling, entertainment with no clear intent, and gaming"
+          "无目的的浏览与被动消费：社媒动态、随机视频、刷屏浏览、缺乏明确目标的娱乐和游戏"
         ),
         (
-          "Personal",
+          "个人",
           "#ADE3E3",
-          "Intentional non-work activity with a purpose: messaging friends and family, managing finances, booking travel, errands, life admin, and hobbies"
+          "有目的的非工作活动，如与朋友和家人交流、管理财务、订票、跑腿、生活事务与兴趣爱好"
         ),
       ]
 
     case .dataScientist:
       return [
         (
-          "Analysis & Modeling",
+          "分析与建模",
           "#6A7EFF",
-          "Notebooks, statistical analysis, ML training, and data exploration"
+          "Notebook、统计分析、ML 训练与数据探索"
         ),
         (
-          "Data Engineering",
+          "数据工程",
           "#56CFEE",
-          "SQL queries, pipelines, data cleaning, and ETL scripts"
+          "SQL 查询、数据管道、清洗与 ETL 脚本"
         ),
         (
-          "Research",
+          "研究",
           "#C787F7",
-          "Reading papers, docs, and exploring new methods and tools"
+          "阅读论文、文档并探索新方法和工具"
         ),
         (
-          "Communication",
+          "沟通",
           "#FFAE8C",
-          "Presenting findings, stakeholder syncs, and team discussions"
+          "汇报发现、与利益相关人同步并进行团队讨论"
         ),
         (
-          "Distraction",
+          "分心",
           "#FF4721",
-          "Unfocused browsing and passive content consumption: social media feeds, random videos, idle scrolling, entertainment with no clear intent, and gaming"
+          "无目的的浏览与被动消费：社媒动态、随机视频、刷屏浏览、缺乏明确目标的娱乐和游戏"
         ),
         (
-          "Personal",
+          "个人",
           "#ADE3E3",
-          "Intentional non-work activity with a purpose: messaging friends and family, managing finances, booking travel, errands, life admin, and hobbies"
+          "有目的的非工作活动，如与朋友和家人交流、管理财务、订票、跑腿、生活事务与兴趣爱好"
         ),
       ]
 
     case .other:
       return [
         (
-          "Work",
+          "工作",
           "#6A7EFF",
-          "Focused work tasks and professional responsibilities that do not fit a more specific category"
+          "不属于更具体分类的聚焦工作任务与职业责任"
         ),
         (
-          "Communication",
+          "沟通",
           "#FFAE8C",
-          "Meetings, standups, Slack, email, video calls, messaging, and syncs"
+          "会议、站会、Slack、邮件、视频通话、消息同步与群聊"
         ),
         (
-          "Distraction",
+          "分心",
           "#FF4721",
-          "Unfocused browsing and passive content consumption: social media feeds, random videos, idle scrolling, entertainment with no clear intent, and gaming"
+          "无目的的浏览与被动消费：社媒动态、随机视频、刷屏浏览、缺乏明确目标的娱乐和游戏"
         ),
         (
-          "Personal",
+          "个人",
           "#ADE3E3",
-          "Intentional non-work activity with a purpose: messaging friends and family, managing finances, booking travel, errands, life admin, and hobbies"
+          "有目的的非工作活动，如与朋友和家人交流、管理财务、订票、跑腿、生活事务与兴趣爱好"
         ),
       ]
     }
@@ -550,32 +550,32 @@ enum CategoryPersistence {
     let now = Date()
     let base: [(String, String, Bool, Bool, String)] = [
       (
-        "Work",
+        "工作",
         "#B984FF",
         false,
         false,
-        "Career, school, or productivity-focused activities (projects, emails, assignments, video calls, learning skills, etc.)"
+        "工作、学习或其他提升产能的活动（项目、邮件、作业、视频通话、技能学习等）"
       ),
       (
-        "Personal",
+        "个人",
         "#6AADFF",
         false,
         false,
-        "Purposeful non-work activities or life tasks (paying bills, fitness tracking, meal planning, personal research, creative hobbies, etc.)"
+        "有目的的非工作活动或生活事务（缴费、运动记录、餐食规划、个人研究、兴趣爱好等）"
       ),
       (
-        "Distraction",
+        "分心",
         "#FF5950",
         false,
         false,
-        "Passive consumption or aimless browsing (scrolling feeds, watching random videos, clicking through news, mindless games, etc.)"
+        "被动消费或无目的浏览（刷动态、看随机视频、点击新闻、玩无目的游戏等）"
       ),
       (
-        "Idle",
+        "空闲",
         "#A0AEC0",
         true,
         true,
-        "For when the user is idle for most of the time."
+        "用于用户大部分时间处于空闲状态的场景。"
       ),
     ]
     return base.enumerated().map { idx, entry in
@@ -602,9 +602,9 @@ enum CategoryPersistence {
     let order = (categories.map { $0.order }.max() ?? -1) + 1
     let now = Date()
     let idle = TimelineCategory(
-      name: "Idle",
+      name: "空闲",
       colorHex: "#A0AEC0",
-      details: "Mark sessions where the user is idle for most of the time.",
+      details: "将用户大部分时间处于空闲状态的时段标记为此分类。",
       order: order,
       isSystem: true,
       isIdle: true,

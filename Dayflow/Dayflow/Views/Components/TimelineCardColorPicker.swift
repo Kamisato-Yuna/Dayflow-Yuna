@@ -366,7 +366,7 @@ private struct ColorSwatch: View {
         .animation(.easeInOut(duration: 0.15), value: hovering)
 
       if showHint && hovering {
-        Text("Drag to category")
+        Text("拖拽到分类")
           .font(.system(size: 11))
           .foregroundColor(.white)
           .padding(.vertical, 4)
@@ -439,7 +439,7 @@ private struct EditableCategoryCard: View {
           Image("CategoriesCheckmark")
             .resizable()
             .frame(width: 20, height: 20)
-            .accessibilityLabel("Save category edits")
+            .accessibilityLabel("保存分类编辑")
         }
         .buttonStyle(.plain)
 
@@ -447,7 +447,7 @@ private struct EditableCategoryCard: View {
 
       ZStack(alignment: .topLeading) {
         if draftDetails.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-          Text("Professional, school, or career-focused tasks (coding, design, meetings).")
+          Text("与职业相关的专业、学习或工作任务（编码、设计、会议）。")
             .font(Font.custom("Figtree", size: 12).weight(.medium))
             .foregroundColor(Color.black.opacity(0.35))
             .padding(.horizontal, 12)
@@ -492,7 +492,7 @@ private struct EditableCategoryCard: View {
 
         Text(
           category.details.isEmpty
-            ? "Add a description to help Dayflow understand your workflow." : category.details
+            ? "添加说明，帮助 Dayflow 理解你的工作流。" : category.details
         )
         .font(Font.custom("Figtree", size: 12).weight(.medium))
         .foregroundColor(Color(red: 0.35, green: 0.35, blue: 0.35))
@@ -509,7 +509,7 @@ private struct EditableCategoryCard: View {
           Image("CategoriesEdit")
             .resizable()
             .frame(width: 20, height: 20)
-            .accessibilityLabel("Edit category")
+            .accessibilityLabel("编辑分类")
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -520,7 +520,7 @@ private struct EditableCategoryCard: View {
           Image("CategoriesDelete")
             .resizable()
             .frame(width: 20, height: 20)
-            .accessibilityLabel("Delete category")
+            .accessibilityLabel("删除分类")
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -749,7 +749,7 @@ struct ColorOrganizerRoot: View {
 
       VStack(spacing: verticalSpacing) {
         if stage == .details && showsTitles {
-          Text("Customize your categories")
+          Text("自定义你的分类")
             .font(Font.custom("Instrument Serif", size: 44))
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .center)
@@ -798,12 +798,12 @@ struct ColorOrganizerRoot: View {
     VStack(alignment: .leading, spacing: showTitles ? 20 : 16) {
       if showTitles {
         VStack(alignment: .leading, spacing: 6) {
-          Text("Part 1 of 2")
+          Text("第一部分，共 2 步")
             .font(Font.custom("Figtree", size: 14).weight(.bold))
             .foregroundColor(Color(red: 0.98, green: 0.43, blue: 0))
             .frame(maxWidth: .infinity, alignment: .leading)
 
-          Text("Edit title and description")
+          Text("编辑标题与说明")
             .font(Font.custom("Instrument Serif", size: 30))
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -814,21 +814,19 @@ struct ColorOrganizerRoot: View {
         instructionRow(
           icon: "CategoriesOrganize",
           text:
-            "Dayflow organizes your activities by the category titles and descriptions you provide."
+            "Dayflow 会基于你填写的分类标题与说明整理活动记录。"
         )
         .frame(maxWidth: isCompact ? .infinity : 280, alignment: .leading)
 
         instructionRow(
           icon: "CategoriesTextSelect",
           text:
-            "Try to provide as much details in the descriptions as you can to help Dayflow understand your workflow and habits."
+            "请尽可能在说明里补充细节，帮助 Dayflow 更好理解你的工作流与习惯。"
         )
         .frame(maxWidth: isCompact ? .infinity : 280, alignment: .leading)
       }
 
-      Text(
-        "This step is optional. You can customize the categories or create new ones anytime while using Dayflow."
-      )
+      Text("此步骤可选。你可在使用 Dayflow 时随时调整分类或新增分类。")
       .font(Font.custom("Figtree", size: 12).weight(.medium))
       .foregroundColor(Color(red: 0.48, green: 0.48, blue: 0.48))
       .frame(maxWidth: isCompact ? .infinity : 280, alignment: .leading)
@@ -852,12 +850,12 @@ struct ColorOrganizerRoot: View {
     VStack(alignment: .leading, spacing: 24) {
       if showTitles {
         VStack(alignment: .leading, spacing: 6) {
-          Text("Part 2 of 2")
+          Text("第二部分，共 2 步")
             .font(Font.custom("Figtree", size: 14).weight(.bold))
             .foregroundColor(Color(red: 0.98, green: 0.43, blue: 0))
             .frame(maxWidth: .infinity, alignment: .leading)
 
-          Text("Edit colors")
+          Text("编辑颜色")
             .font(Font.custom("Instrument Serif", size: 30))
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -894,8 +892,8 @@ struct ColorOrganizerRoot: View {
       VStack(alignment: .leading, spacing: 12) {
         Text(
           isDraggingColor
-            ? "Drop on a category →"
-            : "Click and drag on the canvas above to change the color palette. Then drag a color onto a category."
+            ? "拖到分类上 →"
+            : "在上方画布中点击并拖动来调整色盘，再将颜色拖到分类上。"
         )
         .font(Font.custom("Figtree", size: 13).weight(.medium))
         .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.3))
@@ -935,7 +933,7 @@ struct ColorOrganizerRoot: View {
           .font(.system(size: 10, weight: .bold))
           .foregroundColor(Color(red: 0.49, green: 0.33, blue: 0.16))
 
-        Text("Create a new category")
+        Text("创建新分类")
           .font(Font.custom("Figtree", size: 14).weight(.bold))
           .foregroundColor(Color(red: 0.49, green: 0.33, blue: 0.16))
       }
@@ -1012,7 +1010,7 @@ struct ColorOrganizerRoot: View {
       .frame(maxWidth: isCompact ? .infinity : 708)
       .frame(height: containerHeight, alignment: .topLeading)
 
-      Text("This step is optional. You can change the colors anytime while using Dayflow.")
+      Text("此步骤可选。你可在使用 Dayflow 时随时修改颜色。")
         .font(Font.custom("Figtree", size: 12).weight(.medium))
         .foregroundColor(Color(red: 0.48, green: 0.48, blue: 0.48))
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -1117,7 +1115,7 @@ struct ColorOrganizerRoot: View {
   }
 
   private var emptyState: some View {
-    Text("Add a category to get started.")
+    Text("先添加一个分类开始。")
       .font(Font.custom("Figtree", size: 13).weight(.medium))
       .foregroundColor(Color(red: 0.35, green: 0.35, blue: 0.35))
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -1206,7 +1204,7 @@ struct ColorOrganizerRoot: View {
 
       showFirstTimeHints = false
 
-      let baseName = "New category"
+      let baseName = "新建分类"
       var candidate = baseName
       var suffix = 2
       let existingNames = Set(categories.map { $0.name.lowercased() })

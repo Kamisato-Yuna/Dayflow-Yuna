@@ -29,10 +29,10 @@ struct CategoryPickerView: View {
         Rectangle()
           .fill(Color.clear)
           .frame(height: 0)
-          .overlay(
-            Rectangle()
-              .fill(Color(red: 0.91, green: 0.89, blue: 0.86))
-              .frame(height: 1)
+              .overlay(
+                Rectangle()
+                  .fill(Color(red: 0.91, green: 0.89, blue: 0.86))
+                  .frame(height: 1)
           )
           .padding(.horizontal, 0)
 
@@ -42,13 +42,13 @@ struct CategoryPickerView: View {
             // Main text
             HStack(alignment: .top, spacing: 0) {
               Text(
-                "To help Dayflow organize your activities more accurately, try adding more details to the descriptions in your categories "
+                "想让 Dayflow 更准确地整理你的活动记录，请在分类说明中补充更多细节，"
               )
               .font(Font.custom("Figtree", size: 10).weight(.medium))
               .foregroundColor(Color(red: 0.39, green: 0.35, blue: 0.33))  // #635953
 
               Button(action: onNavigateToEditor) {
-                Text("here")
+                Text("前往设置")
                   .font(Font.custom("Figtree", size: 10).weight(.medium))
                   .foregroundColor(Color(red: 1.0, green: 0.4, blue: 0.0))  // #ff6600
                   .underline()
@@ -56,7 +56,7 @@ struct CategoryPickerView: View {
               .buttonStyle(.plain)
               .pointingHandCursor()
 
-              Text(".")
+              Text("。")
                 .font(Font.custom("Figtree", size: 10).weight(.medium))
                 .foregroundColor(Color(red: 0.39, green: 0.35, blue: 0.33))
             }

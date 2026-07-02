@@ -92,18 +92,18 @@ struct CategoryPickerOverlay: View {
     let linkURL = URL(string: "dayflow://category-editor")!
 
     var intro = AttributedString(
-      "To help Dayflow organize your activities more accurately, try adding more details to the descriptions in your categories "
+      "想让 Dayflow 更准确地整理你的活动记录，请在分类说明中补充更多细节，"
     )
     intro.font = baseFont
     intro.foregroundColor = baseColor
 
-    var link = AttributedString("here")
+    var link = AttributedString("前往设置")
     link.font = baseFont
     link.foregroundColor = linkColor
     link.underlineStyle = .single
     link.link = linkURL
 
-    var period = AttributedString(".")
+    var period = AttributedString("。")
     period.font = baseFont
     period.foregroundColor = baseColor
 
