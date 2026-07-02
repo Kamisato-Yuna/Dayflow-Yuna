@@ -385,7 +385,7 @@ enum CLITool: String, CaseIterable {
 
   var displayName: String {
     switch self {
-    case .codex: return "ChatGPT (Codex CLI)"
+    case .codex: return "ChatGPT（Codex CLI）"
     case .claude: return "Claude Code"
     }
   }

@@ -18,7 +18,7 @@ struct CLIDetector {
     if result.exitCode == 0 {
       let trimmed = result.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
       let firstLine = trimmed.components(separatedBy: .newlines).first ?? trimmed
-      let summary = firstLine.isEmpty ? "\(tool.shortName) detected" : firstLine
+      let summary = firstLine.isEmpty ? "\(tool.shortName) 已检测" : firstLine
       return CLIDetectionReport(
         state: .installed(version: summary), resolvedPath: tool.executableName,
         stdout: result.stdout, stderr: result.stderr)
