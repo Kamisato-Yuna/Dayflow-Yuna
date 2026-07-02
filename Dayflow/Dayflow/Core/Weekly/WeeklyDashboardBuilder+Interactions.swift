@@ -379,7 +379,7 @@ extension WeeklyDashboardBuilder {
 
   private static func averageDurationText(minutes: Int, visits: Int) -> String {
     let averageMinutes = max(1, Int((Double(minutes) / Double(max(visits, 1))).rounded()))
-    return "\(durationText(averageMinutes)) avg"
+    return "平均 \(durationText(averageMinutes))"
   }
 
   private static func clockTime(from minute: Double) -> String {

@@ -90,7 +90,7 @@ struct WeeklyContextShiftComparisonSection: View {
 
   private var chartColumn: some View {
     VStack(alignment: .leading, spacing: Design.xAxisTopSpacing) {
-      Text("Count")
+      Text("次数")
         .font(.custom("Figtree-Regular", size: 12))
         .foregroundStyle(Design.labelColor)
 

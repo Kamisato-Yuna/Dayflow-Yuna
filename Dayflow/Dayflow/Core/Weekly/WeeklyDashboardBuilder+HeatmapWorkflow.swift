@@ -33,9 +33,9 @@ extension WeeklyDashboardBuilder {
     }
 
     return WeeklyFocusHeatmapSnapshot(
-      title: "Focus and distraction heat map",
-      focusedLabel: "Focused work",
-      distractedLabel: "Distracted",
+      title: "专注与分心热力图",
+      focusedLabel: "专注工作",
+      distractedLabel: "分心",
       startMinute: visibleWindow.start,
       endMinute: visibleWindow.start + (Double(bucketCount) * bucketMinutes),
       bucketMinutes: bucketMinutes,
@@ -78,7 +78,7 @@ extension WeeklyDashboardBuilder {
     }
 
     return WeeklyWorkflowSnapshot(
-      title: "Your workflow this week",
+      title: "本周工作流",
       startMinute: visibleStart,
       endMinute: visibleEnd,
       slotMinutes: slotMinutes,
@@ -483,7 +483,7 @@ extension WeeklyDashboardBuilder {
     if isDistractionCategory(fact) {
       return WeeklyWorkflowBucket(
         id: "distraction",
-        name: "Distraction",
+        name: "分心",
         colorHex: "FF5950",
         minutes: 0
       )

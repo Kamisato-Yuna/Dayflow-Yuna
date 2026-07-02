@@ -556,13 +556,13 @@ private struct WeeklyFocusHeatmapGapPreview: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       HStack(spacing: 12) {
-        Text("Gap")
+        Text("间距")
           .font(.custom("Figtree-Regular", size: 12))
 
         Slider(value: $cellGap, in: 0...1.5, step: 0.1)
           .frame(width: 220)
 
-        Text("\(cellGap, format: .number.precision(.fractionLength(1))) pt")
+        Text("\(cellGap, format: .number.precision(.fractionLength(1))) 点")
           .font(.custom("Figtree-Regular", size: 12))
           .monospacedDigit()
       }

@@ -24,7 +24,7 @@ private struct WeeklyApplicationNetworkPane: View {
       Color(hex: "FBF6F0")
 
       VStack(alignment: .leading, spacing: 7) {
-        Text("Interactions between most used applications")
+        Text("常用应用之间的互动")
           .font(.custom("InstrumentSerif-Regular", size: 20))
           .foregroundStyle(Color(hex: "B46531"))
 
@@ -61,9 +61,9 @@ private struct WeeklyApplicationNetworkPane: View {
       }
 
       HStack(spacing: 30) {
-        legendItem("Work", border: Color(hex: "4779E9"), fill: Color(hex: "EEF3FF"))
-        legendItem("Personal", border: Color(hex: "B8B8B8"), fill: Color(hex: "E6E6E6"))
-        legendItem("Distraction", border: Color(hex: "FF7C5A"), fill: Color(hex: "FFDCCF"))
+        legendItem("工作", border: Color(hex: "4779E9"), fill: Color(hex: "EEF3FF"))
+        legendItem("个人", border: Color(hex: "B8B8B8"), fill: Color(hex: "E6E6E6"))
+        legendItem("分心", border: Color(hex: "FF7C5A"), fill: Color(hex: "FFDCCF"))
       }
       .offset(x: 158, y: 507)
     }
@@ -123,7 +123,7 @@ private struct WeeklyApplicationPatternsPane: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text("Most common work patterns")
+      Text("最常见工作模式")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.top, 28)
@@ -138,7 +138,7 @@ private struct WeeklyApplicationPatternsPane: View {
       .padding(.horizontal, 16)
       .padding(.leading, 8)
 
-      Text("Distractions and rabbit holes")
+      Text("分心与深陷浏览")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.top, 19)

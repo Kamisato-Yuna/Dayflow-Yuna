@@ -193,12 +193,12 @@ struct WeeklyWorkflowSection: View {
     HStack(spacing: 8) {
       if snapshot.totals.isEmpty {
         Text(
-          "Week total  No captured activity during \(clockText(snapshot.startMinute))-\(clockText(snapshot.endMinute))"
+          "本周总计  \(clockText(snapshot.startMinute))-\(clockText(snapshot.endMinute)) 暂无捕获活动"
         )
         .font(.custom("Figtree-Regular", size: 12))
         .foregroundStyle(Design.mutedTextColor)
       } else {
-        Text("Week total")
+        Text("本周总计")
           .font(.custom("InstrumentSerif-Regular", size: 14))
           .foregroundStyle(Design.totalTitleColor)
 
@@ -266,7 +266,7 @@ struct WeeklyWorkflowSection: View {
     slotIndex: Int
   ) -> String {
     guard let categoryName = cell.categoryName, cell.minutes > 0 else {
-      return "\(row.label) \(slotRangeText(slotIndex)): No activity"
+      return "\(row.label) \(slotRangeText(slotIndex))：无活动"
     }
     return
       "\(row.label) \(slotRangeText(slotIndex)): \(categoryName), \(durationText(cell.minutes))"
@@ -307,7 +307,7 @@ struct WeeklyWorkflowSection: View {
 
 extension WeeklyWorkflowSnapshot {
   static let figmaPreview = WeeklyWorkflowSnapshot(
-    title: "Your workflow this week",
+    title: "本周工作流",
     startMinute: 9.0 * 60.0,
     endMinute: 22.0 * 60.0,
     slotMinutes: 15,

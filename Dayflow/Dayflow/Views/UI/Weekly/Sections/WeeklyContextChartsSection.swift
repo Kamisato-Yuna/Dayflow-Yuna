@@ -38,13 +38,13 @@ struct WeeklyContextChartsSection: View {
     [
       WeeklyContextLineSeries(
         id: "distractions",
-        label: "Number of times distracted",
+        label: "分心次数",
         colorHex: "FF8A8A",
         values: snapshot.comparison.days.map(\.distracted)
       ),
       WeeklyContextLineSeries(
         id: "context-shifts",
-        label: "Number of context shifts",
+        label: "上下文切换次数",
         colorHex: "A78CFF",
         values: snapshot.comparison.days.map(\.shifts)
       ),
@@ -59,7 +59,7 @@ struct WeeklyContextChartsSection: View {
   var body: some View {
     VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: Design.chartTopSpacing) {
-        Text("Context shift and distractions comparison")
+        Text("上下文切换与分心对比")
           .font(.custom("InstrumentSerif-Regular", size: 20))
           .foregroundStyle(Color(hex: "B46531"))
           .lineLimit(1)
@@ -110,7 +110,7 @@ struct WeeklyContextChartsSection: View {
 
   private var chartColumn: some View {
     VStack(alignment: .leading, spacing: Design.xAxisTopSpacing) {
-      Text("Count")
+      Text("次数")
         .font(.custom("Figtree-Regular", size: 12))
         .foregroundStyle(Design.labelColor)
 
@@ -232,15 +232,15 @@ private struct WeeklyContextDistributionCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text("Context shift and distractions distribution")
+      Text("上下文切换与分心分布")
         .font(.custom("InstrumentSerif-Regular", size: 18))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.leading, 25)
         .padding(.top, 18)
 
       HStack(spacing: 24) {
-        legendItem("Context shift", color: Design.contextColor)
-        legendItem("Distraction", color: Design.distractionColor)
+        legendItem("上下文切换", color: Design.contextColor)
+        legendItem("分心", color: Design.distractionColor)
       }
       .frame(maxWidth: .infinity)
       .padding(.top, 23)
@@ -365,7 +365,7 @@ private struct WeeklyContextComparisonBarCard: View {
   var body: some View {
     VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: 0) {
-        Text("Context shift and distractions comparison")
+        Text("上下文切换与分心对比")
           .font(.custom("InstrumentSerif-Regular", size: 18))
           .foregroundStyle(Color(hex: "B46531"))
           .padding(.top, 22)

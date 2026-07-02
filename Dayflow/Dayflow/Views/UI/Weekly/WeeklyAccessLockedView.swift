@@ -10,13 +10,13 @@ enum WeeklyAccessNotificationState: Equatable {
   var buttonTitle: String {
     switch self {
     case .idle:
-      return "Notify me when ready"
+      return "可用时提醒我"
     case .requesting:
-      return "Setting reminder..."
+      return "正在设置提醒..."
     case .scheduled:
-      return "We'll notify you"
+      return "我们会提醒你"
     case .denied:
-      return "Open notification settings"
+      return "打开通知设置"
     case .failed:
       return "重试"
     }
@@ -58,18 +58,18 @@ struct WeeklyAccessProgressSnapshot: Equatable {
     let remainingMinutes = minutes % 60
 
     if minutes == 0 {
-      return "0h / 30h"
+      return "0 小时 / 30 小时"
     }
 
     if hours == 0 {
-      return "\(remainingMinutes)m / 30h"
+      return "\(remainingMinutes) 分钟 / 30 小时"
     }
 
     if remainingMinutes == 0 {
-      return "\(hours)h / 30h"
+      return "\(hours) 小时 / 30 小时"
     }
 
-    return "\(hours)h \(remainingMinutes)m / 30h"
+    return "\(hours) 小时 \(remainingMinutes) 分钟 / 30 小时"
   }
 
   func estimatedUnlockDate(from date: Date) -> Date {
@@ -133,7 +133,7 @@ private struct WeeklyAccessLockCard: View {
   let onNotify: () -> Void
 
   private var buttonTitle: String {
-    isReady ? "View Weekly" : notificationState.buttonTitle
+    isReady ? "查看周报" : notificationState.buttonTitle
   }
 
   private var isButtonDisabled: Bool {
@@ -145,7 +145,7 @@ private struct WeeklyAccessLockCard: View {
       WeeklyAccessCardBackground()
 
       VStack(spacing: 4) {
-        Text("Unlock Weekly")
+        Text("解锁周报")
           .font(.custom("InstrumentSerif-Regular", size: 22))
           .foregroundStyle(Color(hex: "333333"))
           .multilineTextAlignment(.center)
@@ -153,7 +153,7 @@ private struct WeeklyAccessLockCard: View {
           .minimumScaleFactor(0.76)
           .frame(width: 333, height: 26.4)
 
-        Text("Weekly unlocks after 30 hours of recorded timeline data")
+        Text("记录 30 小时的时间线数据后即可解锁周报")
           .font(.custom("Figtree-Regular", size: 14))
           .foregroundStyle(Color(hex: "796E64"))
           .multilineTextAlignment(.center)
@@ -477,15 +477,15 @@ private struct WeeklyAccessPreviewBackground: View {
 extension WeeklySankeySnapshot {
   fileprivate static let weeklyAccessPreview = WeeklySankeySnapshot(
     id: "weekly-access-preview",
-    seedLabel: "Weekly preview",
+    seedLabel: "周报预览",
     sourceName: "周报",
     categories: [
-      .init(id: "research", name: "Research", minutes: 430, colorHex: "93BCFF"),
-      .init(id: "communication", name: "Communication", minutes: 360, colorHex: "6CDACD"),
-      .init(id: "design", name: "Design", minutes: 720, colorHex: "DE9DFC"),
-      .init(id: "testing", name: "Testing", minutes: 240, colorHex: "FFA189"),
-      .init(id: "distractions", name: "Distractions", minutes: 150, colorHex: "FF5950"),
-      .init(id: "personal", name: "Personal", minutes: 180, colorHex: "FFC6B7"),
+      .init(id: "research", name: "研究", minutes: 430, colorHex: "93BCFF"),
+      .init(id: "communication", name: "沟通", minutes: 360, colorHex: "6CDACD"),
+      .init(id: "design", name: "设计", minutes: 720, colorHex: "DE9DFC"),
+      .init(id: "testing", name: "测试", minutes: 240, colorHex: "FFA189"),
+      .init(id: "distractions", name: "分心", minutes: 150, colorHex: "FF5950"),
+      .init(id: "personal", name: "个人", minutes: 180, colorHex: "FFC6B7"),
     ],
     apps: [
       .init(id: "chatgpt", name: "ChatGPT", minutes: 320, colorHex: "333333"),
@@ -495,7 +495,7 @@ extension WeeklySankeySnapshot {
       .init(id: "zoom", name: "Zoom", minutes: 100, colorHex: "4085FD"),
       .init(id: "clickup", name: "ClickUp", minutes: 100, colorHex: "FD1BB9"),
       .init(id: "youtube", name: "YouTube", minutes: 110, colorHex: "FF0000"),
-      .init(id: "other", name: "Other", minutes: 220, colorHex: "D9D9D9"),
+      .init(id: "other", name: "其他", minutes: 220, colorHex: "D9D9D9"),
     ],
     links: [
       .init(id: "research-chatgpt", from: "research", to: "chatgpt", minutes: 180),

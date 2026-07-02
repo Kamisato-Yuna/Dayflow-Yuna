@@ -55,7 +55,7 @@ extension WeeklyDashboardBuilder {
       .sorted(by: WeeklyTreemapCategory.displayOrder)
 
     return WeeklyTreemapSnapshot(
-      title: "Most used per category",
+      title: "各分类常用应用",
       categories: Array(categories.prefix(5))
     )
   }
@@ -113,7 +113,7 @@ extension WeeklyDashboardBuilder {
 
     return WeeklySankeySnapshot(
       id: "weekly-sankey-\(DateFormatter.yyyyMMdd.string(from: weekRange.weekStart))",
-      seedLabel: "Timeline data",
+      seedLabel: "时间线数据",
       sourceName: sankeySourceName(for: weekRange),
       categories: categoryBuckets.categories.map {
         WeeklySankeySnapshotCategory(
@@ -190,7 +190,7 @@ extension WeeklyDashboardBuilder {
     }
     let categories =
       visible + [
-        WeeklyBucket(key: otherKey, name: "Other", colorHex: otherColorHex, minutes: otherMinutes)
+        WeeklyBucket(key: otherKey, name: "其他", colorHex: otherColorHex, minutes: otherMinutes)
       ]
     return WeeklyVisibleBuckets(categories: categories, visibleKeys: Set(visible.map(\.key)))
   }

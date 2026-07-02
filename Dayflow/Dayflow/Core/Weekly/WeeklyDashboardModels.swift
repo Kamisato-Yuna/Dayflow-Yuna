@@ -27,7 +27,7 @@ struct WeeklySankeySnapshot {
   static func empty(sourceName: String) -> WeeklySankeySnapshot {
     WeeklySankeySnapshot(
       id: "empty-weekly-sankey",
-      seedLabel: "Timeline data",
+      seedLabel: "时间线数据",
       sourceName: sourceName,
       categories: [],
       apps: [],
@@ -74,7 +74,7 @@ struct WeeklySankeySnapshotApp {
   }
 
   var hasFaviconSource: Bool {
-    guard id != "other" && name != "Other" else { return false }
+    guard id != "other" && name != "Other" && name != "其他" else { return false }
     if hasNonEmpty(faviconPrimaryRaw) || hasNonEmpty(faviconSecondaryRaw)
       || hasNonEmpty(faviconPrimaryHost) || hasNonEmpty(faviconSecondaryHost)
     {

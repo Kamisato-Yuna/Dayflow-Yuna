@@ -106,7 +106,7 @@ struct WeeklyView: View {
 
               WeeklyExportableGraphic(
                 layout: layout,
-                title: "Weekly workflow",
+                title: "周工作流",
                 headerTitle: dashboardSnapshot.workflow.title,
                 downloadButtonOrigin: CGPoint(x: 79, y: 16),
                 fileName: exportFileName("weekly-workflow"),
@@ -126,7 +126,7 @@ struct WeeklyView: View {
 
               WeeklyExportableGraphic(
                 layout: layout,
-                title: "Focus heatmap",
+                title: "专注热力图",
                 headerTitle: dashboardSnapshot.heatmap.title,
                 downloadButtonOrigin: CGPoint(x: 44, y: 34),
                 fileName: exportFileName("focus-heatmap"),
@@ -146,7 +146,7 @@ struct WeeklyView: View {
 
               WeeklyExportableGraphic(
                 layout: layout,
-                title: "Focus breakdown",
+                title: "专注细分",
                 headerTitle: dashboardSnapshot.treemap.title,
                 downloadButtonOrigin: CGPoint(x: 40, y: 34),
                 fileName: exportFileName("focus-breakdown"),
@@ -159,7 +159,7 @@ struct WeeklyView: View {
 
               WeeklyExportableGraphic(
                 layout: layout,
-                title: "Weekly breakdown",
+                title: "周报细分",
                 downloadButtonOrigin: CGPoint(
                   x: layout.contentWidth * 72 / 1748,
                   y: layout.contentWidth * 64 / 1748
@@ -211,7 +211,7 @@ struct WeeklyView: View {
   ) -> some View {
     WeeklyExportableFixedGraphic(
       availableWidth: width,
-      title: "Weekly distribution",
+      title: "周分布",
       downloadButtonOrigin: CGPoint(x: 18, y: 16),
       fileName: exportFileName("weekly-distribution"),
       designWidth: WeeklyAdaptiveLayout.donutCardWidth,
@@ -232,8 +232,8 @@ struct WeeklyView: View {
   ) -> some View {
     WeeklyExportableFixedGraphic(
       availableWidth: width,
-      title: "Context charts",
-      headerTitle: "Context shift and distractions comparison",
+      title: "上下文图表",
+      headerTitle: "上下文切换与分心对比",
       downloadButtonOrigin: CGPoint(x: 24, y: 16),
       fileName: exportFileName("context-charts"),
       designWidth: WeeklyAdaptiveLayout.designContentWidth,
@@ -449,7 +449,7 @@ private struct WeeklyDataRequirementView: View {
 
   private var remainingText: String {
     let remainingMinutes = max(targetMinutes - recordedMinutes, 0)
-    return "\(durationText(remainingMinutes)) more to unlock this week"
+    return "还需 \(durationText(remainingMinutes)) 解锁本周周报"
   }
 
   var body: some View {
@@ -464,11 +464,11 @@ private struct WeeklyDataRequirementView: View {
 
       VStack(spacing: 18) {
         VStack(spacing: 5) {
-          Text("Keep recording to unlock this week")
+          Text("继续记录以解锁本周周报")
             .font(.custom("InstrumentSerif-Regular", size: 24))
             .foregroundStyle(Color(hex: "333333"))
 
-          Text("Weekly insights need at least 15 hours of recorded activity for the selected week.")
+          Text("所选周至少需要 15 小时记录活动，才能生成周报洞察。")
             .font(.custom("Figtree-Regular", size: 14))
             .foregroundStyle(Color(hex: "796E64"))
             .multilineTextAlignment(.center)
@@ -493,18 +493,18 @@ private struct WeeklyDataRequirementView: View {
     let remainingMinutes = minutes % 60
 
     if minutes <= 0 {
-      return "0h"
+      return "0 小时"
     }
 
     if hours == 0 {
-      return "\(remainingMinutes)m"
+      return "\(remainingMinutes) 分钟"
     }
 
     if remainingMinutes == 0 {
-      return "\(hours)h"
+      return "\(hours) 小时"
     }
 
-    return "\(hours)h \(remainingMinutes)m"
+    return "\(hours) 小时 \(remainingMinutes) 分钟"
   }
 }
 
@@ -853,7 +853,7 @@ private struct WeeklyGraphicDownloadButton: View {
         .contentShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
     .buttonStyle(.plain)
-    .help("Download \(title) as a full-resolution PNG")
+    .help("将\(title)下载为完整分辨率 PNG")
     .hoverScaleEffect(scale: 1.04)
     .pointingHandCursorOnHover(reassertOnPressEnd: true)
   }
@@ -888,8 +888,8 @@ private enum WeeklyGraphicExporter {
     }
 
     let savePanel = NSSavePanel()
-    savePanel.title = "Download graphic"
-    savePanel.prompt = "Download"
+    savePanel.title = "下载图表"
+    savePanel.prompt = "下载"
     savePanel.nameFieldStringValue = fileName
     savePanel.allowedContentTypes = [.png]
     savePanel.canCreateDirectories = true
@@ -977,13 +977,17 @@ private struct WeeklyExportWatermark: View {
 private struct WeeklyGeneratedWithDayflowText: View {
   var body: some View {
     HStack(spacing: 3) {
-      Text("Generated with")
+      Text("由")
         .font(.custom("Figtree-SemiBold", size: 10))
         .foregroundStyle(Color(hex: "786A61"))
 
       Text("Dayflow")
         .font(.custom("Figtree-Bold", size: 10))
         .foregroundStyle(Color(hex: "B46531"))
+
+      Text("生成")
+        .font(.custom("Figtree-SemiBold", size: 10))
+        .foregroundStyle(Color(hex: "786A61"))
     }
   }
 }
