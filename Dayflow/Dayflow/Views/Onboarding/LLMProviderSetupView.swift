@@ -169,7 +169,7 @@ struct LLMProviderSetupView: View {
     case .localChoice:
       VStack(alignment: .leading, spacing: 20) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("选择本地 AI 引擎")
+          Text("选择本地模型引擎")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
@@ -214,7 +214,7 @@ struct LLMProviderSetupView: View {
           )
         }
         Text(
-          "你已经有本地服务了吗？请确认其兼容 OpenAI API。下一步可设置自定义 Base URL。"
+          "你已经有本地服务了吗？请确认其兼容 OpenAI 接口。下一步可设置自定义基础地址。"
         )
         .font(.custom("Figtree", size: 13))
         .foregroundColor(.black.opacity(0.6))
@@ -292,7 +292,7 @@ struct LLMProviderSetupView: View {
           }
         } else {
           VStack(alignment: .leading, spacing: 8) {
-            Text("使用任意 OpenAI 兼容 VLM")
+            Text("可使用任意兼容 OpenAI 的视觉语言模型")
               .font(.custom("Figtree", size: 16))
               .fontWeight(.semibold)
               .foregroundColor(.black.opacity(0.85))
@@ -326,8 +326,8 @@ struct LLMProviderSetupView: View {
       VStack(alignment: .leading, spacing: 24) {
         APIKeyInputView(
           apiKey: $setupState.apiKey,
-          title: "输入你的 API 密钥：",
-          subtitle: "请在下方粘贴 Gemini API 密钥",
+          title: "输入你的密钥：",
+          subtitle: "请在下方粘贴 Gemini 密钥",
           placeholder: "AQ...",
           onValidate: { key in
             key.components(separatedBy: .whitespacesAndNewlines).joined().count > 10
@@ -391,7 +391,7 @@ struct LLMProviderSetupView: View {
     case .modelDownload(let command):
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("下载 AI 模型")
+          Text("下载模型")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
@@ -521,7 +521,7 @@ struct LLMProviderSetupView: View {
     case .apiKeyInstructions:
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 8) {
-          Text("获取你的 Gemini API 密钥")
+          Text("获取你的 Gemini 密钥")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
             .foregroundColor(.black.opacity(0.9))
@@ -559,7 +559,7 @@ struct LLMProviderSetupView: View {
               .foregroundColor(.black.opacity(0.6))
               .frame(width: 20, alignment: .leading)
 
-            Text("点击右上角“获取 API 密钥”")
+            Text("点击右上角“获取密钥”")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.8))
           }
@@ -570,7 +570,7 @@ struct LLMProviderSetupView: View {
               .foregroundColor(.black.opacity(0.6))
               .frame(width: 20, alignment: .leading)
 
-            Text("创建新的 API 密钥并复制")
+            Text("创建新的密钥并复制")
               .font(.custom("Figtree", size: 14))
               .foregroundColor(.black.opacity(0.8))
           }

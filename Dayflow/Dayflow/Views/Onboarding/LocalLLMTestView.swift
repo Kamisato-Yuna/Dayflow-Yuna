@@ -108,7 +108,7 @@ struct LocalLLMTestView: View {
         }
 
         VStack(alignment: .leading, spacing: 6) {
-          Text("模型 ID")
+          Text("模型标识")
             .font(.custom("Figtree", size: 12))
             .fontWeight(.semibold)
             .foregroundColor(SettingsStyle.secondary)
@@ -120,7 +120,7 @@ struct LocalLLMTestView: View {
 
         if engine == .custom {
           VStack(alignment: .leading, spacing: 6) {
-            Text("API 密钥（可选）")
+            Text("密钥（可选）")
               .font(.custom("Figtree", size: 12))
               .fontWeight(.semibold)
               .foregroundColor(SettingsStyle.secondary)

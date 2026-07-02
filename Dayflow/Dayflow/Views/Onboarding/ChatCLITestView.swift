@@ -16,13 +16,13 @@ struct ChatCLITestView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
-      Text("我们会给 CLI 提一个简单问题，验证它是否可用并已登录。")
+      Text("我们会给命令行工具提一个简单问题，验证它是否可用并已登录。")
         .font(.custom("Figtree", size: 12))
         .foregroundColor(SettingsStyle.secondary)
         .fixedSize(horizontal: false, vertical: true)
 
       SettingsPrimaryButton(
-        title: isTesting ? "测试中…" : "测试 CLI",
+        title: isTesting ? "测试中…" : "测试命令行",
         systemImage: "bolt.fill",
         isLoading: isTesting,
         isDisabled: selectedTool == nil,
