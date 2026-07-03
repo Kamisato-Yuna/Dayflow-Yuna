@@ -92,7 +92,7 @@ struct VideoExpansionOverlay: View {
     if isVisible {
       ZStack {
         // Scrim/backdrop
-        Color.black
+        Color(nsColor: .windowBackgroundColor)
           .opacity(scrimOpacity)
           .ignoresSafeArea()
           .onTapGesture {
@@ -124,8 +124,8 @@ struct VideoExpansionOverlay: View {
     switch expansionState.animationPhase {
     case .collapsed: return 0
     case .lifting: return 0.1
-    case .flying: return 0.5
-    case .expanded: return 0.7
+    case .flying: return 0.32
+    case .expanded: return 0.48
     case .collapsing: return 0
     }
   }
@@ -157,7 +157,7 @@ struct VideoExpansionOverlay: View {
         let vh = fitsWidth ? h : (geo.size.width / a)
 
         ZStack {
-          Color.white
+          Color(nsColor: .textBackgroundColor)
           HStack(spacing: 0) {
             Spacer(minLength: 0)
             videoPlayerView(width: vw, height: vh)
@@ -176,11 +176,7 @@ struct VideoExpansionOverlay: View {
         .offset(y: scrubberOffset)
     }
     .frame(width: targetWidth, height: targetHeight)
-    .background(
-      RoundedRectangle(cornerRadius: 12)
-        .fill(Color.white)
-        .shadow(color: .black.opacity(0.25), radius: 30, x: 0, y: 10)
-    )
+    .dayflowModalSurface(cornerRadius: 14)
     .clipShape(RoundedRectangle(cornerRadius: 12))
   }
 
@@ -197,23 +193,20 @@ struct VideoExpansionOverlay: View {
             "\(videoPlayerTimeFormatter.string(from: startTime)) 至 \(videoPlayerTimeFormatter.string(from: endTime))"
           )
           .font(.caption)
-          .foregroundColor(Color(red: 0.4, green: 0.4, blue: 0.4))
+          .foregroundColor(Color(nsColor: .secondaryLabelColor))
         }
       }
       Spacer()
       Button(action: { closeModal() }) {
         Image(systemName: "xmark.circle.fill")
           .font(.system(size: 20))
-          .foregroundColor(Color.black.opacity(0.5))
+          .foregroundColor(Color(nsColor: .secondaryLabelColor))
       }
       .buttonStyle(ScaleButtonStyle())
     }
     .padding(.horizontal, 16)
     .padding(.vertical, 10)
-    .background(Color.white)
-    .overlay(
-      Rectangle().stroke(Color.gray.opacity(0.25), lineWidth: 1)
-    )
+    .dayflowContentPanel(cornerRadius: 0)
   }
 
   @ViewBuilder
@@ -254,10 +247,9 @@ struct VideoExpansionOverlay: View {
             .foregroundColor(.white)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Color.black.opacity(0.85))
-            .cornerRadius(4)
         }
         .buttonStyle(ScaleButtonStyle())
+        .dayflowFloatingControl(cornerRadius: 8)
         .padding(12)
         .accessibilityLabel("播放速度")
         .transition(
@@ -290,7 +282,7 @@ struct VideoExpansionOverlay: View {
         .padding(.bottom, 12)
       }
     }
-    .background(Color.white)
+    .dayflowContentPanel(cornerRadius: 0)
   }
 
   // Animation helpers
@@ -622,23 +614,20 @@ struct VideoPlayerModal: View {
                 "\(videoPlayerTimeFormatter.string(from: startTime)) 至 \(videoPlayerTimeFormatter.string(from: endTime))"
               )
               .font(.caption)
-              .foregroundColor(Color(red: 0.4, green: 0.4, blue: 0.4))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
             }
           }
           Spacer()
           Button(action: { dismiss() }) {
             Image(systemName: "xmark.circle.fill")
               .font(.system(size: 20))
-              .foregroundColor(Color.black.opacity(0.5))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
           }
           .buttonStyle(ScaleButtonStyle())
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(Color.white)
-        .overlay(
-          Rectangle().stroke(Color.gray.opacity(0.25), lineWidth: 1)
-        )
+        .dayflowContentPanel(cornerRadius: 0)
       }
 
       // Video area + overlays sized by aspect (fill available height)
@@ -651,7 +640,7 @@ struct VideoPlayerModal: View {
         let vh = fitsWidth ? h : (geo.size.width / a)
 
         ZStack {
-          Color.white
+          Color(nsColor: .textBackgroundColor)
           HStack(spacing: 0) {
             Spacer(minLength: 0)
             ZStack {
@@ -696,10 +685,9 @@ struct VideoPlayerModal: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.black.opacity(0.85))
-                    .cornerRadius(4)
                 }
                 .buttonStyle(ScaleButtonStyle())
+                .dayflowFloatingControl(cornerRadius: 8)
                 .padding(12)
                 .accessibilityLabel("播放速度")
                 .transition(
@@ -748,13 +736,14 @@ struct VideoPlayerModal: View {
           .padding(.bottom, 12)
         }
       }
-      .background(Color.white)  // underneath video area edge
+      .dayflowContentPanel(cornerRadius: 0)
     }
     // Size modal to 90% of the presenting window if available
     .frame(
       width: (containerSize?.width ?? 800) * 0.9,
       height: (containerSize?.height ?? 600) * 0.9
     )
+    .dayflowModalSurface(cornerRadius: 14)
     .onAppear {
       // Modal opened
       AnalyticsService.shared.capture(

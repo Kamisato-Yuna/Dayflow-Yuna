@@ -771,7 +771,9 @@ struct ColorOrganizerRoot: View {
           if presentationStyle == .sheet {
             RoundedRectangle(cornerRadius: 20)
               .fill(.regularMaterial)
-              .shadow(color: Color.black.opacity(0.12), radius: 20, x: 0, y: 8)
+            RoundedRectangle(cornerRadius: 20)
+              .fill(Color(nsColor: .controlBackgroundColor).opacity(0.58))
+              .shadow(color: Color.black.opacity(0.10), radius: 20, x: 0, y: 8)
           }
         }
       )
@@ -925,22 +927,7 @@ struct ColorOrganizerRoot: View {
       }
       .padding(.horizontal, 14)
       .padding(.vertical, 8)
-      .background(
-        LinearGradient(
-          gradient: Gradient(stops: [
-            .init(color: Color(red: 1, green: 0.94, blue: 0.79), location: 0),
-            .init(color: Color(red: 1, green: 0.72, blue: 0.43), location: 1),
-          ]),
-          startPoint: .leading,
-          endPoint: .trailing
-        )
-      )
-      .cornerRadius(6)
-      .overlay(
-        RoundedRectangle(cornerRadius: 6)
-          .inset(by: 0.5)
-          .stroke(Color(red: 0.95, green: 0.71, blue: 0.56), lineWidth: 1)
-      )
+      .dayflowFloatingControl(cornerRadius: 6)
       .opacity(canAddMoreCategories ? 1 : 0.45)
     }
     .buttonStyle(.plain)
@@ -966,14 +953,6 @@ struct ColorOrganizerRoot: View {
 
     return VStack(alignment: .leading, spacing: 16) {
       ZStack(alignment: .top) {
-        RoundedRectangle(cornerRadius: 16)
-          .fill(Color(nsColor: .controlBackgroundColor).opacity(0.38))
-          .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
-
-        RoundedRectangle(cornerRadius: 16)
-          .stroke(Color(red: 0.94, green: 0.91, blue: 0.87), lineWidth: 1)
-          .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
-
         ScrollView(showsIndicators: false) {
           VStack(spacing: 8) {
             ForEach(categories) { category in
@@ -992,6 +971,7 @@ struct ColorOrganizerRoot: View {
           .padding(.bottom, 24)
         }
       }
+      .dayflowContentPanel(cornerRadius: 16)
       .frame(maxWidth: .infinity, alignment: .topLeading)
       .frame(maxWidth: isCompact ? .infinity : 708)
       .frame(height: containerHeight, alignment: .topLeading)
@@ -1031,14 +1011,6 @@ struct ColorOrganizerRoot: View {
     return ScrollViewReader { proxy in
       VStack(alignment: .leading, spacing: 24) {
         ZStack(alignment: .top) {
-          RoundedRectangle(cornerRadius: 16)
-            .fill(Color(nsColor: .controlBackgroundColor).opacity(0.38))
-            .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
-
-          RoundedRectangle(cornerRadius: 16)
-            .stroke(Color(red: 0.94, green: 0.91, blue: 0.87), lineWidth: 1)
-            .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
-
           ScrollView(showsIndicators: false) {
             VStack(spacing: 8) {
               if categories.isEmpty {
@@ -1065,6 +1037,7 @@ struct ColorOrganizerRoot: View {
             .padding(.bottom, 16)
           }
         }
+        .dayflowContentPanel(cornerRadius: 16)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .frame(maxWidth: isCompact ? .infinity : 708)
         .frame(height: containerHeight, alignment: .topLeading)
@@ -1118,8 +1091,13 @@ struct ColorOrganizerRoot: View {
     case .embedded:
       Color.clear
     case .sheet:
-      Color.black.opacity(0.16)
-        .ignoresSafeArea()
+      ZStack {
+        Color(nsColor: .windowBackgroundColor).opacity(0.10)
+        Rectangle()
+          .fill(.regularMaterial)
+          .opacity(0.45)
+      }
+      .ignoresSafeArea()
     }
   }
 
@@ -1145,14 +1123,7 @@ struct ColorOrganizerRoot: View {
           .padding(.horizontal, 59)
           .padding(.vertical, 18)
           .frame(width: 160, alignment: .center)
-          .background(
-            RoundedRectangle(cornerRadius: 12)
-              .fill(Color(nsColor: .controlBackgroundColor).opacity(0.82))
-              .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                  .stroke(Color(red: 0.88, green: 0.88, blue: 0.88), lineWidth: 1)
-              )
-          )
+          .dayflowFloatingControl(cornerRadius: 12)
           .opacity(isEnabled ? 1.0 : 0.4)
       }
       .buttonStyle(.plain)

@@ -76,12 +76,11 @@ struct TimelineFeedbackModal: View {
       Button(action: onClose) {
         Image(systemName: "xmark")
           .font(.system(size: 12.5, weight: .semibold))
-          .foregroundColor(Color(hex: "FF8046").opacity(0.7))
+          .foregroundColor(DayflowSurfaceAccent.primary)
           .frame(width: 22, height: 22)
-          .background(Color.white.opacity(0.9))
-          .clipShape(Circle())
       }
       .buttonStyle(.plain)
+      .dayflowFloatingControl(cornerRadius: 11)
       .pointingHandCursor()
       .offset(x: -8, y: 6)
     }
@@ -102,24 +101,7 @@ struct TimelineFeedbackModal: View {
     }
     .padding(24)
     .frame(width: 286)
-    .background(
-      RoundedRectangle(cornerRadius: 6)
-        .fill(
-          LinearGradient(
-            gradient: Gradient(stops: [
-              .init(color: Color(hex: "FFF4E9"), location: 0),
-              .init(color: Color.white, location: 0.85),
-            ]),
-            startPoint: .bottom,
-            endPoint: .top
-          )
-        )
-    )
-    .overlay(
-      RoundedRectangle(cornerRadius: 6)
-        .stroke(Color(hex: "ECECEC"), lineWidth: 1)
-    )
-    .shadow(color: Color.black.opacity(0.07), radius: 12, x: 0, y: 6)
+    .dayflowModalSurface(cornerRadius: 10)
   }
 
   private var formContent: some View {
@@ -143,13 +125,8 @@ struct TimelineFeedbackModal: View {
             .foregroundColor(Color(hex: "333333"))
             .padding(.horizontal, 6)
             .padding(.vertical, 8)
-            .background(Color.white)
             .frame(height: 90)
-            .cornerRadius(4)
-            .overlay(
-              RoundedRectangle(cornerRadius: 4)
-                .stroke(Color(hex: "D9D9D9"), lineWidth: 1)
-            )
+            .dayflowCard(cornerRadius: 6)
             .focused($isEditorFocused)
             .onAppear {
               DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -203,7 +180,7 @@ struct TimelineFeedbackModal: View {
           .foregroundColor(.white)
           .frame(maxWidth: .infinity)
           .frame(height: 30)
-          .background(Color(hex: "FF8046"))
+          .background(DayflowSurfaceAccent.primary)
           .cornerRadius(4)
       }
       .buttonStyle(.plain)

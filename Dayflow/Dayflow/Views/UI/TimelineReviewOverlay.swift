@@ -105,8 +105,12 @@ struct TimelineReviewOverlay: View {
   }
 
   private var overlayBackground: some View {
-    Rectangle()
-      .fill(Color(hex: "FBE9E0").opacity(0.92))
+    ZStack {
+      Color(nsColor: .windowBackgroundColor).opacity(0.72)
+      Rectangle()
+        .fill(.regularMaterial)
+        .opacity(0.82)
+    }
       .ignoresSafeArea()
   }
 
@@ -119,15 +123,11 @@ struct TimelineReviewOverlay: View {
         } label: {
           Image(systemName: "xmark")
             .font(.system(size: 12, weight: .semibold))
-            .foregroundColor(Color(hex: "FF6D00").opacity(0.8))
+            .foregroundColor(DayflowSurfaceAccent.primary)
             .frame(width: 28, height: 28)
-            .background(
-              Circle()
-                .fill(Color.white.opacity(0.7))
-                .overlay(Circle().stroke(Color(hex: "DABCA4"), lineWidth: 1))
-            )
         }
         .buttonStyle(.plain)
+        .dayflowFloatingControl(cornerRadius: 14)
         .pointingHandCursor()
         .padding(.trailing, 22)
         .padding(.top, 16)
@@ -251,24 +251,12 @@ struct TimelineReviewOverlay: View {
       } label: {
         Text("关闭")
           .font(.custom("Figtree", size: 14).weight(.semibold))
-          .foregroundColor(Color(hex: "333333"))
+          .foregroundColor(Color(nsColor: .labelColor))
           .padding(.horizontal, 24)
           .padding(.vertical, 10)
-          .background(
-            Capsule()
-              .fill(
-                LinearGradient(
-                  colors: [Color(hex: "FFF9F1").opacity(0.9), Color(hex: "FDE8D1").opacity(0.9)],
-                  startPoint: .topLeading,
-                  endPoint: .bottomTrailing
-                )
-              )
-              .overlay(
-                Capsule().stroke(Color(hex: "FF8904").opacity(0.5), lineWidth: 1.25)
-              )
-          )
       }
       .buttonStyle(.plain)
+      .dayflowFloatingControl(cornerRadius: 16)
       .pointingHandCursor()
     }
     .frame(maxWidth: 500)

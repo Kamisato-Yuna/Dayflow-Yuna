@@ -169,6 +169,7 @@ struct PausePillView: View {
     }
     .frame(width: pillWidth, height: 32)
     .clipShape(Capsule())
+    .dayflowFloatingControl(cornerRadius: 16)
     .contentShape(Capsule())
     .onTapGesture(perform: handlePillTap)
     .simultaneousGesture(
@@ -708,5 +709,5 @@ private enum Col {
     PausePillView()
   }
   .frame(width: 400, height: 200)
-  .background(Color(red: 0.992, green: 0.973, blue: 0.945))  // #FDF8F1
+  .dayflowWindowBackground()
 }

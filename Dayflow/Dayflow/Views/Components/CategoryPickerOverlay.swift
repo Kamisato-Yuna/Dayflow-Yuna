@@ -47,7 +47,7 @@ struct CategoryPickerOverlay: View {
       .frame(maxWidth: .infinity, alignment: .leading)
 
       Rectangle()
-        .fill(Color(red: 0.91, green: 0.89, blue: 0.86))
+        .fill(Color(nsColor: .separatorColor).opacity(0.62))
         .frame(height: 1)
 
       helperContent
@@ -56,7 +56,7 @@ struct CategoryPickerOverlay: View {
     .padding(.horizontal, 12)
     .padding(.vertical, 12)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(backgroundView)
+    .dayflowPopoverSurface(cornerRadius: 6)
     .clipShape(
       UnevenRoundedRectangle(
         cornerRadii: .init(
@@ -80,15 +80,10 @@ struct CategoryPickerOverlay: View {
     )
   }
 
-  private var backgroundView: some View {
-    DayflowDailyToken.subtleFill(colorScheme: .light)
-      .background(.ultraThinMaterial)
-  }
-
   private var helperContent: some View {
     let baseFont = Font.custom("Figtree", size: 12)
-    let baseColor = Color(red: 0.39, green: 0.35, blue: 0.33)
-    let linkColor = Color(red: 1.0, green: 0.4, blue: 0.0)
+    let baseColor = Color(nsColor: .secondaryLabelColor)
+    let linkColor = DayflowSurfaceAccent.primary
     let linkURL = URL(string: "dayflow://category-editor")!
 
     var intro = AttributedString(
@@ -144,14 +139,14 @@ private struct CategoryPickerPill: View {
       if isSelected {
         LinearGradient(
           colors: [
-            Color(red: 1.0, green: 0.99, blue: 0.97),
-            Color(red: 1.0, green: 0.91, blue: 0.83),
+            DayflowSurfaceAccent.primary.opacity(0.16),
+            DayflowSurfaceAccent.primary.opacity(0.08),
           ],
           startPoint: .leading,
           endPoint: .trailing
         )
       } else {
-        DayflowDailyToken.subtleFill(colorScheme: .light)
+        Color(nsColor: .controlBackgroundColor).opacity(0.58)
       }
     }
   }

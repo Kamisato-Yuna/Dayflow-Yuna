@@ -31,7 +31,7 @@ struct CategoryPickerView: View {
           .frame(height: 0)
               .overlay(
                 Rectangle()
-                  .fill(Color(red: 0.91, green: 0.89, blue: 0.86))
+                  .fill(Color(nsColor: .separatorColor).opacity(0.62))
                   .frame(height: 1)
           )
           .padding(.horizontal, 0)
@@ -74,25 +74,7 @@ struct CategoryPickerView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(
-      ZStack {
-        // Backdrop blur effect - rgba(250,244,241,0.86) with blur
-        DayflowDailyToken.subtleFill(colorScheme: .light)
-          .background(.ultraThinMaterial)
-      }
-      .overlay(
-        // Border - #e9e1de
-        UnevenRoundedRectangle(
-          cornerRadii: .init(
-            topLeading: 0,
-            bottomLeading: 0,
-            bottomTrailing: 0,
-            topTrailing: 6
-          )
-        )
-        .stroke(Color(red: 0.91, green: 0.88, blue: 0.87), lineWidth: 1)
-      )
-    )
+    .dayflowPopoverSurface(cornerRadius: 6)
     .clipShape(
       UnevenRoundedRectangle(
         cornerRadii: .init(
@@ -113,31 +95,7 @@ struct CategoryPickerView: View {
       }
       .buttonStyle(.plain)
       .padding(6)
-      .background(
-        DayflowDailyToken.subtleFill(colorScheme: .light)
-          .background(.ultraThinMaterial)
-      )
-      .clipShape(
-        UnevenRoundedRectangle(
-          cornerRadii: .init(
-            topLeading: 0,
-            bottomLeading: 6,
-            bottomTrailing: 0,
-            topTrailing: 6
-          )
-        )
-      )
-      .overlay(
-        UnevenRoundedRectangle(
-          cornerRadii: .init(
-            topLeading: 0,
-            bottomLeading: 6,
-            bottomTrailing: 0,
-            topTrailing: 6
-          )
-        )
-        .stroke(Color(red: 0.89, green: 0.89, blue: 0.89), lineWidth: 1)
-      )
+      .dayflowFloatingControl(cornerRadius: 6)
       .offset(x: -8, y: 8)
     }
   }
@@ -208,14 +166,14 @@ struct CategoryPill: View {
         // Gradient for selected state
         LinearGradient(
           colors: [
-            Color(red: 1.0, green: 0.99, blue: 0.97),  // #fffdf8
-            Color(red: 1.0, green: 0.91, blue: 0.83),  // #ffe8d3
+            DayflowSurfaceAccent.primary.opacity(0.16),
+            DayflowSurfaceAccent.primary.opacity(0.08),
           ],
           startPoint: .leading,
           endPoint: .trailing
         )
       } else {
-        Color(red: 0.996, green: 0.996, blue: 0.996)  // #fefefe
+        Color(nsColor: .controlBackgroundColor).opacity(0.58)
       }
     }
   }
