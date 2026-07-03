@@ -166,10 +166,7 @@ struct SettingsStorageTabView: View {
             .foregroundColor(SettingsStyle.ink)
             .padding(.horizontal, 12)
             .padding(.vertical, 7)
-            .background(
-              RoundedRectangle(cornerRadius: 7, style: .continuous)
-                .fill(Color.black.opacity(0.05))
-            )
+            .settingsControlSurface(cornerRadius: 7)
           }
           .menuStyle(BorderlessButtonMenuStyle())
           .menuIndicator(.hidden)

@@ -237,10 +237,7 @@ struct SettingsDataTabView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .frame(minWidth: 170, alignment: .leading)
-        .background(
-          RoundedRectangle(cornerRadius: 7, style: .continuous)
-            .fill(Color.black.opacity(disabled ? 0.02 : 0.05))
-        )
+        .settingsControlSurface(isActive: isExpanded, cornerRadius: 7)
       }
       .buttonStyle(.plain)
       .disabled(disabled)
@@ -252,7 +249,7 @@ struct SettingsDataTabView: View {
   // MARK: - Inline calendar
   //
   // Shown as an expanded panel underneath a date pill. Keeps its own
-  // surface (white fill + hairline black stroke) because it's an input
+  // surface because it's an input
   // widget, not a section container — like any dropdown menu.
 
   private func inlineCalendar(
@@ -310,14 +307,8 @@ private struct DayflowCalendarGrid: View {
     }
     .padding(14)
     .frame(maxWidth: 290, alignment: .leading)
-    .background(
-      RoundedRectangle(cornerRadius: 10, style: .continuous)
-        .fill(Color.white.opacity(isEnabled ? 0.85 : 0.45))
-        .overlay(
-          RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .stroke(Color.black.opacity(0.1), lineWidth: 1)
-        )
-    )
+    .opacity(isEnabled ? 1 : 0.62)
+    .dayflowPopoverSurface(cornerRadius: 10)
     .onAppear {
       displayedMonth =
         calendar.date(
@@ -343,10 +334,7 @@ private struct DayflowCalendarGrid: View {
             .font(.system(size: 12, weight: .semibold))
             .foregroundColor(SettingsStyle.ink)
             .frame(width: 24, height: 24)
-            .background(
-              RoundedRectangle(cornerRadius: 6)
-                .fill(Color.black.opacity(0.04))
-            )
+            .settingsControlSurface(cornerRadius: 6)
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -358,10 +346,7 @@ private struct DayflowCalendarGrid: View {
             .font(.system(size: 12, weight: .semibold))
             .foregroundColor(SettingsStyle.ink)
             .frame(width: 24, height: 24)
-            .background(
-              RoundedRectangle(cornerRadius: 6)
-                .fill(Color.black.opacity(0.04))
-            )
+            .settingsControlSurface(cornerRadius: 6)
         }
         .buttonStyle(.plain)
         .pointingHandCursor()

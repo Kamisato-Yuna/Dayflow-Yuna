@@ -466,23 +466,13 @@ struct SettingsProvidersTabView: View {
           .padding(.vertical, 8)
           .frame(minHeight: config.isEnabled.wrappedValue ? 140 : 120)
       }
-      .background(
-        RoundedRectangle(cornerRadius: 7, style: .continuous)
-          .fill(Color.white.opacity(0.7))
-          .overlay(
-            RoundedRectangle(cornerRadius: 7, style: .continuous)
-              .stroke(Color.black.opacity(0.12), lineWidth: 1)
-          )
-      )
+      .settingsControlSurface(cornerRadius: 7)
       .opacity(config.isEnabled.wrappedValue ? 1 : 0.6)
     }
   }
 }
 
-// MARK: - Upgrade banner (kept as an exception — it's a promotional unit)
-//
-// This is the one dark surface on the settings page. Semantically it's
-// advertising, not configuration, so it gets to play by different rules.
+// MARK: - Upgrade banner
 
 private struct LocalModelUpgradeBanner: View {
   let preset: LocalModelPreset
@@ -493,18 +483,18 @@ private struct LocalModelUpgradeBanner: View {
     VStack(alignment: .leading, spacing: 14) {
       HStack(spacing: 10) {
         Image(systemName: "sparkles")
-          .foregroundStyle(Color.white)
+          .foregroundStyle(SettingsStyle.ink)
           .padding(8)
-          .background(Color(red: 0.12, green: 0.09, blue: 0.02))
+          .background(SettingsStyle.selectedFill)
           .clipShape(RoundedRectangle(cornerRadius: 8))
         VStack(alignment: .leading, spacing: 4) {
           Text("升级到 \(preset.displayName)")
             .font(.custom("Figtree", size: 16))
             .fontWeight(.semibold)
-            .foregroundColor(.white)
+            .foregroundColor(SettingsStyle.text)
           Text("升级到 Qwen3VL，可显著提升质量。")
             .font(.custom("Figtree", size: 13))
-            .foregroundColor(.white.opacity(0.8))
+            .foregroundColor(SettingsStyle.secondary)
         }
         Spacer()
       }
@@ -514,11 +504,11 @@ private struct LocalModelUpgradeBanner: View {
           HStack(alignment: .top, spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
               .font(.system(size: 12))
-              .foregroundColor(Color(red: 0.76, green: 1, blue: 0.74))
+              .foregroundColor(SettingsStyle.statusGood)
               .padding(.top, 2)
             Text(bullet)
               .font(.custom("Figtree", size: 13))
-              .foregroundColor(.white.opacity(0.85))
+              .foregroundColor(SettingsStyle.text)
           }
         }
       }
@@ -528,13 +518,10 @@ private struct LocalModelUpgradeBanner: View {
           Text("保留 Qwen2.5")
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
-            .foregroundColor(.white)
+            .foregroundColor(SettingsStyle.ink)
             .padding(.horizontal, 18)
             .padding(.vertical, 9)
-            .background(
-              RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(Color.white.opacity(0.12))
-            )
+            .settingsControlSurface(cornerRadius: 8)
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -547,12 +534,12 @@ private struct LocalModelUpgradeBanner: View {
             Image(systemName: "arrow.right")
               .font(.system(size: 12, weight: .semibold))
           }
-          .foregroundColor(.black)
+          .foregroundColor(Color(nsColor: .selectedMenuItemTextColor))
           .padding(.horizontal, 18)
           .padding(.vertical, 9)
           .background(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-              .fill(Color.white)
+              .fill(SettingsStyle.ink.opacity(0.92))
           )
         }
         .buttonStyle(.plain)
@@ -560,10 +547,7 @@ private struct LocalModelUpgradeBanner: View {
       }
     }
     .padding(20)
-    .background(
-      RoundedRectangle(cornerRadius: 14, style: .continuous)
-        .fill(Color(red: 0.16, green: 0.11, blue: 0))
-    )
+    .dayflowContentPanel(cornerRadius: 14)
   }
 }
 
@@ -756,14 +740,7 @@ struct LocalModelUpgradeSheet: View {
       }
     }
     .padding(20)
-    .background(
-      RoundedRectangle(cornerRadius: 12, style: .continuous)
-        .fill(Color.white)
-        .overlay(
-          RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .stroke(Color.black.opacity(0.1), lineWidth: 1)
-        )
-    )
+    .dayflowCard(cornerRadius: 12)
   }
 }
 
