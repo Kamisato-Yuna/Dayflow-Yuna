@@ -197,19 +197,12 @@ struct DayflowApp: App {
           .transition(.opacity)
         }
       }
-      // Inline background behind the main app UI only
       .background {
         MainWindowRegistrationView()
 
         if didOnboard {
-          ZStack {
-            Image("MainUIBackground")
-              .resizable()
-              .scaledToFill()
-
-            Color(red: 0.98, green: 0.96, blue: 0.93)
-              .opacity(0.4)
-          }
+          Color.clear
+            .dayflowWindowBackground()
           .ignoresSafeArea()
           .allowsHitTesting(false)
           .accessibilityHidden(true)
