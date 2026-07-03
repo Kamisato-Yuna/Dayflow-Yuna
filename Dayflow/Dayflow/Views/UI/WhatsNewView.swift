@@ -61,18 +61,7 @@ enum WhatsNewConfiguration {
 
   /// Update this content before shipping each release. Return nil to disable the modal entirely.
   static var configuredRelease: ReleaseNote? {
-    ReleaseNote(
-      version: targetVersion,
-      title: "Dayflow Pro 与全新推荐系统：成功推荐朋友即可获得 20 美元 Dayflow 额度！",
-      highlights: [
-        "感谢已经注册 Dayflow Pro 的每一位用户！",
-        "我们希望 Dayflow Pro 尽量让更多人用得起，也理解并不是每个人都能负担订阅。因此我们新增了推荐系统：每成功推荐一位朋友使用 Dayflow，你就能获得 20 美元 Dayflow 额度。详情可在“设置 > 账户”中查看。",
-        "Dayflow 会继续保持开源。我们相信应该为所有人打造开放、易用的软件；Dayflow Pro 则面向希望获得最简单配置和最强智能能力的用户。",
-      ],
-      previewIntro: nil,
-      previewImageNames: [],
-      cta: nil
-    )
+    nil
   }
 
   /// Returns the configured release when it matches the app version and hasn't been shown yet.
@@ -134,7 +123,6 @@ struct WhatsNewView: View {
     ""
   @State private var selectedWeeklyFeedback: WhatsNewWeeklyFeedback?
   @State private var weeklyImprovementText = ""
-  @State private var releaseSurveyResponseID = ""
   @State private var isSubmittingWeeklyFeedback = false
   @State private var surveyErrorText: String?
   @State private var didHydrateSurveyState = false
@@ -485,7 +473,6 @@ struct WhatsNewView: View {
       selectedWeeklyFeedback = WhatsNewWeeklyFeedback(rawValue: storedFeedback)
     }
     weeklyImprovementText = UserDefaults.standard.string(forKey: improvementStorageKey) ?? ""
-    releaseSurveyResponseID = loadReleaseSurveyResponseID()
   }
 
   private var selectedFeedbackStorageKey: String {
@@ -496,23 +483,6 @@ struct WhatsNewView: View {
     "whatsNewWeeklyImprovement_\(releaseSurveyKey)_\(releaseNote.version)"
   }
 
-  private var releaseSurveyResponseIDStorageKey: String {
-    "whatsNewReleaseSurveyResponseID_\(releaseSurveyKey)_\(releaseNote.version)"
-  }
-
-  private func loadReleaseSurveyResponseID() -> String {
-    let defaults = UserDefaults.standard
-    if let existing = defaults.string(forKey: releaseSurveyResponseIDStorageKey),
-      !existing.isEmpty
-    {
-      return existing
-    }
-
-    let generated = UUID().uuidString.lowercased()
-    defaults.set(generated, forKey: releaseSurveyResponseIDStorageKey)
-    return generated
-  }
-
   private func submitReleaseSurvey() async -> Bool {
     isSubmittingWeeklyFeedback = true
 
@@ -520,35 +490,9 @@ struct WhatsNewView: View {
       isSubmittingWeeklyFeedback = false
     }
 
-    do {
-      let responseID =
-        releaseSurveyResponseID.isEmpty
-        ? loadReleaseSurveyResponseID() : releaseSurveyResponseID
-      releaseSurveyResponseID = responseID
-      let trimmedImprovement = weeklyImprovementText.trimmingCharacters(
-        in: .whitespacesAndNewlines)
-      try await ReleaseSurveyClient.submit(
-        ReleaseSurveyPayload(
-          responseID: responseID,
-          surveyKey: releaseSurveyKey,
-          version: releaseNote.version,
-          selectedOption: selectedWeeklyFeedback?.rawValue,
-          improvementText: trimmedImprovement.isEmpty ? nil : trimmedImprovement,
-          appVersion: appVersion,
-          analyticsOptIn: AnalyticsService.shared.isOptedIn,
-          providerLabel: currentProviderLabel
-        )
-      )
-      surveyErrorText = nil
-      return true
-    } catch {
-      surveyErrorText = "提交失败，请重试。"
-      return false
-    }
-  }
-
-  private var appVersion: String {
-    Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? releaseNote.version
+    persistWeeklyFeedbackState()
+    surveyErrorText = nil
+    return true
   }
 
   private var currentProviderLabel: String {
@@ -564,80 +508,6 @@ struct WhatsNewView: View {
   private var preferredChatCLITool: ChatCLITool {
     let preferredTool = UserDefaults.standard.string(forKey: "chatCLIPreferredTool") ?? "codex"
     return preferredTool == "claude" ? .claude : .codex
-  }
-}
-
-private struct ReleaseSurveyPayload: Encodable {
-  let responseID: String
-  let surveyKey: String
-  let version: String
-  let selectedOption: String?
-  let improvementText: String?
-  let appVersion: String
-  let analyticsOptIn: Bool
-  let providerLabel: String
-
-  enum CodingKeys: String, CodingKey {
-    case responseID = "response_id"
-    case surveyKey = "survey_key"
-    case version
-    case selectedOption = "pro_interest"
-    case improvementText = "pro_price"
-    case appVersion = "app_version"
-    case analyticsOptIn = "analytics_opt_in"
-    case providerLabel = "provider_label"
-  }
-}
-
-private enum ReleaseSurveyClient {
-  private static let infoPlistEndpointKey = "DayflowBackendURL"
-  private static let debugEndpointOverrideKey = "dayflowBackendURLOverride"
-
-  static func submit(_ payload: ReleaseSurveyPayload) async throws {
-    guard let url = releaseSurveyURL() else {
-      throw URLError(.badURL)
-    }
-
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.httpBody = try JSONEncoder().encode(payload)
-
-    let (_, response) = try await URLSession.shared.data(for: request)
-    guard let httpResponse = response as? HTTPURLResponse,
-      (200..<300).contains(httpResponse.statusCode)
-    else {
-      throw URLError(.badServerResponse)
-    }
-  }
-
-  private static func releaseSurveyURL() -> URL? {
-    guard let endpoint = resolvedEndpoint() else { return nil }
-    return URL(string: "\(endpoint)/v1/release-survey")
-  }
-
-  private static func resolvedEndpoint() -> String? {
-    #if DEBUG
-      if let override = UserDefaults.standard.string(forKey: debugEndpointOverrideKey)?
-        .trimmingCharacters(in: .whitespacesAndNewlines),
-        !override.isEmpty
-      {
-        return override.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-      }
-    #endif
-
-    if let infoEndpoint = Bundle.main.infoDictionary?[infoPlistEndpointKey] as? String {
-      let trimmed = infoEndpoint.trimmingCharacters(in: .whitespacesAndNewlines)
-      if !trimmed.isEmpty {
-        return trimmed.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-      }
-    }
-
-    #if DEBUG
-      return "https://web-production-f3361.up.railway.app"
-    #else
-      return nil
-    #endif
   }
 }
 
