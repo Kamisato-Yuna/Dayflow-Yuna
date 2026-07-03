@@ -10,7 +10,6 @@ import SwiftUI
 
 struct SettingsView: View {
   private enum SettingsTab: String, CaseIterable, Identifiable {
-    case account
     case storage
     case privacy
     case providers
@@ -21,7 +20,6 @@ struct SettingsView: View {
 
     var title: String {
       switch self {
-      case .account: return "账号"
       case .storage: return "存储"
       case .privacy: return "隐私"
       case .providers: return "AI 提供商"
@@ -31,7 +29,7 @@ struct SettingsView: View {
     }
   }
 
-  @State private var selectedTab: SettingsTab = .account
+  @State private var selectedTab: SettingsTab = .providers
 
   @Namespace private var sidebarSelectionNamespace
 
@@ -89,7 +87,6 @@ struct SettingsView: View {
         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .topLeading)
     }
     .onAppear {
-      DayflowAuthManager.shared.loadStoredSessionIfNeeded()
       providersViewModel.handleOnAppear()
       otherViewModel.refreshAnalyticsState()
       storageViewModel.refreshStorageIfNeeded(isStorageTab: selectedTab == .storage)
@@ -110,9 +107,9 @@ struct SettingsView: View {
       }
     }
     .onReceive(NotificationCenter.default.publisher(for: .openAccountSettings)) { _ in
-      guard selectedTab != .account else { return }
+      guard selectedTab != .providers else { return }
       withAnimation(.easeOut(duration: 0.18)) {
-        selectedTab = .account
+        selectedTab = .providers
       }
     }
   }
@@ -238,8 +235,6 @@ struct SettingsView: View {
     // actually exist (the sidebar is vertical, not left/right tabs).
     Group {
       switch selectedTab {
-      case .account:
-        SettingsAccountSection()
       case .storage:
         SettingsStorageTabView(viewModel: storageViewModel)
       case .privacy:

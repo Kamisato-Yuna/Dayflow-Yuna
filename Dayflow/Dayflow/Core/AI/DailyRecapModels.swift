@@ -10,7 +10,6 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
 
   private static let storageKey = "dailyRecapProvider_v1"
   static let allCases: [DailyRecapProvider] = [
-    .dayflow,
     .claude,
     .chatgpt,
     .gemini,
@@ -19,10 +18,16 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
   ]
 
   static func load(from defaults: UserDefaults = .standard) -> DailyRecapProvider {
-    if let rawValue = defaults.string(forKey: storageKey),
-      let provider = DailyRecapProvider(rawValue: rawValue)
-    {
-      return provider
+    if let rawValue = defaults.string(forKey: storageKey) {
+      if rawValue == DailyRecapProvider.dayflow.rawValue {
+        let provider = migrateInitialSelection(from: defaults)
+        provider.save(to: defaults)
+        return provider
+      }
+
+      if let provider = DailyRecapProvider(rawValue: rawValue) {
+        return provider
+      }
     }
 
     let provider = migrateInitialSelection(from: defaults)
@@ -31,25 +36,28 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
   }
 
   func save(to defaults: UserDefaults = .standard) {
+    if self == .dayflow {
+      Self.migrateInitialSelection(from: defaults).save(to: defaults)
+      return
+    }
+
     defaults.set(rawValue, forKey: Self.storageKey)
   }
 
   private static func migrateInitialSelection(from defaults: UserDefaults) -> DailyRecapProvider {
-    if defaults.bool(forKey: "isDailyUnlocked") {
-      return .dayflow
-    }
-
     switch LLMProviderType.load(from: defaults) {
-    case .geminiDirect:
+    case .geminiDirect, .dayflowBackend:
       return .gemini
-    case .dayflowBackend:
-      return .dayflow
     case .chatGPTClaude:
       let preferredTool = defaults.string(forKey: "chatCLIPreferredTool") ?? "codex"
       return preferredTool == "claude" ? .claude : .chatgpt
     case .ollamaLocal:
       return .local
     }
+  }
+
+  var isUserSelectable: Bool {
+    self != .dayflow
   }
 
   var analyticsName: String {
@@ -76,7 +84,7 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
   var selectionLabel: String {
     switch self {
     case .dayflow:
-      return "Dayflow backend"
+      return "Legacy Dayflow backend"
     case .local:
       return "Local"
     case .gemini:
@@ -93,7 +101,7 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
   var pickerSubtitle: String {
     switch self {
     case .dayflow:
-      return "Uses Dayflow's hosted service for best performance."
+      return "Legacy Dayflow backend is no longer available."
     case .local:
       return "Uses Ollama, LM Studio, or another local-compatible server on this Mac."
     case .gemini:
@@ -110,7 +118,7 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
   var runtimeLabel: String {
     switch self {
     case .dayflow:
-      return "dayflow_backend"
+      return "legacy_dayflow_backend"
     case .local:
       return "local_llm"
     case .gemini:
@@ -140,11 +148,7 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
   }
 
   var canGenerate: Bool {
-    self != .none
-  }
-
-  var usesDayflowInputs: Bool {
-    self == .dayflow
+    isUserSelectable && self != .none
   }
 
   private static func currentLocalModelID(from defaults: UserDefaults = .standard) -> String? {

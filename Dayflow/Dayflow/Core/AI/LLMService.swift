@@ -40,11 +40,6 @@ final class LLMService: LLMServicing {
   private static let timelineFailureToastThrottleQueue = DispatchQueue(
     label: "com.dayflow.timelineFailureToastThrottle"
   )
-  private enum DayflowBackendConfig {
-    static let defaultEndpoint = "https://web-production-f3361.up.railway.app"
-    static let infoPlistEndpointKey = "DayflowBackendURL"
-    static let userDefaultsEndpointOverrideKey = "dayflowBackendURLOverride"
-  }
 
   private struct BatchProviderActions {
     let transcribeScreenshots:
@@ -92,48 +87,6 @@ final class LLMService: LLMServicing {
     }
     print("❌ [LLMService] Failed to retrieve Gemini API key for Gemma fallback")
     return nil
-  }
-
-  private func makeDayflowProvider(endpoint: String) -> DayflowBackendProvider? {
-    let token = DayflowAuthManager.storedSessionToken()?
-      .trimmingCharacters(in: .whitespacesAndNewlines)
-    guard let token, !token.isEmpty else {
-      print("❌ [LLMService] Dayflow provider unavailable: missing session token")
-      return nil
-    }
-    print(
-      "🔐 [LLMService] Dayflow provider ready endpoint=\(endpoint) token_length=\(token.count)"
-    )
-    return DayflowBackendProvider(token: token, endpoint: endpoint)
-  }
-
-  private func resolvedDayflowEndpoint(savedEndpoint: String?) -> String {
-    let defaults = UserDefaults.standard
-
-    if let override = defaults.string(forKey: DayflowBackendConfig.userDefaultsEndpointOverrideKey)?
-      .trimmingCharacters(in: .whitespacesAndNewlines),
-      !override.isEmpty
-    {
-      return override
-    }
-
-    if let infoEndpoint = Bundle.main.infoDictionary?[DayflowBackendConfig.infoPlistEndpointKey]
-      as? String
-    {
-      let trimmed = infoEndpoint.trimmingCharacters(in: .whitespacesAndNewlines)
-      if !trimmed.isEmpty {
-        return trimmed
-      }
-    }
-
-    if let savedEndpoint {
-      let trimmed = savedEndpoint.trimmingCharacters(in: .whitespacesAndNewlines)
-      if !trimmed.isEmpty {
-        return trimmed
-      }
-    }
-
-    return DayflowBackendConfig.defaultEndpoint
   }
 
   private func makeOllamaProvider(endpoint: String) -> OllamaProvider {
@@ -230,20 +183,7 @@ final class LLMService: LLMServicing {
         ), fallbackState: fallbackState
       )
     case .dayflow:
-      let savedEndpoint: String?
-      if case .dayflowBackend(let endpointFromSettings) = providerType {
-        savedEndpoint = endpointFromSettings
-      } else {
-        savedEndpoint = nil
-      }
-      let endpoint = resolvedDayflowEndpoint(savedEndpoint: savedEndpoint)
-      guard let provider = makeDayflowProvider(endpoint: endpoint) else { throw noProviderError() }
-      return (
-        actions: BatchProviderActions(
-          transcribeScreenshots: provider.transcribeScreenshots,
-          generateActivityCards: provider.generateActivityCards
-        ), fallbackState: nil
-      )
+      throw noProviderError()
     case .ollama:
       let endpoint =
         UserDefaults.standard.string(forKey: "llmLocalBaseURL") ?? "http://localhost:11434"
@@ -519,11 +459,9 @@ final class LLMService: LLMServicing {
         },
         generateTextStreaming: nil
       )
-    case .dayflowBackend(let endpoint):
-      let resolvedEndpoint = resolvedDayflowEndpoint(savedEndpoint: endpoint)
-      guard let provider = makeDayflowProvider(endpoint: resolvedEndpoint) else {
-        throw noProviderError()
-      }
+    case .dayflowBackend:
+      LLMProviderType.geminiDirect.persist()
+      guard let provider = makeGeminiProvider() else { throw noProviderError() }
       return TextProviderActions(
         generateText: { prompt in
           try await provider.generateText(prompt: prompt)

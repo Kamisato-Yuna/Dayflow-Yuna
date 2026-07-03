@@ -2,6 +2,8 @@
 
 审计日期：2026-07-01
 
+更新：2026-07-03 完成 Dayflow Pro 移除 T10-T17 后，账号登录、Dayflow Pro/Backend provider、auth/billing/referral endpoint、referral asset 与相关 project references 已从 app 可执行路径中移除。本文保留原始审计证据，并在当前状态处标注已关闭项。
+
 > 本报告以中文为主说明，保留代码路径、API 字段、命令行与事件名为原文，便于与代码一一对应。
 
 审计范围：README、CLAUDE.md、docs、Xcode 工程配置、Swift 源码、CodeGraph 调用关系、数据库迁移、设置/路由/接口定义、测试文件与一次受控测试尝试。
@@ -15,9 +17,9 @@ Dayflow 当前是一个 macOS SwiftUI + AppKit 菜单栏应用，核心产品形
 核心链路已经成型，README 中的 Timeline、Daily Standup、Weekly Review、Chat、本地优先、AI provider choice 等能力在源码中均能找到对应实现。主要缺口集中在四类：
 
 1. 产品闭环缺口：Journal 内部实现存在，但主入口与通知跳转未真正接通。
-2. Provider 能力缺口：Dayflow Backend 支持截图转录、card generation、daily generation，但通用 `generateText` 仍直接抛错。
+2. Provider 能力缺口：原始审计发现 Dayflow Backend 通用 `generateText` 半成品；T10-T17 已移除 Dayflow Backend 作为可用 provider，当前不再作为修复项。
 3. 测试/可复现性缺口：StorageManager、AnalysisManager、LLMService、Journal、Auth/Account、UI 路由等核心面缺少覆盖测试；CLI 测试被 SwiftPM 依赖下载失败阻断。
-4. 隐私/线上能力技术债：PostHog/Sentry/Dayflow Auth/Billing/Referral/Backend API 已多处接线；用户已要求后续移除账号登录相关线上能力，这部分需要作为 P0/P1 重构范围。
+4. 隐私/线上能力技术债：PostHog/Sentry、Sparkle、release survey 等非账号线上能力仍需单独决策；Dayflow Auth/Billing/Referral/Backend API 可执行路径已由 T10-T17 移除。
 
 信息不足处均标注“无法确认”。
 
@@ -75,7 +77,7 @@ Dayflow-Yuna/
 | App 框架 | macOS SwiftUI `App` 生命周期 + `NSApplicationDelegate` 混合 AppKit | `CLAUDE.md:29`, `Dayflow/Dayflow/App/DayflowApp.swift:111`, `Dayflow/Dayflow/App/AppDelegate.swift:50` |
 | 持久化 | GRDB + SQLite，`StorageManager` 是单一持久化门面 | `CLAUDE.md:63-65`, `Dayflow/Dayflow/Core/Recording/StorageManager.swift:458` |
 | 截图采集 | ScreenCaptureKit `SCScreenshotManager` 周期截图，默认 10 秒 | `CLAUDE.md:35-43`, `Dayflow/Dayflow/Core/Recording/ScreenRecorder.swift:20` |
-| AI provider | Gemini、Ollama/LM Studio、ChatGPT/Claude CLI、Dayflow Backend | `CLAUDE.md:46-59`, `Dayflow/Dayflow/Core/AI/LLMTypes.swift:94` |
+| AI provider | Gemini、Ollama/LM Studio、ChatGPT/Claude CLI；legacy `dayflowBackend` 仅用于偏好解码迁移 | `CLAUDE.md:79-91`, `Dayflow/Dayflow/Core/AI/LLMTypes.swift` |
 | 自动更新 | Sparkle | `Dayflow/Dayflow/Info.plist:24-37` |
 | 遥测/错误 | PostHog + Sentry | `CLAUDE.md:31`, `Dayflow/Dayflow/System/AnalyticsService.swift:41` |
 | 发布 | `scripts/release.sh` 负责版本、DMG、Sparkle、GitHub Release、appcast | `CLAUDE.md:99-103` |
@@ -125,14 +127,14 @@ ScreenRecorder
 | App | app lifecycle、menu bar、deep link、recording/analysis 启动 | 已实现 |
 | Core/Recording | ScreenRecorder、StorageManager、JournalDayManager、迁移、存储维护 | 已实现，但 StorageManager 高耦合且缺测试 |
 | Core/Analysis | timer-driven batch loop、idle shortcut、reprocess | 已实现，但状态字符串分散 |
-| Core/AI | provider、prompt、LLMService、ChatService、DailyRecapGenerator | 主体完成，Dayflow Backend text generation 未完成 |
+| Core/AI | provider、prompt、LLMService、ChatService、DailyRecapGenerator | 主体完成；Dayflow Backend 运行时 provider 已移除 |
 | Core/Weekly | Weekly dashboard builder 与图表聚合 | 已实现且有部分单测 |
 | Views/UI/MainView | Timeline 主界面、sidebar、activity cards、review、copy/delete | 已实现 |
 | Views/UI/Daily | Daily 解锁、standup、workflow grid、scheduler | 已实现 |
 | Views/UI/Weekly | weekly analytics、PNG export | 已实现 |
 | Views/UI/Chat | chat panel、streaming、tools、本地 DB 查询 | 已实现，range tool 半成品，beta analytics 记录问题全文 |
 | Views/UI/Journal | Journal day flow、summary、reminders、lock/onboarding | 内部实现，但主入口断开 |
-| Views/UI/Settings | Account/Storage/Privacy/Providers/Export/Other | 已实现；Account 线上能力后续需移除 |
+| Views/UI/Settings | Storage/Privacy/Providers/Export/Other | 已实现；Account 账号入口已移除 |
 
 ## 6. 已完成功能
 
@@ -149,8 +151,8 @@ ScreenRecorder
 | 优先级 | 项 | 状态 | 证据 |
 | --- | --- | --- | --- |
 | P0 | UI 多语言配置框架 | 未实现。没有 `.lproj`、`.strings`、`.stringsdict`、`.xcstrings`；SwiftUI 文案大量硬编码英文。当前只有 LLM 输出语言 override。 | 资源搜索无结果；`SettingsOtherTabView.swift:19-80`; `LLMOutputLanguagePreferences.swift:3-29` |
-| P0 | 账号登录相关线上能力后续移除 | 已大量接线，需要单独拆除计划。包括 Account tab、邮箱验证码、session token、entitlements、Stripe、referral、Dayflow Backend token。 | `SettingsView.swift:12-18`; `SettingsAccountSection.swift:4-222`; `DayflowAuthManager.swift:253-837`; `DayflowBackendProvider.swift:163-737` |
-| P0 | Dayflow Backend 通用文本生成 | 半成品。`LLMService` 会把 Dayflow Backend 接到 `generateText`，但 provider 直接抛“不支持”。Journal summary 会受影响。 | `LLMService.swift:512-532`; `DayflowBackendProvider.swift:726-735`; `JournalDayManager.swift:539-542` |
+| P0 | 账号登录相关线上能力后续移除 | 已完成 T10-T17：Account tab、邮箱验证码、session token、entitlements、Stripe、referral、Dayflow Backend token 可执行路径已移除；legacy 偏好迁移保留。 | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T10-T17 完成记录 |
+| P0 | Dayflow Backend 通用文本生成 | 已通过移除 Dayflow Backend provider 关闭该半成品路径。 | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T15/T17 完成记录 |
 | P1 | Journal 主入口 | 内部实现存在，但 sidebar 过滤 `.journal`，`.navigateToJournal` 实际跳到 Weekly。 | `SidebarView.swift:76-80`; `Layout+Panels.swift:89-91`; `Layout.swift:81-84` |
 | P1 | Chat tool 日期范围 | schema 有 `startDate/endDate` future 字段，执行只支持单日 `date`。 | `ChatToolExecutor.swift:43-48`; `ChatToolExecutor.swift:129-139`; `ChatToolExecutor.swift:167-182` |
 | P1 | batch 状态模型 | 多处自由字符串写入，存在 `"processing"`, `"completed"`, `"analyzed"`, `"failed_empty"`, `"skipped_short"` 等，缺少类型约束。 | `AnalysisManager.swift:409-437`; `AnalysisManager.swift:511-512`; `LLMService.swift:709-710`; `LLMService.swift:827-828`; `StorageManager+Chunks.swift:94-100` |
@@ -177,35 +179,33 @@ ScreenRecorder
 3. P1：增加语言切换配置或跟随系统语言策略。
 4. P1：为关键设置页、sidebar、onboarding、Daily/Weekly/Chat 空态添加 snapshot 或字符串覆盖测试。
 
-## 9. 账号登录与线上能力后续移除清单
+## 9. 账号登录与线上能力移除清单
 
-用户明确提出“需要账号登陆的相关线上能力后续需要移除”。当前相关能力并非集中在一个文件，需要按能力拆除。
+用户明确提出“需要账号登陆的相关线上能力后续需要移除”。原始审计发现这些能力并非集中在一个文件；T10-T17 已按能力拆除，并保留 legacy 偏好迁移。
 
-### 需要移除或替换的入口
+### 已移除或替换的入口
 
-| 能力 | 当前入口 | 证据 |
+| 能力 | 当前状态 | 证据 |
 | --- | --- | --- |
-| Settings Account tab | `SettingsTab.account` 默认选中，渲染 `SettingsAccountSection` | `SettingsView.swift:12-18`, `SettingsView.swift:34`, `SettingsAccountSection.swift:4` |
-| 邮箱验证码登录 | `/v1/auth/code/start`, `/v1/auth/code/verify` | `DayflowAuthManager.swift:312-400` |
-| session token Keychain | service `com.teleportlabs.dayflow.auth` / account `session_token` | `DayflowAuthManager.swift:257-260`, `DayflowAuthManager.swift:637-668`, `DayflowAuthManager.swift:811-837` |
-| entitlements/pro 状态 | `DayflowEntitlement`, `refreshAccount`, `/v1/me` | `DayflowAuthManager.swift:263-264`, `DayflowAuthManager.swift:414-435` |
-| Stripe checkout/portal | `/v1/billing/checkout`, `/v1/billing/portal`, `/v1/billing/no-card-trial` | `DayflowAuthManager.swift:437-505`, `DayflowAuthManager.swift:459-485` |
-| Referral 系统 | deep link claim、pending code、claim/invite/me/usage endpoints | `AppDeepLinkRouter.swift:72-107`, `DayflowAuthManager.swift:528-631`, `AppDelegate.swift:375-394` |
-| Dayflow Backend provider | Bearer session token 调用 `/v1/daily`, `/v1/dayflow/transcribe`, `/v1/dayflow/generate-cards` | `DayflowBackendProvider.swift:263-397`, `DayflowBackendProvider.swift:400-575`, `DayflowBackendProvider.swift:577-724` |
-| Dayflow provider UI 状态 | Providers tab 显示 dayflow status / Requires Dayflow Pro | `SettingsProvidersTabView.swift:117-120` |
+| Settings Account tab | 已移除，设置默认进入非账号 tab | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T12 |
+| 邮箱验证码登录 | `/v1/auth/code/start`、`/v1/auth/code/verify` 可执行路径已移除 | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T16 |
+| session token Keychain | 账号 session 读取路径已移除；legacy provider 偏好迁移到非 Dayflow provider | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T10/T15/T16 |
+| entitlements/pro 状态 | Pro entitlement UI 与 manager 已移除 | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T12/T16 |
+| Stripe checkout/portal | `/v1/billing/*` 可执行路径已移除 | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T12/T16 |
+| Referral 系统 | deep link、pending code、usage heartbeat、reward UI 和 referral asset 已移除 | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T13/T16 |
+| Dayflow Backend provider | `/v1/daily` 与 `/v1/dayflow/*` 生成路径已移除 | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T14/T15 |
+| Dayflow provider UI 状态 | Provider routing / onboarding / Daily picker 不再展示 Dayflow Pro 或 Dayflow Backend | `docs/DAYFLOW_PRO_REMOVAL_TASKS.md` T10/T11/T14 |
 | What's New 线上 survey | `/v1/release-survey` | `Dayflow/Dayflow/Views/UI/WhatsNewView.swift:616` |
 | Sparkle/appcast 下载线上能力 | appcast feed `https://dayflow.so/appcast.xml` | `Dayflow/Dayflow/Info.plist:32-35` |
 
-拆除风险：
+保留风险：
 
-- 如果完全移除账号登录，Dayflow Backend provider 将失去 session token，需要同时移除 provider 选项或改为匿名/本地 provider。
-- Account tab 默认选中，移除时要调整 Settings 默认 tab 与 `.openAccountSettings` 通知处理。
-- Referral usage 上报由 AppDelegate heartbeat/recording state 触发，不能只删设置页 UI。
-- Onboarding Prototype 中仍有 Dayflow Pro 登录/试用/referral 旧路径；虽然 CodeGraph 显示非生产 caller，但建议一起清理，避免后续误接。
+- `LLMProviderType.dayflowBackend` 和相关测试命中保留为 legacy decode / migration 兼容，不作为 UI 或 routing 可选项。
+- `ReferralSurveyView` 是 onboarding 来源调查组件，不是 referral 奖励系统；当前仍有 caller，不按 dead file 删除。
+- `docs/DAYFLOW_PRO_REMOVAL_TASKS.md`、本节和 `docs/LOCAL_NO_LOGIN_LIGHTWEIGHT_REVIEW.md` 保留历史关键词用于审计追踪。
 
 无法确认：
 
-- 线上 Dayflow Backend 当前服务是否仍被生产用户使用：无法确认。
 - 后续目标是完全离线版、保留 Sparkle 更新、还是仅移除账号登录但保留匿名下载/更新：无法确认。
 
 ## 10. 高风险技术债
@@ -252,9 +252,9 @@ ScreenRecorder
 
 - StorageManager migration/read/write/maintenance。
 - AnalysisManager batching/idle shortcut/status transitions。
-- LLMService provider failover、Dayflow Backend contract。
+- LLMService provider failover、legacy Dayflow provider migration 防回归。
 - Journal route/summary/reminders。
-- Account/Auth/Billing/Referral。
+- Account/Auth/Billing/Referral 移除后的残留扫描与防回归。
 - UI 多语言。
 - Settings tab 路由、deep link、Sparkle/release。
 
@@ -294,19 +294,17 @@ CoreSimulator is out of date. Current version (1051.50.0) is older than build ve
 
 ### P0
 
-1. 决定账号线上能力移除边界，并拆出明确任务：Settings Account、DayflowAuthManager、Referral、Billing、Dayflow Backend provider、deep link、AppDelegate usage 上报、analytics 字典。
-2. 实现 UI 多语言配置框架，至少引入本地化资源文件与关键 UI 文案迁移。
-3. 修复隐私/遥测风险：默认 opt-in 策略、敏感字段脱敏、聊天问题全文上报、feedback 文本、activity summary、LLM debug print、Keychain prefix print。
-4. 建立可复现测试路径：提交共享 scheme，固定依赖获取策略，给 `xcodebuild test` 提供 CI 友好命令。
-5. 给 StorageManager 和 AnalysisManager 加最小集成测试，覆盖迁移、batch status、timeline card 替换。
+1. 实现 UI 多语言配置框架，至少引入本地化资源文件与关键 UI 文案迁移。
+2. 修复隐私/遥测风险：默认 opt-in 策略、敏感字段脱敏、聊天问题全文上报、feedback 文本、activity summary、LLM debug print、Keychain prefix print。
+3. 建立可复现测试路径：提交共享 scheme，固定依赖获取策略，给 `xcodebuild test` 提供 CI 友好命令。
+4. 给 StorageManager 和 AnalysisManager 加最小集成测试，覆盖迁移、batch status、timeline card 替换。
 
 ### P1
 
-1. Dayflow Backend：实现 `generateText` 或禁止它作为通用文本 provider。
-2. Journal：明确上线/隐藏策略；上线则接通 sidebar 与 `.navigateToJournal`，隐藏则清理 badge/通知入口。
-3. Chat tools：实现日期范围查询或移除 `startDate/endDate` schema。
-4. batch status：收敛为 enum/常量，避免 `"completed"` 与 `"analyzed"` 混用。
-5. 清理原型和 legacy UI，尤其是 Onboarding Prototype、legacy provider selection、JournalWeeklyView、weekly interaction prototype。
+1. Journal：明确上线/隐藏策略；上线则接通 sidebar 与 `.navigateToJournal`，隐藏则清理 badge/通知入口。
+2. Chat tools：实现日期范围查询或移除 `startDate/endDate` schema。
+3. batch status：收敛为 enum/常量，避免 `"completed"` 与 `"analyzed"` 混用。
+4. 清理原型和 legacy UI，尤其是 Onboarding Prototype、legacy provider selection、JournalWeeklyView、weekly interaction prototype。
 
 ### P2
 
@@ -317,8 +315,7 @@ CoreSimulator is out of date. Current version (1051.50.0) is older than build ve
 
 ## 13. 无法确认清单
 
-- 当前完整 build/test 是否通过：SwiftPM 依赖解析失败，未进入编译/测试。
-- Dayflow Backend 线上 API 当前契约与可用性：未进行线上调用验证。
+- 当前完整 test suite 是否通过：未在 T17 全量运行；Debug build 已在 2026-07-03 通过。
 - 后续线上能力移除是否包括 Sparkle 更新、PostHog/Sentry、dayflow.so 下载链接：需求未明确。
 - UI 多语言目标语言、覆盖范围、是否允许运行时切换：需求未明确。
 - 原型视图是否仍被设计/手动调试流程依赖：CodeGraph 未发现生产 caller，但外部使用无法确认。

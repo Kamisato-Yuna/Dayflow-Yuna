@@ -5,7 +5,6 @@
 # Keep project/brand/product names and runtime identifiers
 Dayflow	brand
 dayflow	internal-key
-Dayflow Pro	brand
 Gemini	brand
 Claude	brand
 ChatGPT	brand
@@ -49,8 +48,6 @@ sparkles	ui-icon
 Z	non-user-legend
 N	non-user-legend
 Dayflow	domain-brand
-DayflowPro	domain-brand
-Dayflow Pro	domain-brand
 GPT	model-name
 Model ID	command
 Base URL	command

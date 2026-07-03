@@ -106,6 +106,11 @@ enum LLMProviderType: Codable {
     if let savedData = defaults.data(forKey: providerDefaultsKey),
       let decoded = try? JSONDecoder().decode(LLMProviderType.self, from: savedData)
     {
+      if case .dayflowBackend = decoded {
+        let migrated = migratedDayflowProvider()
+        migrated.persist(to: defaults)
+        return migrated
+      }
       return decoded
     }
 
@@ -129,7 +134,7 @@ enum LLMProviderType: Codable {
     case .geminiDirect:
       return "gemini"
     case .dayflowBackend:
-      return "dayflow"
+      return "gemini"
     case .ollamaLocal:
       return "ollama"
     case .chatGPTClaude:
@@ -151,7 +156,7 @@ enum LLMProviderType: Codable {
     case "gemini":
       return .geminiDirect
     case "dayflow":
-      return .dayflowBackend()
+      return migratedDayflowProvider()
     case "ollama":
       let endpoint = defaults.string(forKey: localBaseURLDefaultsKey)?
         .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -174,6 +179,10 @@ enum LLMProviderType: Codable {
     default:
       return nil
     }
+  }
+
+  private static func migratedDayflowProvider() -> LLMProviderType {
+    .geminiDirect
   }
 }
 
@@ -201,7 +210,7 @@ enum LLMProviderID: String, Codable, CaseIterable {
     case .geminiDirect:
       return .gemini
     case .dayflowBackend:
-      return .dayflow
+      return .gemini
     case .ollamaLocal:
       return .ollama
     case .chatGPTClaude:
@@ -231,12 +240,18 @@ enum LLMProviderRoutingPreferences {
     guard let rawValue = defaults.string(forKey: backupProviderDefaultsKey) else {
       return nil
     }
-    return LLMProviderID(rawValue: rawValue)
+    let provider = LLMProviderID(rawValue: rawValue)
+    guard provider != .dayflow else {
+      defaults.removeObject(forKey: backupProviderDefaultsKey)
+      defaults.removeObject(forKey: backupChatCLIToolDefaultsKey)
+      return nil
+    }
+    return provider
   }
 
   static func saveBackupProvider(_ provider: LLMProviderID?, to defaults: UserDefaults = .standard)
   {
-    if let provider {
+    if let provider, provider != .dayflow {
       defaults.set(provider.rawValue, forKey: backupProviderDefaultsKey)
     } else {
       defaults.removeObject(forKey: backupProviderDefaultsKey)

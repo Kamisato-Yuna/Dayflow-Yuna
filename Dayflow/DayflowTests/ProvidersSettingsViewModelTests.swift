@@ -10,6 +10,12 @@ final class ProvidersSettingsViewModelTests: XCTestCase {
     "llmLocalModelId",
     "llmLocalAPIKey",
     "ollamaSetupComplete",
+    "geminiSetupComplete",
+    "chatgpt_claudeSetupComplete",
+    "chatCLIPreferredTool",
+    "llmProviderType",
+    "llmBackupProviderId",
+    "llmBackupChatCLITool",
     "selectedLLMProvider",
     "selectedLLMProviderBaseURL",
     "selectedLLMProviderCanonical",
@@ -57,5 +63,105 @@ final class ProvidersSettingsViewModelTests: XCTestCase {
     XCTAssertEqual(viewModel.localBaseURL, "http://localhost:1234")
     XCTAssertEqual(viewModel.localModelId, "gemma-4-local")
     XCTAssertEqual(viewModel.localAPIKey, "local-test-key")
+  }
+
+  func testLegacySelectedDayflowProviderMigratesToGemini() {
+    UserDefaults.standard.set("dayflow", forKey: "selectedLLMProvider")
+
+    let loadedProvider = LLMProviderType.load()
+    let viewModel = ProvidersSettingsViewModel()
+    viewModel.loadCurrentProvider()
+
+    guard case .geminiDirect = loadedProvider else {
+      return XCTFail("Expected legacy dayflow selection to migrate to Gemini")
+    }
+    XCTAssertEqual(viewModel.currentProvider, "gemini")
+    XCTAssertEqual(UserDefaults.standard.string(forKey: "selectedLLMProvider"), "gemini")
+  }
+
+  func testEncodedLegacyDayflowBackendMigratesToGemini() throws {
+    let encoded = try JSONEncoder().encode(LLMProviderType.dayflowBackend())
+    UserDefaults.standard.set(encoded, forKey: "llmProviderType")
+    UserDefaults.standard.set("dayflow", forKey: "selectedLLMProvider")
+
+    let viewModel = ProvidersSettingsViewModel()
+    viewModel.loadCurrentProvider()
+
+    XCTAssertEqual(viewModel.currentProvider, "gemini")
+    XCTAssertEqual(UserDefaults.standard.string(forKey: "selectedLLMProvider"), "gemini")
+
+    let reloadedProvider = LLMProviderType.load()
+    guard case .geminiDirect = reloadedProvider else {
+      return XCTFail("Expected encoded dayflow backend to be rewritten as Gemini")
+    }
+  }
+
+  func testProviderIDMappingTreatsLegacyDayflowBackendAsGemini() {
+    let mapped = LLMProviderID.from(LLMProviderType.dayflowBackend())
+
+    XCTAssertEqual(mapped, .gemini)
+    XCTAssertNotEqual(mapped, .dayflow)
+  }
+
+  func testLegacyDayflowBackupProviderIsClearedAndRemovedFromDefaults() {
+    LLMProviderType.geminiDirect.persist()
+    UserDefaults.standard.set("dayflow", forKey: "llmBackupProviderId")
+    UserDefaults.standard.set("claude", forKey: "llmBackupChatCLITool")
+
+    let viewModel = ProvidersSettingsViewModel()
+    viewModel.loadCurrentProvider()
+    viewModel.loadBackupProvider()
+
+    XCTAssertNil(viewModel.backupProvider)
+    XCTAssertNil(viewModel.backupChatCLITool)
+    XCTAssertNil(UserDefaults.standard.string(forKey: "llmBackupProviderId"))
+    XCTAssertNil(UserDefaults.standard.string(forKey: "llmBackupChatCLITool"))
+  }
+
+  func testRoutingPreferencesRejectLegacyDayflowBackupProvider() {
+    UserDefaults.standard.set("dayflow", forKey: "llmBackupProviderId")
+    UserDefaults.standard.set("claude", forKey: "llmBackupChatCLITool")
+
+    let backup = LLMProviderRoutingPreferences.loadBackupProvider()
+
+    XCTAssertNil(backup)
+    XCTAssertNil(UserDefaults.standard.string(forKey: "llmBackupProviderId"))
+    XCTAssertNil(UserDefaults.standard.string(forKey: "llmBackupChatCLITool"))
+  }
+
+  func testRoutingPreferencesDoNotPersistDayflowBackupProvider() {
+    LLMProviderRoutingPreferences.saveBackupProvider(.dayflow)
+
+    XCTAssertNil(LLMProviderRoutingPreferences.loadBackupProvider())
+    XCTAssertNil(UserDefaults.standard.string(forKey: "llmBackupProviderId"))
+  }
+
+  func testLegacyDayflowBackendCannotBecomeActiveRoutingProvider() throws {
+    let encoded = try JSONEncoder().encode(LLMProviderType.dayflowBackend())
+    UserDefaults.standard.set(encoded, forKey: "llmProviderType")
+    UserDefaults.standard.set("dayflow", forKey: "selectedLLMProvider")
+    UserDefaults.standard.set("dayflow", forKey: "llmBackupProviderId")
+
+    let loaded = LLMProviderType.load()
+    let primary = LLMProviderID.from(loaded)
+    let backup = LLMProviderRoutingPreferences.loadBackupProvider()
+
+    guard case .geminiDirect = loaded else {
+      return XCTFail("Expected legacy dayflow backend to migrate before provider routing")
+    }
+    XCTAssertEqual(primary, .gemini)
+    XCTAssertNotEqual(primary, .dayflow)
+    XCTAssertNil(backup)
+    XCTAssertEqual(UserDefaults.standard.string(forKey: "selectedLLMProvider"), "gemini")
+    XCTAssertNil(UserDefaults.standard.string(forKey: "llmBackupProviderId"))
+  }
+
+  func testRoutingProvidersExcludeDayflowPro() {
+    let viewModel = ProvidersSettingsViewModel()
+    let ids = viewModel.routingProviders.map(\.id)
+    let titles = viewModel.routingProviders.map(\.title)
+
+    XCTAssertFalse(ids.contains("dayflow"))
+    XCTAssertFalse(titles.contains("Dayflow Pro"))
   }
 }

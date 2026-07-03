@@ -3,7 +3,6 @@ import SwiftUI
 
 struct SettingsProvidersTabView: View {
   @ObservedObject var viewModel: ProvidersSettingsViewModel
-  @ObservedObject private var authManager = DayflowAuthManager.shared
 
   var body: some View {
     VStack(alignment: .leading, spacing: SettingsStyle.sectionSpacing) {
@@ -114,10 +113,6 @@ struct SettingsProvidersTabView: View {
       SettingsRow(label: "CLI 偏好") {
         SettingsMetadata(text: viewModel.chatCLIStatusLabel())
       }
-    case "dayflow":
-      SettingsRow(label: "状态", showsDivider: false) {
-        SettingsMetadata(text: viewModel.statusText(for: "dayflow") ?? "需要 Dayflow Pro")
-      }
     default:
       SettingsRow(label: "状态", showsDivider: false) {
         SettingsMetadata(text: "即将推出")
@@ -155,12 +150,8 @@ struct SettingsProvidersTabView: View {
             selectedTool: viewModel.preferredCLITool,
             onTestComplete: { _ in }
           )
-        case "dayflow":
-          Text("托管卡片生成和转写会通过你的 Dayflow 账号运行。")
-            .font(.custom("Figtree", size: 13))
-            .foregroundColor(SettingsStyle.secondary)
         default:
-          Text("Dayflow Pro 诊断即将推出")
+          Text("诊断即将推出")
             .font(.custom("Figtree", size: 13))
             .foregroundColor(SettingsStyle.secondary)
         }
@@ -222,51 +213,29 @@ struct SettingsProvidersTabView: View {
         .fixedSize(horizontal: false, vertical: true)
 
       HStack(spacing: 8) {
-        if viewModel.shouldShowDayflowUpgradeAction(for: provider.id) {
-          SettingsPrimaryButton(title: "升级账号", systemImage: "sparkles") {
-            viewModel.openDayflowUpgradeAccount(from: provider.id)
+        if !isConfigured {
+          SettingsSecondaryButton(title: "设置") {
+            viewModel.beginProviderSetup(provider.id, role: .setupOnly)
           }
-        } else if provider.id == "dayflow" {
-          if !isPrimary {
-            SettingsSecondaryButton(title: "设为主要") {
-              viewModel.setPrimaryOrSetup(provider.id)
-            }
-          }
+        }
 
-          if !isSecondary {
-            SettingsSecondaryButton(title: "设为备用", isDisabled: !canSetSecondary) {
-              viewModel.setSecondaryOrSetup(provider.id)
-            }
-          } else {
-            SettingsSecondaryButton(title: "取消备用") {
-              viewModel.clearBackupProvider()
-            }
+        SettingsSecondaryButton(title: "编辑配置") {
+          viewModel.editProviderConfiguration(provider.id)
+        }
+
+        if !isPrimary {
+          SettingsSecondaryButton(title: "设为主要") {
+            viewModel.setPrimaryOrSetup(provider.id)
+          }
+        }
+
+        if !isSecondary {
+          SettingsSecondaryButton(title: "设为备用", isDisabled: !canSetSecondary) {
+            viewModel.setSecondaryOrSetup(provider.id)
           }
         } else {
-          if !isConfigured {
-            SettingsSecondaryButton(title: "设置") {
-              viewModel.beginProviderSetup(provider.id, role: .setupOnly)
-            }
-          }
-
-          SettingsSecondaryButton(title: "编辑配置") {
-            viewModel.editProviderConfiguration(provider.id)
-          }
-
-          if !isPrimary {
-            SettingsSecondaryButton(title: "设为主要") {
-              viewModel.setPrimaryOrSetup(provider.id)
-            }
-          }
-
-          if !isSecondary {
-            SettingsSecondaryButton(title: "设为备用", isDisabled: !canSetSecondary) {
-              viewModel.setSecondaryOrSetup(provider.id)
-            }
-          } else {
-            SettingsSecondaryButton(title: "取消备用") {
-              viewModel.clearBackupProvider()
-            }
+          SettingsSecondaryButton(title: "取消备用") {
+            viewModel.clearBackupProvider()
           }
         }
       }
