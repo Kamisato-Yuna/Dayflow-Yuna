@@ -35,12 +35,10 @@ struct WeeklyWorkflowSection: View {
   private enum Design {
     static let sectionWidth: CGFloat = 958
     static let cornerRadius: CGFloat = 4
-    static let borderColor = Color(hex: "E8E1DA")
-    static let backgroundColor = Color.white.opacity(0.78)
-    static let dividerColor = Color(hex: "E5DFD9")
-    static let titleColor = Color(hex: "B46531")
-    static let textColor = Color.black.opacity(0.9)
-    static let mutedTextColor = Color(hex: "7F7062")
+    static let dividerColor = DayflowWeeklyToken.separator
+    static let titleColor = DayflowWeeklyToken.title
+    static let textColor = DayflowWeeklyToken.text
+    static let mutedTextColor = DayflowWeeklyToken.secondaryText
     static let totalTitleColor = Color(hex: "777777")
     static let totalNameColor = Color(hex: "1F1B18")
     static let emptyCellColor = Color(red: 0.95, green: 0.93, blue: 0.92)
@@ -86,10 +84,8 @@ struct WeeklyWorkflowSection: View {
 
       footerPanel
     }
-    .background(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(Design.backgroundColor)
-    )
+    .frame(width: width, alignment: .topLeading)
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
     .overlay(alignment: .topLeading) {
       Text(snapshot.title)
         .font(.custom("InstrumentSerif-Regular", size: 20))
@@ -97,12 +93,6 @@ struct WeeklyWorkflowSection: View {
         .padding(.top, Design.titleTopPadding)
         .padding(.leading, Design.titleLeadingPadding)
     }
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-        .allowsHitTesting(false)
-    )
-    .frame(width: width, alignment: .topLeading)
   }
 
   private var gridPanel: some View {
@@ -445,5 +435,5 @@ private struct WeeklyWorkflowPreviewRun {
 #Preview("Weekly Workflow Section", traits: .fixedLayout(width: 958, height: 292)) {
   WeeklyWorkflowSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
 }

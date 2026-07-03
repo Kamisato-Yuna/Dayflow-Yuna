@@ -1,12 +1,15 @@
+import AppKit
 import SwiftUI
 
 #Preview("Weekly Treemap", traits: .fixedLayout(width: 958, height: 549)) {
   WeeklyTreemapPreviewHarness()
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
 }
 
 struct WeeklyTreemapPreviewHarness: View {
   @State var selectedDataset = WeeklyTreemapPreviewDataset.balanced
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
@@ -17,13 +20,20 @@ struct WeeklyTreemapPreviewHarness: View {
           } label: {
             Text(dataset.title)
               .font(.custom("Figtree-Regular", size: 12))
-              .foregroundStyle(selectedDataset == dataset ? Color.white : Color(hex: "7C5A46"))
+              .foregroundStyle(
+                selectedDataset == dataset ? Color(nsColor: .selectedMenuItemTextColor) : DayflowWeeklyToken.text
+              )
               .padding(.horizontal, 12)
               .padding(.vertical, 6)
               .background(
                 Capsule(style: .continuous)
                   .fill(
-                    selectedDataset == dataset ? Color(hex: "B46531") : Color.white.opacity(0.75))
+                    selectedDataset == dataset
+                      ? DayflowWeeklyToken.accent
+                      : DayflowWeeklyToken.secondaryFill(
+                        colorScheme: colorScheme,
+                        reduceTransparency: reduceTransparency
+                      ))
               )
               .overlay(
                 Capsule(style: .continuous)

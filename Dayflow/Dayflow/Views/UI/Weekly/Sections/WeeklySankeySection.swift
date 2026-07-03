@@ -42,12 +42,7 @@ struct WeeklySankeySection: View {
       WeeklySankeyCard(model: model, width: width)
     }
     .frame(width: width, alignment: .topLeading)
-    .background(Color.white.opacity(0.6))
-    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 4, style: .continuous)
-        .stroke(Color(hex: "EBE6E3"), lineWidth: 1)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 
   private var controls: some View {
@@ -1583,5 +1578,5 @@ private func sankeyColumnUnderlayPath(
 #Preview("Weekly Sankey", traits: .fixedLayout(width: 958, height: 545)) {
   WeeklySankeySection()
     .padding(24)
-    .background(Color(hex: "FBF6EF"))
+    .dayflowWindowBackground()
 }

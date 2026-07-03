@@ -20,9 +20,7 @@ struct WeeklyDonutSection: View {
     static let cardWidth: CGFloat = 461
     static let cardHeight: CGFloat = 300
     static let cornerRadius: CGFloat = 4
-    static let borderColor = Color(hex: "EBE6E3")
-    static let backgroundColor = Color.white.opacity(0.6)
-    static let titleColor = Color(hex: "B46531")
+    static let titleColor = DayflowWeeklyToken.title
     static let contentHorizontalPadding: CGFloat = 18
     static let contentSpacing: CGFloat = 18
     static let donutSize: CGFloat = 205
@@ -34,9 +32,6 @@ struct WeeklyDonutSection: View {
 
   var body: some View {
     ZStack(alignment: .topLeading) {
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(Design.backgroundColor)
-
       Text("周分布")
         .font(.custom("InstrumentSerif-Regular", size: 20))
         .foregroundStyle(Design.titleColor)
@@ -53,11 +48,7 @@ struct WeeklyDonutSection: View {
 
     }
     .frame(width: width, height: Design.cardHeight, alignment: .topLeading)
-    .clipShape(RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 
   @ViewBuilder
@@ -102,7 +93,7 @@ private struct WeeklyDonutChart: View {
   var body: some View {
     ZStack {
       Circle()
-        .fill(Color.white)
+        .fill(Color(nsColor: .controlBackgroundColor))
         .frame(width: size, height: size)
         .shadow(color: Color(red: 0.39, green: 0.28, blue: 0.22).opacity(0.35), radius: 5)
 
@@ -134,7 +125,7 @@ private struct WeeklyDonutChart: View {
         .allowsHitTesting(false)
 
       Circle()
-        .fill(Color.white)
+        .fill(Color(nsColor: .controlBackgroundColor))
         .frame(
           width: chartSize * innerRadiusRatio - innerGap,
           height: chartSize * innerRadiusRatio - innerGap
@@ -219,7 +210,7 @@ private struct WeeklyDonutEmptyState: View {
   var body: some View {
     ZStack {
       Circle()
-        .fill(Color.white)
+        .fill(Color(nsColor: .controlBackgroundColor))
         .frame(width: size, height: size)
         .shadow(color: Color(red: 0.39, green: 0.28, blue: 0.22).opacity(0.12), radius: 5)
 
@@ -247,5 +238,5 @@ private struct WeeklyDonutEmptyState: View {
     isLoading: false
   )
   .padding(16)
-  .background(Color(hex: "F7F3F0"))
+  .dayflowWindowBackground()
 }

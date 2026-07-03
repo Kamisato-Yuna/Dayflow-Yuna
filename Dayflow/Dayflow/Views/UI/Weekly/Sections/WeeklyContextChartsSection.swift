@@ -4,6 +4,8 @@ import SwiftUI
 struct WeeklyContextChartsSection: View {
   let snapshot: WeeklyContextChartsSnapshot
   let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(snapshot: WeeklyContextChartsSnapshot, width: CGFloat = 958) {
     self.snapshot = snapshot
@@ -23,11 +25,8 @@ struct WeeklyContextChartsSection: View {
     static let xAxisTopSpacing: CGFloat = 8
     static let lineWidth: CGFloat = 2
     static let pointSize: CGFloat = 42
-    static let borderColor = Color(hex: "EBE6E3")
-    static let backgroundColor = Color.white.opacity(0.78)
-    static let footerBackgroundColor = Color.white.opacity(0.58)
     static let axisColor = Color(hex: "5A534C").opacity(0.9)
-    static let labelColor = Color.black
+    static let labelColor = DayflowWeeklyToken.text
   }
 
   private var chartWidth: CGFloat {
@@ -72,22 +71,16 @@ struct WeeklyContextChartsSection: View {
       .padding(.top, Design.topPadding)
       .padding(.horizontal, Design.horizontalPadding)
       .frame(width: width, height: Design.height - Design.footerHeight, alignment: .topLeading)
-      .background(Design.backgroundColor)
       .overlay(alignment: .bottom) {
         Rectangle()
-          .fill(Color(hex: "EBE6E3"))
+          .fill(DayflowWeeklyToken.separator)
           .frame(height: 1)
       }
 
       footer
     }
     .frame(width: width, height: Design.height, alignment: .topLeading)
-    .background(Design.backgroundColor)
-    .clipShape(RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: Design.cornerRadius)
   }
 
   private var legend: some View {
@@ -192,7 +185,10 @@ struct WeeklyContextChartsSection: View {
     }
     .padding(.horizontal, 24)
     .frame(width: width, height: Design.footerHeight, alignment: .center)
-    .background(Design.footerBackgroundColor)
+    .background(DayflowWeeklyToken.secondaryChartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
   }
 }
 
@@ -206,6 +202,8 @@ private struct WeeklyContextLineSeries: Identifiable {
 private struct WeeklyContextDistributionCard: View {
   let snapshot: WeeklyContextDistributionSnapshot
   let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private enum Design {
     static let width: CGFloat = 340
@@ -277,7 +275,10 @@ private struct WeeklyContextDistributionCard: View {
       .padding(.leading, 70)
     }
     .frame(width: width, height: Design.height, alignment: .topLeading)
-    .background(Color.white.opacity(0.75))
+    .background(DayflowWeeklyToken.chartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
     .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
   }
 
@@ -343,6 +344,8 @@ private struct WeeklyContextDistributionCard: View {
 private struct WeeklyContextComparisonBarCard: View {
   let snapshot: WeeklyContextComparisonSnapshot
   let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private enum Design {
     static let width: CGFloat = 574
@@ -380,10 +383,9 @@ private struct WeeklyContextComparisonBarCard: View {
           .frame(maxWidth: .infinity)
       }
       .frame(width: width, height: Design.mainHeight, alignment: .topLeading)
-      .background(Color.white.opacity(0.75))
       .overlay(alignment: .bottom) {
         Rectangle()
-          .fill(Color(hex: "EBE6E3"))
+          .fill(DayflowWeeklyToken.separator)
           .frame(height: 1)
       }
 
@@ -491,7 +493,10 @@ private struct WeeklyContextComparisonBarCard: View {
     }
     .padding(.horizontal, 18)
     .frame(width: width, height: 58, alignment: .center)
-    .background(Color(hex: "FAF7F5"))
+    .background(DayflowWeeklyToken.secondaryChartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
   }
 }
 
@@ -589,5 +594,5 @@ private func minutes(_ time: String) -> Int {
 #Preview("Context Charts", traits: .fixedLayout(width: 958, height: 427)) {
   WeeklyContextChartsSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "FBF6EF"))
+    .dayflowWindowBackground()
 }

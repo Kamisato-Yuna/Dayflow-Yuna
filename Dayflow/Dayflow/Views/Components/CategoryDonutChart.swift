@@ -136,7 +136,7 @@ struct CategoryDonutChart: View {
       // White circle in center - slightly smaller than donut hole to show grey gap on inner edge
       let innerGap: CGFloat = 8  // 4px gap on each side (matches outer gap)
       Circle()
-        .fill(Color.white)
+        .fill(Color(nsColor: .controlBackgroundColor))
         .frame(
           width: chartSize * innerRadiusRatio - innerGap,
           height: chartSize * innerRadiusRatio - innerGap)
@@ -224,11 +224,11 @@ struct CategoryDonutChart: View {
 
   CategoryDonutChart(data: previewData)
     .padding(40)
-    .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+    .dayflowWindowBackground()
 }
 
 #Preview("Empty State") {
   CategoryDonutChart(data: [])
     .padding(40)
-    .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+    .dayflowWindowBackground()
 }

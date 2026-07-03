@@ -218,6 +218,24 @@ enum DayflowWeeklyToken {
       increaseContrast: increaseContrast
     )
   }
+
+  static func chartFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color(nsColor: .controlBackgroundColor).opacity(0.44)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.64)
+  }
+
+  static func secondaryChartFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .underPageBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color.white.opacity(0.06)
+      : Color.white.opacity(0.34)
+  }
 }
 
 enum DayflowOnboardingToken {
@@ -370,6 +388,44 @@ private struct DayflowCardModifier: ViewModifier {
   }
 }
 
+private struct DayflowWeeklySectionSurfaceModifier: ViewModifier {
+  let cornerRadius: CGFloat
+
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    let increaseContrast = NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+
+    content
+      .background {
+        if reduceTransparency {
+          shape.fill(DayflowWeeklyToken.cardFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
+        } else {
+          shape.fill(.regularMaterial)
+          shape.fill(DayflowWeeklyToken.chartFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
+        }
+      }
+      .overlay {
+        shape.stroke(
+          DayflowWeeklyToken.border(
+            colorScheme: colorScheme,
+            increaseContrast: increaseContrast
+          ),
+          lineWidth: increaseContrast ? 1 : 0.75
+        )
+      }
+      .clipShape(shape)
+  }
+}
+
 private struct DayflowLiquidGlassModifier: ViewModifier {
   let isEnabled: Bool
 
@@ -454,6 +510,10 @@ extension View {
 
   func dayflowCard(cornerRadius: CGFloat = 10) -> some View {
     modifier(DayflowCardModifier(cornerRadius: cornerRadius))
+  }
+
+  func dayflowWeeklySectionSurface(cornerRadius: CGFloat = 6) -> some View {
+    modifier(DayflowWeeklySectionSurfaceModifier(cornerRadius: cornerRadius))
   }
 
   func dayflowSidebarSurface(cornerRadius: CGFloat = 14) -> some View {

@@ -11,9 +11,7 @@ struct WeeklyFocusHeatmapSection: View {
     static let cardWidth: CGFloat = 958
     static let cardHeight: CGFloat = 238
     static let cornerRadius: CGFloat = 4
-    static let borderColor = Color(hex: "EBE6E3")
-    static let backgroundColor = Color.white.opacity(0.75)
-    static let titleColor = Color(hex: "B46531")
+    static let titleColor = DayflowWeeklyToken.title
 
     static let topPadding: CGFloat = 34
     static let leadingPadding: CGFloat = 44
@@ -97,14 +95,7 @@ struct WeeklyFocusHeatmapSection: View {
     .padding(.trailing, Design.trailingPadding)
     .padding(.bottom, Design.bottomPadding)
     .frame(width: width, height: Design.cardHeight, alignment: .topLeading)
-    .background(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(Design.backgroundColor)
-    )
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 
   private var header: some View {
@@ -573,7 +564,7 @@ private struct WeeklyFocusHeatmapGapPreview: View {
       )
     }
     .padding(24)
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
   }
 }
 

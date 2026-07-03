@@ -253,6 +253,8 @@ struct WeeklyTreemapLeafTile: View {
 struct WeeklyTreemapHoverCard: View {
   let app: WeeklyTreemapApp
   let palette: WeeklyTreemapPalette
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   enum Design {
     static let cornerRadius: CGFloat = 6
@@ -281,7 +283,10 @@ struct WeeklyTreemapHoverCard: View {
     .padding(12)
     .background(
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(Color.white.opacity(0.96))
+        .fill(DayflowWeeklyToken.chartFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .overlay(
           RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
             .fill(palette.shellFill.opacity(0.85))
