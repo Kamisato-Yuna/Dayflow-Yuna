@@ -5,13 +5,14 @@
 //  Reusable styling components for the new UI
 //
 
+import AppKit
 import SwiftUI
 
 extension View {
   /// Applies complete Dayflow style with rounded rectangle shape
   func dayflowStyle(
     cornerRadius: CGFloat = 735.4068,
-    backgroundColor: Color = .white
+    backgroundColor: Color = Color(nsColor: .controlBackgroundColor)
   ) -> some View {
     self
       .background(backgroundColor)
@@ -19,7 +20,7 @@ extension View {
   }
 
   /// Applies complete Dayflow style with circle shape
-  func dayflowCircleStyle(backgroundColor: Color = .white) -> some View {
+  func dayflowCircleStyle(backgroundColor: Color = Color(nsColor: .controlBackgroundColor)) -> some View {
     self
       .background(backgroundColor)
       .clipShape(Circle())
@@ -52,7 +53,7 @@ struct DayflowCircleButton<Content: View>: View {
     Button(action: action) {
       ZStack {
         Circle()
-          .fill(Color.white)
+          .fill(Color(nsColor: .controlBackgroundColor))
 
         content()
           .frame(maxWidth: .infinity, maxHeight: .infinity)

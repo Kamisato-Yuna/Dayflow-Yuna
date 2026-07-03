@@ -3,6 +3,7 @@
 //  Dayflow
 //
 
+import AppKit
 import SwiftUI
 
 // MARK: - Choose Provider Step
@@ -14,6 +15,9 @@ struct OnboardingPrototypeChooseProviderStep: View {
   let onSelect: (String) -> Void
 
   @State private var showAllOptions = false
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   private let layoutScale: CGFloat = 0.8
   private let textScale: CGFloat = 1.1
@@ -139,7 +143,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
 
       // Toggle pill
       Button {
-        withAnimation(.easeInOut(duration: 0.3)) {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.3)) {
           showAllOptions.toggle()
         }
       } label: {
@@ -148,11 +152,16 @@ struct OnboardingPrototypeChooseProviderStep: View {
           .foregroundColor(Color(hex: "492304"))
           .padding(.horizontal, scaled(20))
           .padding(.vertical, scaled(8))
-          .background(Color.white.opacity(0.4))
+          .background(
+            DayflowContentToken.secondaryFill(
+              colorScheme: colorScheme,
+              reduceTransparency: reduceTransparency
+            )
+          )
           .clipShape(Capsule())
-          .overlay(Capsule().stroke(Color(hex: "E4D3C2"), lineWidth: 1))
+          .overlay(Capsule().stroke(contentBorder, lineWidth: borderLineWidth))
           .shadow(
-            color: Color(hex: "AF7246").opacity(0.15),
+            color: reduceTransparency ? .clear : Color.black.opacity(0.08),
             radius: scaled(2),
             x: 0,
             y: 0
@@ -222,7 +231,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
     .frame(maxWidth: .infinity)
     .frame(maxHeight: scaled(432))
     .background(
-      isHighlighted ? AnyView(SelectedCardBackground()) : AnyView(Color.white.opacity(0.3))
+      isHighlighted ? AnyView(SelectedCardBackground()) : AnyView(contentFill)
     )
     .cornerRadius(4)
     .overlay(
@@ -230,7 +239,9 @@ struct OnboardingPrototypeChooseProviderStep: View {
         ? AnyView(SelectedCardOverlay())
         : AnyView(
           RoundedRectangle(cornerRadius: 4).inset(by: 0.5).stroke(
-            Color.black.opacity(0.06), lineWidth: 1)
+            contentBorder,
+            lineWidth: borderLineWidth
+          )
         )
     )
     .modifier(CardShadowModifier(isSelected: isHighlighted))
@@ -275,12 +286,32 @@ struct OnboardingPrototypeChooseProviderStep: View {
     .padding(.vertical, scaled(18))
     .frame(maxWidth: .infinity)
     .frame(height: scaled(205))
-    .background(Color.white.opacity(0.3))
+    .background(contentFill)
     .cornerRadius(4)
     .overlay(
       RoundedRectangle(cornerRadius: 4).inset(by: 0.5).stroke(
-        Color.black.opacity(0.06), lineWidth: 1)
+        contentBorder,
+        lineWidth: borderLineWidth
+      )
     )
+  }
+
+  private var contentFill: Color {
+    DayflowContentToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
+  }
+
+  private var contentBorder: Color {
+    DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+    )
+  }
+
+  private var borderLineWidth: CGFloat {
+    NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast ? 1.2 : 1
   }
 
   private func selectButton(title: String) -> some View {

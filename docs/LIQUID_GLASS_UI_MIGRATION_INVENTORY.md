@@ -1,9 +1,12 @@
 # Liquid Glass UI Migration Inventory
 
 Baseline date: 2026-07-03
+Final cleanup update: 2026-07-03
 
-This document is the LG00 baseline for the Liquid Glass UI migration. It is a
-scope and verification guide for later tasks, not a UI implementation change.
+This document started as the LG00 baseline for the Liquid Glass UI migration and
+now also records the LG15 final cleanup state. It is the source of truth for
+remaining visual-surface residuals, accessibility expectations, and video paths
+that must be preserved.
 
 ## Scope Rules
 
@@ -23,39 +26,82 @@ scope and verification guide for later tasks, not a UI implementation change.
   task. Do not remove or break runtime recording, playback, processing, or
   transcription video paths.
 
-## Current Baseline Findings
+## LG15 Final Status
 
-The LG00 validation scan currently finds these major categories:
+- Bundled onboarding mp4 files are no longer present under `Dayflow/Dayflow`.
+- `MainUIBackground` is no longer referenced by production Swift or project
+  resources.
+- App and test deployment targets are set to macOS 15.1.
+- macOS 26 Liquid Glass API use is centralized in:
+  - `Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift`
+  - `Dayflow/Dayflow/Views/UI/DayflowSurfaceStyles.swift`
+- Functional surfaces use the shared material/glass wrappers. Content-heavy
+  surfaces use semantic card/chart fills and borders instead of full-screen
+  glass.
+- Reduce Motion is respected by the live onboarding line animation and the
+  interactive rating footer.
+- Reduce Transparency and Increase Contrast are handled by the shared surface
+  tokens and applied to the LG15-cleaned residual controls.
 
-- Bundled onboarding videos:
+## Remaining Residuals And Reasons
+
+These scan hits are intentionally kept:
+
+| Residual | Location | Reason |
+| --- | --- | --- |
+| `Color.white` in `WhiteBGVideoPlayer` / video chrome | Runtime video playback views | This is runtime media playback backing or playback affordance contrast, not a bundled onboarding animation. Preserve the mp4 playback chain. |
+| `Color.white` in `ScrubberView` | Runtime video scrubber filmstrip and playhead | The white strip/playhead is part of the media-control content layer. It is not a page background. |
+| `Color.white` in screenshot slideshow / review media | Screenshot or video review content | These fills keep media thumbnails and selection affordances legible. |
+| `Color.white` in previews | SwiftUI previews | Preview-only background scaffolding does not ship as an app surface. |
+| `Color.white.opacity(...)` in semantic tokens | `DayflowSurfaceStyles.swift` | The token layer uses translucent neutral fills for macOS 15 material path and applies reduce-transparency fallbacks. |
+
+Unresolved after LG15:
+
+- Full GUI visual inspection on both macOS 15.7 and macOS 26+ still needs human
+  runtime QA because this CLI pass can validate build/static state but cannot
+  prove cross-version rendering in the current environment.
+
+## macOS 15 And macOS 26 Visual Paths
+
+- macOS 15.1 through macOS 15.x uses neutral AppKit/SwiftUI material, semantic
+  fills, subtle borders, and reduced-transparency solid fallbacks.
+- macOS 26+ uses the same semantic roles, with Liquid Glass enabled only for
+  functional layers such as sidebar, floating controls, popovers, and modals via
+  guarded wrapper code.
+- Content layers such as timeline cards, charts, media, journal text, chat
+  messages, and settings rows keep readable standard material/card fills rather
+  than being glassed wholesale.
+
+## Historical LG00 Baseline Findings
+
+The LG00 validation scan originally found these major categories:
+
+- Bundled onboarding videos, now removed:
   - `Dayflow/Dayflow/Videos/DayflowAnimation.mp4`
   - `Dayflow/Dayflow/Videos/DayflowOnboarding.mp4`
   - `Dayflow/Dayflow/Videos/JournalOnboardingVideo.mp4`
-- Main window custom background:
+- Main window custom background, now removed:
   - `Dayflow/Dayflow/App/DayflowApp.swift` references `Image("MainUIBackground")`
     and a warm overlay `Color(red: 0.98, green: 0.96, blue: 0.93)`.
-- Large-area warm backgrounds:
+- Large-area warm backgrounds, now migrated or explained:
   - Weekly surfaces include `FBF6EF` and `F7F3F0` in `WeeklyView` and weekly
     section files.
   - Timeline, journal, chat, settings, onboarding, and modal surfaces contain
     many `Color.white` or warm white fills that need task-by-task review.
 - Liquid Glass API baseline:
-  - No production Swift source currently references `glassEffect`,
-    `GlassEffectContainer`, `GlassButtonStyle`,
-    `GlassProminentButtonStyle`, `backgroundExtensionEffect`, or guarded
-    macOS 26 availability branches. Existing mentions are in the migration
-    task document.
+  - LG00 had no production Swift references. LG15 now finds guarded references
+    only in the shared surface wrapper layer.
 
 ## Bundled Onboarding MP4 Inventory
 
-These are the only bundled mp4 files found under `Dayflow/Dayflow/Videos/`.
-They are migration candidates for LG02.
+These were the only bundled mp4 files found under `Dayflow/Dayflow/Videos/` at
+LG00. They were migration candidates for LG02 and should stay absent after LG15.
 
 | Asset | Current role | Current references | Later-task rule |
 | --- | --- | --- | --- |
-| `DayflowAnimation.mp4` | Launch video animation | `Dayflow/Dayflow/Views/Onboarding/VideoLaunchView.swift` | Replace with real-time line animation, then remove bundled asset only after references are gone. |
-| `DayflowOnboarding.mp4` | Onboarding intro/prototype video name and analytics asset name | `Dayflow/Dayflow/Views/Onboarding/OnboardingFlow.swift`, `Dayflow/Dayflow/Views/Onboarding/Prototype/OnboardingPrototypeFlow.swift` | Replace onboarding intro path without deleting runtime video code. |
-| `JournalOnboardingVideo.mp4` | Journal onboarding video | `Dayflow/Dayflow/Views/UI/JournalView.swift`, `Dayflow/Dayflow/App/DayflowApp.swift` | Replace journal onboarding video path; keep journal feature flow intact. |
+| `DayflowAnimation.mp4` | Launch video animation | Removed from production references | Keep absent; live line animation replaces this bundled asset. |
+| `DayflowOnboarding.mp4` | Onboarding intro/prototype video name and analytics asset name | Removed from production references | Keep absent; semantic line-animation payloads replace the old asset names. |
+| `JournalOnboardingVideo.mp4` | Journal onboarding video | Removed from production references | Keep absent; journal onboarding no longer depends on bundled mp4. |
 
 ## Runtime Video Paths To Preserve
 
@@ -120,6 +166,12 @@ macOS 15.1 and macOS 26+ separately when both runtimes are available.
 ## Reusable Scan Commands
 
 Run from the repository root.
+
+LG15 final audit wrapper:
+
+```bash
+bash scripts/audit-liquid-glass-final.sh
+```
 
 ```bash
 rg -n 'DayflowAnimation|DayflowOnboarding|JournalOnboardingVideo|MainUIBackground|Color\(red: 0\.98|Color\.white|FBF6EF|F7F3F0' Dayflow/Dayflow docs
