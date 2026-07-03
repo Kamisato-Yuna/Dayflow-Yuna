@@ -31,13 +31,10 @@ This document lists manual events, properties, and code locations. All events re
 - onboarding_started
   - file: Views/Onboarding/OnboardingFlow.swift (intro video appear)
 - onboarding_step_completed
-  - props: `step: intro_video|role_selection|download_reason|referral|preferences|llm_selection|llm_setup|categories|category_colors|screen_recording|completion`
+  - props: `step: intro_video|role_selection|download_reason|preferences|llm_selection|llm_setup|categories|category_colors|screen_recording|completion`
   - file: Views/Onboarding/OnboardingFlow.swift
 - onboarding_download_reason
   - props: `reasons: string[] (automatic_log|proof_of_work|cut_distractions|productive_focused|automated_manual_tracking|open_source_private|other)`, `surface: onboarding_download_reason`, `other_detail?: string`
-  - file: Views/Onboarding/OnboardingFlow.swift
-- onboarding_referral
-  - props: `source: hacker_news|x|friend|youtube|newsletter_blog|chatgpt_claude_ai|other`, `surface: onboarding_referral`, `detail?: string`
   - file: Views/Onboarding/OnboardingFlow.swift
 - llm_provider_selected
   - props: `provider: chatgpt_claude|gemini|ollama`, `local_engine?: ollama|lmstudio|custom`
