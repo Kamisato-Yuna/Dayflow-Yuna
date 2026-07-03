@@ -66,7 +66,7 @@ final class DailyRecapGeneratorTests: XCTestCase {
     XCTAssertEqual(defaults.string(forKey: "dailyRecapProvider_v1"), "gemini")
   }
 
-  func testMakeLocalPromptPlacesLanguageSectionBeforeOutputFormat() {
+  func testMakeLocalPromptPlacesLanguageSectionBeforeOutputFormat() throws {
     LLMOutputLanguagePreferences.override = "Japanese"
 
     let prompt = DailyRecapGenerator.makeLocalPrompt(
