@@ -3,7 +3,6 @@
 //  Dayflow
 //
 
-import AVFoundation
 import SwiftUI
 
 enum OnboardingPrototypeStep: Int, CaseIterable, Identifiable {
@@ -67,13 +66,13 @@ struct OnboardingPrototypeFlow: View {
       switch currentStep {
       case .introVideo:
         OnboardingPrototypeVideoIntroStep(
-          videoName: "DayflowOnboarding",
+          animationName: "dayflow_onboarding_line_animation",
           onPlaybackStarted: {
             OnboardingPrototypeAnalytics.trackVideoStarted(
               step: .introVideo,
               flowID: flowID,
               flowVariant: flowVariant,
-              assetName: "DayflowOnboarding.mp4"
+              assetName: "dayflow_onboarding_line_animation"
             )
           },
           onPlaybackCompleted: { reason in
@@ -81,7 +80,7 @@ struct OnboardingPrototypeFlow: View {
               step: .introVideo,
               flowID: flowID,
               flowVariant: flowVariant,
-              assetName: "DayflowOnboarding.mp4",
+              assetName: "dayflow_onboarding_line_animation",
               completionReason: reason
             )
             advance(from: .introVideo, method: "video_\(reason)")

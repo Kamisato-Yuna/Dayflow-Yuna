@@ -185,9 +185,9 @@ struct DayflowApp: App {
             }
         }
 
-        // Journal onboarding video (full window coverage, above sidebar)
+        // Journal onboarding animation (full window coverage, above sidebar)
         if journalCoordinator.showOnboardingVideo {
-          JournalOnboardingVideoView(onComplete: {
+          JournalOnboardingAnimationView(onComplete: {
             withAnimation(.easeOut(duration: 0.3)) {
               journalCoordinator.showOnboardingVideo = false
               hasCompletedJournalOnboarding = true

@@ -46,10 +46,10 @@ struct OnboardingFlow: View {
       switch step {
       case .introVideo:
         OnboardingPrototypeVideoIntroStep(
-          videoName: "DayflowOnboarding",
+          animationName: "dayflow_onboarding_line_animation",
           onPlaybackStarted: {
             AnalyticsService.shared.capture(
-              "onboarding_video_started", ["asset": "DayflowOnboarding.mp4"])
+              "onboarding_video_started", ["asset": "dayflow_onboarding_line_animation"])
           },
           onPlaybackCompleted: { reason in
             AnalyticsService.shared.capture("onboarding_video_completed", ["reason": reason])
