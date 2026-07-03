@@ -49,9 +49,9 @@ struct TerminalCommandView: View {
                 .fontWeight(.medium)
             }
             .foregroundColor(
-              isCopied ? Color(red: 0.34, green: 1, blue: 0.45) : .black.opacity(0.75))
+              isCopied ? DayflowSurfaceAccent.positive : .black.opacity(0.75))
           },
-          background: Color.white.opacity(0.93),
+          background: Color(nsColor: .controlBackgroundColor).opacity(0.82),
           foreground: .black,
           borderColor: Color.black.opacity(0.12),
           cornerRadius: 6,
@@ -62,12 +62,7 @@ struct TerminalCommandView: View {
         .padding(.trailing, 6)
         .padding(.vertical, 6)
       }
-      .background(Color(hex: "F8F9FA"))
-      .cornerRadius(8)
-      .overlay(
-        RoundedRectangle(cornerRadius: 8)
-          .stroke(Color.black.opacity(0.08), lineWidth: 1)
-      )
+      .dayflowOnboardingTextField()
     }
   }
 

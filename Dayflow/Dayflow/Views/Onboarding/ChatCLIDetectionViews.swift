@@ -70,7 +70,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
   let onSelectTool: (CLITool) -> Void
   @ViewBuilder let nextButton: () -> NextButton
 
-  let accentColor = Color(red: 0.25, green: 0.17, blue: 0)
+  let accentColor = DayflowOnboardingToken.primaryButtonFill
 
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
@@ -111,12 +111,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
         }
       }
       .padding(16)
-      .background(Color.white.opacity(0.5))
-      .cornerRadius(12)
-      .overlay(
-        RoundedRectangle(cornerRadius: 12)
-          .stroke(Color.black.opacity(0.05), lineWidth: 1)
-      )
+      .dayflowCard(cornerRadius: 12)
 
       HStack {
         DayflowSurfaceButton(
@@ -198,8 +193,12 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
       .padding(.vertical, 10)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
-        RoundedRectangle(cornerRadius: 10)
-          .fill(selectedTool == tool ? Color.white.opacity(0.9) : Color.white.opacity(0.5))
+        RoundedRectangle(cornerRadius: 10, style: .continuous)
+          .fill(
+            selectedTool == tool
+              ? Color.accentColor.opacity(0.14)
+              : Color(nsColor: .controlBackgroundColor).opacity(0.55)
+          )
       )
       .overlay(
         RoundedRectangle(cornerRadius: 10)
@@ -220,7 +219,7 @@ struct ChatCLIToolStatusRow: View {
   let status: CLIDetectionState
   let onInstall: () -> Void
 
-  let accentColor = Color(red: 0.25, green: 0.17, blue: 0)
+  let accentColor = DayflowOnboardingToken.primaryButtonFill
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -253,7 +252,7 @@ struct ChatCLIToolStatusRow: View {
                 .fontWeight(.semibold)
             }
           },
-          background: .white.opacity(0.85),
+          background: Color(nsColor: .controlBackgroundColor).opacity(0.82),
           foreground: accentColor,
           borderColor: accentColor.opacity(0.35),
           cornerRadius: 6,
@@ -265,12 +264,7 @@ struct ChatCLIToolStatusRow: View {
     }
     .padding(14)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Color.white.opacity(0.6))
-    .cornerRadius(12)
-    .overlay(
-      RoundedRectangle(cornerRadius: 12)
-        .stroke(Color.black.opacity(0.05), lineWidth: 1)
-    )
+    .dayflowCard(cornerRadius: 12)
   }
 
   @ViewBuilder
@@ -300,7 +294,7 @@ struct ChatCLIToolStatusRow: View {
         Text(status.statusLabel)
           .font(.custom("Figtree", size: 11))
           .fontWeight(.semibold)
-          .foregroundColor(Color(hex: "E91515"))
+          .foregroundColor(DayflowSurfaceAccent.critical)
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
         .background(Color(hex: "FFD1D1"))

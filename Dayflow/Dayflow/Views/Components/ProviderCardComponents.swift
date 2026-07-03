@@ -73,11 +73,11 @@ struct FlexibleProviderCard: View {
     }
     .frame(maxWidth: .infinity)
     .background(cardBackground)
-    .cornerRadius(4)
+    .cornerRadius(10)
     .overlay(cardOverlay)
     .modifier(CardShadowModifier(isSelected: isSelected))
     .animation(.spring(response: 0.3, dampingFraction: 0.9), value: isSelected)
-    .contentShape(RoundedRectangle(cornerRadius: 4))
+    .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     .allowsHitTesting(shouldAllowHitTesting)
     .pointingHandCursor(enabled: shouldShowPointer)
     .onTapGesture { handleCardTap() }
@@ -190,7 +190,7 @@ struct FlexibleProviderCard: View {
           .foregroundColor(buttonForegroundColor)
           .frame(maxWidth: .infinity)
       },
-      background: buttonBackgroundColor,
+      background: DayflowOnboardingToken.primaryButtonFill,
       foreground: buttonForegroundColor,
       borderColor: .clear,
       cornerRadius: 8,
@@ -247,7 +247,7 @@ struct FlexibleProviderCard: View {
   }
 
   private var buttonBackgroundColor: Color {
-    return Color(red: 0.25, green: 0.17, blue: 0)
+    return DayflowOnboardingToken.primaryButtonFill
   }
 
   @ViewBuilder
@@ -255,7 +255,7 @@ struct FlexibleProviderCard: View {
     if isSelected {
       SelectedCardBackground()
     } else {
-      Color.white.opacity(0.3)
+      Color(nsColor: .controlBackgroundColor).opacity(0.58)
     }
   }
 
@@ -264,7 +264,7 @@ struct FlexibleProviderCard: View {
     if isSelected {
       SelectedCardOverlay()
     } else {
-      RoundedRectangle(cornerRadius: 4)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
         .inset(by: 0.5)
         .stroke(Color.black.opacity(0.06), lineWidth: 1)
     }
@@ -334,7 +334,7 @@ struct BadgeView: View {
 
   private var badgeBackground: some View {
     ZStack {
-      Color.white.opacity(0.69)
+      Color(nsColor: .controlBackgroundColor).opacity(0.70)
 
       LinearGradient(
         stops: gradientColors,
@@ -354,7 +354,7 @@ struct BadgeView: View {
     switch type {
     case .green:
       return [
-        Gradient.Stop(color: Color(red: 0.34, green: 1, blue: 0.45), location: 0.00),
+        Gradient.Stop(color: DayflowSurfaceAccent.positive, location: 0.00),
         Gradient.Stop(color: Color(red: 1, green: 0.98, blue: 0.95).opacity(0), location: 1.00),
       ]
     case .orange:
@@ -373,7 +373,7 @@ struct BadgeView: View {
   private var shadowColor: Color {
     switch type {
     case .green:
-      return Color(red: 0.34, green: 1, blue: 0.45)
+      return DayflowSurfaceAccent.positive
     case .orange:
       return Color(red: 1, green: 0.53, blue: 0)
     case .blue:
@@ -384,7 +384,7 @@ struct BadgeView: View {
   private var strokeColor: Color {
     switch type {
     case .green:
-      return Color(red: 0.34, green: 1, blue: 0.45).opacity(0.3)
+      return DayflowSurfaceAccent.positive.opacity(0.3)
     case .orange:
       return Color(red: 1, green: 0.25, blue: 0.02).opacity(0.3)
     case .blue:
@@ -483,7 +483,7 @@ struct ProviderIconView: View {
       .scaledToFit()
       .frame(width: 28 * scale, height: 28 * scale)
       .padding(6 * scale)
-      .background(.white.opacity(0.9))
+      .background(.regularMaterial)
       .cornerRadius(6 * scale)
       .shadow(color: Color.black.opacity(0.05), radius: 2 * scale, x: 0, y: 2 * scale)
       .overlay(
@@ -498,7 +498,7 @@ struct ProviderIconView: View {
       .font(.system(size: 20 * scale, weight: .medium))
       .foregroundColor(.black.opacity(0.7))
       .frame(width: 40 * scale, height: 40 * scale)
-      .background(.white.opacity(0.6))
+      .background(.regularMaterial)
       .cornerRadius(3 * scale)
       .shadow(
         color: Color(red: 0.92, green: 0.91, blue: 0.91),
@@ -509,7 +509,7 @@ struct ProviderIconView: View {
       .overlay(
         RoundedRectangle(cornerRadius: 3 * scale)
           .inset(by: 0.23)
-          .stroke(.white.opacity(0.87), lineWidth: 0.46508 * scale)
+          .stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 0.46508 * scale)
       )
   }
 }
@@ -530,7 +530,7 @@ struct FeatureRowView: View {
       Image(systemName: feature.isAvailable ? "checkmark" : "xmark")
         .font(.system(size: 12 * scale, weight: .bold))
         .foregroundColor(
-          feature.isAvailable ? Color(red: 0.34, green: 1, blue: 0.45) : Color(hex: "E91515")
+          feature.isAvailable ? DayflowSurfaceAccent.positive : DayflowSurfaceAccent.critical
         )
         .frame(width: 16 * scale)
 
@@ -546,13 +546,13 @@ struct FeatureRowView: View {
 struct SelectedCardBackground: View {
   var body: some View {
     ZStack {
-      Color(hex: "FCF2E3")
-      Color.white.opacity(0.69)
+      Color(nsColor: .controlBackgroundColor).opacity(0.86)
+      Color.accentColor.opacity(0.10)
       LinearGradient(
         stops: [
           Gradient.Stop(color: Color.clear, location: 0.25),
-          Gradient.Stop(color: Color(hex: "FF7506").opacity(0.05), location: 0.7),
-          Gradient.Stop(color: Color(hex: "FF7506").opacity(0.15), location: 1.0),
+          Gradient.Stop(color: Color.accentColor.opacity(0.05), location: 0.7),
+          Gradient.Stop(color: Color.accentColor.opacity(0.15), location: 1.0),
         ],
         startPoint: UnitPoint(x: 0, y: 0.5),
         endPoint: UnitPoint(x: 1, y: 0.5)
@@ -564,31 +564,31 @@ struct SelectedCardBackground: View {
 struct SelectedCardOverlay: View {
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: 4)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
         .inset(by: 0.5)
-        .stroke(Color(hex: "EBE9E6"), lineWidth: 1)
+        .stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 1)
 
-      RoundedRectangle(cornerRadius: 4)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
         .inset(by: 0.5)
-        .stroke(Color(hex: "FFEBC9"), lineWidth: 1)
+        .stroke(Color.accentColor.opacity(0.24), lineWidth: 1)
 
-      RoundedRectangle(cornerRadius: 4)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
         .inset(by: 0.5)
         .stroke(
           AngularGradient(
             stops: [
-              .init(color: Color(hex: "FFF1D3").opacity(0.50), location: 0.00),
-              .init(color: Color(hex: "FF8904").opacity(0.50), location: 0.03),
-              .init(color: Color(hex: "FF8904").opacity(0.35), location: 0.09),
-              .init(color: .white, location: 0.17),
-              .init(color: .white.opacity(0.75), location: 0.23),
-              .init(color: .white.opacity(0.50), location: 0.25),
-              .init(color: .white.opacity(0.50), location: 0.30),
-              .init(color: Color(hex: "FF8904").opacity(0.35), location: 0.52),
-              .init(color: Color(hex: "FFE0A5"), location: 0.58),
-              .init(color: .white, location: 0.80),
-              .init(color: Color(hex: "FFF1D3").opacity(0.50), location: 0.91),
-              .init(color: Color(hex: "FFF1D3").opacity(0.50), location: 1.00),
+              .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.62), location: 0.00),
+              .init(color: Color.accentColor.opacity(0.50), location: 0.03),
+              .init(color: Color.accentColor.opacity(0.34), location: 0.09),
+              .init(color: Color(nsColor: .windowBackgroundColor), location: 0.17),
+              .init(color: Color(nsColor: .windowBackgroundColor).opacity(0.75), location: 0.23),
+              .init(color: Color(nsColor: .windowBackgroundColor).opacity(0.50), location: 0.25),
+              .init(color: Color(nsColor: .windowBackgroundColor).opacity(0.50), location: 0.30),
+              .init(color: Color.accentColor.opacity(0.34), location: 0.52),
+              .init(color: Color.accentColor.opacity(0.22), location: 0.58),
+              .init(color: Color(nsColor: .windowBackgroundColor), location: 0.80),
+              .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.62), location: 0.91),
+              .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.62), location: 1.00),
             ],
             center: .center,
             startAngle: .degrees(0),

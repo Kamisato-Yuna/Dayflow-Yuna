@@ -283,11 +283,6 @@ struct OnboardingLLMSelectionView_Previews: PreviewProvider {
       onNext: { _ in }  // Takes provider string now
     )
     .frame(width: 1400, height: 900)
-    .background(
-      Image("OnboardingBackgroundv2")
-        .resizable()
-        .aspectRatio(contentMode: .fill)
-        .ignoresSafeArea()
-    )
+    .dayflowWindowBackground()
   }
 }

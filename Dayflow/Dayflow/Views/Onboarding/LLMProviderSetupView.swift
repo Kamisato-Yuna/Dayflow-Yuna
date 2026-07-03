@@ -135,8 +135,8 @@ struct LLMProviderSetupView: View {
             Text("完成设置").font(.custom("Figtree", size: 14)).fontWeight(.semibold)
           }
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 24,
@@ -154,8 +154,8 @@ struct LLMProviderSetupView: View {
             }
           }
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 24,
@@ -212,8 +212,8 @@ struct LLMProviderSetupView: View {
                 .font(.custom("Figtree", size: 14))
                 .fontWeight(.semibold)
             },
-            background: Color(red: 0.25, green: 0.17, blue: 0),
-            foreground: .white,
+            background: DayflowOnboardingToken.primaryButtonFill,
+            foreground: DayflowOnboardingToken.primaryButtonText,
             borderColor: .clear,
             cornerRadius: 8,
             showOverlayStroke: true
@@ -259,8 +259,8 @@ struct LLMProviderSetupView: View {
                     .fontWeight(.semibold)
                 }
               },
-              background: Color(red: 0.25, green: 0.17, blue: 0),
-              foreground: .white,
+              background: DayflowOnboardingToken.primaryButtonFill,
+              foreground: DayflowOnboardingToken.primaryButtonText,
               borderColor: .clear,
               cornerRadius: 8,
               horizontalPadding: 24,
@@ -347,21 +347,21 @@ struct LLMProviderSetupView: View {
           HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
               .font(.system(size: 12))
-              .foregroundColor(Color(hex: "E91515"))
+              .foregroundColor(DayflowSurfaceAccent.critical)
 
             Text(message)
               .font(.custom("Figtree", size: 13))
-              .foregroundColor(Color(hex: "E91515"))
+              .foregroundColor(DayflowSurfaceAccent.critical)
           }
           .padding(.horizontal, 16)
           .padding(.vertical, 10)
           .background(
             RoundedRectangle(cornerRadius: 4)
-              .fill(Color(hex: "E91515").opacity(0.1))
+              .fill(DayflowSurfaceAccent.critical.opacity(0.1))
           )
           .overlay(
             RoundedRectangle(cornerRadius: 4)
-              .stroke(Color(hex: "E91515").opacity(0.3), lineWidth: 1)
+              .stroke(DayflowSurfaceAccent.critical.opacity(0.3), lineWidth: 1)
           )
         }
 
@@ -594,8 +594,8 @@ struct LLMProviderSetupView: View {
                   .semibold)
               }
             },
-            background: Color(red: 0.25, green: 0.17, blue: 0),
-            foreground: .white,
+            background: DayflowOnboardingToken.primaryButtonFill,
+            foreground: DayflowOnboardingToken.primaryButtonText,
             borderColor: .clear,
             cornerRadius: 8,
             horizontalPadding: 24,

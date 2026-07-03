@@ -461,7 +461,7 @@ private struct EditableCategoryCard: View {
           .padding(.top, 10)
           .padding(.bottom, 12)
           .frame(minHeight: 55)
-          .background(Color.white)
+          .background(Color(nsColor: .textBackgroundColor))
           .focused($focusedField, equals: .description)
           .scrollContentBackground(.hidden)
       }
@@ -472,14 +472,7 @@ private struct EditableCategoryCard: View {
     }
     .padding(16)
     .frame(alignment: .leading)
-    .background(Color.white)
-    .cornerRadius(8)
-    .shadow(color: Color(red: 0.86, green: 0.8, blue: 0.76), radius: 3, x: 0, y: 0)
-    .overlay(
-      RoundedRectangle(cornerRadius: 8)
-        .inset(by: 0.25)
-        .stroke(Color(red: 0.89, green: 0.86, blue: 0.85), lineWidth: 0.5)
-    )
+    .dayflowCard(cornerRadius: 8)
   }
 
   private var displayView: some View {
@@ -529,14 +522,7 @@ private struct EditableCategoryCard: View {
     .padding(.horizontal, 20)
     .padding(.vertical, 12)
     .frame(maxWidth: .infinity, alignment: .center)
-    .background(Color.white)
-    .cornerRadius(4)
-    .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 0)
-    .overlay(
-      RoundedRectangle(cornerRadius: 4)
-        .inset(by: 0.25)
-        .stroke(Color(red: 0.89, green: 0.89, blue: 0.89), lineWidth: 0.5)
-    )
+    .dayflowCard(cornerRadius: 8)
     .contentShape(Rectangle())
     .onTapGesture {
       if !category.isSystem {
@@ -565,7 +551,7 @@ private struct ColorAssignmentCard: View {
       .overlay(
         RoundedRectangle(cornerRadius: 6)
           .inset(by: 0.75)
-          .stroke(.white, lineWidth: 1.5)
+          .stroke(Color(nsColor: .windowBackgroundColor), lineWidth: 1.5)
       )
   }
 
@@ -595,7 +581,7 @@ private struct ColorAssignmentCard: View {
     .padding(.horizontal, 20)
     .padding(.vertical, 16)
     .frame(maxWidth: .infinity, alignment: .center)
-    .background(Color.white)
+    .dayflowCard(cornerRadius: 8)
     .overlay(
       RoundedRectangle(cornerRadius: 8)
         .stroke(
@@ -784,8 +770,8 @@ struct ColorOrganizerRoot: View {
         Group {
           if presentationStyle == .sheet {
             RoundedRectangle(cornerRadius: 20)
-              .fill(Color.white)
-              .shadow(color: Color.black.opacity(0.15), radius: 20, x: 0, y: 8)
+              .fill(.regularMaterial)
+              .shadow(color: Color.black.opacity(0.12), radius: 20, x: 0, y: 8)
           }
         }
       )
@@ -800,7 +786,7 @@ struct ColorOrganizerRoot: View {
         VStack(alignment: .leading, spacing: 6) {
           Text("第一部分，共 2 步")
             .font(Font.custom("Figtree", size: 14).weight(.bold))
-            .foregroundColor(Color(red: 0.98, green: 0.43, blue: 0))
+            .foregroundColor(Color.accentColor)
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text("编辑标题与说明")
@@ -852,7 +838,7 @@ struct ColorOrganizerRoot: View {
         VStack(alignment: .leading, spacing: 6) {
           Text("第二部分，共 2 步")
             .font(Font.custom("Figtree", size: 14).weight(.bold))
-            .foregroundColor(Color(red: 0.98, green: 0.43, blue: 0))
+            .foregroundColor(Color.accentColor)
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text("编辑颜色")
@@ -981,7 +967,7 @@ struct ColorOrganizerRoot: View {
     return VStack(alignment: .leading, spacing: 16) {
       ZStack(alignment: .top) {
         RoundedRectangle(cornerRadius: 16)
-          .fill(Color.white.opacity(0.2))
+          .fill(Color(nsColor: .controlBackgroundColor).opacity(0.38))
           .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
 
         RoundedRectangle(cornerRadius: 16)
@@ -1046,7 +1032,7 @@ struct ColorOrganizerRoot: View {
       VStack(alignment: .leading, spacing: 24) {
         ZStack(alignment: .top) {
           RoundedRectangle(cornerRadius: 16)
-            .fill(Color.white.opacity(0.2))
+            .fill(Color(nsColor: .controlBackgroundColor).opacity(0.38))
             .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
 
           RoundedRectangle(cornerRadius: 16)
@@ -1161,7 +1147,7 @@ struct ColorOrganizerRoot: View {
           .frame(width: 160, alignment: .center)
           .background(
             RoundedRectangle(cornerRadius: 12)
-              .fill(Color.white.opacity(0.85))
+              .fill(Color(nsColor: .controlBackgroundColor).opacity(0.82))
               .overlay(
                 RoundedRectangle(cornerRadius: 12)
                   .stroke(Color(red: 0.88, green: 0.88, blue: 0.88), lineWidth: 1)

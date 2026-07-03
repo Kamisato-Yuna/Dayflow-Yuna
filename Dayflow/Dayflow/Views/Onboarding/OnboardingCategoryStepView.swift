@@ -174,13 +174,7 @@ struct OnboardingCategoryStepView: View {
     }
     .padding(.horizontal, 14)
     .padding(.vertical, 10)
-    .background(Color.white)
-    .cornerRadius(4)
-    .overlay(
-      RoundedRectangle(cornerRadius: 4)
-        .stroke(Color(hex: "E3DBD9"), lineWidth: 0.5)
-    )
-    .shadow(color: Color(hex: "FCB278"), radius: 3, x: 0, y: 0)
+    .dayflowOnboardingTextField()
   }
 
   // MARK: - Read-Only Card
@@ -222,13 +216,7 @@ struct OnboardingCategoryStepView: View {
     }
     .padding(.horizontal, 14)
     .padding(.vertical, 10)
-    .background(Color.white)
-    .cornerRadius(6)
-    .overlay(
-      RoundedRectangle(cornerRadius: 6)
-        .stroke(Color(hex: "E3DBD9"), lineWidth: 0.5)
-    )
-    .shadow(color: Color(hex: "DCCDC1").opacity(0.5), radius: 3, x: 0, y: 0)
+    .dayflowCard(cornerRadius: 8)
     .onTapGesture {
       if !category.isSystem {
         startEditing(category)
@@ -245,7 +233,7 @@ struct OnboardingCategoryStepView: View {
       .frame(width: 16, height: 16)
       .overlay(
         RoundedRectangle(cornerRadius: 6)
-          .stroke(Color.white, lineWidth: 1.5)
+          .stroke(Color(nsColor: .windowBackgroundColor), lineWidth: 1.5)
       )
       .shadow(color: .black.opacity(0.25), radius: 3, x: 0, y: 0)
   }
@@ -274,13 +262,7 @@ struct OnboardingCategoryStepView: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(Color(hex: "FFBA81").opacity(0.3))
-        .cornerRadius(4)
-        .overlay(
-          RoundedRectangle(cornerRadius: 4)
-            .stroke(Color(hex: "F3A462"), lineWidth: 0.5)
-        )
-        .shadow(color: .black.opacity(0.06), radius: 2, x: 0, y: 0)
+        .dayflowFloatingControl(cornerRadius: 8)
     }
     .buttonStyle(.plain)
     .pointingHandCursor(enabled: canAddMore)
@@ -299,12 +281,12 @@ struct OnboardingCategoryStepView: View {
         Text("返回")
           .font(.custom("Figtree", size: 12).weight(.medium))
           .tracking(-0.48)
-          .foregroundColor(Color(hex: "B6B6B6"))
+          .foregroundColor(DayflowOnboardingToken.secondaryButtonText.opacity(0.58))
           .padding(.horizontal, 40)
           .padding(.vertical, 12)
           .overlay(
-            RoundedRectangle(cornerRadius: 4)
-              .stroke(Color(hex: "B6B6B6"), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+              .stroke(DayflowOnboardingToken.secondaryButtonText.opacity(0.28), lineWidth: 1)
           )
       }
       .buttonStyle(.plain)
@@ -328,11 +310,11 @@ struct OnboardingCategoryStepView: View {
         Text("下一步")
           .font(.custom("Figtree", size: 12).weight(.medium))
           .tracking(-0.48)
-          .foregroundColor(.white)
+          .foregroundColor(DayflowOnboardingToken.primaryButtonText)
           .padding(.horizontal, 40)
           .padding(.vertical, 12)
-          .background(Color(hex: "402B00"))
-          .cornerRadius(4)
+          .background(DayflowOnboardingToken.primaryButtonFill)
+          .cornerRadius(8)
       }
       .buttonStyle(.plain)
       .pointingHandCursor()
@@ -421,10 +403,5 @@ struct OnboardingCategoryStepView: View {
   )
   .environmentObject(CategoryStore.shared)
   .frame(width: 1200, height: 680)
-  .background {
-    Image("OnboardingBackgroundv2")
-      .resizable()
-      .aspectRatio(contentMode: .fill)
-      .ignoresSafeArea()
-  }
+  .dayflowWindowBackground()
 }

@@ -24,8 +24,8 @@ struct ScreenRecordingPermissionView: View {
     case needsAction  // requested or settings opened, awaiting quit & reopen / toggle
   }
 
-  private let brownAccent = Color(hex: "492304")
-  private let privacyTextColor = Color(hex: "89380E")
+  private let actionAccent = DayflowOnboardingToken.primaryButtonFill
+  private let privacyTextColor = Color(nsColor: .labelColor)
 
   var body: some View {
     ZStack(alignment: .bottomTrailing) {
@@ -69,14 +69,7 @@ struct ScreenRecordingPermissionView: View {
           }
           .padding(16)
           .frame(maxWidth: 351, alignment: .leading)
-          .background(Color.white.opacity(0.3))
-          .cornerRadius(5)
-          .overlay(
-            RoundedRectangle(cornerRadius: 5)
-              .stroke(Color(red: 0.8, green: 0.278, blue: 0).opacity(0.15), lineWidth: 1)
-          )
-          .shadow(
-            color: Color(red: 0.725, green: 0.608, blue: 0.482).opacity(0.3), radius: 4, x: 0, y: 0)
+          .dayflowCard(cornerRadius: 10)
 
           // State-based messaging
           Group {
@@ -108,29 +101,13 @@ struct ScreenRecordingPermissionView: View {
                   Text(isCheckingPermission ? "检查中..." : "打开系统设置")
                     .font(.custom("Figtree-SemiBold", size: 12))
                     .tracking(-0.48)
-                    .foregroundColor(brownAccent)
+                    .foregroundColor(DayflowOnboardingToken.primaryButtonText)
                 }
                 .padding(12)
               }
               .buttonStyle(.plain)
-              .background(
-                LinearGradient(
-                  stops: [
-                    .init(
-                      color: Color(red: 1, green: 0.773, blue: 0.341).opacity(0.7), location: 0.73),
-                    .init(
-                      color: Color(red: 1, green: 0.98, blue: 0.945).opacity(0), location: 0.99),
-                  ],
-                  startPoint: UnitPoint(x: 0.7, y: 1),
-                  endPoint: UnitPoint(x: 0.3, y: 0)
-                )
-                .background(Color.white.opacity(0.69))
-              )
-              .cornerRadius(6)
-              .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                  .stroke(Color(hex: "FFBC80"), lineWidth: 1)
-              )
+              .background(actionAccent)
+              .cornerRadius(8)
               .disabled(isCheckingPermission)
             case .needsAction:
               HStack {
@@ -141,46 +118,21 @@ struct ScreenRecordingPermissionView: View {
                     Text("打开系统设置")
                       .font(.custom("Figtree-SemiBold", size: 12))
                       .tracking(-0.48)
-                      .foregroundColor(brownAccent)
+                      .foregroundColor(actionAccent)
                       .padding(12)
                   }
                   .buttonStyle(.plain)
-                  .background(
-                    LinearGradient(
-                      stops: [
-                        .init(
-                          color: Color(red: 1, green: 0.773, blue: 0.341).opacity(0.7),
-                          location: 0.73
-                        ),
-                        .init(
-                          color: Color(red: 1, green: 0.98, blue: 0.945).opacity(0),
-                          location: 0.99),
-                      ],
-                      startPoint: UnitPoint(x: 0.7, y: 1),
-                      endPoint: UnitPoint(x: 0.3, y: 0)
-                    )
-                    .background(Color.white.opacity(0.69))
-                  )
-                  .cornerRadius(6)
-                  .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                      .stroke(Color(hex: "FFBC80"), lineWidth: 1)
-                  )
+                  .dayflowFloatingControl(cornerRadius: 8)
 
                   Button(action: quitAndReopen) {
                     Text("退出并重开")
                       .font(.custom("Figtree-SemiBold", size: 12))
                       .tracking(-0.48)
-                      .foregroundColor(brownAccent)
+                      .foregroundColor(actionAccent)
                       .padding(12)
                   }
                   .buttonStyle(.plain)
-                  .background(Color.white.opacity(0.69))
-                  .cornerRadius(6)
-                  .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                      .stroke(Color(hex: "FFBC80"), lineWidth: 1)
-                  )
+                  .dayflowFloatingControl(cornerRadius: 8)
                 }
               }
             case .granted:
@@ -200,15 +152,7 @@ struct ScreenRecordingPermissionView: View {
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(maxWidth: 486)
-            .background(Color(hex: "FCFCFC"))
-            .cornerRadius(8)
-            .overlay(
-              RoundedRectangle(cornerRadius: 8)
-                .stroke(Color(hex: "F0F0F0"), lineWidth: 1)
-            )
-            .shadow(
-              color: Color(red: 0.725, green: 0.608, blue: 0.482).opacity(0.25), radius: 3, x: 0,
-              y: 2)
+            .dayflowCard(cornerRadius: 12)
         }
       }
 
@@ -217,7 +161,7 @@ struct ScreenRecordingPermissionView: View {
         DayflowSurfaceButton(
           action: onBack,
           content: { Text("返回").font(.custom("Figtree-Medium", size: 12)).tracking(-0.48) },
-          background: .white,
+          background: Color(nsColor: .controlBackgroundColor).opacity(0.72),
           foreground: Color(hex: "B6B6B6"),
           borderColor: Color(hex: "B6B6B6"),
           cornerRadius: 4,
@@ -231,9 +175,9 @@ struct ScreenRecordingPermissionView: View {
           },
           content: { Text("下一步").font(.custom("Figtree-Medium", size: 12)).tracking(-0.48) },
           background: permissionState == .granted
-            ? Color(hex: "402B00")
-            : Color(hex: "402B00").opacity(0.3),
-          foreground: .white,
+            ? DayflowOnboardingToken.primaryButtonFill
+            : DayflowOnboardingToken.primaryButtonFill.opacity(0.3),
+          foreground: DayflowOnboardingToken.primaryButtonText,
           borderColor: .clear,
           cornerRadius: 4,
           horizontalPadding: 40,
