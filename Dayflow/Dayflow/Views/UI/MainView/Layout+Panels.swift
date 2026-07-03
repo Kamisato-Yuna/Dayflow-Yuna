@@ -255,6 +255,7 @@ extension MainView {
             showTimelineReview = true
           }
         }
+        .dayflowFloatingControl(cornerRadius: 20)
         .opacity(contentOpacity)
       }
     }
@@ -440,9 +441,7 @@ extension MainView {
   }
 
   private var copyTimelineButton: some View {
-    let background = Color(red: 0.99, green: 0.93, blue: 0.88)
-    let stroke = Color(red: 0.97, green: 0.89, blue: 0.81)
-    let textColor = Color(red: 0.84, green: 0.65, blue: 0.52)
+    let textColor = Color(nsColor: .secondaryLabelColor)
 
     // Slide up + fade: no text scaling (scaling distorts letterforms)
     let enterTransition = AnyTransition.opacity
@@ -482,13 +481,7 @@ extension MainView {
       .animation(.spring(response: 0.3, dampingFraction: 0.85), value: copyTimelineState)
       .frame(width: 104, height: 23)
       .foregroundColor(textColor)
-      .background(background)
-      .clipShape(RoundedRectangle(cornerRadius: 7))
-      .overlay(
-        RoundedRectangle(cornerRadius: 7)
-          .inset(by: 0.5)
-          .stroke(stroke, lineWidth: 1)
-      )
+      .dayflowFloatingControl(cornerRadius: 7)
       .contentShape(Rectangle())
     }
     .buttonStyle(ShrinkButtonStyle())

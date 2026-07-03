@@ -4,6 +4,8 @@ private enum SidebarMetrics {
   static let itemSpacing: CGFloat = 5.25
   static let scale: CGFloat = 1.1
   static let itemSize: CGFloat = 56 * scale
+  static let surfaceCornerRadius: CGFloat = 22
+  static let surfacePadding: CGFloat = 6
   static let selectedBackgroundSize: CGFloat = 30 * scale
   static let iconSize: CGFloat = 16 * scale
   static let fallbackSymbolSize: CGFloat = 15 * scale
@@ -80,16 +82,23 @@ struct SidebarView: View {
   }
 
   var body: some View {
-    VStack(alignment: .center, spacing: SidebarMetrics.itemSpacing) {
-      ForEach(visibleIcons, id: \.self) { icon in
-        SidebarIconButton(
-          icon: icon,
-          isSelected: selectedIcon == icon,
-          showBadge: shouldShowBadge(for: icon),
-          action: { selectedIcon = icon }
-        )
-        .frame(width: SidebarMetrics.itemSize, height: SidebarMetrics.itemSize)
+    DayflowGlassSurface(
+      role: .sidebarSurface,
+      cornerRadius: SidebarMetrics.surfaceCornerRadius,
+      spacing: SidebarMetrics.itemSpacing
+    ) {
+      VStack(alignment: .center, spacing: SidebarMetrics.itemSpacing) {
+        ForEach(visibleIcons, id: \.self) { icon in
+          SidebarIconButton(
+            icon: icon,
+            isSelected: selectedIcon == icon,
+            showBadge: shouldShowBadge(for: icon),
+            action: { selectedIcon = icon }
+          )
+          .frame(width: SidebarMetrics.itemSize, height: SidebarMetrics.itemSize)
+        }
       }
+      .padding(SidebarMetrics.surfacePadding)
     }
   }
 
@@ -111,15 +120,42 @@ struct SidebarIconButton: View {
   var showBadge: Bool = false
   let action: () -> Void
 
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  private var selectedAccent: Color {
+    DayflowSurfaceAccent.primary
+  }
+
+  private var inactiveForeground: Color {
+    Color(nsColor: .secondaryLabelColor)
+  }
+
+  private var selectedForeground: Color {
+    Color(nsColor: .labelColor)
+  }
+
+  private var selectedFill: Color {
+    reduceTransparency
+      ? Color(nsColor: .selectedControlColor).opacity(0.36)
+      : selectedAccent.opacity(colorScheme == .dark ? 0.22 : 0.16)
+  }
+
+  private var selectedStroke: Color {
+    selectedAccent.opacity(colorScheme == .dark ? 0.46 : 0.32)
+  }
+
   var body: some View {
     Button(action: action) {
       VStack(spacing: SidebarMetrics.iconLabelSpacing) {
         ZStack {
           if isSelected {
-            Image("IconBackground")
-              .resizable()
-              .interpolation(.high)
-              .renderingMode(.original)
+            RoundedRectangle(cornerRadius: 11, style: .continuous)
+              .fill(selectedFill)
+              .overlay(
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                  .stroke(selectedStroke, lineWidth: 0.8)
+              )
               .frame(
                 width: SidebarMetrics.selectedBackgroundSize,
                 height: SidebarMetrics.selectedBackgroundSize
@@ -132,7 +168,7 @@ struct SidebarIconButton: View {
               .interpolation(.high)
               .renderingMode(.template)
               .foregroundColor(
-                isSelected ? Color(hex: "F96E00") : Color(red: 0.6, green: 0.4, blue: 0.3)
+                isSelected ? selectedAccent : inactiveForeground
               )
               .aspectRatio(contentMode: .fit)
               .frame(width: SidebarMetrics.iconSize, height: SidebarMetrics.iconSize)
@@ -140,12 +176,12 @@ struct SidebarIconButton: View {
             Image(systemName: sys)
               .font(.system(size: SidebarMetrics.fallbackSymbolSize))
               .foregroundColor(
-                isSelected ? Color(hex: "F96E00") : Color(red: 0.6, green: 0.4, blue: 0.3))
+                isSelected ? selectedAccent : inactiveForeground)
           }
 
           if showBadge {
             Circle()
-              .fill(Color(hex: "F96E00"))
+              .fill(DayflowSurfaceAccent.primary)
               .frame(width: SidebarMetrics.badgeSize, height: SidebarMetrics.badgeSize)
               .offset(x: SidebarMetrics.badgeOffsetX, y: SidebarMetrics.badgeOffsetY)
           }
@@ -157,7 +193,7 @@ struct SidebarIconButton: View {
           .lineLimit(1)
           .minimumScaleFactor(0.75)
           .foregroundColor(
-            isSelected ? Color(hex: "F96E00") : Color(red: 0.6, green: 0.4, blue: 0.3))
+            isSelected ? selectedForeground : inactiveForeground)
       }
       .frame(width: SidebarMetrics.itemSize, height: SidebarMetrics.itemSize)
       .contentShape(Rectangle())

@@ -19,9 +19,9 @@ enum DayflowSurfaceRole: CaseIterable {
 
   var usesLiquidGlass: Bool {
     switch self {
-    case .floatingControl, .popoverSurface, .modalSurface:
+    case .sidebarSurface, .floatingControl, .popoverSurface, .modalSurface:
       return true
-    case .windowBackground, .sidebarSurface, .contentPanel, .inspectorPanel:
+    case .windowBackground, .contentPanel, .inspectorPanel:
       return false
     }
   }

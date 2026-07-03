@@ -19,12 +19,31 @@ struct DayflowButton: View {
   @State private var isHovered = false
   @State private var showPulse = false
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.colorScheme) private var colorScheme
 
   // Animation constants following Emil Kowalski principles
   private let hoverAnimation = Animation.spring(
     response: 0.22, dampingFraction: 0.8, blendDuration: 0)
   private let pressAnimation = Animation.spring(
     response: 0.3, dampingFraction: 0.65, blendDuration: 0)
+
+  private var foregroundColor: Color {
+    isSubtle ? Color(nsColor: .labelColor) : Color(nsColor: .selectedMenuItemTextColor)
+  }
+
+  private var accentFill: Color {
+    DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.76 : 0.86)
+  }
+
+  private var subtleFill: Color {
+    Color(nsColor: .controlBackgroundColor).opacity(colorScheme == .dark ? 0.32 : 0.48)
+  }
+
+  private var borderColor: Color {
+    isSubtle
+      ? Color(nsColor: .separatorColor).opacity(isHovered ? 0.46 : 0.30)
+      : Color(nsColor: .highlightColor).opacity(isHovered ? 0.28 : 0.18)
+  }
 
   var body: some View {
     Button(action: {
@@ -58,25 +77,23 @@ struct DayflowButton: View {
       Text(title)
         .font(.custom("Figtree", size: fontSize))
         .fontWeight(.semibold)
-        .foregroundColor(isSubtle ? .black.opacity(0.7) : .white)
+        .foregroundColor(foregroundColor)
         .frame(width: width, height: 56, alignment: .center)
         .background(
           ZStack {
-            // Main background
-            if isSubtle {
-              Color.white.opacity(0.9)
+            if !isSubtle {
+              accentFill
             } else {
-              Color(red: 1, green: 0.42, blue: 0.02)
+              subtleFill
             }
 
             // Pulse effect
             if showPulse {
               Group {
                 if isSubtle {
-                  Color.gray.opacity(0.1)
+                  DayflowSurfaceAccent.primary.opacity(0.08)
                 } else {
-                  Color(red: 1, green: 0.42, blue: 0.02)
-                    .opacity(0.3)
+                  Color(nsColor: .highlightColor).opacity(0.22)
                 }
               }
               .scaleEffect(1.2)
@@ -108,13 +125,9 @@ struct DayflowButton: View {
         .overlay(
           RoundedRectangle(cornerRadius: 12)
             .inset(by: 0.75)
-            .stroke(
-              isSubtle
-                ? Color.black.opacity(isHovered ? 0.15 : 0.1)
-                : .white.opacity(isHovered ? 0.25 : 0.17),
-              lineWidth: 1.5
-            )
+            .stroke(borderColor, lineWidth: 1.5)
         )
+        .dayflowFloatingControl(cornerRadius: 12)
         .dayflowPressScale(
           isPressed,
           enabled: !reduceMotion,
