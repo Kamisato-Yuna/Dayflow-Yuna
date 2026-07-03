@@ -269,7 +269,7 @@ struct WeekTimelineGridView: View {
         HStack(spacing: WeekTimelineConfig.weekdayInlineSpacing) {
           Text(day.weekdayLabel)
             .font(.custom("Figtree", size: 12).weight(.medium))
-            .foregroundColor(Color(hex: "333333"))
+            .foregroundColor(.secondary)
 
           dayNumberBadge(for: day)
         }
@@ -294,7 +294,7 @@ struct WeekTimelineGridView: View {
     } else {
       Text(day.dayNumber)
         .font(.custom("Figtree", size: 12).weight(.medium))
-        .foregroundColor(Color(hex: "333333"))
+        .foregroundColor(.secondary)
     }
   }
 
@@ -344,7 +344,7 @@ struct WeekTimelineGridView: View {
         ForEach(0..<(WeekTimelineConfig.endHour - WeekTimelineConfig.startHour), id: \.self) { _ in
           VStack(spacing: 0) {
             Rectangle()
-              .fill(Color.black.opacity(0.1))
+              .fill(Color(nsColor: .separatorColor).opacity(0.42))
               .frame(height: 1)
             Spacer(minLength: 0)
           }
@@ -356,7 +356,7 @@ struct WeekTimelineGridView: View {
       HStack(spacing: 0) {
         ForEach(0..<8, id: \.self) { index in
           Rectangle()
-            .fill(Color.black.opacity(0.1))
+            .fill(Color(nsColor: .separatorColor).opacity(0.42))
             .frame(width: index == 0 ? 0 : 1)
 
           if index < 7 {
@@ -376,7 +376,7 @@ struct WeekTimelineGridView: View {
         let hourIndex = hour - WeekTimelineConfig.startHour
         Text(formatHour(hour))
           .font(.custom("Figtree", size: 9))
-          .foregroundColor(Color(hex: "594838"))
+          .foregroundColor(.secondary)
           .padding(.trailing, 6)
           .padding(.top, 2)
           .frame(width: WeekTimelineConfig.timeColumnWidth, alignment: .trailing)
@@ -980,14 +980,16 @@ struct WeekTimelineGridView: View {
     let category = matched ?? fallback
     let accentNSColor = NSColor(hex: category.colorHex) ?? .systemBlue
     let fillColor =
-      accentNSColor.blended(with: 0.88, of: .white) ?? accentNSColor.withAlphaComponent(0.12)
-    let borderColor = accentNSColor.blended(with: 0.62, of: .white) ?? accentNSColor
+      accentNSColor.blended(with: 0.90, of: .controlBackgroundColor)
+      ?? NSColor.controlBackgroundColor
+    let borderColor =
+      accentNSColor.blended(with: 0.62, of: .separatorColor) ?? NSColor.separatorColor
 
     return WeekTimelineCardPalette(
       accent: Color(nsColor: accentNSColor),
       fill: Color(nsColor: fillColor),
       border: Color(nsColor: borderColor),
-      title: Color(hex: "333333")
+      title: .primary
     )
   }
 }
@@ -1138,13 +1140,13 @@ private struct WeekTimelineActivityCard: View {
     // stroke, and no left accent bar. Kept as three inline branches rather
     // than a dedicated Modifier so it's obvious at read-time what's
     // special-cased.
-    .background(isFailedCard ? Color(hex: "FFECE4") : palette.fill)
+    .background(isFailedCard ? Color(nsColor: .systemRed).opacity(0.10) : palette.fill)
     .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
     .overlay(
       RoundedRectangle(cornerRadius: 2, style: .continuous)
         .stroke(
           isFailedCard
-            ? Color(red: 1, green: 0.16, blue: 0.11)
+            ? Color(nsColor: .systemRed).opacity(0.9)
             : (isSelected ? palette.accent : palette.border),
           style: isFailedCard
             ? StrokeStyle(lineWidth: 0.5, dash: [2.5, 2.5])
@@ -1263,12 +1265,12 @@ private struct WeekTimelineHoverPrototypeHarness: View {
       VStack(alignment: .leading, spacing: 4) {
         Text("悬停展开原型")
           .font(.custom("Figtree", size: 13).weight(.semibold))
-          .foregroundColor(Color(hex: "333333"))
+          .foregroundColor(.primary)
         Text(
           "悬停短卡片时，卡片会展开显示完整标题。已有文字不移动，只在下方显示新行。"
         )
         .font(.custom("Figtree", size: 11))
-        .foregroundColor(Color(hex: "6B5548"))
+        .foregroundColor(.secondary)
       }
 
       WeekTimelineGridView(
@@ -1281,11 +1283,11 @@ private struct WeekTimelineHoverPrototypeHarness: View {
         onClearSelection: { selectedActivity = nil },
         previewPositionedActivities: Self.mockActivities()
       )
-      .background(Color(hex: "FFF6EE"))
+      .dayflowCard(cornerRadius: 8)
     }
     .padding(16)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color(hex: "FAF3EB"))
+    .dayflowWindowBackground()
     .preferredColorScheme(.light)
   }
 

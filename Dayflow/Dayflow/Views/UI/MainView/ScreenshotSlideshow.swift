@@ -49,14 +49,14 @@ struct ScreenshotSlideshowModal: View {
               "\(Self.timeFormatter.string(from: startTime)) 至 \(Self.timeFormatter.string(from: endTime))"
             )
             .font(.caption)
-            .foregroundColor(Color(red: 0.4, green: 0.4, blue: 0.4))
+            .foregroundColor(.secondary)
           }
         }
         Spacer()
         Button(action: { dismiss() }) {
           Image(systemName: "xmark.circle.fill")
             .font(.system(size: 20))
-            .foregroundColor(Color.black.opacity(0.5))
+            .foregroundColor(.secondary)
         }
         .buttonStyle(PlainButtonStyle())
         .hoverScaleEffect(scale: 1.02)
@@ -64,7 +64,7 @@ struct ScreenshotSlideshowModal: View {
       }
       .padding(.horizontal, 16)
       .padding(.vertical, 10)
-      .background(Color.white)
+      .background(.regularMaterial)
 
       Divider()
 
@@ -98,10 +98,10 @@ struct ScreenshotSlideshowModal: View {
         .padding(.horizontal)
         .padding(.bottom, 12)
       }
-      .background(Color.white)
+      .dayflowCard(cornerRadius: 0)
     }
     .frame(minWidth: 960, minHeight: 640)
-    .background(Color.white)
+    .dayflowModalSurface(cornerRadius: 18)
     .overlay {
       ScreenshotSlideshowDisplayLinkDriver(
         playbackState: playbackModel.timelineState,

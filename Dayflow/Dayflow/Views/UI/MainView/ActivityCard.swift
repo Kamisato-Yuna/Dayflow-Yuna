@@ -40,7 +40,9 @@ struct ActivityCard: View {
     if let activity = activity {
       ZStack(alignment: .top) {
         activityDetails(for: activity)
-          .padding(16)
+          .padding(14)
+          .dayflowCard(cornerRadius: 12)
+          .padding(14)
           .allowsHitTesting(!showCategoryPicker)
           .id(activity.id)
           .transition(
@@ -115,12 +117,12 @@ struct ActivityCard: View {
             VStack(spacing: 6) {
               Text("尚无卡片")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.gray.opacity(0.7))
+                .foregroundColor(.primary)
               Text(
                 "卡片大约每 15 分钟生成一次。如果 Dayflow 已开启但 30 分钟内仍没有卡片，请提交反馈。"
               )
               .font(.custom("Figtree", size: 13))
-              .foregroundColor(.gray.opacity(0.6))
+              .foregroundColor(.secondary)
               .multilineTextAlignment(.center)
               .padding(.horizontal, 16)
             }
@@ -128,10 +130,10 @@ struct ActivityCard: View {
             VStack(spacing: 6) {
               Text("录制已关闭")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.gray.opacity(0.7))
+                .foregroundColor(.primary)
               Text("Dayflow 录制当前已关闭，因此不会生成卡片。")
                 .font(.custom("Figtree", size: 13))
-                .foregroundColor(.gray.opacity(0.6))
+                .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 16)
             }
@@ -141,6 +143,8 @@ struct ActivityCard: View {
       }
       .padding(16)
       .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .dayflowCard(cornerRadius: 12)
+      .padding(14)
       .if(maxHeight != nil) { view in
         view.frame(maxHeight: maxHeight!)
       }
@@ -158,7 +162,7 @@ struct ActivityCard: View {
               Font.custom("Figtree", size: 16)
                 .weight(.semibold)
             )
-            .foregroundColor(.black)
+            .foregroundColor(.primary)
 
           HStack(alignment: .center, spacing: 6) {
             Text(
@@ -167,16 +171,16 @@ struct ActivityCard: View {
             .font(
               Font.custom("Figtree", size: 12)
             )
-            .foregroundColor(Color(red: 0.4, green: 0.4, blue: 0.4))
+            .foregroundColor(.secondary)
             .lineLimit(1)
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
-            .background(Color(red: 0.96, green: 0.94, blue: 0.91).opacity(0.9))
+            .background(Color(nsColor: .controlBackgroundColor).opacity(0.72))
             .cornerRadius(6)
             .overlay(
               RoundedRectangle(cornerRadius: 6)
                 .inset(by: 0.38)
-                .stroke(Color(red: 0.9, green: 0.9, blue: 0.9), lineWidth: 0.75)
+                .stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 0.75)
             )
 
             Spacer(minLength: 6)
@@ -190,17 +194,17 @@ struct ActivityCard: View {
 
                   Text(badge.name)
                     .font(Font.custom("Figtree", size: 12))
-                    .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.white.opacity(0.76))
+                .background(Color(nsColor: .controlBackgroundColor).opacity(0.72))
                 .cornerRadius(6)
                 .overlay(
                   RoundedRectangle(cornerRadius: 6)
                     .inset(by: 0.25)
-                    .stroke(Color(red: 0.88, green: 0.88, blue: 0.88), lineWidth: 0.5)
+                    .stroke(Color(nsColor: .separatorColor).opacity(0.42), lineWidth: 0.5)
                 )
               }
 
@@ -237,7 +241,7 @@ struct ActivityCard: View {
       {
         Text(statusLine)
           .font(.custom("Figtree", size: 11))
-          .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5))
+          .foregroundColor(.secondary)
           .lineLimit(1)
       }
 
@@ -291,13 +295,13 @@ struct ActivityCard: View {
             Font.custom("Figtree", size: 12)
               .weight(.semibold)
           )
-          .foregroundColor(Color(red: 0.55, green: 0.55, blue: 0.55))
+          .foregroundColor(.secondary)
 
         renderMarkdownText(activity.summary)
           .font(
             Font.custom("Figtree", size: 12)
           )
-          .foregroundColor(.black)
+          .foregroundColor(.primary)
           .lineLimit(nil)
           .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
@@ -310,13 +314,13 @@ struct ActivityCard: View {
               Font.custom("Figtree", size: 12)
                 .weight(.semibold)
             )
-            .foregroundColor(Color(red: 0.55, green: 0.55, blue: 0.55))
+            .foregroundColor(.secondary)
 
           renderMarkdownText(formattedDetailedSummary(activity.detailedSummary))
             .font(
               Font.custom("Figtree", size: 12)
             )
-            .foregroundColor(.black)
+            .foregroundColor(.primary)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .textSelection(.enabled)
@@ -405,8 +409,7 @@ struct ActivityCard: View {
       }
       .padding(.horizontal, 12)
       .padding(.vertical, 8)
-      .background(Color(red: 0.91, green: 0.85, blue: 0.8))
-      .cornerRadius(200)
+      .dayflowFloatingControl(cornerRadius: 200)
     } else {
       // Retry button - orange pill
       Button(action: { handleRetry(for: activity) }) {
@@ -466,11 +469,11 @@ struct ActivityCard: View {
               .cornerRadius(12)
           } else {
             RoundedRectangle(cornerRadius: 12)
-              .fill(Color.gray.opacity(0.3))
+              .fill(Color(nsColor: .controlBackgroundColor))
               .overlay(
                 Image(systemName: "photo")
                   .font(.system(size: 18, weight: .medium))
-                  .foregroundColor(Color.white.opacity(0.9))
+                  .foregroundColor(.secondary)
               )
           }
 

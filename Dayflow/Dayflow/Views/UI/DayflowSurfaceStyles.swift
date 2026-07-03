@@ -124,6 +124,31 @@ enum DayflowSurfaceToken {
   }
 }
 
+enum DayflowContentToken {
+  static func cardFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color(nsColor: .controlBackgroundColor).opacity(0.58)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.72)
+  }
+
+  static func cardBorder(colorScheme: ColorScheme, increaseContrast: Bool) -> Color {
+    let opacity = increaseContrast ? 0.34 : 0.18
+    return (colorScheme == .dark ? Color.white : Color.black).opacity(opacity)
+  }
+
+  static func secondaryFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .underPageBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color.white.opacity(0.07)
+      : Color.white.opacity(0.48)
+  }
+}
+
 private struct DayflowWindowBackgroundModifier: ViewModifier {
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -207,6 +232,44 @@ struct DayflowSurfaceModifier: ViewModifier {
   }
 }
 
+private struct DayflowCardModifier: ViewModifier {
+  let cornerRadius: CGFloat
+
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    let increaseContrast = NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+
+    content
+      .background {
+        if reduceTransparency {
+          shape.fill(DayflowContentToken.cardFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
+        } else {
+          shape.fill(.regularMaterial)
+          shape.fill(DayflowContentToken.cardFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
+        }
+      }
+      .overlay {
+        shape.stroke(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: increaseContrast
+          ),
+          lineWidth: increaseContrast ? 1 : 0.7
+        )
+      }
+      .clipShape(shape)
+  }
+}
+
 private struct DayflowLiquidGlassModifier: ViewModifier {
   let isEnabled: Bool
 
@@ -227,6 +290,10 @@ extension View {
 
   func dayflowContentPanel(cornerRadius: CGFloat = 14) -> some View {
     modifier(DayflowSurfaceModifier(role: .contentPanel, cornerRadius: cornerRadius))
+  }
+
+  func dayflowCard(cornerRadius: CGFloat = 10) -> some View {
+    modifier(DayflowCardModifier(cornerRadius: cornerRadius))
   }
 
   func dayflowSidebarSurface(cornerRadius: CGFloat = 14) -> some View {

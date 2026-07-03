@@ -56,10 +56,10 @@ struct DaySummaryView: View {
     static let headerSpacing: CGFloat = 6
     static let donutSectionSpacing: CGFloat = 20
 
-    static let dividerColor = Color(hex: "E7E5E3")
+    static let dividerColor = Color(nsColor: .separatorColor).opacity(0.45)
 
-    static let titleColor = Color(hex: "333333")
-    static let subtitleColor = Color(hex: "707070")
+    static let titleColor = Color.primary
+    static let subtitleColor = Color.secondary
 
     static let focusGapMinutes: Int = 5
     static let timelineDayStartMinutes: Int = 4 * 60
@@ -450,6 +450,8 @@ struct DaySummaryView: View {
       cardsToReviewCount: cardsToReviewCount,
       onReviewTap: onReviewTap
     )
+    .padding(12)
+    .dayflowCard(cornerRadius: 12)
   }
 
   // MARK: - Focus Section
@@ -1363,5 +1365,5 @@ struct DaySummaryView: View {
     onReviewTap: {}
   )
   .frame(width: 358, height: 700)
-  .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+  .dayflowWindowBackground()
 }

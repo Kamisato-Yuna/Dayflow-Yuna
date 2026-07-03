@@ -39,8 +39,8 @@ struct TimelineReviewSummaryCard: View {
     static let headerSpacing: CGFloat = 2
     static let contentSpacing: CGFloat = 16
 
-    static let titleColor = Color(hex: "333333")
-    static let subtitleColor = Color(hex: "707070")
+    static let titleColor = Color.primary
+    static let subtitleColor = Color.secondary
     static let linkColor = Color(hex: "F96E00")
 
     static let barHeight: CGFloat = 39
@@ -213,10 +213,10 @@ struct TimelineReviewSummaryCard: View {
       ratio: max(CGFloat(summary.neutralRatio), 0),
       durationText: durationText(summary.neutralDuration),
       style: metricStyle(
-        baseColor: Color(hex: "EAE0DB"),
-        shadow: Color(red: 225 / 255, green: 210 / 255, blue: 203 / 255).opacity(0.25),
-        legendFill: Color(hex: "DDDBDA").opacity(0.4),
-        legendStroke: Color(hex: "DDDBDA"),
+        baseColor: Color(nsColor: .tertiaryLabelColor),
+        shadow: Color.black.opacity(0.08),
+        legendFill: Color(nsColor: .tertiaryLabelColor).opacity(0.24),
+        legendStroke: Color(nsColor: .tertiaryLabelColor).opacity(0.75),
         placeholder: placeholder
       )
     )
@@ -245,10 +245,10 @@ struct TimelineReviewSummaryCard: View {
     legendStroke: Color,
     placeholder: Bool
   ) -> ReviewMetricStyle {
-    let barColor = placeholder ? Color(hex: "EAE0DB") : baseColor
+    let barColor = placeholder ? Color(nsColor: .tertiaryLabelColor).opacity(0.55) : baseColor
     let barShadow =
       placeholder
-      ? Color(red: 225 / 255, green: 210 / 255, blue: 203 / 255).opacity(0.25)
+      ? Color.black.opacity(0.06)
       : shadow
     let gradient = LinearGradient(
       colors: [barColor.opacity(0.5), barColor],
@@ -320,5 +320,5 @@ struct TimelineReviewSummaryCard: View {
     .frame(width: 322)
   }
   .padding(24)
-  .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+  .dayflowWindowBackground()
 }

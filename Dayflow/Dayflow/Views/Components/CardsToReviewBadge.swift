@@ -18,27 +18,11 @@ struct CardsToReviewBadge: View {
       // Label text
       Text("张卡片待复盘")
         .font(.custom("Figtree", size: 10).weight(.medium))
-        .foregroundColor(.white)
+        .foregroundColor(.primary)
     }
     .padding(.horizontal, 12)
     .padding(.vertical, 10)
-    .background(
-      LinearGradient(
-        stops: [
-          Gradient.Stop(color: Color(red: 1, green: 0.6, blue: 0.44), location: 0.00),
-          Gradient.Stop(color: Color(red: 0.74, green: 0.67, blue: 1), location: 1.00),
-        ],
-        startPoint: UnitPoint(x: 0.05, y: 0),
-        endPoint: UnitPoint(x: 0.95, y: 1)
-      )
-    )
-    .cornerRadius(20)
-    .shadow(color: Color(red: 0.91, green: 0.79, blue: 0.7), radius: 1.5, x: 0, y: 2)
-    .overlay(
-      RoundedRectangle(cornerRadius: 20)
-        .inset(by: 0.75)
-        .stroke(Color(red: 1, green: 0.85, blue: 0.83), lineWidth: 1.5)
-    )
+    .dayflowFloatingControl(cornerRadius: 20)
   }
 
   private var stackedCardsIcon: some View {
@@ -46,7 +30,7 @@ struct CardsToReviewBadge: View {
       // Back card (rotated, behind) - 15.75 x 14 (h x w)
       // Positioned so leftmost point pokes out only 3px
       RoundedRectangle(cornerRadius: 3.5)
-        .fill(Color.white)
+        .fill(Color(nsColor: .controlBackgroundColor))
         .frame(width: 14, height: 15.75)
         .rotationEffect(.degrees(-11.64))
         .offset(x: -3, y: 0)
@@ -54,7 +38,7 @@ struct CardsToReviewBadge: View {
       // Front card with number - 18 x 14 (h x w)
       ZStack {
         RoundedRectangle(cornerRadius: 3.5)
-          .fill(Color.white)
+          .fill(Color(nsColor: .controlBackgroundColor))
       }
       .frame(width: 14, height: 18)
       .overlay(
@@ -65,7 +49,7 @@ struct CardsToReviewBadge: View {
       .overlay(
         Text("\(count)")
           .font(.custom("Figtree", size: 9).weight(.heavy))
-          .foregroundColor(Color(red: 0.98, green: 0.6, blue: 0.49))
+          .foregroundColor(DayflowSurfaceAccent.primary)
       )
       .offset(x: 4, y: 0)
     }
@@ -159,6 +143,6 @@ private struct CardsToReviewBadgePreview: View {
       .cornerRadius(12)
     }
     .padding(60)
-    .background(Color(red: 0.98, green: 0.96, blue: 0.94))
+    .dayflowWindowBackground()
   }
 }

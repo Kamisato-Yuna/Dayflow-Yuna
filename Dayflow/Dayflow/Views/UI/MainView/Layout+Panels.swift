@@ -110,7 +110,7 @@ extension MainView {
         timelineLeftColumn
           .zIndex(1)
         Rectangle()
-          .fill(Color(hex: "ECECEC"))
+          .fill(Color(nsColor: .separatorColor).opacity(0.5))
           .frame(width: timelineInspectorDividerWidth)
           .opacity(timelineInspectorDividerWidth == 0 ? 0 : 1)
           .frame(maxHeight: .infinity)
@@ -255,7 +255,6 @@ extension MainView {
             showTimelineReview = true
           }
         }
-        .dayflowFloatingControl(cornerRadius: 20)
         .opacity(contentOpacity)
       }
     }
@@ -420,7 +419,7 @@ extension MainView {
   }
 
   private var weeklyHoursText: some View {
-    let textColor = Color(red: 0.84, green: 0.65, blue: 0.52)
+    let textColor = Color(nsColor: .secondaryLabelColor)
     let parts = timelineTrackedMinutesParts
 
     return
