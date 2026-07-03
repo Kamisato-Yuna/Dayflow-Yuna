@@ -149,6 +149,35 @@ enum DayflowContentToken {
   }
 }
 
+enum DayflowOnboardingToken {
+  static let title = Color(nsColor: .labelColor)
+  static let secondaryText = Color(nsColor: .secondaryLabelColor)
+  static let accent = Color.accentColor
+  static let primaryButtonFill = Color(nsColor: .labelColor)
+  static let primaryButtonText = Color(nsColor: .windowBackgroundColor)
+  static let secondaryButtonText = Color(nsColor: .labelColor)
+
+  static func optionFill(isSelected: Bool, colorScheme: ColorScheme) -> Color {
+    if isSelected {
+      return accent.opacity(colorScheme == .dark ? 0.24 : 0.16)
+    }
+    return DayflowContentToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
+    )
+  }
+
+  static func optionBorder(isSelected: Bool, colorScheme: ColorScheme) -> Color {
+    if isSelected {
+      return accent.opacity(colorScheme == .dark ? 0.70 : 0.48)
+    }
+    return DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+    )
+  }
+}
+
 private struct DayflowWindowBackgroundModifier: ViewModifier {
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -283,6 +312,66 @@ private struct DayflowLiquidGlassModifier: ViewModifier {
   }
 }
 
+private struct DayflowOnboardingOptionCardModifier: ViewModifier {
+  let isSelected: Bool
+  let cornerRadius: CGFloat
+
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    let fill = DayflowOnboardingToken.optionFill(isSelected: isSelected, colorScheme: colorScheme)
+    let border = DayflowOnboardingToken.optionBorder(isSelected: isSelected, colorScheme: colorScheme)
+
+    content
+      .background {
+        if reduceTransparency {
+          shape.fill(fill)
+        } else {
+          shape.fill(.regularMaterial)
+          shape.fill(fill)
+        }
+      }
+      .overlay {
+        shape.stroke(border, lineWidth: isSelected ? 1.1 : 0.8)
+      }
+      .clipShape(shape)
+  }
+}
+
+private struct DayflowOnboardingTextFieldModifier: ViewModifier {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
+
+    content
+      .background {
+        if reduceTransparency {
+          shape.fill(Color(nsColor: .controlBackgroundColor))
+        } else {
+          shape.fill(.regularMaterial)
+          shape.fill(DayflowContentToken.secondaryFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
+        }
+      }
+      .overlay {
+        shape.stroke(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          ),
+          lineWidth: 0.8
+        )
+      }
+      .clipShape(shape)
+  }
+}
+
 extension View {
   func dayflowWindowBackground() -> some View {
     modifier(DayflowWindowBackgroundModifier())
@@ -314,5 +403,20 @@ extension View {
 
   func dayflowModalSurface(cornerRadius: CGFloat = 18) -> some View {
     modifier(DayflowSurfaceModifier(role: .modalSurface, cornerRadius: cornerRadius))
+  }
+
+  func dayflowOnboardingPanel(cornerRadius: CGFloat = 18) -> some View {
+    dayflowContentPanel(cornerRadius: cornerRadius)
+  }
+
+  func dayflowOnboardingOptionCard(isSelected: Bool, cornerRadius: CGFloat = 10) -> some View {
+    modifier(DayflowOnboardingOptionCardModifier(
+      isSelected: isSelected,
+      cornerRadius: cornerRadius
+    ))
+  }
+
+  func dayflowOnboardingTextField() -> some View {
+    modifier(DayflowOnboardingTextFieldModifier())
   }
 }

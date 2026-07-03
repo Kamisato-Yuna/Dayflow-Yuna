@@ -44,7 +44,7 @@ struct HowItWorksView: View {
           .font(.custom("InstrumentSerif-Regular", size: 48))
           .multilineTextAlignment(.center)
           .frame(maxWidth: .infinity, minHeight: 60)
-          .foregroundColor(.black)
+          .foregroundColor(DayflowOnboardingToken.title)
           .opacity(titleOpacity)
           .onAppear {
             withAnimation(.easeOut(duration: 0.6)) {
@@ -74,9 +74,9 @@ struct HowItWorksView: View {
         DayflowSurfaceButton(
           action: onBack,
           content: { Text("返回").font(.custom("Figtree", size: 14)).fontWeight(.semibold) },
-          background: .white,
-          foreground: Color(red: 0.25, green: 0.17, blue: 0),
-          borderColor: .clear,
+          background: Color(nsColor: .controlBackgroundColor).opacity(0.72),
+          foreground: DayflowOnboardingToken.secondaryButtonText,
+          borderColor: Color(nsColor: .separatorColor).opacity(0.5),
           cornerRadius: 8,
           horizontalPadding: 20,
           verticalPadding: 12,
@@ -100,8 +100,8 @@ struct HowItWorksView: View {
               Text("在 GitHub 上给 Dayflow 点赞").font(.custom("Figtree", size: 14)).fontWeight(.medium)
             }
           },
-          background: Color(red: 0.25, green: 0.17, blue: 0),
-          foreground: .white,
+          background: DayflowOnboardingToken.primaryButtonFill,
+          foreground: DayflowOnboardingToken.primaryButtonText,
           borderColor: .clear,
           cornerRadius: 8,
           horizontalPadding: 24,
@@ -114,8 +114,8 @@ struct HowItWorksView: View {
         DayflowSurfaceButton(
           action: onNext,
           content: { Text("下一步").font(.custom("Figtree", size: 14)).fontWeight(.semibold) },
-          background: Color(red: 0.25, green: 0.17, blue: 0),
-          foreground: .white,
+          background: DayflowOnboardingToken.primaryButtonFill,
+          foreground: DayflowOnboardingToken.primaryButtonText,
           borderColor: .clear,
           cornerRadius: 8,
           horizontalPadding: 20,
