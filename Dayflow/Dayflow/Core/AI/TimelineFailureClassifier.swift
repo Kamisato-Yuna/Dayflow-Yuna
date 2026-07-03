@@ -33,7 +33,6 @@ enum TimelineFailureKind: String {
 
 enum TimelineFailureToastDestination: String {
   case providers
-  case account
 }
 
 struct TimelineFailureToastContent {
@@ -60,10 +59,10 @@ struct TimelineFailureClassification {
     switch kind {
     case .dayflowProRequired:
       return TimelineFailureToastContent(
-        title: "Dayflow Pro required",
+        title: "Selected AI provider unavailable",
         body:
-          "Timeline generation is paused for this account. Subscribe, or refer a friend and earn a free month of Pro. Your recordings are safe — use Retry on the failed cards once you're back.",
-        destination: .account
+          "Timeline generation is paused for the old hosted provider. Switch to Gemini, ChatGPT/Claude CLI, or Ollama/LM Studio in provider settings, then use Retry on the failed cards.",
+        destination: .providers
       )
 
     case .providerLoginExpired:

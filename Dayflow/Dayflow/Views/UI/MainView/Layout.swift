@@ -117,7 +117,7 @@ extension MainView {
       TimelineFailureToastView(
         title: payload.title,
         message: payload.message,
-        actionTitle: payload.destination == .account ? "Open Account" : "Open Provider Settings",
+        actionTitle: "Open Provider Settings",
         onOpenSettings: { handleTimelineFailureToastOpenSettings(payload) },
         onDismiss: { handleTimelineFailureToastDismiss(payload) }
       )
@@ -346,10 +346,8 @@ extension MainView {
       selectedIcon = .settings
       timelineFailureToastPayload = nil
     }
-    let settingsTab: Notification.Name =
-      payload.destination == .account ? .openAccountSettings : .openProvidersSettings
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-      NotificationCenter.default.post(name: settingsTab, object: nil)
+      NotificationCenter.default.post(name: .openProvidersSettings, object: nil)
     }
   }
 
