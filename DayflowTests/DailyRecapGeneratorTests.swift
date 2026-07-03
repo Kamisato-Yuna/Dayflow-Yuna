@@ -8,6 +8,64 @@ final class DailyRecapGeneratorTests: XCTestCase {
     LLMOutputLanguagePreferences.override = ""
   }
 
+  func testLegacyDailyDayflowProviderMigratesToGeminiAndPersists() throws {
+    let defaults = try makeIsolatedDefaults()
+    defaults.set("dayflow", forKey: "dailyRecapProvider_v1")
+
+    let provider = DailyRecapProvider.load(from: defaults)
+
+    XCTAssertEqual(provider, .gemini)
+    XCTAssertNotEqual(provider, .dayflow)
+    XCTAssertEqual(defaults.string(forKey: "dailyRecapProvider_v1"), "gemini")
+  }
+
+  func testLegacyDailyUnlockDoesNotSelectDayflowProvider() throws {
+    let defaults = try makeIsolatedDefaults()
+    defaults.set(true, forKey: "isDailyUnlocked")
+
+    let provider = DailyRecapProvider.load(from: defaults)
+
+    XCTAssertEqual(provider, .gemini)
+    XCTAssertNotEqual(provider, .dayflow)
+    XCTAssertEqual(defaults.string(forKey: "dailyRecapProvider_v1"), "gemini")
+  }
+
+  func testLegacyLLMDayflowBackendMigratesDailyProviderToGemini() throws {
+    let defaults = try makeIsolatedDefaults()
+    LLMProviderType.dayflowBackend(endpoint: "https://legacy.example.test").persist(to: defaults)
+
+    let provider = DailyRecapProvider.load(from: defaults)
+
+    XCTAssertEqual(provider, .gemini)
+    XCTAssertNotEqual(provider, .dayflow)
+    XCTAssertEqual(defaults.string(forKey: "dailyRecapProvider_v1"), "gemini")
+    XCTAssertEqual(defaults.string(forKey: "selectedLLMProvider"), "gemini")
+  }
+
+  func testDailyProviderPickerDataSourceExcludesDayflowBackend() {
+    XCTAssertFalse(DailyRecapProvider.allCases.contains(.dayflow))
+    XCTAssertFalse(DailyRecapProvider.allCases.map(\.rawValue).contains("dayflow"))
+    XCTAssertFalse(DailyRecapProvider.allCases.map(\.displayName).contains("Dayflow backend"))
+  }
+
+  func testDailyAvailabilitySnapshotExcludesDayflowBackend() {
+    let snapshot = DailyRecapGenerator.shared.availabilitySnapshot()
+
+    XCTAssertNil(snapshot[.dayflow])
+  }
+
+  func testLegacyDayflowMetadataIsDisplayOnly() throws {
+    let metadata = DailyStandupGenerationMetadata.legacyDayflow
+    let defaults = try makeIsolatedDefaults()
+
+    metadata.provider.save(to: defaults)
+
+    XCTAssertEqual(metadata.provider, .dayflow)
+    XCTAssertEqual(metadata.displayLabel, "Dayflow backend")
+    XCTAssertFalse(metadata.provider.canGenerate)
+    XCTAssertEqual(defaults.string(forKey: "dailyRecapProvider_v1"), "gemini")
+  }
+
   func testMakeLocalPromptPlacesLanguageSectionBeforeOutputFormat() {
     LLMOutputLanguagePreferences.override = "Japanese"
 
@@ -26,22 +84,6 @@ final class DailyRecapGeneratorTests: XCTestCase {
     XCTAssertLessThan(languageRange.lowerBound, outputFormatRange.lowerBound)
     XCTAssertLessThan(instructionRange.lowerBound, outputFormatRange.lowerBound)
     XCTAssertTrue(prompt.contains("Return exactly one JSON object and nothing before or after it."))
-  }
-
-  func testDailyGenerationRequestEncodesPreferredOutputLanguage() throws {
-    let request = DayflowDailyGenerationRequest(
-      day: "2026-04-08",
-      cardsText: "Cards",
-      observationsText: "Observations",
-      priorDailyText: "Prior",
-      preferencesText: "{}",
-      preferredOutputLanguage: "Japanese"
-    )
-
-    let data = try JSONEncoder().encode(request)
-    let jsonObject = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
-
-    XCTAssertEqual(jsonObject["preferred_output_language"] as? String, "Japanese")
   }
 
   func testSourceResolverAllowsFridayForMondayWhenWeekendHasNoActivity() throws {
@@ -138,5 +180,12 @@ final class DailyRecapGeneratorTests: XCTestCase {
       createdAt: nil,
       updatedAt: nil
     )
+  }
+
+  private func makeIsolatedDefaults() throws -> UserDefaults {
+    let suiteName = "DailyRecapGeneratorTests.\(UUID().uuidString)"
+    let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+    defaults.removePersistentDomain(forName: suiteName)
+    return defaults
   }
 }

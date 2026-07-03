@@ -99,8 +99,6 @@ final class DailyRecapScheduler: @unchecked Sendable {
     }
 
     let sourceDayString = sourceDay.dayString
-    let sourceStart = sourceDay.startOfDay
-    let sourceEnd = sourceDay.endOfDay
     let selectedProvider = DailyRecapGenerator.shared.selectedProvider()
     let providerAvailability =
       DailyRecapGenerator.shared.availabilitySnapshot()[selectedProvider]
@@ -146,36 +144,11 @@ final class DailyRecapScheduler: @unchecked Sendable {
       return
     }
 
-    let usesDayflowInputs = selectedProvider.usesDayflowInputs
-
     let cards = StorageManager.shared.fetchTimelineCards(forDay: sourceDayString)
-    let observations =
-      usesDayflowInputs
-      ? StorageManager.shared.fetchObservations(
-        startTs: Int(sourceStart.timeIntervalSince1970),
-        endTs: Int(sourceEnd.timeIntervalSince1970)
-      ) : []
-    let priorEntries =
-      usesDayflowInputs
-      ? StorageManager.shared.fetchRecentDailyStandups(
-        limit: priorStandupHistoryLimit,
-        excludingDay: sourceDayString
-      ) : []
+    let observations: [Observation] = []
+    let priorEntries: [DailyStandupEntry] = []
 
     let cardsText = DailyRecapGenerator.makeCardsText(day: sourceDayString, cards: cards)
-    let observationsText =
-      usesDayflowInputs
-      ? DailyRecapGenerator.makeObservationsText(day: sourceDayString, observations: observations)
-      : ""
-    let priorDailyText =
-      usesDayflowInputs ? DailyRecapGenerator.makePriorDailyText(entries: priorEntries) : ""
-    let preferencesText =
-      usesDayflowInputs
-      ? DailyRecapGenerator.makePreferencesText(
-        highlightsTitle: "Yesterday's highlights",
-        tasksTitle: "Today's tasks",
-        blockersTitle: "Blockers"
-      ) : ""
     AnalyticsService.shared.capture(
       "daily_auto_generation_check_started",
       providerProps.merging(
@@ -194,14 +167,14 @@ final class DailyRecapScheduler: @unchecked Sendable {
           "trigger": reason,
           "target_day": targetDay,
           "source_day": sourceDayString,
-          "input_mode": usesDayflowInputs ? "cards_observations_prior" : "cards_only",
+          "input_mode": "cards_only",
           "cards_count": cards.count,
           "observations_count": observations.count,
           "prior_daily_count": priorEntries.count,
           "cards_text_chars": cardsText.count,
-          "observations_text_chars": observationsText.count,
-          "prior_daily_text_chars": priorDailyText.count,
-          "preferences_text_chars": preferencesText.count,
+          "observations_text_chars": 0,
+          "prior_daily_text_chars": 0,
+          "preferences_text_chars": 0,
         ],
         uniquingKeysWith: { _, new in new }
       ))
@@ -319,37 +292,6 @@ final class DailyRecapScheduler: @unchecked Sendable {
     )
   }
 
-  private static func resolvedDayflowEndpoint(
-    defaultEndpoint: String,
-    infoPlistKey: String,
-    overrideDefaultsKey: String
-  ) -> String {
-    let defaults = UserDefaults.standard
-
-    if let override = defaults.string(forKey: overrideDefaultsKey)?
-      .trimmingCharacters(in: .whitespacesAndNewlines),
-      !override.isEmpty
-    {
-      return override
-    }
-
-    if let infoEndpoint = Bundle.main.infoDictionary?[infoPlistKey] as? String {
-      let trimmed = infoEndpoint.trimmingCharacters(in: .whitespacesAndNewlines)
-      if !trimmed.isEmpty {
-        return trimmed
-      }
-    }
-
-    if case .dayflowBackend(let savedEndpoint) = LLMProviderType.load(from: defaults) {
-      let trimmed = savedEndpoint.trimmingCharacters(in: .whitespacesAndNewlines)
-      if !trimmed.isEmpty {
-        return trimmed
-      }
-    }
-
-    return defaultEndpoint
-  }
-
   private static func makeCardsText(day: String, cards: [TimelineCard]) -> String {
     let ordered = cards.sorted { lhs, rhs in
       if lhs.startTimestamp == rhs.startTimestamp {
@@ -463,65 +405,4 @@ final class DailyRecapScheduler: @unchecked Sendable {
     return trimmedSummary.isEmpty ? nil : trimmedSummary
   }
 
-  private static func makePersistedDailyDraftJSON(from response: DayflowDailyGenerationResponse)
-    -> String?
-  {
-    let highlights = normalizedUniqueLines(from: response.highlights).map {
-      PersistedDailyBulletItem(text: $0)
-    }
-    let tasks = normalizedUniqueLines(from: response.unfinished).map {
-      PersistedDailyBulletItem(text: $0)
-    }
-    let blockers = normalizedBlockersText(from: response.blockers)
-
-    let draft = PersistedDailyStandupDraft(
-      highlightsTitle: "Yesterday's highlights",
-      highlights: highlights,
-      tasksTitle: "Today's tasks",
-      tasks: tasks,
-      blockersTitle: "Blockers",
-      blockersBody: blockers
-    )
-
-    guard let data = try? JSONEncoder().encode(draft) else { return nil }
-    return String(data: data, encoding: .utf8)
-  }
-
-  private static func normalizedUniqueLines(from values: [String]) -> [String] {
-    var seen: Set<String> = []
-    return values.compactMap { raw in
-      let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-      guard !trimmed.isEmpty else { return nil }
-      guard seen.insert(trimmed).inserted else { return nil }
-      return trimmed
-    }
-  }
-
-  private static func normalizedBlockersText(from values: [String]) -> String {
-    values
-      .compactMap { value -> String? in
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
-      }
-      .joined(separator: "\n")
-  }
-}
-
-private struct PersistedDailyBulletItem: Codable {
-  let id: UUID
-  let text: String
-
-  init(text: String) {
-    self.id = UUID()
-    self.text = text
-  }
-}
-
-private struct PersistedDailyStandupDraft: Codable {
-  let highlightsTitle: String
-  let highlights: [PersistedDailyBulletItem]
-  let tasksTitle: String
-  let tasks: [PersistedDailyBulletItem]
-  let blockersTitle: String
-  let blockersBody: String
 }
