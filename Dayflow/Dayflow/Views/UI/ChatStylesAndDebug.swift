@@ -2,6 +2,83 @@ import AppKit
 import Charts
 import SwiftUI
 
+enum ChatSurfacePalette {
+  static let primaryText = Color(nsColor: .labelColor)
+  static let secondaryText = Color(nsColor: .secondaryLabelColor)
+  static let tertiaryText = Color(nsColor: .tertiaryLabelColor)
+  static let separator = Color(nsColor: .separatorColor)
+  static let accent = Color.accentColor
+  static let positive = DayflowSurfaceAccent.positive
+  static let critical = DayflowSurfaceAccent.critical
+
+  static func messageFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color(nsColor: .controlBackgroundColor).opacity(0.64)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.78)
+  }
+
+  static func subtleFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    DayflowContentToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
+  }
+
+  static func border(colorScheme: ColorScheme, increaseContrast: Bool) -> Color {
+    DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: increaseContrast
+    )
+  }
+}
+
+struct ChatMessageSurfaceModifier: ViewModifier {
+  let cornerRadius: CGFloat
+
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    let increaseContrast = NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+
+    content
+      .background {
+        if reduceTransparency {
+          shape.fill(ChatSurfacePalette.messageFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
+        } else {
+          shape.fill(.regularMaterial)
+          shape.fill(ChatSurfacePalette.messageFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
+        }
+      }
+      .overlay {
+        shape.stroke(
+          ChatSurfacePalette.border(
+            colorScheme: colorScheme,
+            increaseContrast: increaseContrast
+          ),
+          lineWidth: increaseContrast ? 1 : 0.7
+        )
+      }
+      .clipShape(shape)
+  }
+}
+
+extension View {
+  func chatMessageSurface(cornerRadius: CGFloat = 16) -> some View {
+    modifier(ChatMessageSurfaceModifier(cornerRadius: cornerRadius))
+  }
+}
+
 // MARK: - Beta Button Style (hover + press animations)
 
 struct PressScaleButtonStyle: ButtonStyle {
@@ -41,18 +118,18 @@ struct ProviderTogglePill: View {
   let action: () -> Void
 
   var backgroundColor: Color {
-    if !isEnabled { return Color(hex: "F2F2F2") }
-    return isSelected ? Color(hex: "FFF4E9") : Color.white
+    if !isEnabled { return Color(nsColor: .quaternaryLabelColor).opacity(0.08) }
+    return isSelected ? ChatSurfacePalette.accent.opacity(0.13) : Color.clear
   }
 
   var borderColor: Color {
-    if !isEnabled { return Color(hex: "E0E0E0") }
-    return isSelected ? Color(hex: "F96E00").opacity(0.25) : Color(hex: "E0E0E0")
+    if !isEnabled { return Color(nsColor: .separatorColor).opacity(0.45) }
+    return isSelected ? ChatSurfacePalette.accent.opacity(0.36) : Color(nsColor: .separatorColor)
   }
 
   var textColor: Color {
-    if !isEnabled { return Color(hex: "B0B0B0") }
-    return isSelected ? Color(hex: "F96E00") : Color(hex: "666666")
+    if !isEnabled { return ChatSurfacePalette.tertiaryText }
+    return isSelected ? ChatSurfacePalette.accent : ChatSurfacePalette.secondaryText
   }
 
   var body: some View {
@@ -101,17 +178,16 @@ struct DebugLogEntry: View {
       ScrollView(.horizontal, showsIndicators: false) {
         Text(entry.content)
           .font(.system(size: 10, design: .monospaced))
-          .foregroundColor(Color(hex: "333333"))
+          .foregroundColor(ChatSurfacePalette.primaryText)
           .textSelection(.enabled)
       }
       .frame(maxHeight: 150)
     }
     .padding(8)
-    .background(Color(hex: "FAFAFA"))
-    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+    .chatMessageSurface(cornerRadius: 8)
     .overlay(
-      RoundedRectangle(cornerRadius: 6, style: .continuous)
-        .stroke(Color(hex: entry.typeColor).opacity(0.3), lineWidth: 1)
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .stroke(Color(hex: entry.typeColor).opacity(0.28), lineWidth: 1)
     )
   }
 
@@ -178,16 +254,16 @@ struct ThinkingIndicator: View {
     HStack(spacing: 4) {
       Image(systemName: "sparkles")
         .font(.system(size: 12, weight: .medium))
-        .foregroundColor(Color(hex: "F96E00"))
+        .foregroundColor(ChatSurfacePalette.accent)
 
       Text("思考中")
         .font(.custom("Figtree", size: 12).weight(.semibold))
-        .foregroundColor(Color(hex: "8B5E3C"))
+        .foregroundColor(ChatSurfacePalette.primaryText)
 
       HStack(spacing: 3) {
         ForEach(0..<3, id: \.self) { index in
           Circle()
-            .fill(Color(hex: "F96E00"))
+            .fill(ChatSurfacePalette.accent)
             .frame(width: 4, height: 4)
             .scaleEffect(dotScale[index])
         }
@@ -195,18 +271,7 @@ struct ThinkingIndicator: View {
     }
     .padding(.horizontal, 14)
     .padding(.vertical, 10)
-    .background(
-      LinearGradient(
-        colors: [Color(hex: "FFF4E9"), Color(hex: "FFECD8")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-      )
-    )
-    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 16, style: .continuous)
-        .stroke(Color(hex: "F96E00").opacity(0.2), lineWidth: 1)
-    )
+    .chatMessageSurface(cornerRadius: 16)
     .onAppear {
       startAnimation()
     }

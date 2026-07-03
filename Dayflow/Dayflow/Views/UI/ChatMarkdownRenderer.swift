@@ -10,7 +10,7 @@ import SwiftUI
 struct ChatMarkdownContentView: View {
   let content: String
 
-  private let textColor = Color(hex: "333333")
+  private let textColor = ChatSurfacePalette.primaryText
 
   var body: some View {
     let blocks = ChatMarkdownParser.parse(content)
@@ -52,13 +52,13 @@ private struct ChatMarkdownBlockView: View {
     case .quote(let text):
       HStack(alignment: .top, spacing: 10) {
         RoundedRectangle(cornerRadius: 999)
-          .fill(Color(hex: "E7D7C6"))
+          .fill(ChatSurfacePalette.separator)
           .frame(width: 4)
 
         ChatMarkdownInlineText(
           content: text,
           font: .custom("Figtree", size: 13).weight(.medium),
-          textColor: Color(hex: "5A5147")
+          textColor: ChatSurfacePalette.secondaryText
         )
       }
       .padding(.vertical, 2)
@@ -109,25 +109,20 @@ private struct ChatMarkdownCodeBlock: View {
       if let language, !language.isEmpty {
         Text(language.uppercased())
           .font(.custom("Figtree", size: 10).weight(.bold))
-          .foregroundColor(Color(hex: "9A7C60"))
+          .foregroundColor(ChatSurfacePalette.secondaryText)
       }
 
       ScrollView(.horizontal, showsIndicators: false) {
         Text(code)
           .font(.system(size: 12, weight: .regular, design: .monospaced))
-          .foregroundColor(Color(hex: "333333"))
+          .foregroundColor(ChatSurfacePalette.primaryText)
           .fixedSize(horizontal: false, vertical: true)
           .frame(maxWidth: .infinity, alignment: .leading)
       }
     }
     .textSelection(.enabled)
     .padding(10)
-    .background(Color(hex: "FAF7F2"))
-    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 12, style: .continuous)
-        .stroke(Color(hex: "E7DDD2"), lineWidth: 1)
-    )
+    .chatMessageSurface(cornerRadius: 12)
   }
 }
 

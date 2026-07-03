@@ -23,10 +23,9 @@ struct ToolCallBubble: View {
     }
     .padding(.horizontal, 14)
     .padding(.vertical, 10)
-    .background(backgroundView)
-    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    .chatMessageSurface(cornerRadius: 16)
+    .overlay(shimmerLayer)
     .overlay(borderOverlay)
-    .shadow(color: shadowColor, radius: 6, x: 0, y: 3)
     .scaleEffect(appearScale)
     .opacity(appearOpacity)
     .onAppear {
@@ -58,20 +57,20 @@ struct ToolCallBubble: View {
       // Animated spinner
       Image(systemName: "circle.dotted")
         .font(.system(size: 14, weight: .medium))
-        .foregroundColor(Color(hex: "F96E00"))
+        .foregroundColor(ChatSurfacePalette.accent)
         .rotationEffect(.degrees(spinnerRotation))
 
     case .completed:
       // Green checkmark
       Image(systemName: "checkmark.circle.fill")
         .font(.system(size: 14, weight: .medium))
-        .foregroundColor(Color(hex: "34C759"))
+        .foregroundColor(ChatSurfacePalette.positive)
 
     case .failed:
       // Red X
       Image(systemName: "xmark.circle.fill")
         .font(.system(size: 14, weight: .medium))
-        .foregroundColor(Color(hex: "FF3B30"))
+        .foregroundColor(ChatSurfacePalette.critical)
 
     case nil:
       EmptyView()
@@ -86,71 +85,33 @@ struct ToolCallBubble: View {
     case .running:
       Text(message.content)
         .font(.custom("Figtree", size: 12).weight(.semibold))
-        .foregroundColor(Color(hex: "8B5E3C"))
+        .foregroundColor(ChatSurfacePalette.primaryText)
 
     case .completed(let summary):
       Text(summary)
         .font(.custom("Figtree", size: 12).weight(.semibold))
-        .foregroundColor(Color(hex: "2D7D46"))
+        .foregroundColor(ChatSurfacePalette.positive)
 
     case .failed(let error):
       Text(error)
         .font(.custom("Figtree", size: 12).weight(.semibold))
-        .foregroundColor(Color(hex: "C62828"))
+        .foregroundColor(ChatSurfacePalette.critical)
 
     case nil:
       Text(message.content)
         .font(.custom("Figtree", size: 12).weight(.semibold))
-        .foregroundColor(Color(hex: "8B5E3C"))
+        .foregroundColor(ChatSurfacePalette.primaryText)
     }
   }
 
-  // MARK: - Background
+  // MARK: - Shimmer
 
   @ViewBuilder
-  private var backgroundView: some View {
-    switch message.toolStatus {
-    case .running:
-      ZStack {
-        // Base gradient
-        LinearGradient(
-          colors: [
-            Color(hex: "FFF4E9"),
-            Color(hex: "FFECD8"),
-          ],
-          startPoint: .topLeading,
-          endPoint: .bottomTrailing
-        )
-
-        // Shimmer overlay
-        if !reduceMotion {
-          ShimmerOverlay(offset: shimmerOffset)
-            .blendMode(.softLight)
-        }
-      }
-
-    case .completed:
-      LinearGradient(
-        colors: [
-          Color(hex: "E8F5E9"),
-          Color(hex: "C8E6C9"),
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-      )
-
-    case .failed:
-      LinearGradient(
-        colors: [
-          Color(hex: "FFEBEE"),
-          Color(hex: "FFCDD2"),
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-      )
-
-    case nil:
-      Color(hex: "FFF4E9")
+  private var shimmerLayer: some View {
+    if message.isRunning, !reduceMotion {
+      ShimmerOverlay(offset: shimmerOffset)
+        .blendMode(.softLight)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
   }
 
@@ -164,26 +125,13 @@ struct ToolCallBubble: View {
   private var borderColor: Color {
     switch message.toolStatus {
     case .running:
-      return Color(hex: "F96E00").opacity(0.3)
+      return ChatSurfacePalette.accent.opacity(0.26)
     case .completed:
-      return Color(hex: "34C759").opacity(0.3)
+      return ChatSurfacePalette.positive.opacity(0.28)
     case .failed:
-      return Color(hex: "FF3B30").opacity(0.3)
+      return ChatSurfacePalette.critical.opacity(0.30)
     case nil:
-      return Color(hex: "F96E00").opacity(0.3)
-    }
-  }
-
-  private var shadowColor: Color {
-    switch message.toolStatus {
-    case .running:
-      return Color(hex: "F96E00").opacity(0.1)
-    case .completed:
-      return Color(hex: "34C759").opacity(0.1)
-    case .failed:
-      return Color(hex: "FF3B30").opacity(0.1)
-    case nil:
-      return Color(hex: "F96E00").opacity(0.1)
+      return ChatSurfacePalette.accent.opacity(0.24)
     }
   }
 
@@ -213,9 +161,9 @@ private struct ShimmerOverlay: View {
     GeometryReader { geo in
       LinearGradient(
         colors: [
-          Color.white.opacity(0),
-          Color.white.opacity(0.5),
-          Color.white.opacity(0),
+          Color(nsColor: .windowBackgroundColor).opacity(0),
+          Color(nsColor: .windowBackgroundColor).opacity(0.5),
+          Color(nsColor: .windowBackgroundColor).opacity(0),
         ],
         startPoint: .leading,
         endPoint: .trailing
@@ -256,5 +204,5 @@ private struct ShimmerOverlay: View {
     )
   }
   .padding(40)
-  .background(Color(hex: "FAF5F0"))
+  .background(Color(nsColor: .windowBackgroundColor))
 }

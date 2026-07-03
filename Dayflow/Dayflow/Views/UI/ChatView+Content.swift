@@ -14,17 +14,10 @@ extension ChatView {
           Button(action: { resetConversation() }) {
             Text("清除")
               .font(.custom("Figtree", size: 12).weight(.semibold))
-              .foregroundColor(Color(hex: "F96E00"))
+              .foregroundColor(ChatSurfacePalette.secondaryText)
               .padding(.horizontal, 10)
               .padding(.vertical, 6)
-              .background(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                  .fill(Color(hex: "FFF4E9"))
-              )
-              .overlay(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                  .stroke(Color(hex: "F96E00").opacity(0.25), lineWidth: 1)
-              )
+              .dayflowFloatingControl(cornerRadius: 8)
           }
           .buttonStyle(.plain)
           .help("清除对话")
@@ -36,7 +29,7 @@ extension ChatView {
           Image(systemName: chatService.showDebugPanel ? "ladybug.fill" : "ladybug")
             .font(.system(size: 14))
             .foregroundColor(
-              chatService.showDebugPanel ? Color(hex: "F96E00") : Color(hex: "999999"))
+              chatService.showDebugPanel ? ChatSurfacePalette.accent : ChatSurfacePalette.secondaryText)
         }
         .buttonStyle(.plain)
         .help("显示或隐藏调试面板")
@@ -53,7 +46,7 @@ extension ChatView {
         ) {
           Image(systemName: showMemoryPanel ? "brain.head.profile.fill" : "brain.head.profile")
             .font(.system(size: 14))
-            .foregroundColor(showMemoryPanel ? Color(hex: "F96E00") : Color(hex: "999999"))
+            .foregroundColor(showMemoryPanel ? ChatSurfacePalette.accent : ChatSurfacePalette.secondaryText)
         }
         .buttonStyle(.plain)
         .help("显示或隐藏记忆面板")
@@ -133,18 +126,12 @@ extension ChatView {
       }
 
       Divider()
-        .background(Color(hex: "ECECEC"))
+        .background(ChatSurfacePalette.separator)
 
       // Input area
       inputArea
     }
-    .background(
-      LinearGradient(
-        colors: [Color(hex: "FFFAF5"), Color(hex: "FFF6EC")],
-        startPoint: .top,
-        endPoint: .bottom
-      )
-    )
+    .dayflowContentPanel(cornerRadius: 18)
   }
 
   // MARK: - Debug Panel
@@ -155,14 +142,14 @@ extension ChatView {
       HStack {
         Text("调试日志")
           .font(.custom("Figtree", size: 12).weight(.bold))
-          .foregroundColor(Color(hex: "666666"))
+          .foregroundColor(ChatSurfacePalette.secondaryText)
 
         Spacer()
 
         Button(action: { copyDebugLog() }) {
           Image(systemName: "doc.on.doc")
             .font(.system(size: 11))
-            .foregroundColor(Color(hex: "999999"))
+            .foregroundColor(ChatSurfacePalette.secondaryText)
         }
         .buttonStyle(.plain)
         .help("复制全部")
@@ -171,7 +158,7 @@ extension ChatView {
         Button(action: { chatService.clearDebugLog() }) {
           Image(systemName: "trash")
             .font(.system(size: 11))
-            .foregroundColor(Color(hex: "999999"))
+            .foregroundColor(ChatSurfacePalette.secondaryText)
         }
         .buttonStyle(.plain)
         .help("清除日志")
@@ -179,7 +166,7 @@ extension ChatView {
       }
       .padding(.horizontal, 12)
       .padding(.vertical, 8)
-      .background(Color(hex: "F5F5F5"))
+      .background(Color(nsColor: .controlBackgroundColor).opacity(0.45))
 
       Divider()
 
@@ -194,10 +181,10 @@ extension ChatView {
       }
     }
     .frame(width: 350)
-    .background(Color.white)
+    .dayflowInspectorPanel(cornerRadius: 0)
     .overlay(
       Rectangle()
-        .fill(Color(hex: "E0E0E0"))
+        .fill(ChatSurfacePalette.separator)
         .frame(width: 1),
       alignment: .leading
     )
@@ -210,32 +197,27 @@ extension ChatView {
       HStack {
         Text("记忆")
           .font(.custom("Figtree", size: 12).weight(.bold))
-          .foregroundColor(Color(hex: "666666"))
+          .foregroundColor(ChatSurfacePalette.secondaryText)
         Spacer()
         Text("\(memoryCharacterCount)/\(DashboardChatMemoryStore.maxCharacters)")
           .font(.custom("Figtree", size: 11))
-          .foregroundColor(Color(hex: "999999"))
+          .foregroundColor(ChatSurfacePalette.tertiaryText)
       }
       .padding(.horizontal, 12)
       .padding(.vertical, 8)
-      .background(Color(hex: "F5F5F5"))
+      .background(Color(nsColor: .controlBackgroundColor).opacity(0.45))
 
       Divider()
 
       VStack(alignment: .leading, spacing: 8) {
         Text("会根据助手回复自动更新，你也可以手动编辑。")
           .font(.custom("Figtree", size: 11))
-          .foregroundColor(Color(hex: "8A8A8A"))
+          .foregroundColor(ChatSurfacePalette.secondaryText)
 
         TextEditor(text: $memoryDraft)
           .font(.custom("Figtree", size: 12))
           .padding(8)
-          .background(Color(hex: "FFFCF8"))
-          .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-          .overlay(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-              .stroke(Color(hex: "E7DDD1"), lineWidth: 1)
-          )
+          .dayflowOnboardingTextField()
           .onChange(of: memoryDraft) { _, newValue in
             guard newValue.count > DashboardChatMemoryStore.maxCharacters else { return }
             memoryDraft = String(newValue.prefix(DashboardChatMemoryStore.maxCharacters))
@@ -244,7 +226,7 @@ extension ChatView {
         HStack {
           Text("最后更新：\(memoryUpdatedLabel)")
             .font(.custom("Figtree", size: 10))
-            .foregroundColor(Color(hex: "999999"))
+            .foregroundColor(ChatSurfacePalette.tertiaryText)
           Spacer()
         }
 
@@ -252,14 +234,14 @@ extension ChatView {
           Button("保存") { saveMemoryDraft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
-            .foregroundColor(isMemoryDirty ? Color(hex: "F96E00") : Color(hex: "999999"))
+            .foregroundColor(isMemoryDirty ? ChatSurfacePalette.accent : ChatSurfacePalette.tertiaryText)
             .disabled(!isMemoryDirty)
             .pointingHandCursor()
 
           Button("重新载入") { reloadMemoryDraft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
-            .foregroundColor(isMemoryDirty ? Color(hex: "555555") : Color(hex: "AAAAAA"))
+            .foregroundColor(isMemoryDirty ? ChatSurfacePalette.secondaryText : ChatSurfacePalette.tertiaryText)
             .disabled(!isMemoryDirty)
             .pointingHandCursor()
 
@@ -268,7 +250,7 @@ extension ChatView {
           Button("清除") { clearMemoryDraft() }
             .buttonStyle(.plain)
             .font(.custom("Figtree", size: 11).weight(.bold))
-            .foregroundColor(storedMemoryBlob.isEmpty ? Color(hex: "AAAAAA") : Color(hex: "C85A4B"))
+            .foregroundColor(storedMemoryBlob.isEmpty ? ChatSurfacePalette.tertiaryText : ChatSurfacePalette.critical)
             .disabled(storedMemoryBlob.isEmpty)
             .pointingHandCursor()
         }
@@ -276,10 +258,10 @@ extension ChatView {
       .padding(12)
     }
     .frame(width: 360)
-    .background(Color.white)
+    .dayflowInspectorPanel(cornerRadius: 0)
     .overlay(
       Rectangle()
-        .fill(Color(hex: "E0E0E0"))
+        .fill(ChatSurfacePalette.separator)
         .frame(width: 1),
       alignment: .leading
     )
@@ -291,18 +273,8 @@ extension ChatView {
     VStack(spacing: 0) {
       ZStack {
         RoundedRectangle(cornerRadius: 24, style: .continuous)
-          .fill(
-            LinearGradient(
-              colors: [Color.white.opacity(0.86), Color(hex: "FFF8EF").opacity(0.95)],
-              startPoint: .topLeading,
-              endPoint: .bottomTrailing
-            )
-          )
-          .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-              .stroke(Color(hex: "F5DFC7"), lineWidth: 1)
-          )
-          .shadow(color: Color(hex: "E7B98E").opacity(0.24), radius: 20, x: 0, y: 10)
+          .fill(Color.clear)
+          .dayflowContentPanel(cornerRadius: 24)
 
         VStack(spacing: 16) {
           HStack(alignment: .center, spacing: 12) {
@@ -324,15 +296,15 @@ extension ChatView {
             VStack(alignment: .leading, spacing: 2) {
               Text("询问你的 Dayflow 数据")
                 .font(.custom("InstrumentSerif-Regular", size: 30))
-                .foregroundColor(Color(hex: "2F2A24"))
+                .foregroundColor(ChatSurfacePalette.primaryText)
 
               Text("提问、分析时间线，并生成图表。")
                 .font(.custom("Figtree", size: 13).weight(.semibold))
-                .foregroundColor(Color(hex: "7D6B5B"))
+                .foregroundColor(ChatSurfacePalette.secondaryText)
 
               Text("我会记住你的回复偏好，你可以随时教我你的风格。")
                 .font(.custom("Figtree", size: 12))
-                .foregroundColor(Color(hex: "8A7765"))
+                .foregroundColor(ChatSurfacePalette.tertiaryText)
             }
 
             Spacer(minLength: 0)
@@ -341,7 +313,7 @@ extension ChatView {
           VStack(alignment: .leading, spacing: 10) {
             Text("试试这些问题")
               .font(.custom("Figtree", size: 12).weight(.bold))
-              .foregroundColor(Color(hex: "8A7765"))
+              .foregroundColor(ChatSurfacePalette.secondaryText)
 
             ForEach(Array(welcomePrompts.enumerated()), id: \.offset) { index, prompt in
               WelcomeSuggestionRow(prompt: prompt) {
@@ -384,7 +356,7 @@ extension ChatView {
       HStack(alignment: .top, spacing: 4) {
         Text("解锁测试版")
           .font(.custom("InstrumentSerif-Italic", size: 38))
-          .foregroundColor(Color(hex: "593D2A"))
+          .foregroundColor(ChatSurfacePalette.primaryText)
 
         Text("测试版")
           .font(.custom("Figtree-Bold", size: 11))
@@ -404,14 +376,14 @@ extension ChatView {
         Text(
           "对话功能可以回答关于 Dayflow 活动的问题，并生成总结、对比和洞察。"
         )
-        .font(.custom("Figtree-Regular", size: 14))
-        .foregroundColor(Color(hex: "593D2A").opacity(0.85))
+          .font(.custom("Figtree-Regular", size: 14))
+        .foregroundColor(ChatSurfacePalette.secondaryText)
         .multilineTextAlignment(.center)
         .frame(maxWidth: 600)
 
         Text("如果遇到问题或异常行为，请随时反馈！")
           .font(.custom("Figtree-SemiBold", size: 14))
-          .foregroundColor(Color(hex: "593D2A"))
+          .foregroundColor(ChatSurfacePalette.primaryText)
           .multilineTextAlignment(.center)
       }
 
@@ -427,7 +399,7 @@ extension ChatView {
           .font(.system(size: 32))
           .foregroundColor(
             hasChatMinimumAccess && anyRuntimeAvailable
-              ? Color(hex: "34C759") : Color(hex: "F98D3D")
+              ? ChatSurfacePalette.positive : ChatSurfacePalette.accent
           )
           .contentTransition(.symbolEffect(.replace))
           .animation(.easeOut(duration: 0.2), value: anyRuntimeAvailable)
@@ -436,29 +408,29 @@ extension ChatView {
           if !hasChatMinimumAccess {
             Text("需要 10 小时时间线数据")
               .font(.custom("Figtree-SemiBold", size: 15))
-              .foregroundColor(Color(hex: "593D2A"))
+              .foregroundColor(ChatSurfacePalette.primaryText)
 
             Text(
               "Dayflow 分析足够活动后会解锁对话功能。\(chatAccessProgressText)"
             )
             .font(.custom("Figtree-Regular", size: 13))
-            .foregroundColor(Color(hex: "593D2A").opacity(0.8))
+            .foregroundColor(ChatSurfacePalette.secondaryText)
             .multilineTextAlignment(.center)
           } else if anyRuntimeAvailable {
             Text("已检测到 Gemini Key 或 CLI 运行方式")
               .font(.custom("Figtree-SemiBold", size: 15))
-              .foregroundColor(Color(hex: "34C759"))
+              .foregroundColor(ChatSurfacePalette.positive)
               .transition(.opacity.combined(with: .scale(scale: 0.95)))
           } else {
             Text("需要 Gemini API Key 或 CLI")
               .font(.custom("Figtree-SemiBold", size: 15))
-              .foregroundColor(Color(hex: "593D2A"))
+              .foregroundColor(ChatSurfacePalette.primaryText)
 
             Text(
               "你可以在设置中添加 Gemini API Key，或安装 Codex/Claude CLI 来解锁对话。"
             )
             .font(.custom("Figtree-Regular", size: 13))
-            .foregroundColor(Color(hex: "593D2A").opacity(0.8))
+            .foregroundColor(ChatSurfacePalette.secondaryText)
             .multilineTextAlignment(.center)
           }
         }
@@ -478,8 +450,8 @@ extension ChatView {
             .font(.custom("Figtree-SemiBold", size: 15))
             .foregroundColor(
               hasChatMinimumAccess && anyRuntimeAvailable
-                ? Color(hex: "593D2A")
-                : Color(hex: "999999")
+                ? ChatSurfacePalette.primaryText
+                : ChatSurfacePalette.tertiaryText
             )
             .padding(.horizontal, 28)
             .padding(.vertical, 12)
@@ -489,8 +461,8 @@ extension ChatView {
                   hasChatMinimumAccess && anyRuntimeAvailable
                     ? LinearGradient(
                       colors: [
-                        Color(hex: "FFF4E9"),
-                        Color(hex: "FFE8D4"),
+                        Color(nsColor: .controlBackgroundColor).opacity(0.70),
+                        ChatSurfacePalette.accent.opacity(0.16),
                       ],
                       startPoint: .top,
                       endPoint: .bottom
@@ -508,8 +480,8 @@ extension ChatView {
                   Capsule()
                     .stroke(
                       hasChatMinimumAccess && anyRuntimeAvailable
-                        ? Color(hex: "E8C9A8")
-                        : Color(hex: "D0D0D0"),
+                        ? ChatSurfacePalette.accent.opacity(0.28)
+                        : ChatSurfacePalette.separator,
                       lineWidth: 1
                     )
                 )
@@ -521,8 +493,8 @@ extension ChatView {
       .padding(20)
       .background(
         RoundedRectangle(cornerRadius: 20, style: .continuous)
-          .fill(Color.white)
-          .shadow(color: Color.black.opacity(0.08), radius: 20, x: 0, y: 8)
+          .fill(Color.clear)
+          .dayflowContentPanel(cornerRadius: 20)
       )
       .frame(maxWidth: 420)
 
@@ -530,13 +502,13 @@ extension ChatView {
       VStack(spacing: 4) {
         Text("隐私说明")
           .font(.custom("Figtree-SemiBold", size: 12))
-          .foregroundColor(Color(hex: "593D2A").opacity(0.6))
+          .foregroundColor(ChatSurfacePalette.secondaryText)
 
         Text(
           "测试版期间，你的问题会被记录以帮助改进产品。回复内容不会被记录，以保护你的隐私。"
         )
         .font(.custom("Figtree-Regular", size: 12))
-        .foregroundColor(Color(hex: "593D2A").opacity(0.5))
+        .foregroundColor(ChatSurfacePalette.tertiaryText)
         .multilineTextAlignment(.center)
         .frame(maxWidth: 600)
       }
@@ -547,7 +519,7 @@ extension ChatView {
     .padding(.horizontal)
     .padding(.vertical, 12)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color(hex: "FFFAF5"))
+    .background(Color(nsColor: .windowBackgroundColor))
   }
 
   var chatUnlockButtonTitle: String {
@@ -577,7 +549,7 @@ extension ChatView {
       .frame(height: 50, alignment: .leading)
 
       Rectangle()
-        .fill(Color(hex: "EEE4D8"))
+        .fill(ChatSurfacePalette.separator)
         .frame(height: 1)
 
       // Bottom toolbar
@@ -591,21 +563,19 @@ extension ChatView {
           HStack(spacing: 6) {
             ProgressView()
               .scaleEffect(0.55)
-              .tint(Color(hex: "C18043"))
+              .tint(ChatSurfacePalette.accent)
             Text("正在回答")
               .font(.custom("Figtree", size: 11).weight(.bold))
-              .foregroundColor(Color(hex: "9B7753"))
+              .foregroundColor(ChatSurfacePalette.secondaryText)
           }
           .padding(.horizontal, 9)
           .padding(.vertical, 5)
-          .background(
-            Capsule()
-              .fill(Color(hex: "FFF3E6"))
-          )
+          .background(ChatSurfacePalette.accent.opacity(0.10))
           .overlay(
             Capsule()
-              .stroke(Color(hex: "F0CBA7"), lineWidth: 1)
+              .stroke(ChatSurfacePalette.accent.opacity(0.22), lineWidth: 1)
           )
+          .clipShape(Capsule())
         }
 
         // Send button
@@ -614,11 +584,11 @@ extension ChatView {
             if chatService.isProcessing {
               ProgressView()
                 .scaleEffect(0.6)
-                .tint(Color.white)
+                .tint(Color(nsColor: .windowBackgroundColor))
             } else {
               Image(systemName: "arrow.up")
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.white)
+                .foregroundColor(Color(nsColor: .windowBackgroundColor))
             }
           }
           .frame(width: 32, height: 32)
@@ -638,7 +608,7 @@ extension ChatView {
           .clipShape(Circle())
           .overlay(
             Circle()
-              .stroke(Color.white.opacity(0.55), lineWidth: 0.8)
+              .stroke(Color(nsColor: .windowBackgroundColor).opacity(0.55), lineWidth: 0.8)
           )
           .shadow(
             color: canSubmitCurrentInput ? Color(hex: "D37E2D").opacity(0.35) : Color.clear,
@@ -654,16 +624,7 @@ extension ChatView {
       .padding(.vertical, 9)
       .frame(minHeight: 48)
     }
-    .background(
-      RoundedRectangle(cornerRadius: 16, style: .continuous)
-        .fill(
-          LinearGradient(
-            colors: [Color.white, Color(hex: "FFF8F0")],
-            startPoint: .top,
-            endPoint: .bottom
-          )
-        )
-    )
+    .dayflowFloatingControl(cornerRadius: 16)
     .overlay(
       RoundedRectangle(cornerRadius: 16, style: .continuous)
         .stroke(composerBorderColor, lineWidth: isInputFocused ? 1.2 : 1)
@@ -671,9 +632,8 @@ extension ChatView {
     .overlay(
       RoundedRectangle(cornerRadius: 16, style: .continuous)
         .inset(by: 0.6)
-        .stroke(Color.white.opacity(0.65), lineWidth: 0.8)
+        .stroke(isInputFocused ? ChatSurfacePalette.accent.opacity(0.28) : Color.clear, lineWidth: 0.8)
     )
-    .shadow(color: Color(hex: "D99A5A").opacity(0.14), radius: 14, x: 0, y: 6)
     .animation(.easeOut(duration: 0.16), value: isInputFocused)
     .padding(.horizontal, 16)
     .padding(.vertical, 12)
@@ -706,11 +666,11 @@ extension ChatView {
     .padding(4)
     .background(
       RoundedRectangle(cornerRadius: 11, style: .continuous)
-        .fill(Color.white.opacity(0.84))
+        .fill(Color(nsColor: .controlBackgroundColor).opacity(0.36))
     )
     .overlay(
       RoundedRectangle(cornerRadius: 11, style: .continuous)
-        .stroke(Color(hex: "E4D6C8"), lineWidth: 1)
+        .stroke(ChatSurfacePalette.separator, lineWidth: 1)
     )
     .help(providerToggleHelpText)
   }
