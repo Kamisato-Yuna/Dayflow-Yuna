@@ -61,7 +61,7 @@ extension AnyTransition {
 struct WetInkText: View {
   let text: String
   var font: Font = .custom("Figtree-Regular", size: 15)
-  var color: Color = Color(red: 0.18, green: 0.11, blue: 0.06)
+  var color: Color = JournalDayTokens.bodyText
   var lineHeight: CGFloat = 5
 
   @State private var displayedText: String = ""
@@ -125,13 +125,7 @@ struct JournalPillButtonStyle: ButtonStyle {
       .foregroundStyle(JournalDayTokens.primaryText.opacity(0.8))
       .padding(.horizontal, horizontalPadding)
       .padding(.vertical, verticalPadding)
-      .background(Color(red: 1, green: 0.96, blue: 0.92).opacity(0.6))
-      .cornerRadius(100)
-      .overlay(
-        RoundedRectangle(cornerRadius: 100)
-          .inset(by: 0.5)
-          .stroke(Color(red: 0.95, green: 0.86, blue: 0.84), lineWidth: 1)
-      )
+      .dayflowFloatingControl(cornerRadius: 100)
       .dayflowPressScale(
         configuration.isPressed,
         pressedScale: 0.96,
@@ -400,7 +394,7 @@ private struct MacTextView: NSViewRepresentable {
     let textView = JournalClickableTextView()
     textView.delegate = context.coordinator
     textView.font = font
-    textView.textColor = NSColor(red: 0.18, green: 0.11, blue: 0.06, alpha: 1.0)
+    textView.textColor = .labelColor
     textView.drawsBackground = false
     textView.isRichText = false
     textView.isAutomaticQuoteSubstitutionEnabled = false
@@ -418,8 +412,8 @@ private struct MacTextView: NSViewRepresentable {
     }
 
     textView.selectedTextAttributes = [
-      .backgroundColor: NSColor(red: 1.0, green: 0.93, blue: 0.82, alpha: 1.0),
-      .foregroundColor: NSColor(red: 0.18, green: 0.11, blue: 0.06, alpha: 1.0),
+      .backgroundColor: NSColor.controlAccentColor.withAlphaComponent(0.22),
+      .foregroundColor: NSColor.labelColor,
     ]
 
     if autoFocus {
@@ -498,8 +492,7 @@ private struct IntentionsEditForm: View {
             .font(.system(size: 14, weight: .medium))
             .foregroundStyle(JournalDayTokens.bodyText.opacity(0.5))
             .frame(width: 32, height: 32)
-            .background(Color.white.opacity(0.6))
-            .clipShape(Circle())
+            .dayflowFloatingControl(cornerRadius: 16)
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -535,24 +528,7 @@ private struct IntentionsEditForm: View {
       .padding(.vertical, 24)
       .frame(maxWidth: .infinity, alignment: .topLeading)
     }
-    .background(
-      LinearGradient(
-        stops: [
-          .init(color: Color.white.opacity(0.3), location: 0.00),
-          .init(color: Color.white.opacity(0.8), location: 0.50),
-          .init(color: Color.white.opacity(0.3), location: 1.00),
-        ],
-        startPoint: UnitPoint(x: 1, y: 0.14),
-        endPoint: UnitPoint(x: 0, y: 0.78)
-      )
-    )
-    .cornerRadius(8)
-    .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 0)
-    .overlay(
-      RoundedRectangle(cornerRadius: 8)
-        .inset(by: 0.5)
-        .stroke(Color.white, lineWidth: 1)
-    )
+    .dayflowCard(cornerRadius: 8)
   }
 
   private static let intentionsPlaceholders = [
@@ -730,24 +706,7 @@ private struct JournalLeftCardView: View {
       .frame(maxWidth: .infinity, alignment: .topLeading)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(
-      LinearGradient(
-        stops: [
-          .init(color: Color.white.opacity(0.3), location: 0.00),
-          .init(color: Color.white.opacity(0.8), location: 0.51),
-          .init(color: Color.white.opacity(0.3), location: 1.00),
-        ],
-        startPoint: UnitPoint(x: 1, y: 0.14),
-        endPoint: UnitPoint(x: 0, y: 0.78)
-      )
-    )
-    .cornerRadius(12)
-    .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 0)
-    .overlay(
-      RoundedRectangle(cornerRadius: 12)
-        .inset(by: 0.5)
-        .stroke(Color.white, lineWidth: 1)
-    )
+    .dayflowCard(cornerRadius: 12)
     .applyIf(namespace != nil) { view in
       view.matchedGeometryEffect(id: "card_bg", in: namespace!)
     }
@@ -793,13 +752,7 @@ private struct JournalRightCard<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.white.opacity(0.92))
-    .cornerRadius(12)
-    .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 0)
-    .overlay(
-      RoundedRectangle(cornerRadius: 12)
-        .stroke(Color.white.opacity(0.8), lineWidth: 1)
-    )
+    .dayflowCard(cornerRadius: 12)
   }
 }
 
@@ -1119,7 +1072,7 @@ private struct JournalDaySegmentedControl: View {
             .font(.custom("Figtree-Regular", size: 12))
             .tracking(-0.12)
             .foregroundStyle(
-              selection == option ? Color.white : JournalDayTokens.segmentInactiveText
+              selection == option ? JournalDayTokens.segmentActiveText : JournalDayTokens.segmentInactiveText
             )
             .padding(.horizontal, 14).padding(.vertical, 4)
             .frame(width: 64, alignment: .center)
@@ -1136,7 +1089,7 @@ private struct JournalDaySegmentedControl: View {
     .padding(2)
     .background(
       Capsule().fill(JournalDayTokens.segmentContainerFill).overlay(
-        Capsule().inset(by: 0.5).stroke(Color.white.opacity(0.6), lineWidth: 1))
+        Capsule().inset(by: 0.5).stroke(JournalDayTokens.segmentBorder, lineWidth: 1))
     )
     .shadow(color: Color.black.opacity(0.10), radius: 2, x: 0, y: 1)
   }
@@ -1155,26 +1108,28 @@ enum JournalDayViewPeriod: String, CaseIterable, Identifiable {
 }
 
 private enum JournalDayTokens {
-  static let primaryText = Color(red: 0.18, green: 0.09, blue: 0.03)
-  static let reminderText = Color(red: 0.35, green: 0.20, blue: 0.05)
-  static let bodyText = Color(red: 0.18, green: 0.11, blue: 0.06)
-  static let bullet = Color(red: 0.96, green: 0.57, blue: 0.24)
-  static let sectionHeader = Color(red: 0.85, green: 0.44, blue: 0.04)
-  static let divider = Color(red: 0.90, green: 0.85, blue: 0.80)
-  static let navCircleFill = Color(red: 0.996, green: 0.976, blue: 0.953)
-  static let navCircleStroke = Color.white
+  static let primaryText = Color(nsColor: .labelColor)
+  static let reminderText = Color(nsColor: .labelColor)
+  static let bodyText = Color(nsColor: .labelColor)
+  static let bullet = Color.accentColor
+  static let sectionHeader = Color(nsColor: .labelColor)
+  static let divider = Color(nsColor: .separatorColor).opacity(0.68)
+  static let navCircleFill = Color(nsColor: .controlBackgroundColor).opacity(0.72)
+  static let navCircleStroke = Color(nsColor: .separatorColor).opacity(0.22)
   static let navCircleShadow = Color.black.opacity(0.04)
-  static let navArrow = Color(red: 1.0, green: 0.74, blue: 0.35)
-  static let segmentActiveFill = Color(red: 1, green: 0.72, blue: 0.35)
-  static let segmentInactiveFill = Color(red: 0.95, green: 0.94, blue: 0.93)
-  static let segmentInactiveText = Color(red: 0.80, green: 0.78, blue: 0.77)
-  static let segmentContainerFill = Color(red: 1.0, green: 0.976, blue: 0.953)
+  static let navArrow = Color.accentColor
+  static let segmentActiveFill = Color.accentColor
+  static let segmentActiveText = Color(nsColor: .selectedControlTextColor)
+  static let segmentInactiveFill = Color(nsColor: .controlBackgroundColor).opacity(0.62)
+  static let segmentInactiveText = Color(nsColor: .secondaryLabelColor)
+  static let segmentContainerFill = Color(nsColor: .controlBackgroundColor).opacity(0.50)
+  static let segmentBorder = Color(nsColor: .separatorColor).opacity(0.22)
 }
 
 struct JournalDayView_Previews: PreviewProvider {
   static var previews: some View {
     JournalDayView()
-      .background(Color(red: 0.96, green: 0.94, blue: 0.92))
+      .background(Color(nsColor: .windowBackgroundColor))
       .previewLayout(.sizeThatFits)
       .preferredColorScheme(.light)
       .frame(width: 800, height: 600)

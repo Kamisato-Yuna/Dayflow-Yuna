@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Hero surface matching the highlighted Figma frame (Daily Journal pill + warm gradient entry).
+/// Hero surface for journal entry previews.
 struct JournalHeroView: View {
   var summary: JournalHeroSummary
   var onReflect: (() -> Void)?
@@ -26,6 +26,7 @@ struct JournalHeroView: View {
       .padding(.horizontal, 28)
       .padding(.vertical, 36)
     }
+    .dayflowContentPanel(cornerRadius: 24)
   }
 }
 
@@ -36,32 +37,27 @@ extension JournalHeroView {
     ZStack {
       LinearGradient(
         colors: [
-          Color(hex: "FF9B3A"),
-          Color(hex: "FFB764"),
-          Color(hex: "FFE6C5"),
-          Color(hex: "FFF6EB"),
+          Color(nsColor: .controlBackgroundColor).opacity(0.36),
+          Color(nsColor: .windowBackgroundColor).opacity(0.58),
+          Color.accentColor.opacity(0.08),
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
       )
-      .ignoresSafeArea()
 
       RadialGradient(
-        colors: [Color.white.opacity(0.9), Color.clear],
+        colors: [Color(nsColor: .controlAccentColor).opacity(0.10), Color.clear],
         center: .bottomLeading,
         startRadius: 90,
         endRadius: 520
       )
-      .blendMode(.screen)
-      .ignoresSafeArea()
 
       RadialGradient(
-        colors: [Color(hex: "FFAE5E").opacity(0.45), Color.clear],
+        colors: [Color(nsColor: .separatorColor).opacity(0.16), Color.clear],
         center: .topLeading,
         startRadius: 140,
         endRadius: 520
       )
-      .ignoresSafeArea()
     }
   }
 }
@@ -125,6 +121,7 @@ extension JournalHeroView {
     }
     .padding(.horizontal, 6)
     .frame(maxWidth: .infinity, alignment: .leading)
+    .dayflowCard(cornerRadius: 20)
   }
 }
 
@@ -147,16 +144,10 @@ private struct JournalHeroPillButtonStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
-      .foregroundStyle(Color(red: 0.18, green: 0.11, blue: 0.06).opacity(0.8))
+      .foregroundStyle(JournalHeroTokens.ctaText)
       .padding(.horizontal, horizontalPadding)
       .padding(.vertical, verticalPadding)
-      .background(Color(red: 1, green: 0.96, blue: 0.92).opacity(0.6))
-      .cornerRadius(100)
-      .overlay(
-        RoundedRectangle(cornerRadius: 100)
-          .inset(by: 0.5)
-          .stroke(Color(red: 0.95, green: 0.86, blue: 0.84), lineWidth: 1)
-      )
+      .dayflowFloatingControl(cornerRadius: 100)
       .dayflowPressScale(
         configuration.isPressed,
         pressedScale: 0.98,
@@ -214,41 +205,44 @@ extension AttributedString {
 
 private enum JournalHeroTokens {
   static let badgeTextGradient = LinearGradient(
-    colors: [Color(hex: "ED6B0C"), Color(hex: "F4C11C")],
+    colors: [Color(nsColor: .labelColor), Color.accentColor],
     startPoint: .leading,
     endPoint: .trailing
   )
 
   static let badgeBackground = LinearGradient(
-    colors: [Color.white.opacity(0.96), Color(hex: "FFF2DB")],
+    colors: [
+      Color(nsColor: .controlBackgroundColor).opacity(0.76),
+      Color(nsColor: .windowBackgroundColor).opacity(0.48),
+    ],
     startPoint: .top,
     endPoint: .bottom
   )
 
-  static let badgeStroke = Color.white.opacity(0.65)
-  static let badgeInnerHighlight = Color.white.opacity(0.32)
-  static let badgeShadow = Color(hex: "D88931").opacity(0.38)
+  static let badgeStroke = Color(nsColor: .separatorColor).opacity(0.24)
+  static let badgeInnerHighlight = Color(nsColor: .highlightColor).opacity(0.20)
+  static let badgeShadow = Color.black.opacity(0.08)
 
-  static let entryBackground = Color.white.opacity(0.36)
-  static let entryStroke = Color.white.opacity(0.62)
-  static let entryShadow = Color(hex: "C86E1A").opacity(0.14)
-  static let entryPrimary = Color(hex: "7A4116")
-  static let entrySecondary = Color(hex: "9C5A26").opacity(0.86)
-  static let entryEmphasis = Color(hex: "5B2A06")
+  static let entryBackground = Color(nsColor: .controlBackgroundColor).opacity(0.18)
+  static let entryStroke = Color.clear
+  static let entryShadow = Color.clear
+  static let entryPrimary = Color(nsColor: .labelColor)
+  static let entrySecondary = Color(nsColor: .secondaryLabelColor)
+  static let entryEmphasis = Color.accentColor
   static let entryFade = LinearGradient(
-    colors: [Color.clear, Color(hex: "FFF6EB").opacity(0.94)],
+    colors: [Color.clear, Color(nsColor: .windowBackgroundColor).opacity(0.70)],
     startPoint: .center,
     endPoint: .bottom
   )
 
   static let ctaBackground = LinearGradient(
-    colors: [Color(hex: "FFE1B5"), Color(hex: "FFC169")],
+    colors: [Color.accentColor.opacity(0.20), Color.accentColor.opacity(0.10)],
     startPoint: .topLeading,
     endPoint: .bottomTrailing
   )
-  static let ctaStroke = Color(hex: "FFD28A")
-  static let ctaText = Color(hex: "7A3A00")
-  static let ctaShadow = Color(hex: "E6A65A").opacity(0.30)
+  static let ctaStroke = Color(nsColor: .separatorColor)
+  static let ctaText = Color(nsColor: .labelColor)
+  static let ctaShadow = Color.black.opacity(0.08)
 }
 
 // MARK: - Preview
