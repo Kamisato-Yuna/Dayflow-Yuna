@@ -134,7 +134,7 @@ enum LLMProviderType: Codable {
     case .geminiDirect:
       return "gemini"
     case .dayflowBackend:
-      return "dayflow"
+      return "gemini"
     case .ollamaLocal:
       return "ollama"
     case .chatGPTClaude:
@@ -210,7 +210,7 @@ enum LLMProviderID: String, Codable, CaseIterable {
     case .geminiDirect:
       return .gemini
     case .dayflowBackend:
-      return .dayflow
+      return .gemini
     case .ollamaLocal:
       return .ollama
     case .chatGPTClaude:
@@ -240,12 +240,18 @@ enum LLMProviderRoutingPreferences {
     guard let rawValue = defaults.string(forKey: backupProviderDefaultsKey) else {
       return nil
     }
-    return LLMProviderID(rawValue: rawValue)
+    let provider = LLMProviderID(rawValue: rawValue)
+    guard provider != .dayflow else {
+      defaults.removeObject(forKey: backupProviderDefaultsKey)
+      defaults.removeObject(forKey: backupChatCLIToolDefaultsKey)
+      return nil
+    }
+    return provider
   }
 
   static func saveBackupProvider(_ provider: LLMProviderID?, to defaults: UserDefaults = .standard)
   {
-    if let provider {
+    if let provider, provider != .dayflow {
       defaults.set(provider.rawValue, forKey: backupProviderDefaultsKey)
     } else {
       defaults.removeObject(forKey: backupProviderDefaultsKey)
