@@ -63,6 +63,7 @@ struct DailyView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+    .dayflowWindowBackground()
     .environment(\.colorScheme, .light)
     .onAppear {
       refreshDailyAccessProgress()

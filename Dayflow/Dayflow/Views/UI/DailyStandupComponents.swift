@@ -82,7 +82,7 @@ struct DailyBulletCard: View {
       VStack(alignment: .leading, spacing: 18 * scale) {
         Text(title)
           .font(.custom("InstrumentSerif-Regular", size: 24 * scale))
-          .foregroundStyle(Color(hex: "B46531"))
+          .foregroundStyle(DayflowDailyToken.title)
           .frame(maxWidth: .infinity, alignment: .leading)
 
         itemListEditor
@@ -109,9 +109,9 @@ struct DailyBulletCard: View {
         .fill(
           LinearGradient(
             gradient: Gradient(stops: [
-              .init(color: Color.white.opacity(0.6), location: 0.011932),
-              .init(color: Color.white, location: 0.5104),
-              .init(color: Color.white.opacity(0.6), location: 0.98092),
+              .init(color: DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false), location: 0.011932),
+              .init(color: DayflowDailyToken.subtleFill(colorScheme: .light), location: 0.5104),
+              .init(color: DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false), location: 0.98092),
             ]),
             startPoint: UnitPoint(x: 1, y: 0.45),
             endPoint: UnitPoint(x: 0, y: 0.55)
@@ -121,7 +121,7 @@ struct DailyBulletCard: View {
     .clipShape(cardShape)
     .overlay(
       cardShape
-        .stroke(Color(hex: "EBE6E3"), lineWidth: max(0.7, 1 * scale))
+        .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: max(0.7, 1 * scale))
     )
     .shadow(color: Color.black.opacity(0.1), radius: 12 * scale, x: 0, y: 0)
     .onAppear {
@@ -212,12 +212,12 @@ struct DailyBulletCard: View {
       HStack(spacing: 6 * scale) {
         Image(systemName: "plus")
           .font(.system(size: 18 * scale, weight: .regular))
-          .foregroundStyle(Color(hex: "999999"))
+      .foregroundStyle(DayflowDailyToken.tertiaryText)
           .frame(width: 18 * scale, height: 18 * scale)
 
         Text("添加条目")
           .font(.custom("Figtree-Regular", size: 13 * scale))
-          .foregroundStyle(Color(hex: "999999"))
+          .foregroundStyle(DayflowDailyToken.tertiaryText)
           .lineLimit(1)
       }
       .padding(.vertical, 6 * scale)
@@ -323,7 +323,7 @@ struct DailyBlockersSection: View {
     VStack(alignment: .leading, spacing: 8 * scale) {
       TextField("Blockers", text: $title)
         .font(.custom("Figtree-Medium", size: 14 * scale))
-        .foregroundStyle(Color(hex: "BD9479"))
+        .foregroundStyle(DayflowDailyToken.secondaryText)
         .textFieldStyle(.plain)
 
       HStack(alignment: .center, spacing: 8 * scale) {
@@ -332,7 +332,7 @@ struct DailyBlockersSection: View {
 
         TextField("Fill in any blockers you may have", text: $prompt, axis: .vertical)
           .font(.custom("Figtree-Regular", size: 14 * scale))
-          .foregroundStyle(Color(hex: "929292"))
+        .foregroundStyle(DayflowDailyToken.secondaryText)
           .textFieldStyle(.plain)
           .lineLimit(1...4)
           .multilineTextAlignment(.leading)
@@ -343,10 +343,10 @@ struct DailyBlockersSection: View {
     .padding(.trailing, 26 * scale)
     .padding(.top, 14 * scale)
     .frame(maxWidth: .infinity, minHeight: 94 * scale, alignment: .topLeading)
-    .background(Color(hex: "F7F6F5"))
+    .background(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
     .overlay(alignment: .top) {
       Rectangle()
-        .fill(Color(hex: "EBE6E3"))
+        .fill(DayflowDailyToken.separator)
         .frame(height: max(0.7, 1 * scale))
     }
   }

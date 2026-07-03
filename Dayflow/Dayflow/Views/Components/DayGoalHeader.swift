@@ -41,7 +41,7 @@ struct DayGoalHeader: View {
   @State private var distractionLoss: DistractionLossSnapshot?
 
   private enum Design {
-    static let panelBackground = Color(hex: "FFFDFB")
+    static let panelBackground = DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false)
     static let disabledBackground = Color(hex: "FCF9F6")
     static let border = Color(hex: "EDE5E1")
     static let disabledBorder = Color(hex: "D8D8D8")
@@ -311,30 +311,18 @@ struct DayGoalHeader: View {
     Button(action: onSetGoals) {
       Text("设置目标")
         .font(.custom("Figtree", size: 12).weight(.medium))
-        .foregroundColor(.white)
+        .foregroundColor(Color(nsColor: .windowBackgroundColor))
         .lineLimit(1)
         .fixedSize()
         .padding(.horizontal, 12)
         .frame(height: 30)
-        .background(
-          LinearGradient(
-            colors: [
-              Color(hex: "FFB18D").opacity(0.6),
-              Color(hex: "FFB18D"),
-              Color(hex: "FFA46F"),
-              Color(hex: "FFB18D"),
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-          )
-        )
+        .background(DayflowDailyToken.accent)
         .clipShape(Capsule())
         .overlay(
           Capsule()
             .stroke(Color(hex: "F2D2BD"), lineWidth: 1.25)
         )
-        .shadow(color: Color.white.opacity(0.5), radius: 4, x: -3, y: 0)
-        .shadow(color: Color.white.opacity(0.5), radius: 4, x: 3, y: 0)
+        .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
     }
     .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
     .hoverScaleEffect(scale: 1.02)

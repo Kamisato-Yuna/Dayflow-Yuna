@@ -54,23 +54,16 @@ extension DailyView {
         }
         .frame(minWidth: 136 * scale, alignment: .leading)
       }
-      .foregroundStyle(.white)
+      .foregroundStyle(Color(nsColor: .windowBackgroundColor))
       .padding(.horizontal, 12 * scale)
       .padding(.vertical, 10 * scale)
       .background(
-        LinearGradient(
-          colors: [
-            Color(hex: "FF986F"),
-            Color(hex: "BDAAFF"),
-          ],
-          startPoint: .topLeading,
-          endPoint: .bottomTrailing
-        )
+        Color(nsColor: .labelColor)
       )
       .clipShape(Capsule(style: .continuous))
       .overlay(
         Capsule(style: .continuous)
-          .stroke(Color(hex: "F2D7C3"), lineWidth: max(1.2, 1.5 * scale))
+          .stroke(DayflowDailyToken.accent.opacity(0.22), lineWidth: max(1.2, 1.5 * scale))
       )
       .contentShape(Capsule(style: .continuous))
     }
@@ -90,7 +83,7 @@ extension DailyView {
             ProgressView()
               .progressViewStyle(.circular)
               .scaleEffect(0.6 * scale)
-              .tint(.white)
+              .tint(Color(nsColor: .windowBackgroundColor))
           } else if standupRegenerateState == .regenerated {
             Image(systemName: "checkmark")
               .font(.system(size: 12 * scale, weight: .semibold))
@@ -120,23 +113,16 @@ extension DailyView {
         }
         .frame(minWidth: 108 * scale, alignment: .leading)
       }
-      .foregroundStyle(.white)
+      .foregroundStyle(Color(nsColor: .windowBackgroundColor))
       .padding(.horizontal, 12 * scale)
       .padding(.vertical, 10 * scale)
       .background(
-        LinearGradient(
-          colors: [
-            Color(hex: "FFB58A"),
-            Color(hex: "ED9BC0"),
-          ],
-          startPoint: .topLeading,
-          endPoint: .bottomTrailing
-        )
+        canRegenerateStandup ? DayflowDailyToken.accent : DayflowDailyToken.tertiaryText
       )
       .clipShape(Capsule(style: .continuous))
       .overlay(
         Capsule(style: .continuous)
-          .stroke(Color(hex: "F2D7C3"), lineWidth: max(1.2, 1.5 * scale))
+          .stroke(DayflowDailyToken.accent.opacity(0.22), lineWidth: max(1.2, 1.5 * scale))
       )
       .contentShape(Capsule(style: .continuous))
     }
@@ -173,7 +159,7 @@ extension DailyView {
     VStack(alignment: .leading, spacing: 8 * scale) {
       Text(heading)
         .font(.custom("InstrumentSerif-Regular", size: 24 * scale))
-        .foregroundStyle(Color(hex: "B46531"))
+        .foregroundStyle(DayflowDailyToken.title)
 
       if useSingleColumn {
         VStack(alignment: .leading, spacing: 12 * scale) {

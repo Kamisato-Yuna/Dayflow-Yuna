@@ -79,13 +79,13 @@ struct DailyWorkflowGrid: View {
             ForEach(renderRows) { row in
               Text(row.name)
                 .font(.custom("Figtree-Regular", size: categoryLabelFontSize))
-                .foregroundStyle(Color.black.opacity(0.9))
+                .foregroundStyle(DayflowDailyToken.text.opacity(0.9))
                 .frame(width: effectiveLabelWidth, height: cellSize, alignment: .trailing)
             }
             if showDistractions {
               Text("分心")
                 .font(.custom("Figtree-Regular", size: categoryLabelFontSize))
-                .foregroundStyle(Color.black.opacity(0.9))
+                .foregroundStyle(DayflowDailyToken.text.opacity(0.9))
                 .frame(
                   width: effectiveLabelWidth, height: distractionRowHeight, alignment: .trailing
                 )
@@ -127,7 +127,7 @@ struct DailyWorkflowGrid: View {
 
                   ZStack(alignment: .topLeading) {
                     Rectangle()
-                      .fill(Color(red: 0.95, green: 0.93, blue: 0.92))
+                      .fill(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
                       .cornerRadius(distractionCornerRadius)
                       .frame(width: gridWidth, height: distractionRowHeight)
 
@@ -171,7 +171,7 @@ struct DailyWorkflowGrid: View {
 
               VStack(alignment: .leading, spacing: axisLabelSpacing) {
                 Rectangle()
-                  .fill(Color(hex: "E0D9D5"))
+                  .fill(DayflowDailyToken.separator)
                   .frame(width: axisWidth, height: max(0.7, 0.9 * layoutScale))
 
                 if hourTicks.count > 1 {
@@ -185,7 +185,7 @@ struct DailyWorkflowGrid: View {
                       Text(formatAxisHourLabel(fromAbsoluteHour: hour))
                         .font(.custom("Figtree-Regular", size: axisLabelFontSize))
                         .kerning(-0.08 * layoutScale)
-                        .foregroundStyle(Color.black.opacity(0.78))
+                        .foregroundStyle(DayflowDailyToken.secondaryText)
                         .frame(
                           width: labelWidth,
                           alignment: axisLabelAlignment(
@@ -209,7 +209,7 @@ struct DailyWorkflowGrid: View {
                   Text(formatAxisHourLabel(fromAbsoluteHour: onlyTick))
                     .font(.custom("Figtree-Regular", size: axisLabelFontSize))
                     .kerning(-0.08 * layoutScale)
-                    .foregroundStyle(Color.black.opacity(0.78))
+                    .foregroundStyle(DayflowDailyToken.secondaryText)
                     .frame(width: axisWidth, alignment: .leading)
                 }
               }
@@ -251,10 +251,10 @@ struct DailyWorkflowGrid: View {
 
   private func fillColor(for row: DailyWorkflowGridRow, slotIndex: Int) -> Color {
     guard slotIndex < row.slotOccupancies.count else {
-      return Color(red: 0.95, green: 0.93, blue: 0.92)
+      return DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false)
     }
     let occupancy = min(max(row.slotOccupancies[slotIndex], 0), 1)
-    guard occupancy > 0 else { return Color(red: 0.95, green: 0.93, blue: 0.92) }
+    guard occupancy > 0 else { return DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false) }
 
     // Partial occupancy stays dimmer; full occupancy reaches full intensity.
     let alpha = 0.3 + (occupancy * 0.7)
@@ -382,7 +382,7 @@ func workflowTooltip(
       .foregroundStyle(accentColor)
     Text(title)
       .font(.custom("Figtree-Regular", size: 12 * layoutScale))
-      .foregroundStyle(Color.black)
+      .foregroundStyle(DayflowDailyToken.text)
       .fixedSize(horizontal: false, vertical: true)
   }
   .padding(8 * layoutScale)
@@ -393,13 +393,13 @@ func workflowTooltip(
 
 func tooltipBackground(layoutScale: CGFloat) -> some View {
   RoundedRectangle(cornerRadius: 4, style: .continuous)
-    .fill(Color.white)
+    .fill(DayflowDailyToken.subtleFill(colorScheme: .light))
     .overlay(
       RoundedRectangle(cornerRadius: 4, style: .continuous)
-        .stroke(Color(hex: "EDE0CE"), lineWidth: 1)
+        .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: 1)
     )
     .shadow(
-      color: Color(red: 1, green: 0.63, blue: 0.54).opacity(0.25), radius: 2, x: 0, y: 2)
+      color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
 }
 
 struct DailyStatChip: View {
@@ -420,7 +420,7 @@ struct DailyStatChip: View {
     .padding(.vertical, 6 * scale)
     .background(
       Capsule(style: .continuous)
-        .fill(Color(hex: "F7F3F0"))
+        .fill(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
     )
     .overlay(
       Capsule(style: .continuous)
@@ -463,12 +463,12 @@ struct DailyModeToggle: View {
 
   @ViewBuilder
   private func segment(text: String, isActive: Bool, isLeading: Bool) -> some View {
-    let fill = isActive ? Color(hex: "FFA767") : Color(hex: "FFFAF7").opacity(0.6)
+    let fill = isActive ? DayflowDailyToken.accent : DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false)
 
     Text(text)
       .font(.custom("Figtree-Regular", size: 14 * scale))
       .lineLimit(1)
-      .foregroundStyle(isActive ? Color.white : Color(hex: "837870"))
+      .foregroundStyle(isActive ? Color(nsColor: .windowBackgroundColor) : DayflowDailyToken.secondaryText)
       .padding(.horizontal, 12 * scale)
       .padding(.vertical, 8 * scale)
       .frame(minHeight: 33 * scale)

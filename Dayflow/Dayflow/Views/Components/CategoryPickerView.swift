@@ -77,7 +77,7 @@ struct CategoryPickerView: View {
     .background(
       ZStack {
         // Backdrop blur effect - rgba(250,244,241,0.86) with blur
-        Color(red: 0.98, green: 0.96, blue: 0.95).opacity(0.86)
+        DayflowDailyToken.subtleFill(colorScheme: .light)
           .background(.ultraThinMaterial)
       }
       .overlay(
@@ -114,7 +114,7 @@ struct CategoryPickerView: View {
       .buttonStyle(.plain)
       .padding(6)
       .background(
-        Color(red: 0.98, green: 0.98, blue: 0.98).opacity(0.8)
+        DayflowDailyToken.subtleFill(colorScheme: .light)
           .background(.ultraThinMaterial)
       )
       .clipShape(
@@ -222,7 +222,7 @@ struct CategoryPill: View {
 
   private var pillBorder: Color {
     if isSelected {
-      return Color(red: 0.98, green: 0.73, blue: 0.50)  // #fbbb80
+      return DayflowDailyToken.accent.opacity(0.62)
     } else if category.isIdle {
       // Dotted border for Idle category
       return Color(red: 0.88, green: 0.88, blue: 0.88)  // Will be styled differently

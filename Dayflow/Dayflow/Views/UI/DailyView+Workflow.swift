@@ -84,7 +84,7 @@ extension DailyView {
 
         Text(dailyDateTitle(for: selectedDate))
           .font(.custom("InstrumentSerif-Regular", size: 26 * scale))
-          .foregroundStyle(Color(hex: "1E1B18"))
+          .foregroundStyle(DayflowDailyToken.title)
           .lineLimit(1)
           .minimumScaleFactor(0.75)
           .allowsTightening(true)
@@ -130,7 +130,7 @@ extension DailyView {
       HStack {
         Text(headingText)
           .font(.custom("InstrumentSerif-Regular", size: 24 * scale))
-          .foregroundStyle(Color(hex: "B46531"))
+          .foregroundStyle(DayflowDailyToken.title)
 
         Spacer()
       }
@@ -147,7 +147,7 @@ extension DailyView {
         )
 
         Divider()
-          .overlay(Color(hex: "E5DFD9"))
+          .overlay(DayflowDailyToken.separator)
 
         workflowTotalsView(scale: scale, isViewingToday: isViewingToday)
           .padding(.horizontal, 16 * scale)
@@ -156,11 +156,11 @@ extension DailyView {
       }
       .background(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
-          .fill(Color.white.opacity(0.78))
+          .fill(DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false))
       )
       .overlay(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
-          .stroke(Color(hex: "E8E1DA"), lineWidth: max(0.7, 1 * scale))
+          .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: max(0.7, 1 * scale))
           .allowsHitTesting(false)
       )
       .overlayPreferenceValue(DailyWorkflowHoverBoundsPreferenceKey.self) { anchors in
@@ -250,18 +250,18 @@ extension DailyView {
           : "\(totalTitle)  9:00-21:00 期间没有捕获到活动。"
         Text(emptyDescription)
           .font(.custom("Figtree-Regular", size: 12 * scale))
-          .foregroundStyle(Color(hex: "7F7062"))
+          .foregroundStyle(DayflowDailyToken.secondaryText)
       } else {
         HStack(spacing: 8 * scale) {
           Text(totalTitle)
             .font(.custom("InstrumentSerif-Regular", size: 14 * scale))
-            .foregroundStyle(Color(hex: "777777"))
+            .foregroundStyle(DayflowDailyToken.secondaryText)
 
           ForEach(workflowTotals) { total in
             HStack(spacing: 2 * scale) {
               Text(total.name)
                 .font(.custom("Figtree-Regular", size: 12 * scale))
-                .foregroundStyle(Color(hex: "1F1B18"))
+                .foregroundStyle(DayflowDailyToken.text)
               Text(formatDuration(minutes: total.minutes))
                 .font(.custom("Figtree-SemiBold", size: 12 * scale))
                 .foregroundStyle(Color(hex: total.colorHex))
@@ -430,7 +430,7 @@ private struct DailyNavigationButton: View {
     } label: {
       ZStack {
         Circle()
-          .fill(Color(hex: "FFEBD3").opacity(0.79))
+          .fill(DayflowDailyToken.selectedFill(colorScheme: .light))
           .frame(width: hoverCircleSize, height: hoverCircleSize)
           .opacity(isHovering && isEnabled ? 1 : 0)
 

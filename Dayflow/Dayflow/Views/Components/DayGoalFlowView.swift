@@ -91,7 +91,7 @@ struct DayGoalFlowOverlay: View {
   var body: some View {
     GeometryReader { proxy in
       ZStack {
-        Color(hex: "DB420B").opacity(0.10)
+        Color(nsColor: .windowBackgroundColor).opacity(0.34)
           .ignoresSafeArea()
 
         DayGoalFlowView(
@@ -159,12 +159,10 @@ struct DayGoalFlowView: View {
 
   private enum Design {
     static let canvasSize = CGSize(width: 1200, height: 680)
-    static let backgroundTop = Color(hex: "FFF3EC")
-    static let backgroundBottom = Color(hex: "FF8046").opacity(0.78)
     static let orange = Color(hex: "FF8046")
-    static let mutedOrange = Color(hex: "FFEDE4")
-    static let mutedBorder = Color(hex: "B1A8A1")
-    static let text = Color(hex: "333333")
+    static let mutedOrange = DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false)
+    static let mutedBorder = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false)
+    static let text = DayflowDailyToken.text
     static let focus = Color(hex: "628CFF")
     static let distraction = Color(hex: "FA8282")
   }
@@ -247,7 +245,7 @@ struct DayGoalFlowView: View {
     return ZStack(alignment: .topLeading) {
       Text("今天你想把时间花在哪里？")
         .font(.custom("Instrument Serif", size: 24))
-        .foregroundColor(.black)
+        .foregroundColor(DayflowDailyToken.title)
         .multilineTextAlignment(.center)
         .frame(width: 620, height: 30)
         .position(x: 602, y: 64)
@@ -637,7 +635,7 @@ private struct GoalSetupPanel: View {
       }
       .padding(.horizontal, 11)
       .frame(height: 30)
-      .background(accent)
+      .background(accent.opacity(0.92))
 
       HStack(spacing: 10) {
         categoryBox
@@ -650,7 +648,7 @@ private struct GoalSetupPanel: View {
       .padding(.bottom, 23)
       .padding(.horizontal, 24)
       .frame(maxWidth: .infinity)
-      .background(Color.white.opacity(0.8))
+      .background(DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false))
 
       footer
         .frame(height: 59)
@@ -689,7 +687,7 @@ private struct GoalSetupPanel: View {
     }
     .padding(11)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .background(Color(hex: "F8F6F5"))
+    .background(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
     .clipShape(RoundedRectangle(cornerRadius: 4))
     .overlay(
       RoundedRectangle(cornerRadius: 4)
@@ -736,14 +734,14 @@ private struct GoalSetupPanel: View {
     }
     .padding(.horizontal, 16)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-    .background(Color(hex: "FCFCFC").opacity(0.7))
+    .background(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
   }
 
   private func goalStat(title: String, minutes: Int) -> some View {
     VStack(alignment: .leading, spacing: 5) {
       Text(title)
         .font(.custom("Figtree", size: 12))
-        .foregroundColor(.black)
+        .foregroundColor(DayflowDailyToken.text)
         .lineLimit(1)
         .minimumScaleFactor(0.82)
 
@@ -754,7 +752,7 @@ private struct GoalSetupPanel: View {
 
         Text(formatShort(minutes: minutes))
           .font(.custom("Figtree", size: 12))
-          .foregroundColor(.black)
+          .foregroundColor(DayflowDailyToken.text)
           .lineLimit(1)
           .minimumScaleFactor(0.86)
       }
@@ -825,7 +823,7 @@ private struct GoalDurationPicker: View {
       )
     }
     .padding(EdgeInsets(top: 7, leading: 9, bottom: 10, trailing: 11))
-    .background(Color(hex: "F1F1F1"))
+    .background(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
     .clipShape(RoundedRectangle(cornerRadius: 4))
     .overlay(
       RoundedRectangle(cornerRadius: 4)
@@ -891,8 +889,8 @@ private struct GoalNumberColumn: View {
       LinearGradient(
         colors: [
           Color(hex: "E9E4E2"),
-          Color(hex: "FFFDFC"),
-          Color(hex: "FFFDFC"),
+          DayflowDailyToken.subtleFill(colorScheme: .light),
+          DayflowDailyToken.subtleFill(colorScheme: .light),
           Color(hex: "E9E4E2"),
         ],
         startPoint: .top,
@@ -1167,7 +1165,7 @@ private struct GoalReviewCard: View {
           Text(subtitle)
         }
         .font(.custom("Figtree", size: 15))
-        .foregroundColor(.black)
+        .foregroundColor(DayflowDailyToken.text)
 
         Spacer()
 
@@ -1204,7 +1202,7 @@ private struct GoalReviewCard: View {
     .padding(.horizontal, 24)
     .padding(.vertical, kind == .focus ? 18 : 18)
     .frame(width: 388, height: kind == .focus ? 236 : 123, alignment: .topLeading)
-    .background(Color.white.opacity(0.8))
+    .background(DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false))
     .clipShape(RoundedRectangle(cornerRadius: 8))
     .overlay(
       RoundedRectangle(cornerRadius: 8)
@@ -1222,9 +1220,9 @@ private struct GoalReviewCard: View {
       .foregroundColor(succeeded ? Color(hex: "4AB43F") : Color(hex: "FA8282"))
       .padding(.horizontal, 15)
       .frame(height: 30)
-      .background(succeeded ? Color(hex: "F1FFE3") : Color(hex: "FFF0F0"))
+      .background(succeeded ? DayflowDailyToken.success.opacity(0.12) : DayflowDailyToken.distraction.opacity(0.12))
       .clipShape(Capsule())
-      .overlay(Capsule().stroke(Color.white, lineWidth: 0.5))
+      .overlay(Capsule().stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: 0.5))
       .rotationEffect(.degrees(7.5))
   }
 

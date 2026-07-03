@@ -43,14 +43,14 @@ extension DailyView {
     } label: {
       ZStack {
         Circle()
-          .fill(Color(hex: "F7F3F1"))
+          .fill(DayflowDailyToken.subtleFill(colorScheme: .light))
 
         Circle()
-          .stroke(Color(hex: "E4D7D0"), lineWidth: max(1.1, 1.3 * scale))
+          .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: max(1.1, 1.3 * scale))
 
         Image(systemName: "gearshape.fill")
           .font(.system(size: 13 * scale, weight: .semibold))
-          .foregroundStyle(Color(hex: "B46531"))
+          .foregroundStyle(DayflowDailyToken.accent)
       }
       .frame(width: 38 * scale, height: 38 * scale)
       .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
@@ -68,6 +68,7 @@ extension DailyView {
       dailyProviderPicker(scale: scale)
         .padding(16)
         .frame(width: 312)
+        .dayflowPopoverSurface(cornerRadius: 18)
         .environment(\.colorScheme, .light)
         .preferredColorScheme(.light)
     }
@@ -78,11 +79,11 @@ extension DailyView {
         VStack(alignment: .leading, spacing: 2 * scale) {
           Text("每日复盘提供商")
             .font(.custom("InstrumentSerif-Regular", size: 22 * scale))
-            .foregroundStyle(Color(hex: "2E221B"))
+            .foregroundStyle(DayflowDailyToken.title)
 
           Text("选择每日复盘如何生成，或关闭生成功能。")
             .font(.custom("Figtree-Regular", size: 12 * scale))
-            .foregroundStyle(Color(hex: "8B6B59"))
+            .foregroundStyle(DayflowDailyToken.secondaryText)
         }
 
         Spacer(minLength: 0)
@@ -90,7 +91,7 @@ extension DailyView {
         if isRefreshingProviderAvailability {
           ProgressView()
             .controlSize(.small)
-            .tint(Color(hex: "B46531"))
+            .tint(DayflowDailyToken.accent)
         }
       }
 
@@ -108,11 +109,13 @@ extension DailyView {
               VStack(alignment: .leading, spacing: 2 * scale) {
                 Text(provider.displayName)
                   .font(.custom("Figtree-SemiBold", size: 13 * scale))
-                  .foregroundStyle(Color(hex: isSelected ? "8F522C" : "2F241D"))
+                  .foregroundStyle(isSelected ? DayflowDailyToken.accent : DayflowDailyToken.text)
 
                 Text(availability.detail)
                   .font(.custom("Figtree-Regular", size: 12 * scale))
-                  .foregroundStyle(Color(hex: availability.isAvailable ? "8B6B59" : "B07A74"))
+                  .foregroundStyle(
+                    availability.isAvailable ? DayflowDailyToken.secondaryText : DayflowDailyToken.distraction
+                  )
                   .multilineTextAlignment(.leading)
               }
 
@@ -121,7 +124,7 @@ extension DailyView {
               Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 14 * scale, weight: .semibold))
                 .foregroundStyle(
-                  isSelected ? Color(hex: "C96F3A") : Color(hex: "D3C6BE")
+                  isSelected ? DayflowDailyToken.accent : DayflowDailyToken.tertiaryText
                 )
             }
             .padding(.horizontal, 12 * scale)
@@ -130,14 +133,14 @@ extension DailyView {
               RoundedRectangle(cornerRadius: 14 * scale, style: .continuous)
                 .fill(
                   isSelected
-                    ? Color(hex: "FFF4EC")
-                    : Color(hex: "FAF8F7")
+                    ? DayflowDailyToken.selectedFill(colorScheme: .light)
+                    : DayflowDailyToken.subtleFill(colorScheme: .light)
                 )
             )
             .overlay(
               RoundedRectangle(cornerRadius: 14 * scale, style: .continuous)
                 .stroke(
-                  isSelected ? Color(hex: "EBC4AB") : Color(hex: "E8E1DC"),
+                  isSelected ? DayflowDailyToken.accent.opacity(0.42) : DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false),
                   lineWidth: max(1, 1.2 * scale)
                 )
             )

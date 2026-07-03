@@ -108,10 +108,10 @@ private struct TotalFocusCard: View {
     .padding(.horizontal, 16)
     .padding(.vertical, 12)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Color(hex: "F7F7F7"))
+    .background(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
     .overlay(
       RoundedRectangle(cornerRadius: 8)
-        .stroke(Color.white, lineWidth: 1)
+        .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: 1)
     )
     .clipShape(RoundedRectangle(cornerRadius: 8))
   }

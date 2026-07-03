@@ -149,6 +149,42 @@ enum DayflowContentToken {
   }
 }
 
+enum DayflowDailyToken {
+  static let title = Color(nsColor: .labelColor)
+  static let text = Color(nsColor: .labelColor)
+  static let secondaryText = Color(nsColor: .secondaryLabelColor)
+  static let tertiaryText = Color(nsColor: .tertiaryLabelColor)
+  static let separator = Color(nsColor: .separatorColor).opacity(0.62)
+  static let accent = Color.accentColor
+  static let focus = Color(hex: "628CFF")
+  static let distraction = Color(nsColor: .systemRed)
+  static let success = Color(nsColor: .systemGreen)
+
+  static func cardFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    DayflowContentToken.cardFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
+  }
+
+  static func secondaryFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    DayflowContentToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
+  }
+
+  static func selectedFill(colorScheme: ColorScheme) -> Color {
+    accent.opacity(colorScheme == .dark ? 0.24 : 0.13)
+  }
+
+  static func subtleFill(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark
+      ? Color(nsColor: .controlBackgroundColor).opacity(0.58)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.82)
+  }
+}
+
 enum DayflowOnboardingToken {
   static let title = Color(nsColor: .labelColor)
   static let secondaryText = Color(nsColor: .secondaryLabelColor)

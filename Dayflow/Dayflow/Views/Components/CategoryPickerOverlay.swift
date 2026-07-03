@@ -81,7 +81,7 @@ struct CategoryPickerOverlay: View {
   }
 
   private var backgroundView: some View {
-    Color(red: 0.98, green: 0.96, blue: 0.95).opacity(0.86)
+    DayflowDailyToken.subtleFill(colorScheme: .light)
       .background(.ultraThinMaterial)
   }
 
@@ -151,14 +151,14 @@ private struct CategoryPickerPill: View {
           endPoint: .trailing
         )
       } else {
-        Color.white.opacity(0.76)
+        DayflowDailyToken.subtleFill(colorScheme: .light)
       }
     }
   }
 
   private var borderColor: Color {
     if isSelected {
-      return Color(red: 0.98, green: 0.73, blue: 0.50)
+      return DayflowDailyToken.accent.opacity(0.62)
     }
     return Color(red: 0.88, green: 0.88, blue: 0.88)
   }

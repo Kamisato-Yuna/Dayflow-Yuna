@@ -22,7 +22,6 @@ struct DayCategorySelectionEditor: View {
     static let dividerColor = Color(red: 0.91, green: 0.89, blue: 0.86)
     static let helperTextColor = Color(hex: "6C6761")
     static let helperTextSize: CGFloat = 11
-    static let backgroundColor = Color(red: 0.98, green: 0.96, blue: 0.95).opacity(0.86)
     static let borderColor = Color(red: 0.91, green: 0.88, blue: 0.87)
     static let cornerRadius: CGFloat = 6
   }
@@ -69,7 +68,7 @@ struct DayCategorySelectionEditor: View {
       .pointingHandCursorOnHover(reassertOnPressEnd: true)
       .padding(6)
       .background(
-        Color(red: 0.98, green: 0.98, blue: 0.98).opacity(0.8)
+        DayflowDailyToken.subtleFill(colorScheme: .light)
           .background(.ultraThinMaterial)
       )
       .clipShape(
@@ -97,7 +96,7 @@ struct DayCategorySelectionEditor: View {
   }
 
   private var backgroundView: some View {
-    Design.backgroundColor
+    DayflowDailyToken.subtleFill(colorScheme: .light)
       .background(.ultraThinMaterial)
   }
 }
