@@ -64,7 +64,7 @@ struct WeeklyView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-    .background(Color(hex: "FBF6EF"))
+    .dayflowWindowBackground()
     .environment(\.colorScheme, .light)
     .animation(.easeInOut(duration: 0.22), value: isWeeklyAccessUnlocked)
     .onAppear {
@@ -454,14 +454,6 @@ private struct WeeklyDataRequirementView: View {
 
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: 10, style: .continuous)
-        .fill(Color(hex: "FFF7EF"))
-        .overlay(
-          RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .stroke(Color.white, lineWidth: 1)
-        )
-        .shadow(color: Color(hex: "80450D").opacity(0.12), radius: 12, x: 0, y: 2)
-
       VStack(spacing: 18) {
         VStack(spacing: 5) {
           Text("继续记录以解锁本周周报")
@@ -486,6 +478,7 @@ private struct WeeklyDataRequirementView: View {
       .padding(.horizontal, 28)
       .frame(maxWidth: 540)
     }
+    .dayflowContentPanel(cornerRadius: 10)
   }
 
   private func durationText(_ minutes: Int) -> String {
@@ -509,6 +502,8 @@ private struct WeeklyDataRequirementView: View {
 }
 
 private struct WeeklyDataRequirementPill: View {
+  @Environment(\.colorScheme) private var colorScheme
+
   let text: String
 
   var body: some View {
@@ -521,13 +516,12 @@ private struct WeeklyDataRequirementPill: View {
       .frame(height: 58)
       .background(
         Capsule(style: .continuous)
-          .fill(Color(hex: "FFEBD6"))
+          .fill(DayflowWeeklyToken.subtleAccentFill(colorScheme: colorScheme))
       )
       .overlay(
         Capsule(style: .continuous)
-          .stroke(Color(hex: "FF8904").opacity(0.5), lineWidth: 1)
+          .stroke(DayflowWeeklyToken.accent.opacity(0.38), lineWidth: 1)
       )
-      .shadow(color: Color(hex: "FDE7D1"), radius: 8, x: 0, y: 2)
   }
 }
 
@@ -559,7 +553,7 @@ private struct WeeklyDataRequirementProgressBar: View {
               .renderingMode(.template)
               .resizable()
               .scaledToFit()
-              .foregroundStyle(Color.white)
+              .foregroundStyle(Color(nsColor: .windowBackgroundColor))
               .frame(width: 13.5, height: 13.5)
           )
           .shadow(color: Color(hex: "FF6E00").opacity(0.18), radius: 5, x: 0, y: 2)
@@ -840,16 +834,11 @@ private struct WeeklyGraphicDownloadButton: View {
   var body: some View {
     Button(action: action) {
       Image(systemName: "arrow.down.to.line")
-        .font(.system(size: 10, weight: .medium))
-        .foregroundStyle(Color(hex: "DF8351"))
+        .font(.system(size: 10, weight: .semibold))
+        .foregroundStyle(DayflowWeeklyToken.accent)
         .frame(width: 12, height: 12)
         .frame(width: 24, height: 20)
-        .background(Color(hex: "FFF5EA"))
-        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-        .overlay(
-          RoundedRectangle(cornerRadius: 6, style: .continuous)
-            .stroke(Color(hex: "F7E4CE"), lineWidth: 0.75)
-        )
+        .dayflowFloatingControl(cornerRadius: 6)
         .contentShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
     .buttonStyle(.plain)
@@ -871,7 +860,7 @@ private enum WeeklyGraphicExporter {
   ) {
     let exportView = content()
       .frame(width: size.width, height: size.height, alignment: .topLeading)
-      .background(Color(hex: "FBF6EF"))
+      .background(Color(nsColor: .windowBackgroundColor))
       .overlay(alignment: watermarkPlacement.alignment) {
         WeeklyExportWatermark()
           .padding(watermarkPlacement.padding)
@@ -964,7 +953,7 @@ private struct WeeklyExportWatermark: View {
     .frame(height: 26)
     .background(
       Capsule(style: .continuous)
-        .fill(Color.white.opacity(0.94))
+        .fill(Color(nsColor: .controlBackgroundColor))
     )
     .overlay(
       Capsule(style: .continuous)

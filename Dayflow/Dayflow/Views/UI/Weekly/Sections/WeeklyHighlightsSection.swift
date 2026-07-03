@@ -12,9 +12,7 @@ struct WeeklyHighlightsSection: View {
   private enum Design {
     static let width: CGFloat = 470
     static let height: CGFloat = 298
-    static let borderColor = Color(hex: "EBE6E3")
-    static let background = Color.white.opacity(0.6)
-    static let titleColor = Color(hex: "B46531")
+    static let titleColor = DayflowWeeklyToken.title
   }
 
   var body: some View {
@@ -32,10 +30,10 @@ struct WeeklyHighlightsSection: View {
               .lineLimit(1)
               .padding(.horizontal, 6)
               .padding(.vertical, 4)
-              .background(Color(hex: "FFECE0"))
+              .background(DayflowWeeklyToken.accent.opacity(0.12))
               .overlay(
                 RoundedRectangle(cornerRadius: 3, style: .continuous)
-                  .stroke(Color.white, lineWidth: 1)
+                  .stroke(DayflowWeeklyToken.accent.opacity(0.24), lineWidth: 1)
               )
               .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
               .frame(width: 84, alignment: .leading)
@@ -55,12 +53,7 @@ struct WeeklyHighlightsSection: View {
     .padding(.top, 19)
     .padding(.horizontal, 18)
     .frame(width: width, height: Design.height, alignment: .topLeading)
-    .background(Design.background)
-    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 4, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
+    .dayflowCard(cornerRadius: 4)
   }
 }
 
@@ -100,5 +93,5 @@ struct WeeklyHighlight: Identifiable {
 #Preview("Top Highlights", traits: .fixedLayout(width: 470, height: 298)) {
   WeeklyHighlightsSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "FBF6EF"))
+    .dayflowWindowBackground()
 }

@@ -2,20 +2,20 @@ import AppKit
 import SwiftUI
 
 struct WeeklyOverviewSection: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   let snapshot: WeeklyOverviewSnapshot
 
   private enum Design {
     static let sectionWidth: CGFloat = 958
     static let cornerRadius: CGFloat = 4
-    static let titleColor = Color(hex: "B46531")
-    static let borderColor = Color(hex: "EBE6E3")
-    static let topCardBackground = Color.white.opacity(0.6)
-    static let footerBackground = Color(hex: "FAF7F5")
-    static let bodyTextColor = Color(hex: "333333")
-    static let secondaryTextColor = Color(hex: "777777")
+    static let titleColor = DayflowWeeklyToken.title
+    static let bodyTextColor = DayflowWeeklyToken.text
+    static let secondaryTextColor = DayflowWeeklyToken.secondaryText
     static let chartRowFill = Color(hex: "F2F2F2")
     static let chartRowBorder = Color(hex: "E5E4E3")
-    static let accentUnderline = Color(hex: "F0A54D")
+    static let accentUnderline = DayflowWeeklyToken.accent
     static let summaryDividerX: CGFloat = 295
 
     static let topPadding = EdgeInsets(top: 32, leading: 40, bottom: 32, trailing: 40)
@@ -84,11 +84,27 @@ struct WeeklyOverviewSection: View {
     }
     .padding(Design.topPadding)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Design.topCardBackground)
+    .background {
+      if reduceTransparency {
+        topCardShape.fill(DayflowWeeklyToken.cardFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
+      } else {
+        topCardShape.fill(.regularMaterial)
+        topCardShape.fill(DayflowWeeklyToken.cardFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
+      }
+    }
     .clipShape(topCardShape)
     .overlay {
       topCardShape
-        .stroke(Design.borderColor, lineWidth: 1)
+        .stroke(DayflowWeeklyToken.border(
+          colorScheme: colorScheme,
+          increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+        ), lineWidth: 1)
     }
   }
 
@@ -116,9 +132,15 @@ struct WeeklyOverviewSection: View {
     .frame(height: Design.footerHeight)
     .background(
       HStack(spacing: 0) {
-        Design.footerBackground
+        DayflowWeeklyToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        )
           .frame(width: Design.summaryDividerX)
-        Design.footerBackground
+        DayflowWeeklyToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        )
       }
     )
     .clipShape(footerShape)
@@ -149,7 +171,10 @@ struct WeeklyOverviewSection: View {
           path.move(to: CGPoint(x: Design.summaryDividerX, y: 0))
           path.addLine(to: CGPoint(x: Design.summaryDividerX, y: height))
         }
-        .stroke(Design.borderColor, lineWidth: 1)
+        .stroke(DayflowWeeklyToken.border(
+          colorScheme: colorScheme,
+          increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+        ), lineWidth: 1)
       }
     }
   }
@@ -482,5 +507,5 @@ extension WeeklyOverviewSnapshot {
 #Preview("Weekly Overview Section", traits: .fixedLayout(width: 958, height: 339)) {
   WeeklyOverviewSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
 }
