@@ -98,7 +98,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
         .font(.custom("InstrumentSerif-Regular", size: scaledText(40)))
         .tracking(-1.2 * layoutScale)
         .multilineTextAlignment(.center)
-        .foregroundColor(Color(hex: "492304"))
+        .foregroundColor(DayflowOnboardingToken.title)
         .frame(maxWidth: .infinity)
         .padding(.top, scaled(25))
         .padding(.bottom, scaled(30))
@@ -142,33 +142,27 @@ struct OnboardingPrototypeChooseProviderStep: View {
       Spacer()
 
       // Toggle pill
-      Button {
+      DayflowSurfaceButton(
+        action: {
         withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.3)) {
           showAllOptions.toggle()
         }
-      } label: {
-        Text(showAllOptions ? "仅看推荐" : "查看全部")
-          .font(.custom("Figtree", size: scaledText(16)))
-          .foregroundColor(Color(hex: "492304"))
-          .padding(.horizontal, scaled(20))
-          .padding(.vertical, scaled(8))
-          .background(
-            DayflowContentToken.secondaryFill(
-              colorScheme: colorScheme,
-              reduceTransparency: reduceTransparency
-            )
-          )
-          .clipShape(Capsule())
-          .overlay(Capsule().stroke(contentBorder, lineWidth: borderLineWidth))
-          .shadow(
-            color: reduceTransparency ? .clear : Color.black.opacity(0.08),
-            radius: scaled(2),
-            x: 0,
-            y: 0
-          )
-      }
-      .buttonStyle(.plain)
-      .pointingHandCursor()
+        },
+        content: {
+          Text(showAllOptions ? "仅看推荐" : "查看全部")
+            .font(.custom("Figtree", size: scaledText(16)))
+        },
+        background: DayflowContentToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ),
+        foreground: DayflowOnboardingToken.title,
+        borderColor: contentBorder,
+        cornerRadius: 999,
+        horizontalPadding: scaled(20),
+        verticalPadding: scaled(8),
+        isSecondaryStyle: true
+      )
       .padding(.bottom, scaled(30))
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -325,8 +319,8 @@ struct OnboardingPrototypeChooseProviderStep: View {
           .fontWeight(.semibold)
           .frame(maxWidth: .infinity)
       },
-      background: Color(red: 0.25, green: 0.17, blue: 0),
-      foreground: .white,
+      background: DayflowOnboardingToken.primaryButtonFill,
+      foreground: DayflowOnboardingToken.primaryButtonText,
       borderColor: .clear,
       cornerRadius: scaled(8),
       horizontalPadding: scaled(24),

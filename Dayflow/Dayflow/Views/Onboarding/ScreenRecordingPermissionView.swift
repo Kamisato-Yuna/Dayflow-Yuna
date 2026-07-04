@@ -91,48 +91,68 @@ struct ScreenRecordingPermissionView: View {
           Group {
             switch permissionState {
             case .notRequested:
-              Button(action: requestPermission) {
-                HStack(spacing: 6) {
-                  if isCheckingPermission {
-                    ProgressView()
-                      .scaleEffect(0.7)
-                      .progressViewStyle(CircularProgressViewStyle())
+              DayflowSurfaceButton(
+                action: requestPermission,
+                content: {
+                  HStack(spacing: 6) {
+                    if isCheckingPermission {
+                      ProgressView()
+                        .scaleEffect(0.7)
+                        .progressViewStyle(CircularProgressViewStyle())
+                    }
+                    Text(isCheckingPermission ? "检查中..." : "打开系统设置")
+                      .font(.custom("Figtree-SemiBold", size: 12))
+                      .tracking(-0.48)
                   }
-                  Text(isCheckingPermission ? "检查中..." : "打开系统设置")
-                    .font(.custom("Figtree-SemiBold", size: 12))
-                    .tracking(-0.48)
-                    .foregroundColor(DayflowOnboardingToken.primaryButtonText)
-                }
-                .padding(12)
-              }
-              .buttonStyle(.plain)
-              .background(actionAccent)
-              .cornerRadius(8)
+                },
+                background: actionAccent,
+                foreground: DayflowOnboardingToken.primaryButtonText,
+                borderColor: .clear,
+                cornerRadius: 8,
+                horizontalPadding: 12,
+                verticalPadding: 12,
+                showOverlayStroke: true
+              )
               .disabled(isCheckingPermission)
+
             case .needsAction:
               HStack {
                 Spacer(minLength: 0)
 
                 HStack(spacing: 12) {
-                  Button(action: openSystemSettings) {
-                    Text("打开系统设置")
-                      .font(.custom("Figtree-SemiBold", size: 12))
-                      .tracking(-0.48)
-                      .foregroundColor(actionAccent)
-                      .padding(12)
-                  }
-                  .buttonStyle(.plain)
-                  .dayflowFloatingControl(cornerRadius: 8)
+                  DayflowSurfaceButton(
+                    action: openSystemSettings,
+                    content: {
+                      Text("打开系统设置")
+                        .font(.custom("Figtree-SemiBold", size: 12))
+                        .tracking(-0.48)
+                    },
+                    background: Color(nsColor: .controlBackgroundColor).opacity(0.82),
+                    foreground: actionAccent,
+                    borderColor: actionAccent.opacity(0.36),
+                    cornerRadius: 8,
+                    horizontalPadding: 12,
+                    verticalPadding: 12,
+                    showOverlayStroke: true,
+                    isSecondaryStyle: true,
+                  )
 
-                  Button(action: quitAndReopen) {
-                    Text("退出并重开")
-                      .font(.custom("Figtree-SemiBold", size: 12))
-                      .tracking(-0.48)
-                      .foregroundColor(actionAccent)
-                      .padding(12)
-                  }
-                  .buttonStyle(.plain)
-                  .dayflowFloatingControl(cornerRadius: 8)
+                  DayflowSurfaceButton(
+                    action: quitAndReopen,
+                    content: {
+                      Text("退出并重开")
+                        .font(.custom("Figtree-SemiBold", size: 12))
+                        .tracking(-0.48)
+                    },
+                    background: Color(nsColor: .controlBackgroundColor).opacity(0.82),
+                    foreground: actionAccent,
+                    borderColor: actionAccent.opacity(0.36),
+                    cornerRadius: 8,
+                    horizontalPadding: 12,
+                    verticalPadding: 12,
+                    showOverlayStroke: true,
+                    isSecondaryStyle: true,
+                  )
                 }
               }
             case .granted:

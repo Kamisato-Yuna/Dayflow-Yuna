@@ -277,47 +277,51 @@ struct OnboardingCategoryStepView: View {
       Spacer()
 
       // Back button (outlined)
-      Button(action: onBack) {
-        Text("返回")
-          .font(.custom("Figtree", size: 12).weight(.medium))
-          .tracking(-0.48)
-          .foregroundColor(DayflowOnboardingToken.secondaryButtonText.opacity(0.58))
-          .padding(.horizontal, 40)
-          .padding(.vertical, 12)
-          .overlay(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-              .stroke(DayflowOnboardingToken.secondaryButtonText.opacity(0.28), lineWidth: 1)
-          )
-      }
-      .buttonStyle(.plain)
-      .pointingHandCursor()
+      DayflowSurfaceButton(
+        action: onBack,
+        content: {
+          Text("返回")
+            .font(.custom("Figtree", size: 12).weight(.medium))
+            .tracking(-0.48)
+        },
+        background: Color(nsColor: .controlBackgroundColor).opacity(0.72),
+        foreground: DayflowOnboardingToken.secondaryButtonText.opacity(0.58),
+        borderColor: DayflowOnboardingToken.secondaryButtonText.opacity(0.28),
+        cornerRadius: 8,
+        horizontalPadding: 40,
+        verticalPadding: 12,
+        isSecondaryStyle: true
+      )
 
       // Next button (filled)
-      Button {
-        commitPendingEdits()
-        categoryStore.persist()
-        AnalyticsService.shared.capture(
-          "onboarding_categories_completed",
-          [
-            "category_count": categories.count,
-            "renamed_count": renameCount,
-            "added_count": addCount,
-            "color_changed_count": colorChangeCount,
-            "deleted_count": deleteCount,
-          ])
-        onNext()
-      } label: {
-        Text("下一步")
-          .font(.custom("Figtree", size: 12).weight(.medium))
-          .tracking(-0.48)
-          .foregroundColor(DayflowOnboardingToken.primaryButtonText)
-          .padding(.horizontal, 40)
-          .padding(.vertical, 12)
-          .background(DayflowOnboardingToken.primaryButtonFill)
-          .cornerRadius(8)
-      }
-      .buttonStyle(.plain)
-      .pointingHandCursor()
+      DayflowSurfaceButton(
+        action: {
+          commitPendingEdits()
+          categoryStore.persist()
+          AnalyticsService.shared.capture(
+            "onboarding_categories_completed",
+            [
+              "category_count": categories.count,
+              "renamed_count": renameCount,
+              "added_count": addCount,
+              "color_changed_count": colorChangeCount,
+              "deleted_count": deleteCount,
+            ])
+          onNext()
+        },
+        content: {
+          Text("下一步")
+            .font(.custom("Figtree", size: 12).weight(.medium))
+            .tracking(-0.48)
+        },
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
+        borderColor: .clear,
+        cornerRadius: 8,
+        horizontalPadding: 40,
+        verticalPadding: 12,
+        showOverlayStroke: true
+      )
       .opacity(canContinue ? 1 : 0.45)
       .allowsHitTesting(canContinue)
     }

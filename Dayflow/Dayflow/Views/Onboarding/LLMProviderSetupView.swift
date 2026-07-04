@@ -40,23 +40,31 @@ struct LLMProviderSetupView: View {
       HStack(alignment: .center, spacing: 0) {
         // Back button container matching sidebar width
         HStack {
-          Button(action: handleBack) {
-            HStack(spacing: 12) {
-              Image(systemName: "chevron.left")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.black.opacity(0.7))
-                .frame(width: 20, alignment: .center)
+          DayflowSurfaceButton(
+            action: handleBack,
+            content: {
+              HStack(spacing: 12) {
+                Image(systemName: "chevron.left")
+                  .font(.system(size: 12, weight: .semibold))
+                  .foregroundColor(.black.opacity(0.7))
+                  .frame(width: 20, alignment: .center)
 
-              Text("返回")
-                .font(.custom("Figtree", size: 15))
-                .fontWeight(.medium)
-                .foregroundColor(.black.opacity(0.7))
-            }
-          }
-          .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
+                Text("返回")
+                  .font(.custom("Figtree", size: 15))
+                  .fontWeight(.medium)
+                  .foregroundColor(.black.opacity(0.7))
+              }
+            },
+            background: Color(nsColor: .controlBackgroundColor).opacity(0.72),
+            foreground: .black.opacity(0.7),
+            borderColor: Color(nsColor: .separatorColor).opacity(0.5),
+            cornerRadius: 8,
+            horizontalPadding: 20,
+            verticalPadding: 10,
+            isSecondaryStyle: true
+          )
           // Position where sidebar items start: 20 + 16 = 36px
           .padding(.leading, 36)  // Align with sidebar item structure
-          .pointingHandCursor()
 
           Spacer()
         }

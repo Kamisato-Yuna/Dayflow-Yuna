@@ -579,8 +579,8 @@ struct WelcomeView: View {
           DayflowSurfaceButton(
             action: onStart,
             content: { Text("开始").font(.custom("Figtree", size: 16)).fontWeight(.semibold) },
-            background: Color(red: 0.25, green: 0.17, blue: 0),
-            foreground: .white,
+            background: DayflowOnboardingToken.primaryButtonFill,
+            foreground: DayflowOnboardingToken.primaryButtonText,
             borderColor: .clear,
             cornerRadius: 8,
             horizontalPadding: 28,
@@ -952,8 +952,8 @@ struct CompletionView: View {
             .font(.custom("Figtree", size: 16))
             .fontWeight(.semibold)
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 40,
