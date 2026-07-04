@@ -1,29 +1,68 @@
 # Chinese UI localization allowlist
-# Format: `<pattern>\t<reason>`
+# Format: `<pattern>	<reason>`
 # reason examples: brand, command, internal-key, test-fixture, log, url, model-name
 
 # Keep project/brand/product names and runtime identifiers
-Dayflow\tbrand
-Dayflow Pro\tbrand
-Gemini\tbrand
-Claude\tbrand
-ChatGPT\tbrand
-Ollama\tbrand
-LLM\tbrand
-LM Studio\tbrand
-Qwen3-VL\tmodel-name
-OpenAI-compatible\tmodel-name
+Dayflow	brand
+dayflow	internal-key
+Gemini	brand
+Claude	brand
+ChatGPT	brand
+Ollama	brand
+LLM	brand
+LM Studio	brand
+Qwen3-VL	model-name
+Qwen3VL	model-name
+Qwen2.5	model-name
+OpenAI-compatible	model-name
+Pro	brand
+API	technical-term
 
 # Keep analytics and internal identifiers
-PostHog\tinternal-key
-Sentry\tinternal-key
-AppKit\tinternal-key
-SwiftUI\tinternal-key
+PostHog	internal-key
+Sentry	internal-key
+AppKit	internal-key
+SwiftUI	internal-key
 
 # Keep file/command related labels
-curl\tcommand
-codex\tcommand
-claude\tcommand
-git\tcommand
-URL\turl
-Base URL\turl
+curl	command
+codex	command
+claude	command
+git	command
+URL	url
+Base URL	url
+Figtree	brand
+Figtree-Regular	internal-key
+Figtree-Medium	internal-key
+InstrumentSerif-Regular	internal-key
+caller_qos	internal-key
+LeftArrow	ui-icon
+RightArrow	ui-icon
+checkmark.circle.fill	ui-icon
+play.fill	ui-icon
+pause.fill	ui-icon
+chevron.left	ui-icon
+chevron.right	ui-icon
+lock	ui-icon
+sparkles	ui-icon
+Z	non-user-legend
+N	non-user-legend
+Dayflow	domain-brand
+GPT	model-name
+Model ID	command
+Base URL	command
+base URL	command
+vision-capable	model-name
+sk-live-	system-key
+email@example.com	test-fixture
+you@example.com	test-fixture
+ABC123	test-fixture
+\(count)	interpolation-placeholder
+\(totalHours)\(hourLabel)	interpolation-placeholder
+\(durationText(recordedMinutes))	interpolation-placeholder
+\(durationText(targetMinutes))	interpolation-placeholder
+\(durationText(remainingMinutes))	interpolation-placeholder
+\(row.label)	interpolation-placeholder
+\(categoryName)	interpolation-placeholder
+\(cellGap\, format: \.number\.precision\(\.fractionLength\(1\)\))	interpolation-placeholder
+\(Int(viewModel.playbackSpeed * 20))x	unit-display
