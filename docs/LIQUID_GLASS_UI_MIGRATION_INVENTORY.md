@@ -1,7 +1,7 @@
 # Liquid Glass UI Migration Inventory
 
 Baseline date: 2026-07-03
-Final cleanup update: 2026-07-03
+Final cleanup update: 2026-07-04
 
 This document started as the LG00 baseline for the Liquid Glass UI migration and
 now also records the LG15 final cleanup state. It is the source of truth for
@@ -52,10 +52,29 @@ that must be preserved.
       `Glass.interactive(...)`
     - `dayflowFloatingControl` / `dayflowPopoverSurface` / `dayflowModalSurface` /
       `dayflowSidebarSurface` expose `shape` and `isInteractive` / `groupingSpacing`
-  - `Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift`
+- `Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift`
     - wrapper exposes `shape` / `isInteractive` / `shouldGroupGlassEffects`
     - grouping is configurable by passing `shouldGroupGlassEffects` and container
       spacing
+
+## LG23 Final QA 收口（2026-07-04）
+
+- 更新了 `scripts/audit-liquid-glass-final.sh`，将扫描分为：
+  - 代码路径残留（`Dayflow/Dayflow` 与 `Dayflow.xcodeproj`）
+  - 文档路径残留（`docs`）
+  - 统一输出“PASS/WARN”态，便于 CI 与人工复查。
+- 将 LG16-LG22 的收口信息补齐到：
+  - 本文档“残留说明/迁移范围”部分
+  - 复用扫描命令清单
+  - 视觉验收清单
+- 目前未见新 `*.swift` 面向 LG23 的范围外修改；本任务保持为文档与只读审计脚本更新。
+
+### LG23 扫描结论（截至 2026-07-04）
+
+- 已清理的运行时以外 bundled 预置视频资产不应再出现在代码路径中。
+- `Dayflow/Dayflow/Views/UI/ScrubberView.swift`、`Dayflow/Dayflow/Views/UI/MainView/ScreenshotSlideshow.swift` 等媒体内容层 `Color.white` 被保留为播放与内容可读性保障，非背景迁移目标。
+- `docs` 中仍保留历史任务与验收引用，作为审计线索保留，不作为生产残留。
+- `MACOSX_DEPLOYMENT_TARGET = 15.1` 保持生效。
 - This change keeps all existing call sites compatible by making new parameters
   optional and preserving previous defaults.
 

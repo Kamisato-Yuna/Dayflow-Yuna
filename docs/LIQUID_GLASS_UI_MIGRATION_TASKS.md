@@ -1284,11 +1284,18 @@ feat(onboarding): unify glass control styling
 3. 更新或补强只读残留扫描脚本。
 4. 不做大范围 Swift UI 修改；如发现新 Swift 范围缺口，停止报告新任务。
 
+执行结果（2026-07-04）：
+
+- `docs/LIQUID_GLASS_UI_MIGRATION_INVENTORY.md` 已补齐 LG23 收口字段：LG23 状态、scan 结论与 residual 解释、视觉验收清单更新说明。
+- `scripts/audit-liquid-glass-final.sh` 已增强为「代码路径 + 文档路径」分离扫描并支持 PASS/WARN 输出。
+- 未新增 Swift 文件修改；本任务在 LG23 文档/脚本范围内收口。
+
 验收标准：
 
 - 文档清楚说明 macOS 15 material path 和 macOS 26 Liquid Glass path。
 - 残留扫描输出都有解释或后续任务。
 - 不引入新的 UI 实现改动范围漂移。
+ - 文档与脚本扫描在任务范围内完成，不需修改生产代码。
 
 验证命令：
 
