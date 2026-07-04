@@ -43,6 +43,22 @@ that must be preserved.
 - Reduce Transparency and Increase Contrast are handled by the shared surface
   tokens and applied to the LG15-cleaned residual controls.
 
+## LG16 Surface Wrapper Strengthening
+
+- Added configurable liquid-glass parameters to shared surface wrapper layer:
+  - `Dayflow/Dayflow/Views/UI/DayflowSurfaceStyles.swift`
+    - new `DayflowGlassSurfaceShape` for explicit shape control
+    - `DayflowLiquidGlassModifier` now uses `glassEffect(_:, in:)` with optional
+      `Glass.interactive(...)`
+    - `dayflowFloatingControl` / `dayflowPopoverSurface` / `dayflowModalSurface` /
+      `dayflowSidebarSurface` expose `shape` and `isInteractive` / `groupingSpacing`
+  - `Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift`
+    - wrapper exposes `shape` / `isInteractive` / `shouldGroupGlassEffects`
+    - grouping is configurable by passing `shouldGroupGlassEffects` and container
+      spacing
+- This change keeps all existing call sites compatible by making new parameters
+  optional and preserving previous defaults.
+
 ## Remaining Residuals And Reasons
 
 These scan hits are intentionally kept:

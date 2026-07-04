@@ -8,6 +8,29 @@
 import AppKit
 import SwiftUI
 
+enum DayflowGlassSurfaceShape {
+  case roundedRect(CGFloat)
+  case capsule
+  case rectangle
+  case circle
+  case custom(AnyShape)
+
+  func resolvedShape() -> AnyShape {
+    switch self {
+    case .roundedRect(let radius):
+      AnyShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
+    case .capsule:
+      AnyShape(Capsule())
+    case .rectangle:
+      AnyShape(Rectangle())
+    case .circle:
+      AnyShape(Circle())
+    case .custom(let shape):
+      shape
+    }
+  }
+}
+
 enum DayflowSurfaceRole: CaseIterable {
   case windowBackground
   case sidebarSurface
@@ -300,12 +323,29 @@ private struct DayflowWindowBackgroundModifier: ViewModifier {
 struct DayflowSurfaceModifier: ViewModifier {
   let role: DayflowSurfaceRole
   let cornerRadius: CGFloat
+  let glassShape: DayflowGlassSurfaceShape
+  let isGlassInteractive: Bool
+  let glassGroupingSpacing: CGFloat?
+
+  init(
+    role: DayflowSurfaceRole,
+    cornerRadius: CGFloat,
+    glassShape: DayflowGlassSurfaceShape? = nil,
+    isGlassInteractive: Bool = true,
+    glassGroupingSpacing: CGFloat? = nil
+  ) {
+    self.role = role
+    self.cornerRadius = cornerRadius
+    self.glassShape = glassShape ?? .roundedRect(cornerRadius)
+    self.isGlassInteractive = isGlassInteractive
+    self.glassGroupingSpacing = glassGroupingSpacing
+  }
 
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   func body(content: Content) -> some View {
-    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    let shape = glassShape.resolvedShape()
     let increaseContrast = NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
     let shadow = DayflowSurfaceToken.shadow(
       for: role,
@@ -346,7 +386,14 @@ struct DayflowSurfaceModifier: ViewModifier {
       }
       .shadow(color: shadow.color, radius: shadow.radius, x: 0, y: shadow.y)
       .clipShape(shape)
-      .modifier(DayflowLiquidGlassModifier(isEnabled: role.usesLiquidGlass))
+      .modifier(
+        DayflowLiquidGlassModifier(
+          isEnabled: role.usesLiquidGlass,
+          shape: glassShape,
+          isInteractive: isGlassInteractive,
+          groupingSpacing: glassGroupingSpacing
+        )
+      )
   }
 }
 
@@ -428,11 +475,26 @@ private struct DayflowWeeklySectionSurfaceModifier: ViewModifier {
 
 private struct DayflowLiquidGlassModifier: ViewModifier {
   let isEnabled: Bool
+  let shape: DayflowGlassSurfaceShape
+  let isInteractive: Bool
+  let groupingSpacing: CGFloat?
 
   @ViewBuilder
   func body(content: Content) -> some View {
     if #available(macOS 26.0, *), isEnabled {
-      content.glassEffect()
+      let glassShape = shape.resolvedShape()
+      let glassEffect = content.glassEffect(
+        Glass.regular.interactive(isInteractive),
+        in: glassShape
+      )
+
+      if let groupingSpacing {
+        GlassEffectContainer(spacing: groupingSpacing) {
+          glassEffect
+        }
+      } else {
+        glassEffect
+      }
     } else {
       content
     }
@@ -504,8 +566,21 @@ extension View {
     modifier(DayflowWindowBackgroundModifier())
   }
 
-  func dayflowContentPanel(cornerRadius: CGFloat = 14) -> some View {
-    modifier(DayflowSurfaceModifier(role: .contentPanel, cornerRadius: cornerRadius))
+  func dayflowContentPanel(
+    cornerRadius: CGFloat = 14,
+    shape: DayflowGlassSurfaceShape? = nil,
+    isInteractive: Bool = true,
+    groupingSpacing: CGFloat? = nil
+  ) -> some View {
+    modifier(
+      DayflowSurfaceModifier(
+        role: .contentPanel,
+        cornerRadius: cornerRadius,
+        glassShape: shape,
+        isGlassInteractive: isInteractive,
+        glassGroupingSpacing: groupingSpacing
+      )
+    )
   }
 
   func dayflowCard(cornerRadius: CGFloat = 10) -> some View {
@@ -516,24 +591,89 @@ extension View {
     modifier(DayflowWeeklySectionSurfaceModifier(cornerRadius: cornerRadius))
   }
 
-  func dayflowSidebarSurface(cornerRadius: CGFloat = 14) -> some View {
-    modifier(DayflowSurfaceModifier(role: .sidebarSurface, cornerRadius: cornerRadius))
+  func dayflowSidebarSurface(
+    cornerRadius: CGFloat = 14,
+    shape: DayflowGlassSurfaceShape? = nil,
+    isInteractive: Bool = true,
+    groupingSpacing: CGFloat? = nil
+  ) -> some View {
+    modifier(
+      DayflowSurfaceModifier(
+        role: .sidebarSurface,
+        cornerRadius: cornerRadius,
+        glassShape: shape,
+        isGlassInteractive: isInteractive,
+        glassGroupingSpacing: groupingSpacing
+      )
+    )
   }
 
-  func dayflowInspectorPanel(cornerRadius: CGFloat = 14) -> some View {
-    modifier(DayflowSurfaceModifier(role: .inspectorPanel, cornerRadius: cornerRadius))
+  func dayflowInspectorPanel(
+    cornerRadius: CGFloat = 14,
+    shape: DayflowGlassSurfaceShape? = nil,
+    isInteractive: Bool = true,
+    groupingSpacing: CGFloat? = nil
+  ) -> some View {
+    modifier(
+      DayflowSurfaceModifier(
+        role: .inspectorPanel,
+        cornerRadius: cornerRadius,
+        glassShape: shape,
+        isGlassInteractive: isInteractive,
+        glassGroupingSpacing: groupingSpacing
+      )
+    )
   }
 
-  func dayflowFloatingControl(cornerRadius: CGFloat = 12) -> some View {
-    modifier(DayflowSurfaceModifier(role: .floatingControl, cornerRadius: cornerRadius))
+  func dayflowFloatingControl(
+    cornerRadius: CGFloat = 12,
+    shape: DayflowGlassSurfaceShape? = nil,
+    isInteractive: Bool = true,
+    groupingSpacing: CGFloat? = nil
+  ) -> some View {
+    modifier(
+      DayflowSurfaceModifier(
+        role: .floatingControl,
+        cornerRadius: cornerRadius,
+        glassShape: shape,
+        isGlassInteractive: isInteractive,
+        glassGroupingSpacing: groupingSpacing
+      )
+    )
   }
 
-  func dayflowPopoverSurface(cornerRadius: CGFloat = 16) -> some View {
-    modifier(DayflowSurfaceModifier(role: .popoverSurface, cornerRadius: cornerRadius))
+  func dayflowPopoverSurface(
+    cornerRadius: CGFloat = 16,
+    shape: DayflowGlassSurfaceShape? = nil,
+    isInteractive: Bool = true,
+    groupingSpacing: CGFloat? = nil
+  ) -> some View {
+    modifier(
+      DayflowSurfaceModifier(
+        role: .popoverSurface,
+        cornerRadius: cornerRadius,
+        glassShape: shape,
+        isGlassInteractive: isInteractive,
+        glassGroupingSpacing: groupingSpacing
+      )
+    )
   }
 
-  func dayflowModalSurface(cornerRadius: CGFloat = 18) -> some View {
-    modifier(DayflowSurfaceModifier(role: .modalSurface, cornerRadius: cornerRadius))
+  func dayflowModalSurface(
+    cornerRadius: CGFloat = 18,
+    shape: DayflowGlassSurfaceShape? = nil,
+    isInteractive: Bool = true,
+    groupingSpacing: CGFloat? = nil
+  ) -> some View {
+    modifier(
+      DayflowSurfaceModifier(
+        role: .modalSurface,
+        cornerRadius: cornerRadius,
+        glassShape: shape,
+        isGlassInteractive: isInteractive,
+        glassGroupingSpacing: groupingSpacing
+      )
+    )
   }
 
   func dayflowOnboardingPanel(cornerRadius: CGFloat = 18) -> some View {
