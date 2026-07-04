@@ -80,7 +80,7 @@ struct TimelineFeedbackModal: View {
           .frame(width: 22, height: 22)
       }
       .buttonStyle(.plain)
-      .dayflowFloatingControl(cornerRadius: 11)
+      .dayflowFloatingControl(cornerRadius: 11, groupingSpacing: 8)
       .pointingHandCursor()
       .offset(x: -8, y: 6)
     }
@@ -101,7 +101,7 @@ struct TimelineFeedbackModal: View {
     }
     .padding(24)
     .frame(width: 286)
-    .dayflowModalSurface(cornerRadius: 10)
+    .dayflowModalSurface(cornerRadius: 10, groupingSpacing: 8)
   }
 
   private var formContent: some View {

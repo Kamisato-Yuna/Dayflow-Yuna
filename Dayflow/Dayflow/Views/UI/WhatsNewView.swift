@@ -153,7 +153,7 @@ struct WhatsNewView: View {
               .padding(8)
           }
           .buttonStyle(PlainButtonStyle())
-          .dayflowFloatingControl(cornerRadius: 16)
+          .dayflowFloatingControl(cornerRadius: 16, groupingSpacing: 8)
           .pointingHandCursor()
           .accessibilityLabel("关闭")
           .keyboardShortcut(.cancelAction)
@@ -224,7 +224,7 @@ struct WhatsNewView: View {
     }
     .frame(maxHeight: 760)
     .frame(width: 780)
-    .dayflowModalSurface(cornerRadius: 18)
+    .dayflowModalSurface(cornerRadius: 18, groupingSpacing: 8)
     .onAppear {
       AnalyticsService.shared.screen("whats_new")
       if didHydrateSurveyState == false {

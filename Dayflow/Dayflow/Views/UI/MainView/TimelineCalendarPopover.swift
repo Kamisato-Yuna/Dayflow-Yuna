@@ -82,7 +82,7 @@ struct TimelineCalendarPopover: View {
     .padding(.top, Self.topPadding)
     .padding(.bottom, Self.bottomPadding)
     .frame(width: Self.preferredWidth, alignment: .topLeading)
-    .dayflowPopoverSurface(cornerRadius: 10)
+    .dayflowPopoverSurface(cornerRadius: 10, groupingSpacing: 8)
   }
 
   private var monthHeader: some View {

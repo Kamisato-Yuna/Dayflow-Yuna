@@ -176,7 +176,7 @@ struct VideoExpansionOverlay: View {
         .offset(y: scrubberOffset)
     }
     .frame(width: targetWidth, height: targetHeight)
-    .dayflowModalSurface(cornerRadius: 14)
+    .dayflowModalSurface(cornerRadius: 14, groupingSpacing: 8)
     .clipShape(RoundedRectangle(cornerRadius: 12))
   }
 
@@ -227,7 +227,7 @@ struct VideoExpansionOverlay: View {
             Circle()
               .strokeBorder(Color.white.opacity(0.9), lineWidth: 2)
               .frame(width: 64, height: 64)
-              .background(Circle().fill(Color.black.opacity(0.35)))
+              .background(Circle().fill(.regularMaterial))
             Image(systemName: "play.fill")
               .foregroundColor(.white)
               .font(.system(size: 24, weight: .bold))
@@ -249,7 +249,7 @@ struct VideoExpansionOverlay: View {
             .padding(.vertical, 6)
         }
         .buttonStyle(ScaleButtonStyle())
-        .dayflowFloatingControl(cornerRadius: 8)
+        .dayflowFloatingControl(cornerRadius: 8, groupingSpacing: 8)
         .padding(12)
         .accessibilityLabel("播放速度")
         .transition(
@@ -659,7 +659,7 @@ struct VideoPlayerModal: View {
                     Circle()
                       .strokeBorder(Color.white.opacity(0.9), lineWidth: 2)
                       .frame(width: 64, height: 64)
-                      .background(Circle().fill(Color.black.opacity(0.35)))
+                      .background(Circle().fill(.regularMaterial))
                     Image(systemName: "play.fill")
                       .foregroundColor(.white)
                       .font(.system(size: 24, weight: .bold))
@@ -687,7 +687,7 @@ struct VideoPlayerModal: View {
                     .padding(.vertical, 6)
                 }
                 .buttonStyle(ScaleButtonStyle())
-                .dayflowFloatingControl(cornerRadius: 8)
+                .dayflowFloatingControl(cornerRadius: 8, groupingSpacing: 8)
                 .padding(12)
                 .accessibilityLabel("播放速度")
                 .transition(
@@ -743,7 +743,7 @@ struct VideoPlayerModal: View {
       width: (containerSize?.width ?? 800) * 0.9,
       height: (containerSize?.height ?? 600) * 0.9
     )
-    .dayflowModalSurface(cornerRadius: 14)
+    .dayflowModalSurface(cornerRadius: 14, groupingSpacing: 8)
     .onAppear {
       // Modal opened
       AnalyticsService.shared.capture(

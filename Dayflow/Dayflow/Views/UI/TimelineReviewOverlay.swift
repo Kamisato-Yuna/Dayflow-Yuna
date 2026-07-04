@@ -127,7 +127,7 @@ struct TimelineReviewOverlay: View {
             .frame(width: 28, height: 28)
         }
         .buttonStyle(.plain)
-        .dayflowFloatingControl(cornerRadius: 14)
+        .dayflowFloatingControl(cornerRadius: 14, groupingSpacing: 8)
         .pointingHandCursor()
         .padding(.trailing, 22)
         .padding(.top, 16)
@@ -256,7 +256,7 @@ struct TimelineReviewOverlay: View {
           .padding(.vertical, 10)
       }
       .buttonStyle(.plain)
-      .dayflowFloatingControl(cornerRadius: 16)
+      .dayflowFloatingControl(cornerRadius: 16, groupingSpacing: 8)
       .pointingHandCursor()
     }
     .frame(maxWidth: 500)

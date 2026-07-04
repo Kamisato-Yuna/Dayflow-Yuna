@@ -371,7 +371,7 @@ private struct ColorSwatch: View {
           .foregroundColor(.white)
           .padding(.vertical, 4)
           .padding(.horizontal, 8)
-          .background(Color.black.opacity(0.8))
+          .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
           .clipShape(RoundedRectangle(cornerRadius: 4))
           .offset(y: -30)
           .allowsHitTesting(false)
@@ -927,7 +927,7 @@ struct ColorOrganizerRoot: View {
       }
       .padding(.horizontal, 14)
       .padding(.vertical, 8)
-      .dayflowFloatingControl(cornerRadius: 6)
+      .dayflowFloatingControl(cornerRadius: 6, groupingSpacing: 8)
       .opacity(canAddMoreCategories ? 1 : 0.45)
     }
     .buttonStyle(.plain)
@@ -1123,7 +1123,7 @@ struct ColorOrganizerRoot: View {
           .padding(.horizontal, 59)
           .padding(.vertical, 18)
           .frame(width: 160, alignment: .center)
-          .dayflowFloatingControl(cornerRadius: 12)
+          .dayflowFloatingControl(cornerRadius: 12, groupingSpacing: 8)
           .opacity(isEnabled ? 1.0 : 0.4)
       }
       .buttonStyle(.plain)

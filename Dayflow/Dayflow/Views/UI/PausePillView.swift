@@ -169,7 +169,7 @@ struct PausePillView: View {
     }
     .frame(width: pillWidth, height: 32)
     .clipShape(Capsule())
-    .dayflowFloatingControl(cornerRadius: 16)
+    .dayflowFloatingControl(cornerRadius: 16, groupingSpacing: 8)
     .contentShape(Capsule())
     .onTapGesture(perform: handlePillTap)
     .simultaneousGesture(

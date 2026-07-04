@@ -56,7 +56,7 @@ struct CategoryPickerOverlay: View {
     .padding(.horizontal, 12)
     .padding(.vertical, 12)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .dayflowPopoverSurface(cornerRadius: 6)
+    .dayflowPopoverSurface(cornerRadius: 6, groupingSpacing: 8)
     .clipShape(
       UnevenRoundedRectangle(
         cornerRadii: .init(

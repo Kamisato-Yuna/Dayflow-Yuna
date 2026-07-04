@@ -74,7 +74,7 @@ struct CategoryPickerView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .dayflowPopoverSurface(cornerRadius: 6)
+    .dayflowPopoverSurface(cornerRadius: 6, groupingSpacing: 8)
     .clipShape(
       UnevenRoundedRectangle(
         cornerRadii: .init(
@@ -95,7 +95,7 @@ struct CategoryPickerView: View {
       }
       .buttonStyle(.plain)
       .padding(6)
-      .dayflowFloatingControl(cornerRadius: 6)
+      .dayflowFloatingControl(cornerRadius: 6, groupingSpacing: 8)
       .offset(x: -8, y: 8)
     }
   }
