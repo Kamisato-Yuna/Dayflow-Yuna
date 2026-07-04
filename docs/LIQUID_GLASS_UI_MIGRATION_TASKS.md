@@ -14,7 +14,7 @@
 请在 /Users/yuna/ToolsProject-Github/Dayflow-Yuna 仓库、当前分支 codex/liquid-glass-ui-refresh 上执行 docs/LIQUID_GLASS_UI_MIGRATION_TASKS.md 中上述任务编号对应的任务。
 
 执行要求：
-1. 开始前读取 CLAUDE.md、docs/LIQUID_GLASS_UI_MIGRATION_TASKS.md、该任务允许范围内的现有文件。
+1. 开始前读取 AGENTS.md、CLAUDE.md、docs/LIQUID_GLASS_UI_MIGRATION_TASKS.md、该任务允许范围内的现有文件。
 2. 如果文档中找不到上述任务编号，停止并报告，不要猜测任务内容。
 3. 如果仓库根目录存在 .codegraph/，先用 CodeGraph 理解目标文件、调用关系和影响面，再做搜索或编辑。
 4. 开发前先用中文复述本任务的实现方案、允许修改范围、验证命令；随后按方案执行。若发现任务范围不足以编译或达成验收，先报告需要扩展的文件，不要顺手扩大范围。
@@ -126,6 +126,10 @@ git diff --check
 | LG21 | Settings 与 Chat 控件 OS26 补齐 | P2 | 为 settings/chat 的 composer、provider toggle、control surface 补齐 glass path。 |
 | LG22 | Onboarding 控件统一收口 | P2 | 将 onboarding CTA/provider/category/permission 控件统一到新 surface/button 体系。 |
 | LG23 | 最终视觉 QA 与文档收口 | P0 | 对 LG16-LG22 后状态做残留扫描、视觉验收清单和文档更新。 |
+| LG24 | 内页强制浅色与对比度收口 | P0 | 修复真实窗口验收暴露的 Daily/Weekly/Settings/Chat 浅色断层和 Feedback 深色低对比问题。 |
+| LG25 | Weekly 图表 dark-aware 精修 | P0 | 修复 Weekly header、图表标签、空白格和 footer 的黑字/强白格割裂问题。 |
+| LG26 | 跨页面控件材质统一精修 | P1 | 收口 Daily、Chat、Settings、Feedback 的按钮、输入框、disabled chip 和 control surface。 |
+| LG27 | macOS 外观与可访问性最终 QA | P1 | 验证 macOS 15 fallback、macOS 26 Liquid Glass、Reduce Transparency/Increase Contrast。 |
 
 ## LG00：UI 迁移基线清单与视觉验收框架
 
@@ -1314,20 +1318,361 @@ env GIT_CONFIG_GLOBAL=/private/tmp/dayflow-gitconfig GIT_ALLOW_PROTOCOL=file:htt
 docs(ui): finalize liquid glass follow-up audit
 ```
 
+## LG24：内页强制浅色与对比度收口
+
+背景：
+
+- 2026-07-04 真实窗口验收使用当前源码重建产物：
+  `build/review-derived-lg-verify/Build/Products/Debug/Dayflow.app`。
+- 该产物确认 `LSMinimumSystemVersion = 15.1`，运行进程路径确认来自本地构建：
+  `build/review-derived-lg-verify/Build/Products/Debug/Dayflow.app/Contents/MacOS/Dayflow`。
+- 主窗口 shell 已进入深色中性 glass/material 方向，但 Daily、Weekly、Settings、Chat 内页仍存在强制浅色或浅色大面板断层；Feedback 页面在深色背景上存在低对比黑字。
+
+目标：
+
+- 移除内页强制 `.environment(\.colorScheme, .light)` 对整体设计系统的破坏。
+- 让 Daily、Weekly、Settings、Chat 与主窗口 shell 使用同一套中性半透明 material/token 体系。
+- 修复 Feedback/BugReport 深色背景上的硬编码黑字，确保 macOS 15 material path 和 macOS 26 Liquid Glass path 都可读。
+- 保留图表、输入框、导出图像等内容层的可读性，不把所有内容区域无差别 glass 化。
+
+允许范围：
+
+- `Dayflow/Dayflow/Views/UI/DailyView.swift`
+- `Dayflow/Dayflow/Views/UI/DailyView+Access.swift`
+- `Dayflow/Dayflow/Views/UI/DailyView+Provider.swift`
+- `Dayflow/Dayflow/Views/UI/DailyView+Standup.swift`
+- `Dayflow/Dayflow/Views/UI/DailyView+Workflow.swift`
+- `Dayflow/Dayflow/Views/UI/DailyAccessLockedViews.swift`
+- `Dayflow/Dayflow/Views/UI/DailyStandupComponents.swift`
+- `Dayflow/Dayflow/Views/UI/DailyWorkflowGrid.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/WeeklyView.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/WeeklyAccessLockedView.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/*.swift`
+- `Dayflow/Dayflow/Views/UI/SettingsView.swift`
+- `Dayflow/Dayflow/Views/UI/Settings/*.swift`
+- `Dayflow/Dayflow/Views/UI/ChatView.swift`
+- `Dayflow/Dayflow/Views/UI/ChatView+Content.swift`
+- `Dayflow/Dayflow/Views/UI/ChatMessageViews.swift`
+- `Dayflow/Dayflow/Views/UI/ChatComposerTextField.swift`
+- `Dayflow/Dayflow/Views/UI/ChatStylesAndDebug.swift`
+- `Dayflow/Dayflow/Views/UI/ChatWelcomeComponents.swift`
+- `Dayflow/Dayflow/Views/UI/ChatWorkStatusViews.swift`
+- `Dayflow/Dayflow/Views/UI/ChatPanelView.swift`
+- `Dayflow/Dayflow/Views/UI/ChatCharts.swift`
+- `Dayflow/Dayflow/Views/UI/ChatMarkdownRenderer.swift`
+- `Dayflow/Dayflow/Views/Components/ToolCallBubble.swift`
+- `Dayflow/Dayflow/Views/UI/BugReportView.swift`
+- `Dayflow/Dayflow/Views/UI/DayflowSurfaceStyles.swift`（仅 token/modifier 必要扩展）
+- `Dayflow/Dayflow/Views/UI/DayflowUIStyles.swift`（仅 token 必要扩展）
+- `Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift`（仅封装必要扩展）
+- `scripts/audit-liquid-glass-final.sh`（仅当需要把本任务发现补进最终扫描）
+- `docs/LIQUID_GLASS_UI_MIGRATION_INVENTORY.md`（仅当需要记录本任务的视觉验收结论）
+
+关键改动：
+
+1. 移除或收窄以下强制浅色环境，不允许继续让整页固定 light scheme：
+   - `DailyView.swift`
+   - `WeeklyView.swift`
+   - `SettingsView.swift`
+   - `SettingsProvidersTabView.swift`
+   - `ChatView.swift`
+2. 将 Daily/Weekly/Settings/Chat 的页面背景、section card、空状态、输入区、provider/status controls 接入 `DayflowSurfaceToken` / `DayflowContentToken` / `DayflowSurfaceButton`。
+3. `BugReportView` 不再使用 `.black.opacity(...)` 作为正文/标题颜色；改用 semantic label token 或 surface-aware text token。
+4. Weekly 图表和导出内容可以保留必要的浅色内容层，但周报页面 chrome、section card、说明文本不应强制旧白底。
+5. Settings 表单输入框可保留系统可读输入背景，但外层 panel、tab selection、section chrome 需与全局 material 风格一致。
+6. Chat 消息正文、代码块、tool call 要优先保证可读；composer/provider toggle/floating controls 与全局 glass 控件体系一致。
+7. 不改 AI provider、Daily 生成、Weekly 数据、Chat service、Settings 存储、BugReport action 等业务逻辑。
+
+验收标准：
+
+- Timeline shell、Daily、Weekly、Settings、Chat、Feedback 在同一构建中视觉连续，不再出现“深色 shell + 白色内页”的断层。
+- Feedback 页面在深色背景下标题、正文、分组标题、按钮文字均可读。
+- macOS 15.1/15.7 使用中性 translucent/material fallback；macOS 26+ 在共享封装下使用 Liquid Glass，页面代码不新增散落的无保护 macOS 26 API。
+- Reduce Transparency / Increase Contrast 下不依赖透明背景才能读清文字。
+- 若 `Color.white`、浅色输入框或浅色图表背景仍保留，必须是内容层或系统输入控件的可读性需要，并在交付说明中逐条解释。
+
+验证命令：
+
+```bash
+rg -n 'environment\(\\\.colorScheme, \.light\)|foregroundColor\(\.black\.opacity|Color\.white|background\(Color\.white|\.fill\(Color\.white' \
+  Dayflow/Dayflow/Views/UI/DailyView.swift \
+  Dayflow/Dayflow/Views/UI/DailyView+Access.swift \
+  Dayflow/Dayflow/Views/UI/DailyView+Provider.swift \
+  Dayflow/Dayflow/Views/UI/DailyView+Standup.swift \
+  Dayflow/Dayflow/Views/UI/DailyView+Workflow.swift \
+  Dayflow/Dayflow/Views/UI/DailyAccessLockedViews.swift \
+  Dayflow/Dayflow/Views/UI/DailyStandupComponents.swift \
+  Dayflow/Dayflow/Views/UI/DailyWorkflowGrid.swift \
+  Dayflow/Dayflow/Views/UI/Weekly/WeeklyView.swift \
+  Dayflow/Dayflow/Views/UI/Weekly/WeeklyAccessLockedView.swift \
+  Dayflow/Dayflow/Views/UI/Weekly/Sections \
+  Dayflow/Dayflow/Views/UI/SettingsView.swift \
+  Dayflow/Dayflow/Views/UI/Settings \
+  Dayflow/Dayflow/Views/UI/Chat* \
+  Dayflow/Dayflow/Views/Components/ToolCallBubble.swift \
+  Dayflow/Dayflow/Views/UI/BugReportView.swift
+bash scripts/audit-liquid-glass-final.sh
+git diff --check
+env GIT_CONFIG_GLOBAL=/private/tmp/dayflow-gitconfig GIT_ALLOW_PROTOCOL=file:https xcodebuild -project Dayflow/Dayflow.xcodeproj -scheme Dayflow -configuration Debug -derivedDataPath build/local-derived CODE_SIGN_IDENTITY='' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build
+```
+
+真实窗口验收建议：
+
+```bash
+plutil -p build/local-derived/Build/Products/Debug/Dayflow.app/Contents/Info.plist | rg 'LSMinimumSystemVersion|CFBundleShortVersionString|CFBundleVersion'
+open -n -F build/local-derived/Build/Products/Debug/Dayflow.app
+pgrep -afil 'build/local-derived/Build/Products/Debug/Dayflow.app/Contents/MacOS/Dayflow'
+```
+
+人工截图检查点：
+
+- Timeline 主窗口 shell
+- Daily unlocked/locked 或当前可进入状态
+- Weekly overview 与 section card
+- Settings provider/storage/privacy tab
+- Chat welcome/composer/provider controls
+- Feedback/BugReport 页面
+
+建议提交信息：
+
+```text
+fix(ui): align inner pages with glass surfaces
+```
+
+## LG25：Weekly 图表 dark-aware 精修
+
+背景：
+
+- LG24 后 Weekly 不再是整页浅色断层，但真实窗口验收发现 Weekly 仍有旧图表语义残留。
+- 主要问题集中在 header 日期硬编码黑字、hover 暖色圆底、workflow/heatmap 强白空格、图表轴标签和 footer 黑字。
+- 图表和导出内容需要保留清晰可读，但不应在主窗口深色 glass/material 壳层里形成刺眼白块。
+
+目标：
+
+- 将 Weekly header、图表标签、空状态格、footer insight、axis/legend 文案改为 dark-aware / surface-aware token。
+- 保留 Weekly 导出图像的可读性，不破坏 `WeeklyExportableGraphic` 的导出尺寸、水印和内容结构。
+- 让 Weekly overview 与 Timeline/Daily/Settings 的中性半透明风格一致，避免“图表贴了旧白纸”的割裂感。
+
+允许范围：
+
+- `Dayflow/Dayflow/Views/UI/Weekly/WeeklyHeader.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/WeeklyView.swift`（仅 `WeeklyExportableGraphic` / section chrome 必要调整）
+- `Dayflow/Dayflow/Views/UI/Weekly/WeeklyAccessLockedView.swift`（仅同步 token 必要调整）
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyWorkflowSection.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyFocusHeatmapSection.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyContextChartsSection.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyContextShiftComparisonSection.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyDonutSection.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyTreemapSection.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklySankeySection.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyApplicationInteractionsSection.swift`
+- `Dayflow/Dayflow/Views/UI/DayflowSurfaceStyles.swift`（仅 Weekly token 必要扩展）
+- `Dayflow/Dayflow/Views/UI/DayflowUIStyles.swift`（仅语义色/token 必要扩展）
+- `Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift`（仅共享 surface 必要扩展）
+
+关键改动：
+
+1. 移除 Weekly 视觉路径中的硬编码 `Color.black`、强白空格和暖色 hover 背景；改为 `DayflowWeeklyToken` 或共享 semantic token。
+2. 为 workflow/heatmap 的 empty cell 建立 dark-aware neutral fill，降低深色界面中的强白闪烁感。
+3. 图表 axis/legend/footer 文案必须在深色、Reduce Transparency 和 Increase Contrast 下可读。
+4. 导出内容如果必须保留浅色层，需要把 display path 和 export path 的 token 意图写清楚，不允许让主窗口 display path 继续使用旧黑字。
+5. 不改 Weekly 数据生成、图表数据模型、导出文件名、存储读取和周报解锁逻辑。
+
+验收标准：
+
+- Weekly 顶部日期、导航按钮、section 标题、axis、legend、footer insight 在深色 shell 下可读。
+- Workflow / focus heatmap 的空格不再呈现大面积刺眼纯白；仍能区分“无数据”和“有数据”。
+- Weekly 图表内容层保留必要清晰度，但与主壳材质连续，不再像嵌入旧白底图。
+- macOS 15.1/15.7 fallback 与 macOS 26+ Liquid Glass path 都通过共享 token，不新增散落无保护 OS26 API。
+
+验证命令：
+
+```bash
+rg -n 'Color\.black|Color\(red: 0\.95|FFEBD3|foregroundStyle\(Color\.black|foregroundColor\(\.black|Color\.white|fill\(Color\.white' \
+  Dayflow/Dayflow/Views/UI/Weekly/WeeklyHeader.swift \
+  Dayflow/Dayflow/Views/UI/Weekly/WeeklyView.swift \
+  Dayflow/Dayflow/Views/UI/Weekly/WeeklyAccessLockedView.swift \
+  Dayflow/Dayflow/Views/UI/Weekly/Sections
+bash scripts/audit-liquid-glass-final.sh
+git diff --check
+env GIT_CONFIG_GLOBAL=/private/tmp/dayflow-gitconfig GIT_ALLOW_PROTOCOL=file:https xcodebuild -project Dayflow/Dayflow.xcodeproj -scheme Dayflow -configuration Debug -derivedDataPath build/local-derived CODE_SIGN_IDENTITY='' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build
+```
+
+真实窗口验收：
+
+- 按 `AGENTS.md` 的 LG28 / Computer Use 规则确认运行的是最新本地 build，而不是正式版或旧 derivedData。
+- 检查 Weekly overview、workflow、focus heatmap、context chart、treemap/sankey 当前位置。
+- 记录仍保留浅色内容层的原因。
+
+建议提交信息：
+
+```text
+fix(weekly): refine dark-aware chart surfaces
+```
+
+## LG26：跨页面控件材质统一精修
+
+背景：
+
+- LG24 后主页面连续性成立，但 Daily、Chat、Settings、Feedback 中仍有控件层级不一致：白色 pill、黑色输入槽、disabled chip 低对比、进度条过亮、说明文字过弱。
+- 这些问题不属于单个页面断层，而是 shared button/surface token 的二次收口。
+
+目标：
+
+- 统一 Daily、Chat、Settings、Feedback 的按钮、输入框、toggle、provider chip、disabled controls 和小型工具按钮材质。
+- 保留系统输入控件的可读性，但让外层 control chrome 与 Codex-like 中性半透明工具感一致。
+- 将页面内临时色值收敛到 `DayflowSurfaceButton`、`DayflowContentToken`、`DayflowSurfaceToken` 或新的共享 control token。
+
+允许范围：
+
+- `Dayflow/Dayflow/Views/UI/DailyView+Provider.swift`
+- `Dayflow/Dayflow/Views/UI/DailyView+Standup.swift`
+- `Dayflow/Dayflow/Views/UI/DailyView+Workflow.swift`
+- `Dayflow/Dayflow/Views/UI/DailyStandupComponents.swift`
+- `Dayflow/Dayflow/Views/UI/DailyWorkflowGrid.swift`
+- `Dayflow/Dayflow/Views/UI/SettingsView.swift`
+- `Dayflow/Dayflow/Views/UI/Settings/SettingsComponents.swift`
+- `Dayflow/Dayflow/Views/UI/Settings/SettingsStorageTabView.swift`
+- `Dayflow/Dayflow/Views/UI/Settings/SettingsProvidersTabView.swift`
+- `Dayflow/Dayflow/Views/UI/Settings/SettingsRecordingPrivacyTabView.swift`
+- `Dayflow/Dayflow/Views/UI/Settings/SettingsDataTabView.swift`
+- `Dayflow/Dayflow/Views/UI/Settings/SettingsOtherTabView.swift`
+- `Dayflow/Dayflow/Views/UI/ChatView.swift`
+- `Dayflow/Dayflow/Views/UI/ChatView+Content.swift`
+- `Dayflow/Dayflow/Views/UI/ChatWelcomeComponents.swift`
+- `Dayflow/Dayflow/Views/UI/ChatComposerTextField.swift`
+- `Dayflow/Dayflow/Views/UI/ChatStylesAndDebug.swift`
+- `Dayflow/Dayflow/Views/UI/ChatPanelView.swift`
+- `Dayflow/Dayflow/Views/UI/ChatWorkStatusViews.swift`
+- `Dayflow/Dayflow/Views/Components/ToolCallBubble.swift`
+- `Dayflow/Dayflow/Views/UI/BugReportView.swift`
+- `Dayflow/Dayflow/Views/UI/DayflowSurfaceStyles.swift`（仅 control token 必要扩展）
+- `Dayflow/Dayflow/Views/UI/DayflowUIStyles.swift`（仅 control token 必要扩展）
+- `Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift`（仅共享封装必要扩展）
+
+关键改动：
+
+1. Daily 的 copy/regenerate/provider/settings 控件不再混用旧白色 pill 或临时绿色块；统一为 primary/secondary/destructive/utility 控件语义。
+2. Chat welcome prompt、composer、provider controls、disabled state 与全局 control token 对齐；禁用状态必须可读但不过亮。
+3. Settings 输入框、menu、progress、toggle 周边说明文字、status badge 和小按钮统一材质与对比度。
+4. Feedback/BugReport 按钮与正文说明使用同一套 surface-aware text/control token。
+5. 不改 Daily 生成、Chat provider、Settings 存储、Feedback action、API key 存取等业务逻辑。
+
+验收标准：
+
+- Daily、Chat、Settings、Feedback 控件看起来属于同一套系统，不再出现旧白 pill / 黑槽 / 暖色按钮残留。
+- disabled controls、secondary text、说明文案在深色背景下可读。
+- Settings Provider/Storage/Privacy/Data/Other 子页至少逐页抽查。
+- macOS 26+ 控件 glass path 仍集中在封装内；macOS 15 fallback 不是简陋降级。
+
+验证命令：
+
+```bash
+rg -n 'Color\.white|background\(Color\.white|foregroundStyle\(Color\.black|foregroundColor\(\.black|F7F3F0|FFFAF7|FFEBD3|E5D8CA|F4A867' \
+  Dayflow/Dayflow/Views/UI/DailyView+Provider.swift \
+  Dayflow/Dayflow/Views/UI/DailyView+Standup.swift \
+  Dayflow/Dayflow/Views/UI/DailyView+Workflow.swift \
+  Dayflow/Dayflow/Views/UI/DailyStandupComponents.swift \
+  Dayflow/Dayflow/Views/UI/DailyWorkflowGrid.swift \
+  Dayflow/Dayflow/Views/UI/SettingsView.swift \
+  Dayflow/Dayflow/Views/UI/Settings \
+  Dayflow/Dayflow/Views/UI/Chat* \
+  Dayflow/Dayflow/Views/Components/ToolCallBubble.swift \
+  Dayflow/Dayflow/Views/UI/BugReportView.swift
+bash scripts/audit-liquid-glass-final.sh
+git diff --check
+env GIT_CONFIG_GLOBAL=/private/tmp/dayflow-gitconfig GIT_ALLOW_PROTOCOL=file:https xcodebuild -project Dayflow/Dayflow.xcodeproj -scheme Dayflow -configuration Debug -derivedDataPath build/local-derived CODE_SIGN_IDENTITY='' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build
+```
+
+真实窗口验收：
+
+- 按 `AGENTS.md` 的 LG28 / Computer Use 规则确认运行的是最新本地 build。
+- 检查 Daily unlocked 当前状态、Chat welcome/composer、Feedback、Settings Provider/Storage/Privacy/Data/Other。
+- 若权限 toast 或 overlay 遮挡内容，先记录遮挡状态再关闭继续检查。
+
+建议提交信息：
+
+```text
+feat(ui): unify glass control materials
+```
+
+## LG27：macOS 外观与可访问性最终 QA
+
+背景：
+
+- LG25/LG26 后应进入最终外观和可访问性验证：macOS 15.1/15.7 material fallback、macOS 26+ Liquid Glass path、Reduce Transparency、Increase Contrast、深浅外观都需要明确记录。
+- 本任务优先是 QA 和共享 token 收口，不应借机扩大页面级重构。
+
+目标：
+
+- 验证并记录 macOS 15 fallback 与 macOS 26+ Liquid Glass 的视觉路径。
+- 检查 Reduce Transparency / Increase Contrast / Reduce Motion 下文字、边界、控件状态和动画是否仍可用。
+- 如发现问题，优先修共享 token 或 modifier；若必须改页面文件，停止并登记新的后续任务，不要扩大本任务范围。
+
+允许范围：
+
+- `Dayflow/Dayflow/Views/UI/DayflowSurfaceStyles.swift`
+- `Dayflow/Dayflow/Views/UI/DayflowUIStyles.swift`
+- `Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift`
+- `scripts/audit-liquid-glass-final.sh`
+- `docs/LIQUID_GLASS_UI_MIGRATION_INVENTORY.md`
+- `docs/LIQUID_GLASS_UI_MIGRATION_TASKS.md`
+
+关键改动：
+
+1. 补齐共享 token 对 Reduce Transparency / Increase Contrast / dark-light appearance 的处理。
+2. 若需要，增强最终扫描脚本，明确哪些 `Color.white`、`Color.black`、浅色内容层是允许保留的内容层。
+3. 更新 inventory：记录 LG25-LG27 后的真实窗口验收结果、仍保留内容层原因、未解决问题。
+4. 不修改页面业务逻辑，不新增 macOS 26 API 到页面代码。
+
+验收标准：
+
+- macOS 15.1/15.7 路径呈现中性半透明工具感；macOS 26+ 路径使用共享 Liquid Glass 封装。
+- Reduce Transparency 开启时不依赖透明背景才能读清文字。
+- Increase Contrast 开启时边界和控件状态更清楚，而不是变得更混乱。
+- Reduce Motion 下线条动画和页面过渡不会卡住或丢失必要状态。
+- 若 Computer Use 可用，按 `AGENTS.md` 规则做真实窗口逐页检查；若不可用，明确说明降级验证方式。
+
+验证命令：
+
+```bash
+bash scripts/audit-liquid-glass-final.sh
+rg -n 'glassEffect|GlassEffect|GlassButtonStyle|GlassProminentButtonStyle|backgroundExtensionEffect|#available\(macOS 26|@available\(macOS 26' Dayflow/Dayflow docs
+rg -n 'accessibilityReduceTransparency|accessibilityContrast|accessibilityReduceMotion|colorScheme' \
+  Dayflow/Dayflow/Views/UI/DayflowSurfaceStyles.swift \
+  Dayflow/Dayflow/Views/UI/DayflowUIStyles.swift \
+  Dayflow/Dayflow/Views/Components/DayflowGlassSurface.swift
+git diff --check
+env GIT_CONFIG_GLOBAL=/private/tmp/dayflow-gitconfig GIT_ALLOW_PROTOCOL=file:https xcodebuild -project Dayflow/Dayflow.xcodeproj -scheme Dayflow -configuration Debug -derivedDataPath build/local-derived CODE_SIGN_IDENTITY='' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO build
+```
+
+真实窗口验收：
+
+- 按 `AGENTS.md` 的 LG28 / Computer Use 规则启动并确认最新本地 build。
+- 检查 Timeline、Daily、Weekly、Chat、Feedback、Settings。
+- 分别记录普通外观、Reduce Transparency、Increase Contrast、Reduce Motion 的结果；如果系统设置无法自动切换，说明人工切换或降级方式。
+
+建议提交信息：
+
+```text
+docs(ui): finalize glass appearance QA
+```
+
 ## 最终人工验收清单
 
-完成 LG15 以及后续 LG16-LG23 收口后，建议人工逐项检查：
+完成 LG15 以及后续 LG16-LG27 收口后，建议人工逐项检查：
 
-1. 首次启动线条动画能完成并进入 onboarding 或主界面。
-2. Onboarding 全步骤在 900x508 最小窗口下没有文字重叠。
-3. Timeline day/week、activity selection、inspector、review prompt 可用。
-4. Daily locked/unlocked、standup、goal flow 可用。
-5. Weekly overview 和各图表 section 可读。
-6. Journal day/week/reminder 可读。
-7. Chat 长消息、代码块、composer、tool call 可用。
-8. Settings provider/storage/privacy/data tabs 可用。
-9. Calendar popover、category picker、feedback modal、What's New、video modal 可用。
-10. Reduce Motion 下线条动画和页面过渡不造成卡住。
-11. Reduce Transparency / Increase Contrast 下文字和控件边界仍清楚。
-12. macOS 15.7 路径呈现 Codex-like 中性半透明工具感。
-13. macOS 26+ 路径使用 Liquid Glass API，功能层和内容层层级清楚。
+1. 真实窗口验收前按 `AGENTS.md` 确认运行的是最新本地 build，不是正式版或旧 derivedData。
+2. 首次启动线条动画能完成并进入 onboarding 或主界面。
+3. Onboarding 全步骤在 900x508 最小窗口下没有文字重叠。
+4. Timeline day/week、activity selection、inspector、review prompt 可用。
+5. Daily locked/unlocked、standup、goal flow 可用。
+6. Weekly overview 和各图表 section 可读。
+7. Journal day/week/reminder 可读。
+8. Chat 长消息、代码块、composer、tool call 可用。
+9. Settings provider/storage/privacy/data tabs 可用。
+10. Calendar popover、category picker、feedback modal、What's New、video modal 可用。
+11. Reduce Motion 下线条动画和页面过渡不造成卡住。
+12. Reduce Transparency / Increase Contrast 下文字和控件边界仍清楚。
+13. macOS 15.7 路径呈现 Codex-like 中性半透明工具感。
+14. macOS 26+ 路径使用 Liquid Glass API，功能层和内容层层级清楚。

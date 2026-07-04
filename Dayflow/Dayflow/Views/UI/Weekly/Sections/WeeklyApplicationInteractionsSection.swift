@@ -36,7 +36,7 @@ private struct WeeklyApplicationNetworkPane: View {
 
         Text(snapshot.subtitle)
           .font(.custom("Figtree-Regular", size: 12))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
       }
       .offset(x: 29, y: 28)
 
@@ -87,7 +87,7 @@ private struct WeeklyApplicationNetworkPane: View {
 
       Text(title)
         .font(.custom("Figtree-Regular", size: 12))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
     }
   }
 }
@@ -190,7 +190,7 @@ private struct WeeklyPatternFlow: View {
 
       Text(pattern.description)
         .font(.custom("Figtree-Regular", size: 10))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
         .lineSpacing(1)
         .frame(width: 340, alignment: .leading)
     }
@@ -209,7 +209,7 @@ private struct WeeklyPatternFlow: View {
 
       Text(app.name)
         .font(.custom("Figtree-Regular", size: 14))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(1)
     }
   }
@@ -261,7 +261,7 @@ private struct WeeklyRabbitHoleFlow: View {
 
       Text(app.name)
         .font(.custom("Figtree-Regular", size: 14))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(1)
     }
   }
@@ -293,7 +293,7 @@ private func averagePill(
 
     Text(text)
       .font(.custom("Figtree-Regular", size: 12))
-      .foregroundStyle(Color.black)
+      .foregroundStyle(DayflowWeeklyToken.chartText)
       .lineLimit(1)
   }
   .padding(.horizontal, 7)

@@ -8,6 +8,8 @@ struct WeeklySankeySection: View {
   private let snapshot: WeeklySankeySnapshot?
   private let showsControls: Bool
   private let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(
     snapshot: WeeklySankeySnapshot? = nil,
@@ -49,7 +51,7 @@ struct WeeklySankeySection: View {
     HStack(spacing: 8) {
       Text(model.seedLabel)
         .font(.custom("Figtree-Medium", size: 11))
-        .foregroundStyle(Color(hex: "B16845"))
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
       Spacer(minLength: 12)
 
@@ -79,21 +81,27 @@ struct WeeklySankeySection: View {
     Button(action: action) {
       Text(title)
         .font(.custom("Figtree-Medium", size: 11))
-        .foregroundStyle(dataset == targetDataset ? Color(hex: "FF6B14") : Color(hex: "D77A43"))
+        .foregroundStyle(dataset == targetDataset ? DayflowWeeklyToken.accent : DayflowWeeklyToken.chartText)
         .padding(.horizontal, 9)
         .frame(height: 23)
         .background(
           RoundedRectangle(cornerRadius: 7, style: .continuous)
             .fill(
-              dataset == targetDataset
-                ? Color(hex: "FFECD8").opacity(0.98) : Color(hex: "FCEDDF").opacity(0.72))
+              DayflowWeeklyToken.controlFill(
+                isSelected: dataset == targetDataset,
+                colorScheme: colorScheme,
+                reduceTransparency: reduceTransparency
+              ))
         )
         .overlay(
           RoundedRectangle(cornerRadius: 7, style: .continuous)
             .stroke(
               dataset == targetDataset
-                ? Color(hex: "FF7A2F").opacity(0.42)
-                : Color(hex: "F7E3CF"),
+                ? DayflowWeeklyToken.accent.opacity(0.52)
+                : DayflowWeeklyToken.controlBorder(
+                  colorScheme: colorScheme,
+                  increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+                ),
               lineWidth: 1
             )
         )
@@ -434,7 +442,7 @@ private struct WeeklySankeyPlainLabel: View {
     VStack(alignment: .leading, spacing: 2) {
       Text(node.name)
         .font(.custom("Figtree-Regular", size: 10))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(1)
 
       metaLine(fontSize: 10)
@@ -457,7 +465,7 @@ private struct WeeklySankeyPlainLabel: View {
       Text(node.percent)
     }
     .font(.custom("Figtree-Regular", size: fontSize))
-    .foregroundStyle(Color(hex: "717171"))
+    .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
     .lineLimit(1)
   }
 }
@@ -477,7 +485,7 @@ private struct WeeklySankeyAppLabel: View {
       HStack(alignment: .firstTextBaseline, spacing: 5) {
         Text(node.name)
           .font(.custom("Figtree-Regular", size: 10))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.chartText)
           .lineLimit(1)
 
         HStack(alignment: .firstTextBaseline, spacing: 3) {
@@ -488,7 +496,7 @@ private struct WeeklySankeyAppLabel: View {
           Text(node.percent)
         }
         .font(.custom("Figtree-Regular", size: 9))
-        .foregroundStyle(Color(hex: "717171"))
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
         .lineLimit(1)
       }
       .lineLimit(1)

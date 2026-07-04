@@ -57,5 +57,13 @@ echo "== Background residuals to explain (code path) =="
 run_scan "Background residuals" 'Color\(red: 0\.98|FBF6EF|F7F3F0|FAF3EB|Color\.white\)|background\(Color\.white' "$APP_PATH"
 echo
 
+echo "== Scoped display residuals requiring follow-up range =="
+run_scan "Weekly display residuals outside LG25 allowlist" 'foregroundStyle\(Color\.black|Color\.black\.opacity' \
+  "$APP_PATH/Views/UI/Weekly/Sections/WeeklyOverviewSection.swift" \
+  "$APP_PATH/Views/UI/Weekly/Sections/WeeklyTreemapComponents.swift"
+run_scan "Chat control residuals outside LG26 allowlist" 'F4A867|E5D8CA' \
+  "$APP_PATH/Views/UI/ChatView+State.swift"
+echo
+
 echo "== Deployment targets =="
 run_scan "Deployment targets" 'MACOSX_DEPLOYMENT_TARGET = ' "$PROJECT_PBX"

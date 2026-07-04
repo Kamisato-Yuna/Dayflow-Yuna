@@ -189,7 +189,7 @@ private struct WeeklyDonutLegendRow: View {
 
         Text(item.name)
           .font(.custom("Figtree-Regular", size: 14))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.chartText)
           .lineLimit(1)
           .layoutPriority(1)
       }
@@ -198,7 +198,7 @@ private struct WeeklyDonutLegendRow: View {
 
       Text(percentageText)
         .font(.custom("Figtree-Regular", size: 14))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
         .frame(minWidth: 32, alignment: .trailing)
     }
   }

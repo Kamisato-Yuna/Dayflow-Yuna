@@ -938,6 +938,9 @@ private enum WeeklyExportWatermarkPlacement {
 }
 
 private struct WeeklyExportWatermark: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   var body: some View {
     HStack(spacing: 6) {
       Image("DayflowLogo")
@@ -958,7 +961,14 @@ private struct WeeklyExportWatermark: View {
       Capsule(style: .continuous)
         .stroke(Color(hex: "EBE6E3"), lineWidth: 1)
     )
-    .shadow(color: Color.black.opacity(0.05), radius: 6, y: 2)
+    .shadow(
+      color: DayflowWeeklyToken.displayShadow(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      radius: 6,
+      y: 2
+    )
   }
 }
 

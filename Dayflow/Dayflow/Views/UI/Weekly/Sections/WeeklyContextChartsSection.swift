@@ -177,7 +177,7 @@ struct WeeklyContextChartsSection: View {
 
       Text(snapshot.comparison.insight)
         .font(.custom("Figtree-Regular", size: 14))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(2)
         .minimumScaleFactor(0.82)
 
@@ -248,7 +248,7 @@ private struct WeeklyContextDistributionCard: View {
           ForEach(hourTicks, id: \.self) { tick in
             Text(tick)
               .font(.custom("Figtree-Regular", size: 8))
-              .foregroundStyle(Color.black)
+              .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
             if tick != hourTicks.last {
               Spacer(minLength: 0)
@@ -266,7 +266,7 @@ private struct WeeklyContextDistributionCard: View {
         ForEach(snapshot.days, id: \.self) { day in
           Text(day)
             .font(.custom("Figtree-Regular", size: 10))
-            .foregroundStyle(Color.black)
+            .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
             .frame(maxWidth: .infinity)
         }
       }
@@ -336,7 +336,7 @@ private struct WeeklyContextDistributionCard: View {
 
       Text(title)
         .font(.custom("Figtree-Regular", size: 10))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
     }
   }
 }
@@ -409,7 +409,7 @@ private struct WeeklyContextComparisonBarCard: View {
 
           Text(day.day)
             .font(.custom("Figtree-Regular", size: 12))
-            .foregroundStyle(Color.black)
+            .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
             .padding(.top, 10)
         }
       }
@@ -470,7 +470,7 @@ private struct WeeklyContextComparisonBarCard: View {
 
       Text(title)
         .font(.custom("Figtree-Regular", size: 10))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
     }
   }
 
@@ -484,7 +484,7 @@ private struct WeeklyContextComparisonBarCard: View {
 
         Text(snapshot.insight)
           .font(.custom("Figtree-Regular", size: 12))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.chartText)
           .lineSpacing(1)
           .frame(maxWidth: .infinity, alignment: .leading)
       }

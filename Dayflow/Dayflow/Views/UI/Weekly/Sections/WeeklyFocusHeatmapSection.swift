@@ -6,6 +6,8 @@ struct WeeklyFocusHeatmapSection: View {
   let width: CGFloat
   let cellGap: CGFloat
   let usesScrollContainers: Bool
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private enum Design {
     static let cardWidth: CGFloat = 958
@@ -134,7 +136,7 @@ struct WeeklyFocusHeatmapSection: View {
         Text(snapshot.distractedLabel)
       }
       .font(.custom("Figtree-Regular", size: 10))
-      .foregroundStyle(Color.black)
+      .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
       .frame(width: legendWidth)
     }
   }
@@ -165,7 +167,7 @@ struct WeeklyFocusHeatmapSection: View {
       ForEach(snapshot.rows) { row in
         Text(row.label)
           .font(.custom("Figtree-Regular", size: 10))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.chartText)
           .frame(width: Design.labelsWidth, height: Design.rowHeight, alignment: .leading)
       }
     }
@@ -190,7 +192,7 @@ struct WeeklyFocusHeatmapSection: View {
         ForEach(snapshot.timeLabels) { label in
           Text(label.label)
             .font(.custom("Figtree-Regular", size: 10))
-            .foregroundStyle(Color.black)
+            .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
             .frame(width: 34, alignment: axisAlignment(for: label))
             .offset(x: axisOffset(for: label))
         }
@@ -231,7 +233,10 @@ struct WeeklyFocusHeatmapSection: View {
     let intensity = abs(clampedValue)
 
     if intensity < DesignColor.neutralThreshold {
-      return DesignColor.neutral
+      return DayflowWeeklyToken.emptyCellFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
     }
 
     let progress = colorProgress(for: intensity)
@@ -529,7 +534,6 @@ private enum DesignColor {
   static let edgeFadeStrength = 0.65
   static let neutralThreshold = 0.045
 
-  static let neutral = Color(hex: "F2F2F2")
   static let focusSoft = Color(hex: "E3DBFD")
   static let focusDark = Color(hex: "4276E9")
   static let distractionSoft = Color(hex: "F8D1CA")

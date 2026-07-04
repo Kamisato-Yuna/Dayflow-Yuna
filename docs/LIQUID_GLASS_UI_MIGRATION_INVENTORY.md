@@ -69,6 +69,65 @@ that must be preserved.
   - 视觉验收清单
 - 目前未见新 `*.swift` 面向 LG23 的范围外修改；本任务保持为文档与只读审计脚本更新。
 
+## LG25-LG27 Display And Accessibility QA Update (2026-07-05)
+
+- Weekly display path now uses `DayflowWeeklyToken` for header title, navigation
+  hover fill, workflow and heatmap empty cells, axis labels, legend text, Sankey
+  labels, application-interaction labels, donut legend labels, context chart
+  labels, and display watermark shadow.
+- Weekly export structure, dimensions, watermark content, data models, file names,
+  and unlock/storage behavior were not changed. Export-specific light content
+  remains a chart/content readability choice rather than a main-window shell
+  surface.
+- Shared button/control tokens now give disabled controls and reduced-transparency
+  fallbacks stronger neutral surfaces and borders. Increase Contrast raises
+  disabled and floating-control borders through the same token layer.
+- The final audit script now reports scoped residuals that were intentionally not
+  edited because they sit outside the LG25/LG26 allowlists:
+  - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyOverviewSection.swift`
+  - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyTreemapComponents.swift`
+  - `Dayflow/Dayflow/Views/UI/ChatView+State.swift`
+- Runtime video and mp4 processing paths remain untouched.
+
+### LG25-LG27 Visual QA Notes
+
+- macOS 15.1/15.x path: standard SwiftUI/AppKit material, neutral semantic fills,
+  adaptive label colors, and stronger reduced-transparency solid fallbacks.
+- macOS 26+ path: unchanged guarded Liquid Glass entry remains centralized in
+  `DayflowLiquidGlassModifier`; no page-level unguarded macOS 26 API was added.
+- Reduce Transparency: shared surface and weekly empty-cell tokens switch to
+  solid AppKit control/background colors so text does not depend on translucency.
+- Increase Contrast: shared borders use higher opacity through token functions;
+  chart labels use AppKit label colors instead of fixed black.
+- Reduce Motion: no new motion path was added in LG25-LG27; existing animated
+  onboarding/tool-call paths continue to use their reduce-motion checks.
+
+### LG25-LG27 Computer Use Visual QA (2026-07-05)
+
+- Build reviewed:
+  `/Users/yuna/ToolsProject-Github/Dayflow-Yuna/build/lg25-lg27-derived/Build/Products/Debug/Dayflow.app`
+- Running PID reviewed: `89713`.
+- Info.plist fields: `LSMinimumSystemVersion = 15.1`,
+  `CFBundleShortVersionString = 1.14.1`, `CFBundleVersion = 113`.
+- Source branch/commit at review time: `codex/liquid-glass-ui-refresh`,
+  `d39df638`.
+- Pages reviewed with Computer Use: Timeline, Daily, Weekly, Chat, Feedback,
+  Settings Provider, Settings Storage, Settings Privacy, Settings Data, and
+  Settings Other.
+- Timeline initially showed a screen-recording permission toast. The blocked
+  state was recorded, then the toast was closed before continuing page review.
+- Weekly header, workflow, heatmap, Sankey, and application sections are readable
+  in the normal dark appearance; empty cells no longer render as strong white
+  gaps. Treemap and overview still have fixed-black display residuals outside
+  the LG25 allowlist and are recorded as follow-up scope.
+- Daily, Chat, Feedback, and Settings controls visually align with the shared
+  neutral material system in the normal appearance. `ChatView+State.swift`
+  composer border colors remain a scoped follow-up because that file is outside
+  the LG26 allowlist.
+- Reduce Transparency, Increase Contrast, and Reduce Motion were verified by
+  static token/code paths in this pass, not by changing system settings through
+  Computer Use.
+
 ### LG23 扫描结论（截至 2026-07-04）
 
 - 已清理的运行时以外 bundled 预置视频资产不应再出现在代码路径中。

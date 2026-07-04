@@ -181,7 +181,12 @@ enum DayflowSurfaceButtonToken {
         ? Color(nsColor: .systemRed).opacity(isHovered ? 0.56 : 0.50)
         : Color(nsColor: .systemRed).opacity(isHovered ? 0.44 : 0.40)
     case .disabled:
-      return Color(nsColor: .underPageBackgroundColor)
+      if reduceTransparency {
+        return Color(nsColor: .controlBackgroundColor)
+      }
+      return colorScheme == .dark
+        ? Color(nsColor: .controlBackgroundColor).opacity(0.62)
+        : Color(nsColor: .underPageBackgroundColor).opacity(0.92)
     }
   }
 
@@ -201,7 +206,9 @@ enum DayflowSurfaceButtonToken {
     case .destructive:
       return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.92 : 1)
     case .disabled:
-      return Color(nsColor: .tertiaryLabelColor)
+      return colorScheme == .dark
+        ? Color(nsColor: .secondaryLabelColor)
+        : Color(nsColor: .tertiaryLabelColor)
     }
   }
 
@@ -223,7 +230,7 @@ enum DayflowSurfaceButtonToken {
     case .destructive:
       return DayflowSurfaceAccent.critical.opacity(increaseContrast ? 0.8 : 0.6)
     case .disabled:
-      return Color(nsColor: .separatorColor).opacity(0.22)
+      return Color(nsColor: .separatorColor).opacity(increaseContrast ? 0.48 : 0.28)
     }
   }
 
@@ -342,6 +349,10 @@ enum DayflowWeeklyToken {
   static let separator = Color(nsColor: .separatorColor).opacity(0.62)
   static let focus = Color(hex: "628CFF")
   static let distraction = Color(nsColor: .systemRed)
+  static let chartTitle = Color(nsColor: .labelColor)
+  static let chartText = Color(nsColor: .labelColor)
+  static let chartSecondaryText = Color(nsColor: .secondaryLabelColor)
+  static let chartTertiaryText = Color(nsColor: .tertiaryLabelColor)
 
   static func cardFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
     DayflowContentToken.cardFill(
@@ -384,6 +395,38 @@ enum DayflowWeeklyToken {
     return colorScheme == .dark
       ? Color.white.opacity(0.06)
       : Color.white.opacity(0.34)
+  }
+
+  static func emptyCellFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .underPageBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color.white.opacity(0.085)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.58)
+  }
+
+  static func controlFill(
+    isSelected: Bool = false,
+    colorScheme: ColorScheme,
+    reduceTransparency: Bool
+  ) -> Color {
+    if isSelected {
+      return accent.opacity(colorScheme == .dark ? 0.28 : 0.16)
+    }
+    return secondaryChartFill(colorScheme: colorScheme, reduceTransparency: reduceTransparency)
+  }
+
+  static func controlBorder(colorScheme: ColorScheme, increaseContrast: Bool) -> Color {
+    DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: increaseContrast
+    )
+  }
+
+  static func displayShadow(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    guard !reduceTransparency else { return .clear }
+    return Color.black.opacity(colorScheme == .dark ? 0.18 : 0.07)
   }
 }
 

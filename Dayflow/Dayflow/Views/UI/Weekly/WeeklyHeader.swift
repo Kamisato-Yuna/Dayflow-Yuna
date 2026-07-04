@@ -14,7 +14,7 @@ struct WeeklyHeader: View {
 
       Text(title)
         .font(.custom("InstrumentSerif-Regular", size: 20))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.title)
         .multilineTextAlignment(.center)
         .frame(width: 344)
 
@@ -31,6 +31,8 @@ private struct WeeklyNavigationButton: View {
   let assetName: String
   var isEnabled = true
   let action: () -> Void
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   @State private var isHovering = false
 
@@ -44,14 +46,20 @@ private struct WeeklyNavigationButton: View {
     } label: {
       ZStack {
         Circle()
-          .fill(Color(hex: "FFEBD3").opacity(0.79))
+          .fill(DayflowWeeklyToken.controlFill(
+            isSelected: true,
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
           .frame(width: hoverCircleSize, height: hoverCircleSize)
           .opacity(isHovering && isEnabled ? 1 : 0)
 
         Image(assetName)
           .resizable()
+          .renderingMode(.template)
           .scaledToFit()
           .frame(width: arrowSize, height: arrowSize)
+          .foregroundStyle(isEnabled ? DayflowWeeklyToken.chartText : DayflowWeeklyToken.chartTertiaryText)
           .opacity(isEnabled ? 1 : 0.35)
       }
       .frame(width: hoverCircleSize, height: hoverCircleSize)

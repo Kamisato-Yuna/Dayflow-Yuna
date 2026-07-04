@@ -4,6 +4,8 @@ struct WeeklyWorkflowSection: View {
   let snapshot: WeeklyWorkflowSnapshot
   let width: CGFloat
   let usesScrollContainers: Bool
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(
     snapshot: WeeklyWorkflowSnapshot,
@@ -39,9 +41,8 @@ struct WeeklyWorkflowSection: View {
     static let titleColor = DayflowWeeklyToken.title
     static let textColor = DayflowWeeklyToken.text
     static let mutedTextColor = DayflowWeeklyToken.secondaryText
-    static let totalTitleColor = Color(hex: "777777")
-    static let totalNameColor = Color(hex: "1F1B18")
-    static let emptyCellColor = Color(red: 0.95, green: 0.93, blue: 0.92)
+    static let totalTitleColor = DayflowWeeklyToken.chartSecondaryText
+    static let totalNameColor = DayflowWeeklyToken.chartText
     static let axisColor = Color(hex: "E0D9D5")
 
     static let titleTopPadding: CGFloat = 16
@@ -153,7 +154,7 @@ struct WeeklyWorkflowSection: View {
           ForEach(snapshot.timeLabels) { label in
             Text(label.label)
               .font(.custom("Figtree-Regular", size: 10))
-              .foregroundStyle(Color.black.opacity(0.78))
+              .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
               .frame(width: Design.axisLabelWidth, alignment: axisAlignment(for: label))
               .offset(x: axisOffset(for: label))
           }
@@ -216,7 +217,10 @@ struct WeeklyWorkflowSection: View {
 
   private func cellFill(for cell: WeeklyWorkflowCell) -> Color {
     guard let colorHex = cell.colorHex, cell.occupancy > 0 else {
-      return Design.emptyCellColor
+      return DayflowWeeklyToken.emptyCellFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
     }
 
     let occupancy = min(max(cell.occupancy, 0), 1)
