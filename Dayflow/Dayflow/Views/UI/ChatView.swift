@@ -125,6 +125,5 @@ struct ChatView: View {
     } message: {
       Text("切换到 \(pendingProviderLabel) 会清除此对话的上下文。")
     }
-    .environment(\.colorScheme, .light)
   }
 }

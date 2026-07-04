@@ -42,7 +42,6 @@ struct SettingsView: View {
 
   var body: some View {
     contentWithSheets
-      .environment(\.colorScheme, .light)
   }
 
   private var contentWithSheets: some View {

@@ -65,7 +65,6 @@ struct WeeklyView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     .dayflowWindowBackground()
-    .environment(\.colorScheme, .light)
     .animation(.easeInOut(duration: 0.22), value: isWeeklyAccessUnlocked)
     .onAppear {
       refreshWeeklyAccessState()
@@ -865,7 +864,7 @@ private enum WeeklyGraphicExporter {
         WeeklyExportWatermark()
           .padding(watermarkPlacement.padding)
       }
-      .environment(\.colorScheme, .light)
+      .preferredColorScheme(.light)
 
     let renderer = ImageRenderer(content: exportView)
     renderer.proposedSize = ProposedViewSize(width: size.width, height: size.height)

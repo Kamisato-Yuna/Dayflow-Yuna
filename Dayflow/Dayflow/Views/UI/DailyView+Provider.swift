@@ -43,10 +43,16 @@ extension DailyView {
     } label: {
       ZStack {
         Circle()
-          .fill(DayflowDailyToken.subtleFill(colorScheme: .light))
+          .fill(DayflowDailyToken.subtleFill(colorScheme: colorScheme))
 
         Circle()
-          .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: max(1.1, 1.3 * scale))
+          .stroke(
+            DayflowContentToken.cardBorder(
+              colorScheme: colorScheme,
+              increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+            ),
+            lineWidth: max(1.1, 1.3 * scale)
+          )
 
         Image(systemName: "gearshape.fill")
           .font(.system(size: 13 * scale, weight: .semibold))
@@ -69,8 +75,6 @@ extension DailyView {
         .padding(16)
         .frame(width: 312)
         .dayflowPopoverSurface(cornerRadius: 18)
-        .environment(\.colorScheme, .light)
-        .preferredColorScheme(.light)
     }
   }
   func dailyProviderPicker(scale: CGFloat) -> some View {
@@ -133,14 +137,19 @@ extension DailyView {
               RoundedRectangle(cornerRadius: 14 * scale, style: .continuous)
                 .fill(
                   isSelected
-                    ? DayflowDailyToken.selectedFill(colorScheme: .light)
-                    : DayflowDailyToken.subtleFill(colorScheme: .light)
+                    ? DayflowDailyToken.selectedFill(colorScheme: colorScheme)
+                    : DayflowDailyToken.subtleFill(colorScheme: colorScheme)
                 )
             )
             .overlay(
               RoundedRectangle(cornerRadius: 14 * scale, style: .continuous)
                 .stroke(
-                  isSelected ? DayflowDailyToken.accent.opacity(0.42) : DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false),
+                  isSelected
+                    ? DayflowDailyToken.accent.opacity(0.42)
+                    : DayflowContentToken.cardBorder(
+                      colorScheme: colorScheme,
+                      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+                    ),
                   lineWidth: max(1, 1.2 * scale)
                 )
             )

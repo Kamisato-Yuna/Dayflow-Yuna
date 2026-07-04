@@ -16,13 +16,13 @@ struct BugReportView: View {
       VStack(spacing: 16) {
         Text("感谢使用 Dayflow")
           .font(.custom("InstrumentSerif-Regular", size: 40))
-          .foregroundColor(.black.opacity(0.9))
+          .foregroundColor(Color(nsColor: .labelColor))
 
         Text(
           "如果你想快速留言，可以发邮件；如果想加入社区，可以来 Discord；如果更想直接聊聊，也可以在我的日历里约个时间。我很想了解 Dayflow 哪些地方好用，哪些地方还不够好。"
         )
         .font(.custom("Figtree", size: 16))
-        .foregroundColor(.black.opacity(0.65))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         .multilineTextAlignment(.center)
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: 520)
@@ -31,7 +31,7 @@ struct BugReportView: View {
         VStack(spacing: 12) {
           Text("联系我们")
             .font(.custom("Figtree", size: 14).weight(.medium))
-            .foregroundColor(.black.opacity(0.55))
+            .foregroundColor(Color(nsColor: .tertiaryLabelColor))
             .textCase(.uppercase)
             .tracking(0.75)
 
@@ -95,7 +95,7 @@ struct BugReportView: View {
         VStack(spacing: 12) {
           Text("快捷工具")
             .font(.custom("Figtree", size: 14).weight(.medium))
-            .foregroundColor(.black.opacity(0.55))
+            .foregroundColor(Color(nsColor: .tertiaryLabelColor))
             .textCase(.uppercase)
             .tracking(0.75)
 

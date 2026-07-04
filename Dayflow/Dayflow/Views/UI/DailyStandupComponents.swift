@@ -37,6 +37,8 @@ struct DailyBulletCard: View {
   @State private var pendingScrollTargetID: UUID? = nil
   @FocusState private var focusedItemID: UUID?
   @State private var keyMonitor: Any? = nil
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private var listViewportHeight: CGFloat {
     style == .tasks ? 142 * scale : 230 * scale
@@ -109,9 +111,21 @@ struct DailyBulletCard: View {
         .fill(
           LinearGradient(
             gradient: Gradient(stops: [
-              .init(color: DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false), location: 0.011932),
-              .init(color: DayflowDailyToken.subtleFill(colorScheme: .light), location: 0.5104),
-              .init(color: DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false), location: 0.98092),
+              .init(
+                color: DayflowContentToken.cardFill(
+                  colorScheme: colorScheme,
+                  reduceTransparency: reduceTransparency
+                ),
+                location: 0.011932
+              ),
+              .init(color: DayflowDailyToken.subtleFill(colorScheme: colorScheme), location: 0.5104),
+              .init(
+                color: DayflowContentToken.cardFill(
+                  colorScheme: colorScheme,
+                  reduceTransparency: reduceTransparency
+                ),
+                location: 0.98092
+              ),
             ]),
             startPoint: UnitPoint(x: 1, y: 0.45),
             endPoint: UnitPoint(x: 0, y: 0.55)
@@ -121,7 +135,13 @@ struct DailyBulletCard: View {
     .clipShape(cardShape)
     .overlay(
       cardShape
-        .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: max(0.7, 1 * scale))
+        .stroke(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          ),
+          lineWidth: max(0.7, 1 * scale)
+        )
     )
     .shadow(color: Color.black.opacity(0.1), radius: 12 * scale, x: 0, y: 0)
     .onAppear {
@@ -151,7 +171,7 @@ struct DailyBulletCard: View {
 
               TextField("", text: bindingForItemText(id: itemID), axis: .vertical)
                 .font(.custom("Figtree-Regular", size: 14 * scale))
-                .foregroundStyle(Color.black)
+                .foregroundStyle(DayflowDailyToken.text)
                 .textFieldStyle(.plain)
                 .lineLimit(1...6)
                 .multilineTextAlignment(.leading)
@@ -318,6 +338,8 @@ struct DailyBlockersSection: View {
   let scale: CGFloat
   @Binding var title: String
   @Binding var prompt: String
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8 * scale) {
@@ -343,7 +365,12 @@ struct DailyBlockersSection: View {
     .padding(.trailing, 26 * scale)
     .padding(.top, 14 * scale)
     .frame(maxWidth: .infinity, minHeight: 94 * scale, alignment: .topLeading)
-    .background(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
+    .background(
+      DayflowDailyToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
+    )
     .overlay(alignment: .top) {
       Rectangle()
         .fill(DayflowDailyToken.separator)

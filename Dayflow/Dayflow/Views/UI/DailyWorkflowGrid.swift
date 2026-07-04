@@ -13,6 +13,8 @@ struct DailyWorkflowGrid: View {
   @Binding var hoveredDistractionId: String?
   @Binding var hoveredCellKey: String?
   @State private var hoverClearTask: Task<Void, Never>? = nil
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   private let hoverExitDelayNanoseconds: UInt64 = 80_000_000
 
   private var renderRows: [DailyWorkflowGridRow] {
@@ -127,7 +129,12 @@ struct DailyWorkflowGrid: View {
 
                   ZStack(alignment: .topLeading) {
                     Rectangle()
-                      .fill(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
+                      .fill(
+                        DayflowDailyToken.secondaryFill(
+                          colorScheme: colorScheme,
+                          reduceTransparency: reduceTransparency
+                        )
+                      )
                       .cornerRadius(distractionCornerRadius)
                       .frame(width: gridWidth, height: distractionRowHeight)
 
@@ -251,10 +258,18 @@ struct DailyWorkflowGrid: View {
 
   private func fillColor(for row: DailyWorkflowGridRow, slotIndex: Int) -> Color {
     guard slotIndex < row.slotOccupancies.count else {
-      return DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false)
+      return DayflowDailyToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
     }
     let occupancy = min(max(row.slotOccupancies[slotIndex], 0), 1)
-    guard occupancy > 0 else { return DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false) }
+    guard occupancy > 0 else {
+      return DayflowDailyToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
+    }
 
     // Partial occupancy stays dimmer; full occupancy reaches full intensity.
     let alpha = 0.3 + (occupancy * 0.7)
@@ -374,7 +389,9 @@ func workflowTooltip(
   durationMinutes: Double,
   title: String,
   accentColor: Color,
-  layoutScale: CGFloat
+  layoutScale: CGFloat,
+  colorScheme: ColorScheme,
+  reduceTransparency: Bool
 ) -> some View {
   VStack(alignment: .leading, spacing: 4 * layoutScale) {
     Text(formatDurationValue(durationMinutes))
@@ -387,16 +404,32 @@ func workflowTooltip(
   }
   .padding(8 * layoutScale)
   .frame(width: 200 * layoutScale, alignment: .leading)
-  .background(tooltipBackground(layoutScale: layoutScale))
+  .background(
+    tooltipBackground(
+      layoutScale: layoutScale,
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
+  )
   .allowsHitTesting(false)
 }
 
-func tooltipBackground(layoutScale: CGFloat) -> some View {
+func tooltipBackground(
+  layoutScale: CGFloat,
+  colorScheme: ColorScheme,
+  reduceTransparency: Bool
+) -> some View {
   RoundedRectangle(cornerRadius: 4, style: .continuous)
-    .fill(DayflowDailyToken.subtleFill(colorScheme: .light))
+    .fill(DayflowDailyToken.subtleFill(colorScheme: colorScheme))
     .overlay(
       RoundedRectangle(cornerRadius: 4, style: .continuous)
-        .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: 1)
+        .stroke(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          ),
+          lineWidth: 1
+        )
     )
     .shadow(
       color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
@@ -406,6 +439,8 @@ struct DailyStatChip: View {
   let title: String
   let value: String
   let scale: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   var body: some View {
     HStack(spacing: 4) {
@@ -420,7 +455,12 @@ struct DailyStatChip: View {
     .padding(.vertical, 6 * scale)
     .background(
       Capsule(style: .continuous)
-        .fill(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
+        .fill(
+          DayflowDailyToken.secondaryFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          )
+        )
     )
     .overlay(
       Capsule(style: .continuous)
@@ -437,6 +477,8 @@ struct DailyModeToggle: View {
 
   let activeMode: ActiveMode
   let scale: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private var cornerRadius: CGFloat { 8 * scale }
   private var borderWidth: CGFloat { max(0.7, 1 * scale) }
@@ -463,7 +505,12 @@ struct DailyModeToggle: View {
 
   @ViewBuilder
   private func segment(text: String, isActive: Bool, isLeading: Bool) -> some View {
-    let fill = isActive ? DayflowDailyToken.accent : DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false)
+    let fill = isActive
+      ? DayflowDailyToken.accent
+      : DayflowDailyToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
 
     Text(text)
       .font(.custom("Figtree-Regular", size: 14 * scale))

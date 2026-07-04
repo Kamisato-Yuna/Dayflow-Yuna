@@ -7,6 +7,8 @@ struct DailyView: View {
   @AppStorage("isDailyUnlocked") var isUnlocked: Bool = false
   @Binding var selectedDate: Date
   @EnvironmentObject var categoryStore: CategoryStore
+  @Environment(\.colorScheme) var colorScheme
+  @Environment(\.accessibilityReduceTransparency) var reduceTransparency
 
   @State var accessFlowStep: DailyAccessFlowStep = .intro
   @State var lockScreenConfettiTrigger: Int = 0
@@ -64,7 +66,6 @@ struct DailyView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
     .dayflowWindowBackground()
-    .environment(\.colorScheme, .light)
     .onAppear {
       refreshDailyAccessProgress()
       dailyRecapProvider = DailyRecapGenerator.shared.selectedProvider()

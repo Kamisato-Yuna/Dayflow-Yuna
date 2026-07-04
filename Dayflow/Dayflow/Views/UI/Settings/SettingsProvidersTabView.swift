@@ -263,7 +263,6 @@ struct SettingsProvidersTabView: View {
         }
         .pickerStyle(.segmented)
         .labelsHidden()
-        .environment(\.colorScheme, .light)
         .onChange(of: viewModel.selectedGeminiModel) { _, newValue in
           viewModel.persistGeminiModelSelection(newValue, source: "settings")
         }

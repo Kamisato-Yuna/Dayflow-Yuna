@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct DailyAccessIntroView: View {
@@ -111,6 +112,7 @@ struct DailyProviderOnboardingView: View {
   let canContinue: Bool
   let onSelectProvider: (DailyRecapProvider) -> Void
   let onContinue: () -> Void
+  @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
     VStack(spacing: 14) {
@@ -179,8 +181,8 @@ struct DailyProviderOnboardingView: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                   .fill(
                     isSelected
-                      ? DayflowDailyToken.selectedFill(colorScheme: .light)
-                      : DayflowDailyToken.subtleFill(colorScheme: .light)
+                      ? DayflowDailyToken.selectedFill(colorScheme: colorScheme)
+                      : DayflowDailyToken.subtleFill(colorScheme: colorScheme)
                   )
               )
               .overlay(
@@ -189,8 +191,8 @@ struct DailyProviderOnboardingView: View {
                     isSelected
                       ? DayflowDailyToken.accent.opacity(0.42)
                       : DayflowContentToken.cardBorder(
-                        colorScheme: .light,
-                        increaseContrast: false
+                        colorScheme: colorScheme,
+                        increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
                       ),
                     lineWidth: 1.2
                   )
@@ -340,6 +342,7 @@ private struct DailyNotificationPermissionPanelView: View {
   let isNotificationRecheckButtonDisabled: Bool
   let onNotificationPermissionAction: () -> Void
   let onRecheckPermissions: () -> Void
+  @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
     VStack(spacing: 16) {
@@ -386,9 +389,12 @@ private struct DailyNotificationPermissionPanelView: View {
               .font(.custom("Figtree", size: 14))
               .fontWeight(.semibold)
           },
-          background: DayflowDailyToken.subtleFill(colorScheme: .light),
+          background: DayflowDailyToken.subtleFill(colorScheme: colorScheme),
           foreground: DayflowDailyToken.text,
-          borderColor: DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false),
+          borderColor: DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          ),
           cornerRadius: 10,
           horizontalPadding: 20,
           verticalPadding: 11,

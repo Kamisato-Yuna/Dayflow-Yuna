@@ -156,11 +156,22 @@ extension DailyView {
       }
       .background(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
-          .fill(DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false))
+          .fill(
+            DayflowContentToken.cardFill(
+              colorScheme: colorScheme,
+              reduceTransparency: reduceTransparency
+            )
+          )
       )
       .overlay(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
-          .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: max(0.7, 1 * scale))
+          .stroke(
+            DayflowContentToken.cardBorder(
+              colorScheme: colorScheme,
+              increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+            ),
+            lineWidth: max(0.7, 1 * scale)
+          )
           .allowsHitTesting(false)
       )
       .overlayPreferenceValue(DailyWorkflowHoverBoundsPreferenceKey.self) { anchors in
@@ -189,7 +200,9 @@ extension DailyView {
                 durationMinutes: cardInfo.durationMinutes,
                 title: cardInfo.title,
                 accentColor: Color(hex: "D77A43"),
-                layoutScale: layoutScale
+                layoutScale: layoutScale,
+                colorScheme: colorScheme,
+                reduceTransparency: reduceTransparency
               )
             }
             .position(x: frame.midX, y: frame.minY - (4 * layoutScale))
@@ -208,7 +221,9 @@ extension DailyView {
                 durationMinutes: marker.endMinute - marker.startMinute,
                 title: marker.title,
                 accentColor: Color(hex: "FF5950"),
-                layoutScale: layoutScale
+                layoutScale: layoutScale,
+                colorScheme: colorScheme,
+                reduceTransparency: reduceTransparency
               )
             }
             .position(x: frame.midX, y: frame.minY - (4 * layoutScale))
@@ -419,6 +434,7 @@ private struct DailyNavigationButton: View {
   let action: () -> Void
 
   @State private var isHovering = false
+  @Environment(\.colorScheme) private var colorScheme
 
   private var arrowSize: CGFloat { 24 * scale }
   private var hoverCircleSize: CGFloat { 30 * scale }
@@ -430,7 +446,7 @@ private struct DailyNavigationButton: View {
     } label: {
       ZStack {
         Circle()
-          .fill(DayflowDailyToken.selectedFill(colorScheme: .light))
+          .fill(DayflowDailyToken.selectedFill(colorScheme: colorScheme))
           .frame(width: hoverCircleSize, height: hoverCircleSize)
           .opacity(isHovering && isEnabled ? 1 : 0)
 
