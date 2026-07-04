@@ -147,6 +147,132 @@ enum DayflowSurfaceToken {
   }
 }
 
+enum DayflowSurfaceButtonStyle {
+  case primary
+  case secondary
+  case destructive
+  case disabled
+}
+
+enum DayflowSurfaceButtonToken {
+  static func background(
+    for style: DayflowSurfaceButtonStyle,
+    colorScheme: ColorScheme,
+    reduceTransparency: Bool,
+    isHovered: Bool = false
+  ) -> Color {
+    let increase = isHovered ? 1.06 : 1.0
+    switch style {
+    case .primary:
+      return DayflowSurfaceToken.fillColor(
+        for: .floatingControl,
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ).opacity(increase)
+    case .secondary:
+      let base = DayflowContentToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
+      return base
+        .opacity(isHovered ? 1.08 : 1.0)
+    case .destructive:
+      return colorScheme == .dark
+        ? Color(nsColor: .systemRed).opacity(isHovered ? 0.56 : 0.50)
+        : Color(nsColor: .systemRed).opacity(isHovered ? 0.44 : 0.40)
+    case .disabled:
+      return Color(nsColor: .underPageBackgroundColor)
+    }
+  }
+
+  static func foreground(
+    for style: DayflowSurfaceButtonStyle,
+    colorScheme: ColorScheme,
+    reduceTransparency: Bool
+  ) -> Color {
+    _ = reduceTransparency
+    switch style {
+    case .primary:
+      return colorScheme == .dark ? DayflowSurfaceAccent.primary : Color(nsColor: .labelColor)
+    case .secondary:
+      return colorScheme == .dark
+        ? Color(nsColor: .labelColor)
+        : Color(nsColor: .labelColor)
+    case .destructive:
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.92 : 1)
+    case .disabled:
+      return Color(nsColor: .tertiaryLabelColor)
+    }
+  }
+
+  static func border(
+    for style: DayflowSurfaceButtonStyle,
+    colorScheme: ColorScheme,
+    increaseContrast: Bool
+  ) -> Color {
+    let roleBorder = DayflowSurfaceToken.borderColor(
+      for: .floatingControl,
+      colorScheme: colorScheme,
+      increaseContrast: increaseContrast
+    )
+    switch style {
+    case .primary:
+      return roleBorder
+    case .secondary:
+      return roleBorder.opacity(increaseContrast ? 1.5 : 1.2)
+    case .destructive:
+      return DayflowSurfaceAccent.critical.opacity(increaseContrast ? 0.8 : 0.6)
+    case .disabled:
+      return Color(nsColor: .separatorColor).opacity(0.22)
+    }
+  }
+
+  static func overlayStroke(
+    for style: DayflowSurfaceButtonStyle,
+    colorScheme: ColorScheme
+  ) -> Color {
+    switch style {
+    case .primary:
+      return colorScheme == .dark
+        ? Color(nsColor: .windowBackgroundColor).opacity(0.15)
+        : Color(nsColor: .labelColor).opacity(0.06)
+    case .secondary:
+      return DayflowSurfaceToken.borderColor(
+        for: .floatingControl,
+        colorScheme: colorScheme,
+        increaseContrast: false
+      )
+    case .destructive:
+      return Color(nsColor: .windowBackgroundColor).opacity(0.16)
+    case .disabled:
+      return Color(nsColor: .clear)
+    }
+  }
+
+  static func shadow(
+    for style: DayflowSurfaceButtonStyle,
+    colorScheme: ColorScheme,
+    reduceTransparency: Bool
+  ) -> (color: Color, radius: CGFloat, y: CGFloat) {
+    switch style {
+    case .primary, .secondary:
+      return DayflowSurfaceToken.shadow(
+        for: .floatingControl,
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
+    case .destructive:
+      return (
+        color: Color(nsColor: .systemRed).opacity(0.22),
+        radius: 8,
+        y: 2
+      )
+    case .disabled:
+      return (.clear, 0, 0)
+    }
+  }
+}
+
 enum DayflowContentToken {
   static func cardFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
     if reduceTransparency {
