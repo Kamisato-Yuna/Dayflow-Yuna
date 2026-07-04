@@ -257,7 +257,7 @@ struct TimelineReviewFooterIcon: View {
         path.addLine(to: CGPoint(x: size * 0.59375, y: size * 0.66238))
         path.closeSubpath()
       }
-      .fill(Color.white)
+      .fill(Color(nsColor: .labelColor).opacity(0.9))
     }
     .frame(width: size, height: size)
     .rotationEffect(rotation)

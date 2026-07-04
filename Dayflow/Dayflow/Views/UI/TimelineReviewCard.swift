@@ -48,10 +48,6 @@ struct TimelineReviewCard: View {
 
   var body: some View {
     ZStack(alignment: .top) {
-      RoundedRectangle(cornerRadius: 8)
-        .fill(Color.white)
-        .shadow(color: Color.black.opacity(0.18), radius: 14, x: 0, y: 8)
-
       VStack(spacing: 0) {
         TimelineReviewCardMedia(
           previewImage: previewImage,
@@ -100,7 +96,7 @@ struct TimelineReviewCard: View {
         VStack(alignment: .leading, spacing: 12) {
           Text(activity.title)
             .font(.custom("InstrumentSerif-Regular", size: 24))
-            .foregroundColor(Color.black)
+            .foregroundColor(.primary)
             .lineLimit(2)
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -132,15 +128,16 @@ struct TimelineReviewCard: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .padding(.horizontal, 20)
         .padding(.vertical, 18)
-      }
-      .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 8))
 
       if let overlayRating = overlayRating {
         TimelineReviewOverlayBadge(rating: overlayRating)
-          .clipShape(RoundedRectangle(cornerRadius: 8))
-          .transition(.opacity)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .transition(.opacity)
       }
     }
+    .dayflowCard(cornerRadius: 8)
     .opacity(highlightOpacity)
     .overlay {
       if !usingVideoPlayer {

@@ -166,5 +166,5 @@ struct DistractionSummaryCard: View {
       "YouTube recommendations pull attention from one video to the next for extended periods."
   )
   .padding(24)
-  .background(Color.white)
+  .dayflowCard(cornerRadius: 12)
 }

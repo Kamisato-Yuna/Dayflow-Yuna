@@ -423,7 +423,7 @@ private struct TimelineFailureToastView: View {
       HStack(alignment: .top, spacing: 10) {
         Image(systemName: "exclamationmark.triangle.fill")
           .font(.system(size: 14))
-          .foregroundColor(Color(hex: "C04A00"))
+          .foregroundColor(.orange)
           .padding(.top, 2)
 
         // Mirrors ScreenRecordingPermissionNoticeView: semibold title with a
@@ -433,19 +433,19 @@ private struct TimelineFailureToastView: View {
             Text(title)
               .font(.custom("Figtree", size: 13))
               .fontWeight(.semibold)
-              .foregroundColor(.black.opacity(0.86))
+              .foregroundColor(.primary.opacity(0.9))
           }
 
           Text(message)
             .font(.custom("Figtree", size: title == nil ? 13 : 12))
-            .foregroundColor(.black.opacity(title == nil ? 0.82 : 0.62))
+            .foregroundColor(.secondary)
             .fixedSize(horizontal: false, vertical: true)
         }
 
         Button(action: onDismiss) {
           Image(systemName: "xmark")
             .font(.system(size: 11, weight: .semibold))
-            .foregroundColor(.black.opacity(0.45))
+            .foregroundColor(.secondary)
             .frame(width: 18, height: 18)
         }
         .buttonStyle(.plain)
@@ -464,24 +464,16 @@ private struct TimelineFailureToastView: View {
               .fontWeight(.semibold)
           }
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
-        foreground: .white,
-        borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 14,
         verticalPadding: 8,
-        showOverlayStroke: true
+        showShadow: false,
+        isSecondaryStyle: true,
       )
     }
     .padding(14)
     .frame(width: 360, alignment: .leading)
-    .background(Color(hex: "FFF8F2"))
-    .cornerRadius(12)
-    .overlay(
-      RoundedRectangle(cornerRadius: 12)
-        .stroke(Color(hex: "F3D9C2"), lineWidth: 1)
-    )
-    .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
+    .dayflowFloatingControl(cornerRadius: 12)
   }
 }
 
@@ -501,18 +493,18 @@ private struct ScreenRecordingPermissionNoticeView: View {
           Text("需要屏幕录制权限")
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.86))
+            .foregroundColor(.primary.opacity(0.9))
 
           Text("恢复权限前，Dayflow 无法更新时间线。")
             .font(.custom("Figtree", size: 12))
-            .foregroundColor(.black.opacity(0.62))
+            .foregroundColor(.secondary)
             .fixedSize(horizontal: false, vertical: true)
         }
 
         Button(action: onDismiss) {
           Image(systemName: "xmark")
             .font(.system(size: 11, weight: .semibold))
-            .foregroundColor(.black.opacity(0.45))
+            .foregroundColor(.secondary)
             .frame(width: 18, height: 18)
         }
         .buttonStyle(.plain)
@@ -531,23 +523,15 @@ private struct ScreenRecordingPermissionNoticeView: View {
               .fontWeight(.semibold)
           }
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
-        foreground: .white,
-        borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 14,
         verticalPadding: 8,
-        showOverlayStroke: true
+        showShadow: false,
+        isSecondaryStyle: true,
       )
     }
     .padding(14)
     .frame(width: 360, alignment: .leading)
-    .background(Color(hex: "FFF8F2"))
-    .cornerRadius(12)
-    .overlay(
-      RoundedRectangle(cornerRadius: 12)
-        .stroke(Color(hex: "F3D9C2"), lineWidth: 1)
-    )
-    .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
+    .dayflowFloatingControl(cornerRadius: 12)
   }
 }

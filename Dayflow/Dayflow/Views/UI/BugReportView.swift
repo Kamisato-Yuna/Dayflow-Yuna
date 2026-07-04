@@ -46,13 +46,11 @@ struct BugReportView: View {
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 18,
               horizontalPadding: 28,
               verticalPadding: 16,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
 
             DayflowSurfaceButton(
@@ -68,13 +66,11 @@ struct BugReportView: View {
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 18,
               horizontalPadding: 28,
               verticalPadding: 16,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
 
             DayflowSurfaceButton(
@@ -87,13 +83,11 @@ struct BugReportView: View {
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 18,
               horizontalPadding: 28,
               verticalPadding: 16,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
           }
         }
@@ -116,13 +110,11 @@ struct BugReportView: View {
                     .font(.custom("Figtree", size: 15).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 14,
               horizontalPadding: 22,
               verticalPadding: 14,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
             .opacity(didCopyEmail ? 0.85 : 1.0)
 
@@ -139,13 +131,11 @@ struct BugReportView: View {
                   .font(.custom("Figtree", size: 15).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 14,
               horizontalPadding: 20,
               verticalPadding: 14,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
             .opacity(didCopyDebugLogs ? 0.85 : 1.0)
           }
