@@ -217,7 +217,7 @@ struct WeeklyTreemapLeafTile: View {
   func nameText(fontSize: CGFloat) -> some View {
     Text(app.name)
       .font(.custom("InstrumentSerif-Regular", size: fontSize))
-      .foregroundStyle(Color.black)
+      .foregroundStyle(DayflowWeeklyToken.chartText)
       .multilineTextAlignment(.center)
       .lineLimit(1)
       .minimumScaleFactor(0.7)
@@ -264,12 +264,12 @@ struct WeeklyTreemapHoverCard: View {
     VStack(alignment: .leading, spacing: 6) {
       Text(app.name)
         .font(.custom("InstrumentSerif-Regular", size: 17))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(1)
 
       Text(app.formattedDuration)
         .font(.custom("Figtree-Regular", size: 12))
-        .foregroundStyle(Color(hex: "333333"))
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
         .lineLimit(1)
 
       if let change = app.change {
@@ -296,7 +296,15 @@ struct WeeklyTreemapHoverCard: View {
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
         .stroke(palette.shellBorder.opacity(0.95), lineWidth: 1)
     )
-    .shadow(color: Color.black.opacity(0.08), radius: 14, x: 0, y: 6)
+    .shadow(
+      color: DayflowWeeklyToken.displayShadow(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      radius: 14,
+      x: 0,
+      y: 6
+    )
   }
 }
 

@@ -53,6 +53,7 @@ struct ChatView: View {
   @State var chatFeedbackShareLogs = true
   @State var chatFeedbackMode: TimelineFeedbackMode = .form
   @Environment(\.accessibilityReduceMotion) var reduceMotion
+  @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
     ZStack {

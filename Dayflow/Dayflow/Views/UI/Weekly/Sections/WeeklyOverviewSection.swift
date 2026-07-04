@@ -234,7 +234,7 @@ private struct WeeklyOverviewTimelineChart: View {
           ForEach(snapshot.rows) { row in
             Text(row.label)
               .font(.custom("Figtree-Regular", size: 12))
-              .foregroundStyle(Color.black)
+              .foregroundStyle(DayflowWeeklyToken.chartText)
               .frame(width: Design.dayLabelWidth, height: 14, alignment: .leading)
           }
         }
@@ -250,7 +250,7 @@ private struct WeeklyOverviewTimelineChart: View {
             ForEach(Design.axisLabels, id: \.self) { label in
               Text(label)
                 .font(.custom("Figtree-Regular", size: 10))
-                .foregroundStyle(Color.black)
+                .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
               if label != Design.axisLabels.last {
                 Spacer(minLength: 0)
               }
@@ -265,7 +265,7 @@ private struct WeeklyOverviewTimelineChart: View {
           HStack(spacing: 6) {
             Text(item.name)
               .font(.custom("Figtree-Regular", size: 10))
-              .foregroundStyle(Color.black)
+              .foregroundStyle(DayflowWeeklyToken.chartText)
 
             RoundedRectangle(cornerRadius: 1.5, style: .continuous)
               .fill(Color(hex: item.colorHex))

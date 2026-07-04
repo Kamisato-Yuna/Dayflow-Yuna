@@ -1458,12 +1458,14 @@ fix(ui): align inner pages with glass surfaces
 - `Dayflow/Dayflow/Views/UI/Weekly/WeeklyHeader.swift`
 - `Dayflow/Dayflow/Views/UI/Weekly/WeeklyView.swift`（仅 `WeeklyExportableGraphic` / section chrome 必要调整）
 - `Dayflow/Dayflow/Views/UI/Weekly/WeeklyAccessLockedView.swift`（仅同步 token 必要调整）
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyOverviewSection.swift`（LG25 扩展：仅 display label/token 残留）
 - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyWorkflowSection.swift`
 - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyFocusHeatmapSection.swift`
 - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyContextChartsSection.swift`
 - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyContextShiftComparisonSection.swift`
 - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyDonutSection.swift`
 - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyTreemapSection.swift`
+- `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyTreemapComponents.swift`（LG25 扩展：仅 tile/hover display token 残留）
 - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklySankeySection.swift`
 - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyApplicationInteractionsSection.swift`
 - `Dayflow/Dayflow/Views/UI/DayflowSurfaceStyles.swift`（仅 Weekly token 必要扩展）
@@ -1538,6 +1540,7 @@ fix(weekly): refine dark-aware chart surfaces
 - `Dayflow/Dayflow/Views/UI/Settings/SettingsDataTabView.swift`
 - `Dayflow/Dayflow/Views/UI/Settings/SettingsOtherTabView.swift`
 - `Dayflow/Dayflow/Views/UI/ChatView.swift`
+- `Dayflow/Dayflow/Views/UI/ChatView+State.swift`（LG26 扩展：仅 composer border token 残留）
 - `Dayflow/Dayflow/Views/UI/ChatView+Content.swift`
 - `Dayflow/Dayflow/Views/UI/ChatWelcomeComponents.swift`
 - `Dayflow/Dayflow/Views/UI/ChatComposerTextField.swift`

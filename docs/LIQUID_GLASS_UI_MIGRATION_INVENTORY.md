@@ -82,11 +82,13 @@ that must be preserved.
 - Shared button/control tokens now give disabled controls and reduced-transparency
   fallbacks stronger neutral surfaces and borders. Increase Contrast raises
   disabled and floating-control borders through the same token layer.
-- The final audit script now reports scoped residuals that were intentionally not
-  edited because they sit outside the LG25/LG26 allowlists:
+- The LG25/LG26 allowlists were extended after the first QA pass to cover these
+  residual files:
   - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyOverviewSection.swift`
   - `Dayflow/Dayflow/Views/UI/Weekly/Sections/WeeklyTreemapComponents.swift`
   - `Dayflow/Dayflow/Views/UI/ChatView+State.swift`
+- The final audit script now treats those files as expanded scope and expects the
+  fixed-black / warm composer-border residual scan to pass.
 - Runtime video and mp4 processing paths remain untouched.
 
 ### LG25-LG27 Visual QA Notes
@@ -116,14 +118,12 @@ that must be preserved.
   Settings Other.
 - Timeline initially showed a screen-recording permission toast. The blocked
   state was recorded, then the toast was closed before continuing page review.
-- Weekly header, workflow, heatmap, Sankey, and application sections are readable
-  in the normal dark appearance; empty cells no longer render as strong white
-  gaps. Treemap and overview still have fixed-black display residuals outside
-  the LG25 allowlist and are recorded as follow-up scope.
+- Weekly header, workflow, heatmap, Sankey, application, overview, and treemap
+  display labels are readable in the normal dark appearance; empty cells no
+  longer render as strong white gaps.
 - Daily, Chat, Feedback, and Settings controls visually align with the shared
   neutral material system in the normal appearance. `ChatView+State.swift`
-  composer border colors remain a scoped follow-up because that file is outside
-  the LG26 allowlist.
+  composer border colors now use the shared chat surface palette.
 - Reduce Transparency, Increase Contrast, and Reduce Motion were verified by
   static token/code paths in this pass, not by changing system settings through
   Computer Use.

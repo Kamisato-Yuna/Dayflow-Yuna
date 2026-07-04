@@ -83,9 +83,14 @@ extension ChatView {
 
   var composerBorderColor: Color {
     if isInputFocused {
-      return Color(hex: "F4A867")
+      return ChatSurfacePalette.accent.opacity(
+        NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast ? 0.78 : 0.58
+      )
     }
-    return Color(hex: "E5D8CA")
+    return ChatSurfacePalette.border(
+      colorScheme: colorScheme,
+      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+    )
   }
 
   var memoryCharacterCount: Int {
