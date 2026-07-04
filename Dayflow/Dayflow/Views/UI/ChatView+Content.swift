@@ -30,8 +30,10 @@ extension ChatView {
             .font(.system(size: 14))
             .foregroundColor(
               chatService.showDebugPanel ? ChatSurfacePalette.accent : ChatSurfacePalette.secondaryText)
+            .frame(width: 22, height: 22)
         }
         .buttonStyle(.plain)
+        .dayflowFloatingControl(cornerRadius: 8)
         .help("显示或隐藏调试面板")
         .pointingHandCursor()
 
@@ -47,8 +49,10 @@ extension ChatView {
           Image(systemName: showMemoryPanel ? "brain.head.profile.fill" : "brain.head.profile")
             .font(.system(size: 14))
             .foregroundColor(showMemoryPanel ? ChatSurfacePalette.accent : ChatSurfacePalette.secondaryText)
+            .frame(width: 22, height: 22)
         }
         .buttonStyle(.plain)
+        .dayflowFloatingControl(cornerRadius: 8)
         .help("显示或隐藏记忆面板")
         .pointingHandCursor()
       }
@@ -153,6 +157,7 @@ extension ChatView {
         }
         .buttonStyle(.plain)
         .help("复制全部")
+        .dayflowFloatingControl(cornerRadius: 6)
         .pointingHandCursor()
 
         Button(action: { chatService.clearDebugLog() }) {
@@ -162,11 +167,15 @@ extension ChatView {
         }
         .buttonStyle(.plain)
         .help("清除日志")
+        .dayflowFloatingControl(cornerRadius: 6)
         .pointingHandCursor()
       }
       .padding(.horizontal, 12)
       .padding(.vertical, 8)
-      .background(Color(nsColor: .controlBackgroundColor).opacity(0.45))
+      .background {
+        Color.clear
+          .dayflowFloatingControl(cornerRadius: 8)
+      }
 
       Divider()
 
@@ -203,9 +212,12 @@ extension ChatView {
           .font(.custom("Figtree", size: 11))
           .foregroundColor(ChatSurfacePalette.tertiaryText)
       }
-      .padding(.horizontal, 12)
-      .padding(.vertical, 8)
-      .background(Color(nsColor: .controlBackgroundColor).opacity(0.45))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+      .background {
+        Color.clear
+          .dayflowFloatingControl(cornerRadius: 8)
+      }
 
       Divider()
 
@@ -570,12 +582,7 @@ extension ChatView {
           }
           .padding(.horizontal, 9)
           .padding(.vertical, 5)
-          .background(ChatSurfacePalette.accent.opacity(0.10))
-          .overlay(
-            Capsule()
-              .stroke(ChatSurfacePalette.accent.opacity(0.22), lineWidth: 1)
-          )
-          .clipShape(Capsule())
+          .dayflowFloatingControl(cornerRadius: 14)
         }
 
         // Send button
@@ -592,29 +599,10 @@ extension ChatView {
             }
           }
           .frame(width: 32, height: 32)
-          .background(
-            canSubmitCurrentInput
-              ? LinearGradient(
-                colors: [Color(hex: "FAA457"), Color(hex: "F96E00")],
-                startPoint: .top,
-                endPoint: .bottom
-              )
-              : LinearGradient(
-                colors: [Color(hex: "DDDDDD"), Color(hex: "CECECE")],
-                startPoint: .top,
-                endPoint: .bottom
-              )
-          )
-          .clipShape(Circle())
+          .dayflowFloatingControl(cornerRadius: 16, isInteractive: canSubmitCurrentInput)
           .overlay(
             Circle()
-              .stroke(Color(nsColor: .windowBackgroundColor).opacity(0.55), lineWidth: 0.8)
-          )
-          .shadow(
-            color: canSubmitCurrentInput ? Color(hex: "D37E2D").opacity(0.35) : Color.clear,
-            radius: 8,
-            x: 0,
-            y: 3
+              .stroke(ChatSurfacePalette.tertiaryText.opacity(0.4), lineWidth: canSubmitCurrentInput ? 0 : 1)
           )
         }
         .buttonStyle(PressScaleButtonStyle(isEnabled: canSubmitCurrentInput))
@@ -666,12 +654,9 @@ extension ChatView {
     .padding(4)
     .background(
       RoundedRectangle(cornerRadius: 11, style: .continuous)
-        .fill(Color(nsColor: .controlBackgroundColor).opacity(0.36))
+        .fill(Color.clear)
     )
-    .overlay(
-      RoundedRectangle(cornerRadius: 11, style: .continuous)
-        .stroke(ChatSurfacePalette.separator, lineWidth: 1)
-    )
+    .dayflowFloatingControl(cornerRadius: 11)
     .help(providerToggleHelpText)
   }
 

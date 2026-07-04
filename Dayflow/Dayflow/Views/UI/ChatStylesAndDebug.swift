@@ -118,13 +118,15 @@ struct ProviderTogglePill: View {
   let action: () -> Void
 
   var backgroundColor: Color {
-    if !isEnabled { return Color(nsColor: .quaternaryLabelColor).opacity(0.08) }
-    return isSelected ? ChatSurfacePalette.accent.opacity(0.13) : Color.clear
+    if !isEnabled {
+      return Color(nsColor: .quaternaryLabelColor).opacity(0.15)
+    }
+    return isSelected ? ChatSurfacePalette.accent.opacity(0.17) : Color.clear
   }
 
   var borderColor: Color {
     if !isEnabled { return Color(nsColor: .separatorColor).opacity(0.45) }
-    return isSelected ? ChatSurfacePalette.accent.opacity(0.36) : Color(nsColor: .separatorColor)
+    return isSelected ? ChatSurfacePalette.accent.opacity(0.48) : Color(nsColor: .separatorColor)
   }
 
   var textColor: Color {
@@ -149,6 +151,7 @@ struct ProviderTogglePill: View {
         )
     }
     .buttonStyle(.plain)
+    .dayflowFloatingControl(cornerRadius: 8)
     .disabled(!isEnabled)
     .pointingHandCursor(enabled: isEnabled)
   }

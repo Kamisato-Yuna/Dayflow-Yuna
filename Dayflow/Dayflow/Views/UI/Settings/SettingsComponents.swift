@@ -57,15 +57,21 @@ private struct SettingsControlSurfaceModifier: ViewModifier {
     let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
     content
       .background {
-        shape.fill(.regularMaterial)
-        shape.fill(isActive ? SettingsStyle.selectedFill : SettingsStyle.neutralControlFill)
+        shape
+          .fill(isActive ? SettingsStyle.selectedFill : SettingsStyle.neutralControlFill)
+          .overlay(
+            shape
+              .fill(Color(nsColor: .controlBackgroundColor).opacity(0.05))
+              .blendMode(.plusLighter)
+          )
       }
-      .overlay {
+      .dayflowFloatingControl(cornerRadius: cornerRadius)
+      .overlay(
         shape.stroke(
           isActive ? SettingsStyle.ink.opacity(0.34) : SettingsStyle.divider,
           lineWidth: isActive ? 1 : 0.8
         )
-      }
+      )
       .clipShape(shape)
   }
 }
@@ -228,17 +234,19 @@ struct SettingsPrimaryButton: View {
           .font(.custom("Figtree", size: 13))
           .fontWeight(.semibold)
       }
-      .foregroundColor(.white)
+      .foregroundColor(Color(nsColor: .windowBackgroundColor))
       .padding(.horizontal, 18)
       .padding(.vertical, 9)
       .background(
         RoundedRectangle(cornerRadius: 8, style: .continuous)
-          .fill(SettingsStyle.ink.opacity(isDisabled ? 0.38 : 0.92))
+          .fill(SettingsStyle.ink.opacity(isDisabled ? 0.18 : 0.92))
       )
+      .dayflowFloatingControl(cornerRadius: 8)
     }
     .buttonStyle(SettingsButtonPressStyle())
     .disabled(isDisabled || isLoading)
     .pointingHandCursor()
+    .opacity(isDisabled || isLoading ? 0.78 : 1)
   }
 }
 
