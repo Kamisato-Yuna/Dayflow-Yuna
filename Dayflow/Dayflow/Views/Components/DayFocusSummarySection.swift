@@ -25,9 +25,9 @@ struct DayFocusSummarySection: View {
     static let editorWidth: CGFloat = 358
     static let editorOffsetX: CGFloat = -18
     static let editorOffsetY: CGFloat = 28
-    static let titleColor = Color(hex: "333333")
-    static let subtitleColor = Color(hex: "707070")
-    static let iconColor = Color(hex: "CFC7BE")
+    static let titleColor = DayflowDailyToken.title
+    static let subtitleColor = DayflowDailyToken.secondaryText
+    static let iconColor = DayflowDailyToken.tertiaryText
   }
 
   var body: some View {
@@ -91,28 +91,23 @@ private struct TotalFocusCard: View {
       HStack(spacing: 6) {
         Text("总专注时长")
           .font(.custom("InstrumentSerif-Regular", size: 16))
-          .foregroundColor(Color(hex: "333333"))
+          .foregroundColor(DayflowDailyToken.title)
 
         Image(systemName: "info.circle")
           .font(.system(size: 12))
-          .foregroundColor(Color(hex: "CFC7BE"))
+          .foregroundColor(DayflowDailyToken.secondaryText)
 
         Spacer()
       }
 
       Text(value)
         .font(.custom("InstrumentSerif-Regular", size: 34))
-        .foregroundColor(Color(hex: "F3854B"))
+        .foregroundColor(DayflowDailyToken.distraction)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     .padding(.horizontal, 16)
     .padding(.vertical, 12)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
-    .overlay(
-      RoundedRectangle(cornerRadius: 8)
-        .stroke(DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false), lineWidth: 1)
-    )
-    .clipShape(RoundedRectangle(cornerRadius: 8))
+    .dayflowContentPanel(cornerRadius: 8)
   }
 }

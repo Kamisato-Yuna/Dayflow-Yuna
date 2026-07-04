@@ -19,10 +19,10 @@ struct DayCategorySelectionEditor: View {
     static let rowSpacing: CGFloat = 4
     static let horizontalPadding: CGFloat = 10
     static let verticalPadding: CGFloat = 10
-    static let dividerColor = Color(red: 0.91, green: 0.89, blue: 0.86)
-    static let helperTextColor = Color(hex: "6C6761")
+    static let dividerColor = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false)
+    static let helperTextColor = DayflowDailyToken.secondaryText
     static let helperTextSize: CGFloat = 11
-    static let borderColor = Color(red: 0.91, green: 0.88, blue: 0.87)
+    static let borderColor = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: true)
     static let cornerRadius: CGFloat = 6
   }
 
@@ -50,17 +50,12 @@ struct DayCategorySelectionEditor: View {
     .padding(.horizontal, Design.horizontalPadding)
     .padding(.vertical, Design.verticalPadding)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(backgroundView)
-    .clipShape(RoundedRectangle(cornerRadius: Design.cornerRadius))
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
+    .dayflowContentPanel(cornerRadius: Design.cornerRadius)
     .overlay(alignment: .topTrailing) {
       Button(action: onDone) {
         Image(systemName: "checkmark")
           .font(.system(size: 8))
-          .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
+          .foregroundColor(DayflowDailyToken.text)
           .frame(width: 8, height: 8)
       }
       .buttonStyle(.plain)
@@ -76,11 +71,11 @@ struct DayCategorySelectionEditor: View {
       )
       .overlay(
         RoundedRectangle(cornerRadius: Design.cornerRadius)
-          .stroke(Color(red: 0.89, green: 0.89, blue: 0.89), lineWidth: 1)
+          .stroke(Design.borderColor, lineWidth: 1)
       )
       .offset(x: -8, y: 8)
     }
-    .shadow(color: Color.black.opacity(0.08), radius: 18, x: 0, y: 10)
+    .shadow(color: DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false).opacity(0.28), radius: 10, x: 0, y: 8)
   }
 
   private var helperRow: some View {
@@ -95,10 +90,6 @@ struct DayCategorySelectionEditor: View {
     }
   }
 
-  private var backgroundView: some View {
-    DayflowDailyToken.subtleFill(colorScheme: .light)
-      .background(.ultraThinMaterial)
-  }
 }
 
 private struct DayCategoryFlowLayout: Layout {

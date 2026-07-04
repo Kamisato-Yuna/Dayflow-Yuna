@@ -42,17 +42,20 @@ struct DayGoalHeader: View {
 
   private enum Design {
     static let panelBackground = DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false)
-    static let disabledBackground = Color(hex: "FCF9F6")
-    static let border = Color(hex: "EDE5E1")
-    static let disabledBorder = Color(hex: "D8D8D8")
-    static let title = Color(hex: "333333")
-    static let subtitle = Color(hex: "707070")
-    static let label = Color(hex: "787878")
-    static let distraction = Color(hex: "FA8282")
-    static let focusText = Color(hex: "628CFF")
-    static let distractionText = Color(hex: "FC675F")
-    static let inactiveTail = Color(hex: "D9D9D9").opacity(0.72)
-    static let inactiveIcon = Color(hex: "AAAAAA")
+    static let disabledBackground = DayflowDailyToken.secondaryFill(
+      colorScheme: .light,
+      reduceTransparency: false
+    )
+    static let border = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false)
+    static let disabledBorder = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: true)
+    static let title = DayflowDailyToken.title
+    static let subtitle = DayflowDailyToken.secondaryText
+    static let label = DayflowDailyToken.secondaryText
+    static let distraction = DayflowDailyToken.distraction
+    static let focusText = DayflowDailyToken.focus
+    static let distractionText = DayflowDailyToken.distraction
+    static let inactiveTail = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false)
+    static let inactiveIcon = DayflowDailyToken.tertiaryText
     static let focusLegendContentWidth: CGFloat = 211.94
     static let focusLegendItemSpacing: CGFloat = 6
   }
@@ -229,8 +232,8 @@ struct DayGoalHeader: View {
         value: distractionSummaryValue,
         suffix: distractionSummarySuffix,
         accent: Design.distractionText,
-        gradientStart: Color(hex: "FF8C85"),
-        gradientEnd: Color(hex: "FC675F"),
+        gradientStart: DayflowDailyToken.distraction.opacity(0.85),
+        gradientEnd: Design.distractionText,
         isProminent: isDistractionPastBudget
       )
       .contentTransition(.numericText())
@@ -308,25 +311,20 @@ struct DayGoalHeader: View {
   }
 
   private var setGoalsButton: some View {
-    Button(action: onSetGoals) {
-      Text("设置目标")
-        .font(.custom("Figtree", size: 12).weight(.medium))
-        .foregroundColor(Color(nsColor: .windowBackgroundColor))
-        .lineLimit(1)
-        .fixedSize()
-        .padding(.horizontal, 12)
-        .frame(height: 30)
-        .background(DayflowDailyToken.accent)
-        .clipShape(Capsule())
-        .overlay(
-          Capsule()
-            .stroke(Color(hex: "F2D2BD"), lineWidth: 1.25)
-        )
-        .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
-    }
-    .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
-    .hoverScaleEffect(scale: 1.02)
-    .pointingHandCursorOnHover(reassertOnPressEnd: true)
+    DayflowSurfaceButton(
+      action: onSetGoals,
+      content: {
+        Text("设置目标")
+          .font(.custom("Figtree", size: 12).weight(.medium))
+          .lineLimit(1)
+          .fixedSize()
+          .frame(height: 30)
+      },
+      cornerRadius: 16,
+      horizontalPadding: 12,
+      verticalPadding: 0,
+      showShadow: false
+    )
     .accessibilityLabel("设置目标")
   }
 
@@ -343,8 +341,8 @@ struct DayGoalHeader: View {
         value: focusSummaryValue,
         suffix: focusSummarySuffix,
         accent: Design.focusText,
-        gradientStart: Color(hex: "5B87FF"),
-        gradientEnd: Color(hex: "003EE9"),
+        gradientStart: DayflowDailyToken.focus,
+        gradientEnd: DayflowDailyToken.focus,
         isProminent: isFocusPastTarget
       )
       .contentTransition(.numericText())
@@ -357,7 +355,7 @@ struct DayGoalHeader: View {
   private var focusLegend: some View {
     ZStack(alignment: .leading) {
       TargetLegendTail()
-        .fill(Color(hex: "D9D9D9").opacity(0.72))
+        .fill(Design.inactiveTail)
         .frame(width: 232.277, height: 14)
 
       HStack(spacing: Design.focusLegendItemSpacing) {
@@ -609,7 +607,7 @@ private struct GoalMetricSummaryText: View {
 
       Text(suffix)
         .font(.custom(isProminent ? "Nunito" : "Figtree", size: 11))
-        .foregroundColor(Color(hex: "787878"))
+        .foregroundColor(DayflowDailyToken.secondaryText)
     }
     .lineLimit(1)
   }
@@ -638,16 +636,16 @@ private struct FocusTargetProgressBar: View {
 
       ZStack(alignment: .leading) {
         trackShape
-          .fill(isFulfilled ? Color(hex: "ECECEC") : Color(hex: "E7E7E7"))
+          .fill(DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
           .shadow(
-            color: isFulfilled ? Color(hex: "628CFF").opacity(0.5) : .clear,
+            color: isFulfilled ? DayflowDailyToken.focus.opacity(0.5) : .clear,
             radius: isFulfilled ? 3 : 0,
             x: 0,
             y: 0
           )
           .overlay(
             trackShape
-              .stroke(isFulfilled ? Color(hex: "91AEFF").opacity(0.9) : .clear, lineWidth: 0.5)
+              .stroke(isFulfilled ? DayflowDailyToken.focus.opacity(0.9) : .clear, lineWidth: 0.5)
           )
 
         HStack(spacing: segmentSpacing) {
@@ -744,8 +742,8 @@ private struct DistractionLimitBar: View {
       let remainingWidth = max(0, geometry.size.width - startX)
 
       ZStack(alignment: .leading) {
-        RoundedRectangle(cornerRadius: 2)
-          .fill(Color(hex: "E7E7E7"))
+      RoundedRectangle(cornerRadius: 2)
+        .fill(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
 
         RoundedRectangle(cornerRadius: 6)
           .fill(color)
@@ -828,11 +826,11 @@ private struct InactiveGoalTrack: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       RoundedRectangle(cornerRadius: 2)
-        .fill(Color(hex: "E4E4E4"))
+        .fill(DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
         .frame(width: width, height: height)
 
       Capsule()
-        .fill(Color(hex: "F6F6F6"))
+        .fill(DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: true))
         .frame(width: fillWidth, height: 6)
         .offset(x: fillOffsetX, y: fillOffsetY)
     }
@@ -851,7 +849,7 @@ private struct TargetLegendItem: View {
 
       Text(category.name)
         .font(.custom("Figtree", size: 8).weight(.medium))
-        .foregroundColor(Color(hex: "333333"))
+        .foregroundColor(DayflowDailyToken.text)
         .lineLimit(1)
         .fixedSize()
     }
@@ -870,10 +868,17 @@ private struct TargetIconBubble: View {
   var body: some View {
     ZStack {
       Circle()
-        .fill(tint == nil ? Color(hex: "E7E7E7") : Color(hex: "E4E4E4"))
+        .fill(
+          DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false)
+        )
         .overlay(
           Circle()
-            .stroke(tint == nil ? Color(hex: "FCF9F6") : .white, lineWidth: 2)
+            .stroke(
+              tint == nil
+                ? DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: true)
+                : .white,
+              lineWidth: 2
+            )
         )
 
       switch kind {
