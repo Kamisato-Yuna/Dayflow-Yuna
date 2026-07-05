@@ -13,6 +13,12 @@ import Sparkle
 final class UpdaterManager: NSObject, ObservableObject {
   static let shared = UpdaterManager()
 
+  #if DEBUG
+    private static let isDisabledForDebugBuild = true
+  #else
+    private static let isDisabledForDebugBuild = false
+  #endif
+
   private let userDriver = SilentUserDriver()
   private lazy var updater: SPUUpdater = {
     SPUUpdater(
@@ -50,6 +56,12 @@ final class UpdaterManager: NSObject, ObservableObject {
       "[Sparkle] Info SUPublicEDKey = \(Bundle.main.object(forInfoDictionaryKey: "SUPublicEDKey") ?? "nil")"
     )
 
+    guard !Self.isDisabledForDebugBuild else {
+      statusText = "Updates disabled in Debug"
+      print("[Sparkle] Disabled in Debug build; updater.start() skipped")
+      return
+    }
+
     do {
       try updater.start()
       print("[Sparkle] updater.start() OK")
@@ -63,6 +75,15 @@ final class UpdaterManager: NSObject, ObservableObject {
   }
 
   func checkForUpdates(showUI: Bool = false) {
+    guard !Self.isDisabledForDebugBuild else {
+      isChecking = false
+      updateAvailable = false
+      latestVersionString = nil
+      statusText = "Updates disabled in Debug"
+      print("[Sparkle] Check skipped because Sparkle is disabled in Debug build")
+      return
+    }
+
     isChecking = true
     statusText = "Checking…"
     track(
