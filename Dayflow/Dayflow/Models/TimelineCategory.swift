@@ -64,6 +64,10 @@ func firstCategoryLookup(
   return lookup
 }
 
+func firstCategoryLookup(from categories: [TimelineCategory]) -> [String: TimelineCategory] {
+  firstCategoryLookup(from: categories, normalizedKey: CategoryAliasResolver.normalizedKey)
+}
+
 @MainActor
 final class CategoryStore: ObservableObject {
   static let shared = CategoryStore()

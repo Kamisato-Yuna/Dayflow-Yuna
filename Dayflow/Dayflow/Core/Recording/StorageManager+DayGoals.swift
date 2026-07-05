@@ -98,7 +98,7 @@ extension StorageManager {
 
         let snapshot = DayGoalCategorySnapshot(
           categoryID: categoryRow["category_id"],
-          name: categoryRow["category_name"],
+          name: CategoryAliasResolver.displayName(for: categoryRow["category_name"] ?? ""),
           colorHex: categoryRow["category_color_hex"],
           sortOrder: categoryRow["sort_order"]
         )

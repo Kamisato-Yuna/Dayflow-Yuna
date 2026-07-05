@@ -13,7 +13,11 @@ struct SettingsDataTabView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: SettingsStyle.sectionSpacing) {
       exportSection
+      categoryMigrationSection
       reprocessSection
+    }
+    .sheet(isPresented: $viewModel.isCategoryMigrationPresented) {
+      CategoryMigrationSheetView(viewModel: viewModel)
     }
   }
 
@@ -106,6 +110,44 @@ struct SettingsDataTabView: View {
           Text(error)
             .font(.custom("Figtree", size: 12))
             .foregroundColor(SettingsStyle.destructive)
+        }
+      }
+    }
+  }
+
+  // MARK: - Category migration
+
+  private var categoryMigrationSection: some View {
+    SettingsSection(
+      title: "分类数据迁移",
+      subtitle: "先预览影响范围，再把旧英文分类名写入为当前中文分类名。"
+    ) {
+      VStack(alignment: .leading, spacing: 12) {
+        Text("读取和统计已经会显示中文别名；这里只在你确认后修改数据库原值。")
+          .font(.custom("Figtree", size: 12))
+          .foregroundColor(SettingsStyle.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+
+        HStack(spacing: 12) {
+          SettingsPrimaryButton(
+            title: "打开迁移工具",
+            systemImage: "arrow.triangle.2.circlepath",
+            action: viewModel.presentCategoryMigration
+          )
+
+          if let message = viewModel.categoryMigrationStatusMessage {
+            Text(message)
+              .font(.custom("Figtree", size: 12))
+              .foregroundColor(SettingsStyle.secondary)
+              .lineLimit(2)
+          }
+        }
+
+        if let error = viewModel.categoryMigrationErrorMessage {
+          Text(error)
+            .font(.custom("Figtree", size: 12))
+            .foregroundColor(SettingsStyle.destructive)
+            .fixedSize(horizontal: false, vertical: true)
         }
       }
     }
@@ -281,6 +323,262 @@ struct SettingsDataTabView: View {
     formatter.setLocalizedDateFormatFromTemplate("yyyyMMMd")
     return formatter
   }()
+}
+
+private struct CategoryMigrationSheetView: View {
+  @ObservedObject var viewModel: OtherSettingsViewModel
+  @Environment(\.dismiss) private var dismiss
+  @State private var step: Step = .edit
+
+  private enum Step {
+    case edit
+    case preview
+    case confirm
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 18) {
+      header
+      Divider()
+      content
+      Spacer(minLength: 0)
+      footer
+    }
+    .padding(24)
+    .frame(width: 760, height: 620)
+  }
+
+  private var header: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text("分类数据迁移")
+        .font(.custom("Figtree", size: 20))
+        .fontWeight(.semibold)
+        .foregroundColor(SettingsStyle.text)
+
+      Text(stepTitle)
+        .font(.custom("Figtree", size: 12))
+        .foregroundColor(SettingsStyle.secondary)
+    }
+  }
+
+  @ViewBuilder
+  private var content: some View {
+    switch step {
+    case .edit:
+      mappingEditor
+    case .preview:
+      scanPreview
+    case .confirm:
+      confirmationView
+    }
+  }
+
+  private var mappingEditor: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      HStack {
+        Text("默认映射")
+          .font(.custom("Figtree", size: 14))
+          .fontWeight(.semibold)
+          .foregroundColor(SettingsStyle.text)
+        Spacer()
+        Button("恢复默认") {
+          viewModel.resetCategoryMigrationMappings()
+        }
+        .buttonStyle(.plain)
+        .foregroundColor(SettingsStyle.ink)
+      }
+
+      ScrollView {
+        VStack(alignment: .leading, spacing: 8) {
+          ForEach($viewModel.categoryMigrationMappings) { $mapping in
+            HStack(spacing: 10) {
+              Toggle("", isOn: $mapping.isEnabled)
+                .labelsHidden()
+
+              TextField("源分类", text: $mapping.source)
+                .textFieldStyle(.roundedBorder)
+                .frame(minWidth: 190)
+
+              Image(systemName: "arrow.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(SettingsStyle.meta)
+
+              TextField("目标分类", text: $mapping.target)
+                .textFieldStyle(.roundedBorder)
+                .frame(minWidth: 190)
+            }
+            .padding(.vertical, 2)
+          }
+        }
+      }
+    }
+  }
+
+  private var scanPreview: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      if viewModel.isScanningCategoryMigration {
+        ProgressView("正在扫描分类数据…")
+      } else if let result = viewModel.categoryMigrationScanResult {
+        if result.isEmpty {
+          Text("没有发现需要迁移的分类数据。")
+            .font(.custom("Figtree", size: 13))
+            .foregroundColor(SettingsStyle.secondary)
+        } else {
+          Text("共命中 \(result.totalRows) 行，约 \(result.totalDurationMinutes) 分钟。")
+            .font(.custom("Figtree", size: 13))
+            .fontWeight(.semibold)
+            .foregroundColor(SettingsStyle.text)
+
+          migrationEntries(result.entries)
+        }
+      } else {
+        Text("点击扫描后会按表展示命中行数、总时长和日期范围。")
+          .font(.custom("Figtree", size: 13))
+          .foregroundColor(SettingsStyle.secondary)
+      }
+    }
+  }
+
+  private var confirmationView: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      if viewModel.isPerformingCategoryMigration {
+        ProgressView("正在执行迁移…")
+      }
+
+      if let result = viewModel.categoryMigrationResult {
+        Text("迁移完成")
+          .font(.custom("Figtree", size: 15))
+          .fontWeight(.semibold)
+          .foregroundColor(SettingsStyle.statusGood)
+        Text("已更新 \(result.updatedTimelineCardRows) 条时间线卡片、\(result.updatedDayGoalCategoryRows) 条每日目标分类。")
+          .font(.custom("Figtree", size: 13))
+          .foregroundColor(SettingsStyle.text)
+        Text("备份：\(result.backupURL.path)")
+          .font(.custom("Figtree", size: 12))
+          .foregroundColor(SettingsStyle.secondary)
+          .textSelection(.enabled)
+      } else if let result = viewModel.categoryMigrationScanResult, !result.isEmpty {
+        Text("执行前会先创建数据库备份，然后在一次事务中更新两张表。")
+          .font(.custom("Figtree", size: 13))
+          .foregroundColor(SettingsStyle.secondary)
+        migrationEntries(result.entries)
+      } else {
+        Text("当前没有可执行的迁移项。")
+          .font(.custom("Figtree", size: 13))
+          .foregroundColor(SettingsStyle.secondary)
+      }
+    }
+  }
+
+  private func migrationEntries(_ entries: [CategoryMigrationScanEntry]) -> some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 8) {
+        ForEach(entries) { entry in
+          VStack(alignment: .leading, spacing: 5) {
+            HStack {
+              Text(entry.tableName)
+                .font(.custom("Figtree", size: 12))
+                .fontWeight(.semibold)
+              Spacer()
+              Text("\(entry.rowCount) 行")
+                .font(.custom("Figtree", size: 12))
+                .foregroundColor(SettingsStyle.secondary)
+            }
+            Text("\(entry.source) → \(entry.target)")
+              .font(.custom("Figtree", size: 13))
+              .foregroundColor(SettingsStyle.text)
+            Text(entryDetail(entry))
+              .font(.custom("Figtree", size: 12))
+              .foregroundColor(SettingsStyle.secondary)
+          }
+          .padding(10)
+          .settingsControlSurface(cornerRadius: 7)
+        }
+      }
+    }
+  }
+
+  private var footer: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      if let error = viewModel.categoryMigrationErrorMessage {
+        Text(error)
+          .font(.custom("Figtree", size: 12))
+          .foregroundColor(SettingsStyle.destructive)
+          .fixedSize(horizontal: false, vertical: true)
+      } else if let message = viewModel.categoryMigrationStatusMessage {
+        Text(message)
+          .font(.custom("Figtree", size: 12))
+          .foregroundColor(SettingsStyle.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+
+      HStack {
+        Button("取消") {
+          dismiss()
+        }
+        .keyboardShortcut(.cancelAction)
+        .disabled(viewModel.isScanningCategoryMigration || viewModel.isPerformingCategoryMigration)
+
+        Spacer()
+
+        if step != .edit {
+          Button("返回编辑") {
+            step = .edit
+          }
+          .disabled(viewModel.isScanningCategoryMigration || viewModel.isPerformingCategoryMigration)
+        }
+
+        switch step {
+        case .edit:
+          Button(viewModel.isScanningCategoryMigration ? "扫描中…" : "扫描") {
+            viewModel.scanCategoryMigration()
+            step = .preview
+          }
+          .keyboardShortcut(.defaultAction)
+          .disabled(viewModel.isScanningCategoryMigration || viewModel.isPerformingCategoryMigration)
+
+        case .preview:
+          Button("下一步") {
+            step = .confirm
+          }
+          .keyboardShortcut(.defaultAction)
+          .disabled((viewModel.categoryMigrationScanResult?.isEmpty ?? true)
+            || viewModel.isScanningCategoryMigration)
+
+        case .confirm:
+          Button(viewModel.isPerformingCategoryMigration ? "执行中…" : "执行迁移") {
+            viewModel.performCategoryMigration()
+          }
+          .keyboardShortcut(.defaultAction)
+          .disabled((viewModel.categoryMigrationScanResult?.isEmpty ?? true)
+            || viewModel.isPerformingCategoryMigration
+            || viewModel.categoryMigrationResult != nil)
+        }
+      }
+    }
+  }
+
+  private var stepTitle: String {
+    switch step {
+    case .edit:
+      return "调整源分类到目标分类的映射。禁用的映射不会参与扫描或迁移。"
+    case .preview:
+      return "预览数据库中会被更新的记录。"
+    case .confirm:
+      return "确认后才会写入数据库。"
+    }
+  }
+
+  private func entryDetail(_ entry: CategoryMigrationScanEntry) -> String {
+    var parts: [String] = []
+    if entry.totalDurationMinutes > 0 {
+      parts.append("约 \(entry.totalDurationMinutes) 分钟")
+    }
+    if let firstDay = entry.firstDay, let lastDay = entry.lastDay {
+      parts.append(firstDay == lastDay ? firstDay : "\(firstDay) 至 \(lastDay)")
+    }
+    return parts.isEmpty ? "无时长字段" : parts.joined(separator: "，")
+  }
 }
 
 // MARK: - Custom calendar grid

@@ -57,7 +57,7 @@ enum WeeklyDonutBuilder {
 
     let categoryLookup = firstCategoryLookup(
       from: orderedCategories,
-      normalizedKey: normalizedCategoryKey
+      normalizedKey: CategoryAliasResolver.normalizedKey
     )
 
     let visibleWeekDays = Set(weekDayStrings(for: weekRange.weekStart))
@@ -69,7 +69,7 @@ enum WeeklyDonutBuilder {
     var ordersByCategory: [String: Int] = [:]
 
     for card in weeklyCards {
-      let key = normalizedCategoryKey(displayName(for: card.category))
+      let key = CategoryAliasResolver.normalizedKey(card.category)
       let category = categoryLookup[key]
       guard key != systemCategoryKey, key != idleCategoryKey else { continue }
       guard category?.isSystem != true, category?.isIdle != true else { continue }
@@ -97,7 +97,7 @@ enum WeeklyDonutBuilder {
     let rawItems = minutesByCategory.map { key, minutes in
       RawWeeklyDonutItem(
         key: key,
-        name: namesByCategory[key] ?? "Uncategorized",
+        name: namesByCategory[key] ?? CategoryAliasResolver.uncategorizedName,
         colorHex: colorsByCategory[key] ?? fallbackColorHex(for: key),
         order: ordersByCategory[key] ?? Int.max,
         minutes: minutes
@@ -180,18 +180,6 @@ enum WeeklyDonutBuilder {
     return Double(parsed)
   }
 
-  private static func displayName(for value: String) -> String {
-    let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-    return trimmed.isEmpty ? "Uncategorized" : trimmed
-  }
-
-  private static func normalizedCategoryKey(_ value: String) -> String {
-    value
-      .trimmingCharacters(in: .whitespacesAndNewlines)
-      .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-      .lowercased()
-  }
-
   private static func resolvedName(
     for key: String,
     card: TimelineCard,
@@ -201,7 +189,7 @@ enum WeeklyDonutBuilder {
       return category.name
     }
 
-    return displayName(for: card.category)
+    return CategoryAliasResolver.displayName(for: card.category)
   }
 
   private static func resolvedColorHex(

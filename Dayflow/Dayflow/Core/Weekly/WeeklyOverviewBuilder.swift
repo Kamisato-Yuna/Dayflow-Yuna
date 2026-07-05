@@ -94,11 +94,11 @@ enum WeeklyOverviewBuilder {
     let orderedCategories =
       categories
       .sorted { $0.order < $1.order }
-      .filter { normalizedCategoryKey($0.name) != systemCategoryKey }
+      .filter { CategoryAliasResolver.normalizedKey($0.name) != systemCategoryKey }
 
     let categoryLookup = firstCategoryLookup(
       from: orderedCategories,
-      normalizedKey: normalizedCategoryKey
+      normalizedKey: CategoryAliasResolver.normalizedKey
     )
 
     let weekDays = weekDays(for: weekRange.weekStart)
@@ -111,7 +111,7 @@ enum WeeklyOverviewBuilder {
     var colorHexByCategory: [String: String] = [:]
 
     for card in weeklyCards {
-      let key = normalizedCategoryKey(displayName(for: card.category))
+      let key = CategoryAliasResolver.normalizedKey(card.category)
       guard key != systemCategoryKey else { continue }
 
       let durationMinutes = totalMinutes(for: card)
@@ -210,7 +210,7 @@ enum WeeklyOverviewBuilder {
       endMinute = min(normalized.end, visibleEndMinute)
       guard endMinute > startMinute else { return nil }
 
-      let rawKey = normalizedCategoryKey(displayName(for: card.category))
+      let rawKey = CategoryAliasResolver.normalizedKey(card.category)
       guard rawKey != systemCategoryKey else { return nil }
 
       let bucketKey =
@@ -254,7 +254,7 @@ enum WeeklyOverviewBuilder {
       endMinute = normalized.end
       guard endMinute > startMinute else { return nil }
 
-      let key = normalizedCategoryKey(displayName(for: card.category))
+      let key = CategoryAliasResolver.normalizedKey(card.category)
       guard key != systemCategoryKey else { return nil }
 
       return SortableSegment(categoryKey: key, startMinute: startMinute, endMinute: endMinute)
@@ -287,7 +287,7 @@ enum WeeklyOverviewBuilder {
 
     for entry in cardsByDay {
       let ranges = entry.cards.compactMap { card -> MinuteRange? in
-        let key = normalizedCategoryKey(displayName(for: card.category))
+        let key = CategoryAliasResolver.normalizedKey(card.category)
         if key == systemCategoryKey { return nil }
         if categories[key]?.isIdle == true { return nil }
 
@@ -410,11 +410,10 @@ enum WeeklyOverviewBuilder {
     card: TimelineCard,
     categories: [String: TimelineCategory]
   ) -> String {
-    let trimmed = card.category.trimmingCharacters(in: .whitespacesAndNewlines)
     if let category = categories[key] {
       return category.name
     }
-    return trimmed.isEmpty ? "未分类" : trimmed
+    return CategoryAliasResolver.displayName(for: card.category)
   }
 
   private static func resolvedColorHex(
@@ -450,11 +449,6 @@ enum WeeklyOverviewBuilder {
     }
   }
 
-  private static func displayName(for value: String) -> String {
-    let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-    return trimmed.isEmpty ? "未分类" : trimmed
-  }
-
   private static func normalizedMinuteRange(start: Double, end: Double) -> (
     start: Double, end: Double
   ) {
@@ -469,13 +463,6 @@ enum WeeklyOverviewBuilder {
   private static func parseCardMinute(_ value: String) -> Double? {
     guard let parsed = parseTimeHMMA(timeString: value) else { return nil }
     return Double(parsed)
-  }
-
-  private static func normalizedCategoryKey(_ value: String) -> String {
-    value
-      .trimmingCharacters(in: .whitespacesAndNewlines)
-      .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-      .lowercased()
   }
 
   private static func fallbackColorHex(for key: String) -> String {

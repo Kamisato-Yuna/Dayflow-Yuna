@@ -560,7 +560,7 @@ final class ChatService: ObservableObject {
       **timeline_cards** - High-level activity summaries (start here)
       - day (YYYY-MM-DD), start_ts/end_ts (epoch seconds)
       - title, summary, detailed_summary, category, subcategory (detailed_summary is large—only pull if you really need the granularity)
-      - category values: Work, Personal, Distraction, Idle, System
+      - category values may include current Chinese names and legacy English aliases; normalize legacy aliases such as Work, Personal, Distraction, Idle, Communication, Specs & Planning, and Research & Analysis to the current category meaning when analyzing.
       - is_deleted (0=active, 1=deleted) - ALWAYS filter is_deleted=0
       - Ignore "processing failed" cards unless user explicitly asks about them
       - Duration in minutes: (end_ts - start_ts)/60

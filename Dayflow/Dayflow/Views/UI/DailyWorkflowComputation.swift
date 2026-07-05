@@ -8,15 +8,15 @@ import UserNotifications
 func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
   -> DailyWorkflowComputationResult
 {
-  let systemCategoryKey = normalizedCategoryKey("System")
+  let systemCategoryKey = CategoryAliasResolver.normalizedKey("System")
   let orderedCategories =
     categories
     .sorted { $0.order < $1.order }
-    .filter { normalizedCategoryKey($0.name) != systemCategoryKey }
+    .filter { CategoryAliasResolver.normalizedKey($0.name) != systemCategoryKey }
 
   let categoryLookup = firstCategoryLookup(
     from: orderedCategories,
-    normalizedKey: normalizedCategoryKey
+    normalizedKey: CategoryAliasResolver.normalizedKey
   )
   let colorMap = categoryLookup.mapValues { normalizedHex($0.colorHex) }
   let nameMap = categoryLookup.mapValues {
@@ -48,9 +48,8 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
     startMinute = normalized.start
     endMinute = normalized.end
 
-    let trimmed = card.category.trimmingCharacters(in: .whitespacesAndNewlines)
-    let displayName = trimmed.isEmpty ? "未分类" : trimmed
-    let key = normalizedCategoryKey(displayName)
+    let displayName = CategoryAliasResolver.displayName(for: card.category)
+    let key = CategoryAliasResolver.normalizedKey(displayName)
     guard key != systemCategoryKey else { continue }
     let colorHex = colorMap[key] ?? fallbackColorHex(for: key)
 
@@ -123,7 +122,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
   }
 
   let idleCategoryKeys = Set(
-    orderedCategories.filter(\.isIdle).map { normalizedCategoryKey($0.name) })
+    orderedCategories.filter(\.isIdle).map { CategoryAliasResolver.normalizedKey($0.name) })
   var contextSwitches = 0
   var interruptions = 0
   var focusedMinutes = 0.0
@@ -166,7 +165,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
   var seenKeys = Set<String>()
 
   for category in orderedCategories {
-    let key = normalizedCategoryKey(category.name)
+    let key = CategoryAliasResolver.normalizedKey(category.name)
     guard !key.isEmpty else { continue }
     guard seenKeys.insert(key).inserted else { continue }
     selectedKeys.append(key)
@@ -272,9 +271,9 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
   ]
 
   // Check if user has a Distraction category
-  let distractionCategoryKey = normalizedCategoryKey("Distraction")
+  let distractionCategoryKey = CategoryAliasResolver.normalizedKey("Distraction")
   let hasDistractionCategory = orderedCategories.contains {
-    normalizedCategoryKey($0.name) == distractionCategoryKey
+    CategoryAliasResolver.normalizedKey($0.name) == distractionCategoryKey
   }
 
   // Collect distraction markers from both sources
@@ -285,8 +284,7 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
 
     for card in cards {
       // Source 1: Full cards categorized as "Distraction"
-      let cardCategoryKey = normalizedCategoryKey(
-        card.category.trimmingCharacters(in: .whitespacesAndNewlines))
+      let cardCategoryKey = CategoryAliasResolver.normalizedKey(card.category)
       if cardCategoryKey == distractionCategoryKey {
         if let rawStart = parseCardMinute(card.startTimestamp),
           let rawEnd = parseCardMinute(card.endTimestamp)
@@ -398,8 +396,9 @@ func computeDailyWorkflow(cards: [TimelineCard], categories: [TimelineCategory])
 }
 
 func isDistractionCategoryKey(_ key: String) -> Bool {
-  let normalized = key.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-  return normalized == "distraction" || normalized == "distractions"
+  let normalized = CategoryAliasResolver.normalizedKey(key)
+  return normalized == CategoryAliasResolver.normalizedKey("Distraction")
+    || normalized == CategoryAliasResolver.rawNormalizedKey("distractions")
 }
 
 func normalizedMinuteRange(start: Double, end: Double) -> (start: Double, end: Double) {
