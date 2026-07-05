@@ -225,7 +225,7 @@ private struct WeeklyContextDistributionCard: View {
   }
 
   private var hourTicks: [String] {
-    ["6pm", "5pm", "4pm", "3pm", "2pm", "1pm", "12pm", "11am", "10am"]
+    ["18点", "17点", "16点", "15点", "14点", "13点", "12点", "11点", "10点"]
   }
 
   var body: some View {
@@ -457,8 +457,8 @@ private struct WeeklyContextComparisonBarCard: View {
 
   private var legend: some View {
     HStack(spacing: 24) {
-      legendItem("Number of times distracted", color: Color(hex: "FF653B"))
-      legendItem("Number of context shifts", color: Color(hex: "A88CFF"))
+      legendItem("分心次数", color: Color(hex: "FF653B"))
+      legendItem("上下文切换次数", color: Color(hex: "A88CFF"))
     }
   }
 
@@ -517,32 +517,32 @@ struct WeeklyContextDistributionSnapshot {
   let events: [WeeklyContextDistributionEvent]
 
   static let figmaPreview = WeeklyContextDistributionSnapshot(
-    days: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
+    days: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
     start: "10:00",
     end: "18:00",
     events: [
-      .init(day: "Mon", kind: .context, time: "10:45"),
-      .init(day: "Mon", kind: .distraction, time: "11:55"),
-      .init(day: "Mon", kind: .context, time: "13:55"),
-      .init(day: "Mon", kind: .distraction, time: "15:08"),
-      .init(day: "Mon", kind: .context, time: "16:40"),
-      .init(day: "Tue", kind: .context, time: "12:55"),
-      .init(day: "Tue", kind: .distraction, time: "14:45"),
-      .init(day: "Tue", kind: .context, time: "15:50"),
-      .init(day: "Wed", kind: .distraction, time: "10:55"),
-      .init(day: "Wed", kind: .context, time: "11:45"),
-      .init(day: "Wed", kind: .distraction, time: "13:20"),
-      .init(day: "Wed", kind: .context, time: "14:55"),
-      .init(day: "Wed", kind: .distraction, time: "15:55"),
-      .init(day: "Thu", kind: .distraction, time: "11:20"),
-      .init(day: "Thu", kind: .context, time: "14:15"),
-      .init(day: "Thu", kind: .distraction, time: "16:18"),
-      .init(day: "Fri", kind: .context, time: "10:28"),
-      .init(day: "Fri", kind: .distraction, time: "11:55"),
-      .init(day: "Fri", kind: .distraction, time: "14:20"),
-      .init(day: "Fri", kind: .context, time: "16:58"),
-      .init(day: "Sat", kind: .context, time: "12:10"),
-      .init(day: "Sun", kind: .distraction, time: "15:35"),
+      .init(day: "周一", kind: .context, time: "10:45"),
+      .init(day: "周一", kind: .distraction, time: "11:55"),
+      .init(day: "周一", kind: .context, time: "13:55"),
+      .init(day: "周一", kind: .distraction, time: "15:08"),
+      .init(day: "周一", kind: .context, time: "16:40"),
+      .init(day: "周二", kind: .context, time: "12:55"),
+      .init(day: "周二", kind: .distraction, time: "14:45"),
+      .init(day: "周二", kind: .context, time: "15:50"),
+      .init(day: "周三", kind: .distraction, time: "10:55"),
+      .init(day: "周三", kind: .context, time: "11:45"),
+      .init(day: "周三", kind: .distraction, time: "13:20"),
+      .init(day: "周三", kind: .context, time: "14:55"),
+      .init(day: "周三", kind: .distraction, time: "15:55"),
+      .init(day: "周四", kind: .distraction, time: "11:20"),
+      .init(day: "周四", kind: .context, time: "14:15"),
+      .init(day: "周四", kind: .distraction, time: "16:18"),
+      .init(day: "周五", kind: .context, time: "10:28"),
+      .init(day: "周五", kind: .distraction, time: "11:55"),
+      .init(day: "周五", kind: .distraction, time: "14:20"),
+      .init(day: "周五", kind: .context, time: "16:58"),
+      .init(day: "周六", kind: .context, time: "12:10"),
+      .init(day: "周日", kind: .distraction, time: "15:35"),
     ]
   )
 }
@@ -565,16 +565,16 @@ struct WeeklyContextComparisonSnapshot {
 
   static let figmaPreview = WeeklyContextComparisonSnapshot(
     days: [
-      .init(day: "Mon", distracted: 12, shifts: 15),
-      .init(day: "Tue", distracted: 8, shifts: 10),
-      .init(day: "Wed", distracted: 16, shifts: 28),
-      .init(day: "Thur", distracted: 12, shifts: 5),
-      .init(day: "Fri", distracted: 3, shifts: 10),
-      .init(day: "Sat", distracted: 12, shifts: 12),
-      .init(day: "Sun", distracted: 6, shifts: 8),
+      .init(day: "周一", distracted: 12, shifts: 15),
+      .init(day: "周二", distracted: 8, shifts: 10),
+      .init(day: "周三", distracted: 16, shifts: 28),
+      .init(day: "周四", distracted: 12, shifts: 5),
+      .init(day: "周五", distracted: 3, shifts: 10),
+      .init(day: "周六", distracted: 12, shifts: 12),
+      .init(day: "周日", distracted: 6, shifts: 8),
     ],
     insight:
-      "Tue had the most interruptions, with 22 context shifts and 53 distractions."
+      "周二被打断最多，共有 22 次上下文切换和 53 次分心。"
   )
 }
 

@@ -343,7 +343,7 @@ struct DailyBlockersSection: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8 * scale) {
-      TextField("Blockers", text: $title)
+      TextField("阻碍", text: $title)
         .font(.custom("Figtree-Medium", size: 14 * scale))
         .foregroundStyle(DayflowDailyToken.secondaryText)
         .textFieldStyle(.plain)
@@ -352,7 +352,7 @@ struct DailyBlockersSection: View {
         DailyDragHandleIcon(scale: scale)
           .frame(width: 18 * scale, height: 18 * scale)
 
-        TextField("Fill in any blockers you may have", text: $prompt, axis: .vertical)
+        TextField("填写目前遇到的阻碍", text: $prompt, axis: .vertical)
           .font(.custom("Figtree-Regular", size: 14 * scale))
         .foregroundStyle(DayflowDailyToken.secondaryText)
           .textFieldStyle(.plain)

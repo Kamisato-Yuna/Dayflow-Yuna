@@ -239,7 +239,7 @@ extension WeeklyDashboardBuilder {
         to: patternApp(to),
         count: averageCount,
         description:
-          "Moves from \(from.name) to \(to.name) an average of \(averageCount) times per active day."
+          "活跃日平均从 \(from.name) 切换到 \(to.name) \(averageCount) 次。"
       )
     }
     .prefixArray(2)
@@ -277,7 +277,7 @@ extension WeeklyDashboardBuilder {
       visibleApps.first
       ?? WeeklyAppAggregate(
         key: "none",
-        name: "No app",
+        name: "暂无应用",
         colorHex: "D9D9D9",
         kind: .work,
         minutes: 0,
@@ -295,20 +295,20 @@ extension WeeklyDashboardBuilder {
     -> WeeklyApplicationInteractionsSnapshot
   {
     WeeklyApplicationInteractionsSnapshot(
-      subtitle: "No recorded app interactions for this week yet.",
+      subtitle: "本周还没有记录到应用交互。",
       nodes: [],
       edges: [],
       patterns: [],
       rabbitHole: WeeklyRabbitHoleSnapshot(
         from: WeeklyPatternApp(
           id: "none",
-          name: "No app",
+          name: "暂无应用",
           initial: "-",
           color: Color(hex: "D9D9D9"),
-          avg: "0m avg"
+          avg: "平均 0 分钟"
         ),
         targets: [],
-        avg: "0m avg"
+        avg: "平均 0 分钟"
       )
     )
   }
@@ -331,11 +331,11 @@ extension WeeklyDashboardBuilder {
         (lhs.distracted + lhs.shifts) < (rhs.distracted + rhs.shifts)
       }), busiest.distracted + busiest.shifts > 0
     else {
-      return "No context shift or distraction pattern was detected in this week."
+      return "本周未检测到明显的上下文切换或分心模式。"
     }
 
     return
-      "\(busiest.day) had the most interruptions, with \(busiest.shifts) context shifts and \(busiest.distracted) distractions."
+      "\(busiest.day) 被打断最多，共有 \(busiest.shifts) 次上下文切换和 \(busiest.distracted) 次分心。"
   }
 
   private static func edgeKind(

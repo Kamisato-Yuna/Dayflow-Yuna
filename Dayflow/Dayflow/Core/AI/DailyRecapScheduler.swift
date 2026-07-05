@@ -187,9 +187,9 @@ final class DailyRecapScheduler: @unchecked Sendable {
         cards: cards,
         observations: observations,
         priorEntries: priorEntries,
-        highlightsTitle: "Yesterday's highlights",
-        tasksTitle: "Today's tasks",
-        blockersTitle: "Blockers"
+        highlightsTitle: "昨日重点",
+        tasksTitle: "今日任务",
+        blockersTitle: "阻碍"
       )
       let draft = try await DailyRecapGenerator.shared.generate(context: context)
       guard let payloadJSON = draft.encodedJSONString() else {
@@ -357,9 +357,9 @@ final class DailyRecapScheduler: @unchecked Sendable {
 
   private static func makeDefaultPreferencesText() -> String {
     let preferences: [String: String] = [
-      "highlights_title": "Yesterday's highlights",
-      "tasks_title": "Today's tasks",
-      "blockers_title": "Blockers",
+      "highlights_title": "昨日重点",
+      "tasks_title": "今日任务",
+      "blockers_title": "阻碍",
     ]
 
     guard

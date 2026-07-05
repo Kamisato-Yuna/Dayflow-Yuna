@@ -595,7 +595,7 @@ extension DailyView {
     if decoded.generation == nil {
       decoded.generation = .legacyDayflow
     }
-    standupDraft = decoded
+    standupDraft = decoded.localizedLegacyPlaceholders()
   }
   func scheduleStandupDraftSave() {
     guard let dayString = loadedStandupDraftDay else { return }

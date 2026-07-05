@@ -166,12 +166,12 @@ enum DailyRecapProvider: String, Codable, CaseIterable, Sendable {
 
 enum DailyStandupPlaceholder {
   static let notGeneratedMessage =
-    "Daily data has not been generated yet. If this is unexpected, please report a bug."
-  static let todayNotGeneratedMessage = "Today's daily recap will be generated tomorrow morning."
+    "Daily 数据尚未生成。如果这不符合预期，请提交反馈。"
+  static let todayNotGeneratedMessage = "今天的每日复盘会在明早生成。"
   static let insufficientHistoryMessage =
-    "Not enough captured activity in the previous 3 days to generate a standup."
+    "过去 3 天捕获的活动不足，暂时无法生成站会更新。"
   static let noProviderSelectedMessage =
-    "No Daily provider is selected. Click the gear button above, then choose a provider to turn recap generation back on."
+    "尚未选择每日复盘提供商。点击上方齿轮按钮并选择提供商，即可重新开启复盘生成。"
 }
 
 struct DailyStandupGenerationMetadata: Codable, Equatable, Sendable {
@@ -232,42 +232,61 @@ struct DailyStandupDraft: Codable, Equatable, Sendable {
   var blockersBody: String
   var generation: DailyStandupGenerationMetadata?
 
+  private static let legacyPlaceholderTranslations: [String: String] = [
+    "Daily data has not been generated yet. If this is unexpected, please report a bug.":
+      DailyStandupPlaceholder.notGeneratedMessage,
+    "Today's daily recap will be generated tomorrow morning.":
+      DailyStandupPlaceholder.todayNotGeneratedMessage,
+    "Not enough captured activity in the previous 3 days to generate a standup.":
+      DailyStandupPlaceholder.insufficientHistoryMessage,
+    "No Daily provider is selected. Click the gear button above, then choose a provider to turn recap generation back on.":
+      DailyStandupPlaceholder.noProviderSelectedMessage,
+  ]
+
+  private static let legacyTitleTranslations: [String: String] = [
+    "Yesterday's highlights": "昨日重点",
+    "Today's tasks": "今日任务",
+    "Recent highlights": "最近重点",
+    "Tasks": "任务",
+    "Blockers": "阻碍",
+  ]
+
   static let `default` = DailyStandupDraft(
-    highlightsTitle: "Yesterday's highlights",
+    highlightsTitle: "昨日重点",
     highlights: [DailyBulletItem(text: DailyStandupPlaceholder.notGeneratedMessage)],
-    tasksTitle: "Today's tasks",
+    tasksTitle: "今日任务",
     tasks: [DailyBulletItem(text: DailyStandupPlaceholder.notGeneratedMessage)],
-    blockersTitle: "Blockers",
+    blockersTitle: "阻碍",
     blockersBody: DailyStandupPlaceholder.notGeneratedMessage,
     generation: nil
   )
 
   static let todayPlaceholder = DailyStandupDraft(
-    highlightsTitle: "Yesterday's highlights",
+    highlightsTitle: "昨日重点",
     highlights: [DailyBulletItem(text: DailyStandupPlaceholder.todayNotGeneratedMessage)],
-    tasksTitle: "Today's tasks",
+    tasksTitle: "今日任务",
     tasks: [DailyBulletItem(text: DailyStandupPlaceholder.todayNotGeneratedMessage)],
-    blockersTitle: "Blockers",
+    blockersTitle: "阻碍",
     blockersBody: DailyStandupPlaceholder.todayNotGeneratedMessage,
     generation: nil
   )
 
   static let insufficientHistory = DailyStandupDraft(
-    highlightsTitle: "Recent highlights",
+    highlightsTitle: "最近重点",
     highlights: [DailyBulletItem(text: DailyStandupPlaceholder.insufficientHistoryMessage)],
-    tasksTitle: "Tasks",
+    tasksTitle: "任务",
     tasks: [DailyBulletItem(text: DailyStandupPlaceholder.insufficientHistoryMessage)],
-    blockersTitle: "Blockers",
+    blockersTitle: "阻碍",
     blockersBody: DailyStandupPlaceholder.insufficientHistoryMessage,
     generation: nil
   )
 
   static let noProviderSelected = DailyStandupDraft(
-    highlightsTitle: "Yesterday's highlights",
+    highlightsTitle: "昨日重点",
     highlights: [DailyBulletItem(text: DailyStandupPlaceholder.noProviderSelectedMessage)],
-    tasksTitle: "Today's tasks",
+    tasksTitle: "今日任务",
     tasks: [DailyBulletItem(text: DailyStandupPlaceholder.noProviderSelectedMessage)],
-    blockersTitle: "Blockers",
+    blockersTitle: "阻碍",
     blockersBody: DailyStandupPlaceholder.noProviderSelectedMessage,
     generation: nil
   )
@@ -280,6 +299,28 @@ struct DailyStandupDraft: Codable, Equatable, Sendable {
   var hasGeneratedContent: Bool {
     !highlights.isEmpty || !tasks.isEmpty
       || !blockersBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+
+  func localizedLegacyPlaceholders() -> DailyStandupDraft {
+    var copy = self
+    copy.highlightsTitle = Self.legacyTitleTranslations[copy.highlightsTitle] ?? copy.highlightsTitle
+    copy.tasksTitle = Self.legacyTitleTranslations[copy.tasksTitle] ?? copy.tasksTitle
+    copy.blockersTitle = Self.legacyTitleTranslations[copy.blockersTitle] ?? copy.blockersTitle
+    copy.highlights = copy.highlights.map { item in
+      DailyBulletItem(
+        id: item.id,
+        text: Self.legacyPlaceholderTranslations[item.text] ?? item.text
+      )
+    }
+    copy.tasks = copy.tasks.map { item in
+      DailyBulletItem(
+        id: item.id,
+        text: Self.legacyPlaceholderTranslations[item.text] ?? item.text
+      )
+    }
+    copy.blockersBody =
+      Self.legacyPlaceholderTranslations[copy.blockersBody] ?? copy.blockersBody
+    return copy
   }
 }
 

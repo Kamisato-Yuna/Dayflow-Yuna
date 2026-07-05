@@ -915,12 +915,7 @@ extension GeminiDirectProvider {
   func minutesToTimeString(_ minutes: Double) -> String {
     let hours = (Int(minutes) / 60) % 24  // Handle > 24 hours
     let mins = Int(minutes) % 60
-    let period = hours < 12 ? "AM" : "PM"
-    var displayHour = hours % 12
-    if displayHour == 0 {
-      displayHour = 12
-    }
-    return String(format: "%d:%02d %@", displayHour, mins, period)
+    return String(format: "%02d:%02d", hours, mins)
   }
 
 }

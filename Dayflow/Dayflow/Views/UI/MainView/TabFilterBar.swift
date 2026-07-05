@@ -5,44 +5,25 @@ struct TabFilterBar: View {
   let idleCategory: TimelineCategory?
   let onManageCategories: () -> Void
 
-  @State private var chipRowWidth: CGFloat = 0
-
   private let editButtonSize: CGFloat = 24
   private let chipButtonSpacing: CGFloat = 8
+  private let chipSpacing: CGFloat = 5
+  private let rowSpacing: CGFloat = 8
 
   var body: some View {
-    GeometryReader { geometry in
-      let availableWidth = max(0, geometry.size.width)
-      let maxChipRowWidth = max(0, availableWidth - editButtonSize - chipButtonSpacing)
-      let hasMeasuredChipRow = chipRowWidth > 0
-      let isOverflowing = hasMeasuredChipRow && chipRowWidth > maxChipRowWidth
-      let chipRowFrameWidth =
-        hasMeasuredChipRow
-        ? min(chipRowWidth, maxChipRowWidth)
-        : maxChipRowWidth
-
-      ZStack(alignment: .topLeading) {
-        HStack(spacing: chipButtonSpacing) {
-          visibleChipRow(width: chipRowFrameWidth)
-          editButton
+    HStack(alignment: .top, spacing: chipButtonSpacing) {
+      ChipFlowLayout(spacing: chipSpacing, rowSpacing: rowSpacing) {
+        ForEach(displayCategories) { category in
+          CategoryChip(category: category, isIdle: category.isIdle)
         }
-        .frame(width: availableWidth, height: editButtonSize, alignment: .leading)
-        .overlay(alignment: .trailing) {
-          if isOverflowing {
-            overflowGradient
-              .padding(.trailing, editButtonSize + chipButtonSpacing)
-          }
-        }
-
-        measuredChipRow
-          .opacity(0)
-          .allowsHitTesting(false)
-          .accessibilityHidden(true)
       }
-      .frame(width: availableWidth, height: editButtonSize, alignment: .leading)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.top, 1)
+
+      editButton
+        .padding(.top, 2)
     }
-    .frame(height: editButtonSize)
-    .onPreferenceChange(ChipRowWidthPreferenceKey.self) { chipRowWidth = $0 }
+    .frame(maxWidth: .infinity, alignment: .leading)
   }
 
   struct CategoryChip: View {
@@ -90,37 +71,11 @@ struct TabFilterBar: View {
     }
   }
 
-  private func visibleChipRow(width: CGFloat) -> some View {
-    ScrollView(.horizontal, showsIndicators: false) {
-      chipRowContent
-        .fixedSize(horizontal: true, vertical: false)
-        .frame(height: 26)
+  private var displayCategories: [TimelineCategory] {
+    if let idleCategory {
+      return categories + [idleCategory]
     }
-    .frame(width: max(0, width), height: 26, alignment: .leading)
-    .clipped()
-  }
-
-  private var measuredChipRow: some View {
-    chipRowContent
-      .fixedSize(horizontal: true, vertical: false)
-      .background(
-        GeometryReader { proxy in
-          Color.clear.preference(key: ChipRowWidthPreferenceKey.self, value: proxy.size.width)
-        }
-      )
-  }
-
-  private var chipRowContent: some View {
-    HStack(spacing: 5) {
-      ForEach(categories) { category in
-        CategoryChip(category: category, isIdle: false)
-      }
-
-      if let idleCategory {
-        CategoryChip(category: idleCategory, isIdle: true)
-      }
-    }
-    .padding(.leading, 2)
+    return categories
   }
 
   private var editButton: some View {
@@ -130,20 +85,86 @@ struct TabFilterBar: View {
     )
   }
 
-  private var overflowGradient: some View {
-    LinearGradient(
-      gradient: Gradient(colors: [Color.clear, Color(nsColor: .windowBackgroundColor)]),
-      startPoint: .leading,
-      endPoint: .trailing
-    )
-    .frame(width: 40)
-    .allowsHitTesting(false)
+}
+
+private struct ChipFlowLayout: Layout {
+  var spacing: CGFloat
+  var rowSpacing: CGFloat
+
+  func sizeThatFits(
+    proposal: ProposedViewSize,
+    subviews: Subviews,
+    cache: inout ()
+  ) -> CGSize {
+    let rows = arrangeRows(proposalWidth: proposal.width, subviews: subviews)
+    let width = rows.reduce(CGFloat.zero) { max($0, $1.width) }
+    let height =
+      rows.reduce(CGFloat.zero) { $0 + $1.height }
+      + CGFloat(max(0, rows.count - 1)) * rowSpacing
+    return CGSize(width: width, height: height)
   }
 
-  private struct ChipRowWidthPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-      value = nextValue()
+  func placeSubviews(
+    in bounds: CGRect,
+    proposal: ProposedViewSize,
+    subviews: Subviews,
+    cache: inout ()
+  ) {
+    let rows = arrangeRows(proposalWidth: bounds.width, subviews: subviews)
+    var y = bounds.minY
+
+    for row in rows {
+      var x = bounds.minX
+      for item in row.items {
+        item.subview.place(
+          at: CGPoint(x: x, y: y),
+          proposal: ProposedViewSize(item.size)
+        )
+        x += item.size.width + spacing
+      }
+      y += row.height + rowSpacing
     }
+  }
+
+  private func arrangeRows(proposalWidth: CGFloat?, subviews: Subviews) -> [Row] {
+    let maxWidth = max(1, proposalWidth ?? .greatestFiniteMagnitude)
+    var rows: [Row] = []
+    var currentItems: [Row.Item] = []
+    var currentWidth: CGFloat = 0
+    var currentHeight: CGFloat = 0
+
+    for subview in subviews {
+      let size = subview.sizeThatFits(.unspecified)
+      let item = Row.Item(subview: subview, size: size)
+      let candidateWidth = currentItems.isEmpty ? size.width : currentWidth + spacing + size.width
+
+      if candidateWidth > maxWidth && !currentItems.isEmpty {
+        rows.append(Row(items: currentItems, width: currentWidth, height: currentHeight))
+        currentItems = [item]
+        currentWidth = size.width
+        currentHeight = size.height
+      } else {
+        currentItems.append(item)
+        currentWidth = candidateWidth
+        currentHeight = max(currentHeight, size.height)
+      }
+    }
+
+    if !currentItems.isEmpty {
+      rows.append(Row(items: currentItems, width: currentWidth, height: currentHeight))
+    }
+
+    return rows
+  }
+
+  private struct Row {
+    struct Item {
+      let subview: LayoutSubview
+      let size: CGSize
+    }
+
+    let items: [Item]
+    let width: CGFloat
+    let height: CGFloat
   }
 }

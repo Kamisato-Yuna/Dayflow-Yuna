@@ -1347,12 +1347,12 @@ struct DaySummaryView: View {
 
 #Preview("Day Summary") {
   let sampleCategories: [TimelineCategory] = [
-    TimelineCategory(name: "Research", colorHex: "#8BAAFF", order: 0),
-    TimelineCategory(name: "Coding", colorHex: "#CF8FFF", order: 1),
-    TimelineCategory(name: "Code review", colorHex: "#90DDF0", order: 2),
-    TimelineCategory(name: "Debugging", colorHex: "#6E66D4", order: 3),
-    TimelineCategory(name: "Distraction", colorHex: "#FF5950", order: 4),
-    TimelineCategory(name: "Idle", colorHex: "#A0AEC0", order: 5, isSystem: true, isIdle: true),
+    TimelineCategory(name: "研究", colorHex: "#8BAAFF", order: 0),
+    TimelineCategory(name: "编码", colorHex: "#CF8FFF", order: 1),
+    TimelineCategory(name: "代码审查", colorHex: "#90DDF0", order: 2),
+    TimelineCategory(name: "调试", colorHex: "#6E66D4", order: 3),
+    TimelineCategory(name: "分心", colorHex: "#FF5950", order: 4),
+    TimelineCategory(name: "空闲", colorHex: "#A0AEC0", order: 5, isSystem: true, isIdle: true),
   ]
 
   DaySummaryView(

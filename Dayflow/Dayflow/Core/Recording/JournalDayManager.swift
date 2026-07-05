@@ -255,14 +255,13 @@ final class JournalDayManager: ObservableObject {
     }
 
     let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
 
     if isToday {
-      // "Today, November 24" - no day of week needed
-      formatter.dateFormat = "MMMM d"
-      return "Today, \(formatter.string(from: date))"
+      formatter.dateFormat = "M月d日"
+      return "今天，\(formatter.string(from: date))"
     } else {
-      // "Monday, November 24" - day of week helps orient for past days
-      formatter.dateFormat = "EEEE, MMMM d"
+      formatter.dateFormat = "EEEE，M月d日"
       return formatter.string(from: date)
     }
   }

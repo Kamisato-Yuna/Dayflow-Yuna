@@ -575,7 +575,7 @@ class VideoPlayerViewModel: ObservableObject {
         title: "Coding session", startTime: 1020, endTime: 1680, color: .orange,
         activityType: .coding),
       VideoSegment(
-        title: "Research", startTime: 1680, endTime: 1980, color: .orange,
+        title: "研究", startTime: 1680, endTime: 1980, color: .orange,
         activityType: .brainstorming),
       VideoSegment(
         title: "Planning", startTime: 1980, endTime: duration, color: .blue,

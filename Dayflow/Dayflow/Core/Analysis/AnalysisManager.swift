@@ -973,7 +973,8 @@ final class AnalysisManager: AnalysisManaging {
   }
 
   private func normalizedIdleValue(_ value: String) -> String {
-    value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    let normalized = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    return normalized == "空闲" ? "idle" : normalized
   }
 
   private func makeIdleCard(
@@ -987,15 +988,15 @@ final class AnalysisManager: AnalysisManaging {
     formatter.timeZone = TimeZone.current
 
     let detailedSummary =
-      "Idle period. Dayflow skipped activity summarization for this block."
+      "空闲时段。Dayflow 已跳过此时间块的活动总结。"
 
     return TimelineCardShell(
       startTimestamp: formatter.string(from: startDate),
       endTimestamp: formatter.string(from: endDate),
-      category: "Idle",
+      category: "空闲",
       subcategory: "",
-      title: "Idle",
-      summary: "You were idle during this period.",
+      title: "空闲",
+      summary: "这段时间处于空闲状态。",
       detailedSummary: detailedSummary,
       distractions: nil,
       appSites: nil,

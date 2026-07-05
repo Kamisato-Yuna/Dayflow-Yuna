@@ -950,16 +950,13 @@ struct WeekTimelineGridView: View {
 
   private func formatHour(_ hour: Int) -> String {
     let normalizedHour = hour >= 24 ? hour - 24 : hour
-    let adjustedHour =
-      normalizedHour > 12 ? normalizedHour - 12 : (normalizedHour == 0 ? 12 : normalizedHour)
-    let period = normalizedHour >= 12 ? "PM" : "AM"
-    return "\(adjustedHour):00 \(period)"
+    return "\(normalizedHour)点"
   }
 
   nonisolated private static func formatRange(start: Date, end: Date) -> String {
     let formatter = DateFormatter()
-    formatter.dateFormat = "h:mm a"
-    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "HH:mm"
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
     return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
   }
 
@@ -1314,58 +1311,58 @@ private struct WeekTimelineHoverPrototypeHarness: View {
       Spec(
         column: 1, startMinutes: 6 * 60, durationMinutes: 45,
         title: "Refining UI mockups for the weekly view",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
 
       // Tuesday (col 2) — stacked cluster of short cards (displace showcase)
       Spec(
         column: 2, startMinutes: 6 * 60, durationMinutes: 12,
         title: "Refining UI mockups — iteration 1 of the hover card",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
       Spec(
         column: 2, startMinutes: 6 * 60 + 12, durationMinutes: 10,
         title: "Refining UI mockups — iteration 2",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
       Spec(
         column: 2, startMinutes: 6 * 60 + 22, durationMinutes: 8,
         title: "Refining UI mockups — quick pass",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
       Spec(
         column: 2, startMinutes: 6 * 60 + 30, durationMinutes: 11,
         title: "Refining UI mockups — small tweaks",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
 
       // Wednesday (col 3) — medium card followed closely by a tiny one
       Spec(
         column: 3, startMinutes: 7 * 60, durationMinutes: 30,
         title: "Browsing X looking for design inspiration around calendars",
-        category: "Distraction", favicon: "x.com"),
+        category: "分心", favicon: "x.com"),
       Spec(
         column: 3, startMinutes: 7 * 60 + 32, durationMinutes: 6,
         title: "Quick Slack check",
-        category: "Communication", favicon: "slack.com"),
+        category: "沟通", favicon: "slack.com"),
 
       // Thursday (col 4) — mid-length card that fits comfortably
       Spec(
         column: 4, startMinutes: 8 * 60, durationMinutes: 28,
         title:
           "Researching, creating roadmap, and summarizing documents with Chat GPT for the next planning cycle",
-        category: "Research", favicon: "chat.openai.com"),
+        category: "研究", favicon: "chat.openai.com"),
 
       // Friday (col 5) — very short card isolated
       Spec(
         column: 5, startMinutes: 7 * 60 + 30, durationMinutes: 5,
         title: "Messaging Alex on Slack about the design review",
-        category: "Communication", favicon: "slack.com"),
+        category: "沟通", favicon: "slack.com"),
 
       // Saturday (col 6) — two back-to-back short cards
       Spec(
         column: 6, startMinutes: 9 * 60, durationMinutes: 9,
         title: "Comparing screenshots",
-        category: "Work", favicon: nil),
+        category: "工作", favicon: nil),
       Spec(
         column: 6, startMinutes: 9 * 60 + 9, durationMinutes: 7,
         title: "Next card preview",
-        category: "Work", favicon: nil),
+        category: "工作", favicon: nil),
     ]
 
     return specs.enumerated().map { index, spec in
@@ -1417,12 +1414,7 @@ private struct WeekTimelineHoverPrototypeHarness: View {
     let absoluteMinutes = minutes + 4 * 60
     let hour24 = (absoluteMinutes / 60) % 24
     let minute = absoluteMinutes % 60
-    let period = hour24 >= 12 ? "PM" : "AM"
-    let hour12: Int = {
-      let raw = hour24 % 12
-      return raw == 0 ? 12 : raw
-    }()
-    return String(format: "%d:%02d %@", hour12, minute, period)
+    return String(format: "%02d:%02d", hour24, minute)
   }
 }
 

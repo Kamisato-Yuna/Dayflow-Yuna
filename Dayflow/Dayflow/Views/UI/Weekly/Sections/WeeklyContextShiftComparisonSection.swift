@@ -213,11 +213,11 @@ struct WeeklyContextShiftComparisonSnapshot {
   let callToAction: String
 
   static let figmaPreview = WeeklyContextShiftComparisonSnapshot(
-    dayLabels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat"],
+    dayLabels: ["周一", "周二", "周三", "周四", "周五", "周六"],
     series: [
       WeeklyContextShiftComparisonSeries(
         id: "distractions",
-        label: "Number of times distracted",
+        label: "分心次数",
         colorHex: "FF8A8A",
         points: [
           .init(dayIndex: 0, value: 12),
@@ -230,7 +230,7 @@ struct WeeklyContextShiftComparisonSnapshot {
       ),
       WeeklyContextShiftComparisonSeries(
         id: "context-shifts",
-        label: "Number of context shifts",
+        label: "上下文切换次数",
         colorHex: "A78CFF",
         points: [
           .init(dayIndex: 0, value: 15),
@@ -243,8 +243,8 @@ struct WeeklyContextShiftComparisonSnapshot {
       ),
     ],
     insightText:
-      "Your interruptions are driven by context shifts and distractions.",
-    callToAction: "Pinpoint"
+      "你的打断主要来自上下文切换和分心。",
+    callToAction: "定位原因"
   )
 }
 

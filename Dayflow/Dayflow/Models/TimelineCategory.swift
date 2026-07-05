@@ -550,6 +550,12 @@ enum CategoryPersistence {
   private static func migrateLegacyPresetCopy(_ category: TimelineCategory) -> TimelineCategory {
     var migrated = category
     switch (category.name, category.details) {
+    case ("Idle", _):
+      migrated.name = "空闲"
+      migrated.details = "将用户大部分时间处于空闲状态的时段标记为此分类。"
+      migrated.isSystem = true
+      migrated.isIdle = true
+
     case (
       "Coding / Debugging",
       "Writing, refactoring, and fixing code in an IDE or terminal"
@@ -772,12 +778,13 @@ enum CategoryPersistence {
   }
 
   static func ensureIdleCategoryPresent(in categories: [TimelineCategory]) -> [TimelineCategory] {
-    if categories.contains(where: { $0.isIdle }) {
-      return categories.sorted { $0.order < $1.order }
+    let migrated = categories.map(migrateLegacyPresetCopy)
+    if migrated.contains(where: { $0.isIdle }) {
+      return migrated.sorted { $0.order < $1.order }
     }
 
-    var updated = categories
-    let order = (categories.map { $0.order }.max() ?? -1) + 1
+    var updated = migrated
+    let order = (migrated.map { $0.order }.max() ?? -1) + 1
     let now = Date()
     let idle = TimelineCategory(
       name: "空闲",

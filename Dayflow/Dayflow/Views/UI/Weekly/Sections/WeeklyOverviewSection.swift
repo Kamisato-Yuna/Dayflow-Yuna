@@ -32,7 +32,7 @@ struct WeeklyOverviewSection: View {
     static let footerHeight: CGFloat = 65
 
     static let dayLabels = [
-      "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm",
+      "9点", "10点", "11点", "12点", "13点", "14点", "15点", "16点", "17点", "18点",
     ]
   }
 
@@ -223,7 +223,7 @@ private struct WeeklyOverviewTimelineChart: View {
     static let rowFill = Color(hex: "F2F2F2")
     static let rowBorder = Color(hex: "E5E4E3")
     static let axisLabels = [
-      "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm",
+      "9点", "10点", "11点", "12点", "13点", "14点", "15点", "16点", "17点", "18点",
     ]
   }
 
@@ -405,8 +405,8 @@ extension WeeklyOverviewSnapshot {
     rows: [
       WeeklyOverviewRow(
         id: "mon",
-        label: "Mon",
-        weekdayName: "Monday",
+        label: "周一",
+        weekdayName: "星期一",
         segments: [
           segment("mon-alignment-1", "alignment", "6CDACD", 555, 573),
           segment("mon-testing", "testing", "FFA189", 574, 725),
@@ -418,8 +418,8 @@ extension WeeklyOverviewSnapshot {
       ),
       WeeklyOverviewRow(
         id: "tue",
-        label: "Tue",
-        weekdayName: "Tuesday",
+        label: "周二",
+        weekdayName: "星期二",
         segments: [
           segment("tue-testing", "testing", "FFA189", 547, 731),
           segment("tue-design", "design", "DE9DFC", 732, 760),
@@ -429,8 +429,8 @@ extension WeeklyOverviewSnapshot {
       ),
       WeeklyOverviewRow(
         id: "wed",
-        label: "Wed",
-        weekdayName: "Wednesday",
+        label: "周三",
+        weekdayName: "星期三",
         segments: [
           segment("wed-alignment-1", "alignment", "6CDACD", 555, 572),
           segment("wed-design-1", "design", "DE9DFC", 574, 754),
@@ -443,8 +443,8 @@ extension WeeklyOverviewSnapshot {
       ),
       WeeklyOverviewRow(
         id: "thu",
-        label: "Thu",
-        weekdayName: "Thursday",
+        label: "周四",
+        weekdayName: "星期四",
         segments: [
           segment("thu-alignment-1", "alignment", "6CDACD", 542, 603),
           segment("thu-design-1", "design", "DE9DFC", 604, 736),
@@ -458,8 +458,8 @@ extension WeeklyOverviewSnapshot {
       ),
       WeeklyOverviewRow(
         id: "fri",
-        label: "Fri",
-        weekdayName: "Friday",
+        label: "周五",
+        weekdayName: "星期五",
         segments: [
           segment("fri-alignment-1", "alignment", "6CDACD", 547, 567),
           segment("fri-design", "design", "DE9DFC", 569, 766),
@@ -470,18 +470,18 @@ extension WeeklyOverviewSnapshot {
       ),
     ],
     legendItems: [
-      WeeklyOverviewLegendItem(id: "research", name: "Research", colorHex: "93BCFF"),
-      WeeklyOverviewLegendItem(id: "design", name: "Design", colorHex: "DE9DFC"),
-      WeeklyOverviewLegendItem(id: "alignment", name: "Alignment", colorHex: "6CDACD"),
-      WeeklyOverviewLegendItem(id: "testing", name: "Testing", colorHex: "FFA189"),
-      WeeklyOverviewLegendItem(id: "general", name: "General", colorHex: "BFB6AE"),
+      WeeklyOverviewLegendItem(id: "research", name: "研究", colorHex: "93BCFF"),
+      WeeklyOverviewLegendItem(id: "design", name: "设计", colorHex: "DE9DFC"),
+      WeeklyOverviewLegendItem(id: "alignment", name: "协作", colorHex: "6CDACD"),
+      WeeklyOverviewLegendItem(id: "testing", name: "测试", colorHex: "FFA189"),
+      WeeklyOverviewLegendItem(id: "general", name: "常规", colorHex: "BFB6AE"),
     ],
     contextSwitchTotal: 52,
     contextSwitchAverage: 7,
     totalFocusMinutes: 1478,
-    longestFocus: WeeklyOverviewFocusSummary(weekdayName: "Wednesday", minutes: 245),
+    longestFocus: WeeklyOverviewFocusSummary(weekdayName: "星期三", minutes: 245),
     primaryFocus: WeeklyOverviewCategorySummary(
-      name: "Design",
+      name: "设计",
       minutes: 734,
       colorHex: "DE9DFC"
     )

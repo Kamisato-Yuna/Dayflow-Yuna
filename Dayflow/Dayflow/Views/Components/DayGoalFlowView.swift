@@ -1485,11 +1485,11 @@ private struct DayGoalFlowLayout: Layout {
 
 #Preview("Day Goal Flow") {
   let categories = [
-    TimelineCategory(name: "Research", colorHex: "#8BAAFF", order: 0),
-    TimelineCategory(name: "Coding", colorHex: "#CF8FFF", order: 1),
-    TimelineCategory(name: "Code review", colorHex: "#90DDF0", order: 2),
-    TimelineCategory(name: "Debugging", colorHex: "#6E66D4", order: 3),
-    TimelineCategory(name: "Distraction", colorHex: "#FF706B", order: 4),
+    TimelineCategory(name: "研究", colorHex: "#8BAAFF", order: 0),
+    TimelineCategory(name: "编码", colorHex: "#CF8FFF", order: 1),
+    TimelineCategory(name: "代码审查", colorHex: "#90DDF0", order: 2),
+    TimelineCategory(name: "调试", colorHex: "#6E66D4", order: 3),
+    TimelineCategory(name: "分心", colorHex: "#FF706B", order: 4),
   ]
   let plan = DayGoalPlan.defaultPlan(day: "2026-05-13", categories: categories)
   DayGoalFlowView(
@@ -1500,8 +1500,8 @@ private struct DayGoalFlowLayout: Layout {
       distractedDuration: 85 * 60,
       focusCategories: [
         DayGoalCategoryResult(
-          id: "research", name: "Research", colorHex: "#8BAAFF", duration: 74 * 60),
-        DayGoalCategoryResult(id: "coding", name: "Coding", colorHex: "#CF8FFF", duration: 74 * 60),
+          id: "research", name: "研究", colorHex: "#8BAAFF", duration: 74 * 60),
+        DayGoalCategoryResult(id: "coding", name: "编码", colorHex: "#CF8FFF", duration: 74 * 60),
       ]
     ),
     plan: plan,

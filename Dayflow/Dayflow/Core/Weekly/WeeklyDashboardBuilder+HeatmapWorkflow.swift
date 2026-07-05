@@ -471,12 +471,10 @@ extension WeeklyDashboardBuilder {
     let totalMinutes = Int(minute.rounded())
     let hour24 = (totalMinutes / 60) % 24
     let minutePart = totalMinutes % 60
-    let hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12
-    let suffix = hour24 < 12 ? "am" : "pm"
     if minutePart > 0 {
-      return String(format: "%d:%02d%@", hour12, minutePart, suffix)
+      return String(format: "%d:%02d", hour24, minutePart)
     }
-    return "\(hour12)\(suffix)"
+    return "\(hour24)点"
   }
 
   private static func workflowBucket(for fact: WeeklyCardFact) -> WeeklyWorkflowBucket {

@@ -1174,10 +1174,7 @@ struct CanvasTimelineDataView: View {
 
   private func formatHour(_ hour: Int) -> String {
     let normalizedHour = hour >= 24 ? hour - 24 : hour
-    let adjustedHour =
-      normalizedHour > 12 ? normalizedHour - 12 : (normalizedHour == 0 ? 12 : normalizedHour)
-    let period = normalizedHour >= 12 ? "PM" : "AM"
-    return "\(adjustedHour):00 \(period)"
+    return "\(normalizedHour)点"
   }
 
   nonisolated private static func formatRange(start: Date, end: Date) -> String {

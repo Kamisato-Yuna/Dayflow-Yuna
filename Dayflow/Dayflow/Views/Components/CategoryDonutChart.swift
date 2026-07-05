@@ -49,11 +49,11 @@ struct CategoryTimeData: Identifiable {
     let minutes = totalMinutes % 60
 
     if hours > 0 && minutes > 0 {
-      return "\(hours)h \(minutes)m"
+      return "\(hours)小时 \(minutes)分钟"
     } else if hours > 0 {
-      return "\(hours)h"
+      return "\(hours)小时"
     } else {
-      return "\(minutes)m"
+      return "\(minutes)分钟"
     }
   }
 }
@@ -214,12 +214,12 @@ struct CategoryDonutChart: View {
 #Preview("Category Donut Chart") {
   // Dummy data matching the Figma design
   let previewData: [CategoryTimeData] = [
-    CategoryTimeData(name: "Personal", colorHex: "#6AADFF", duration: 92 * 60),  // 1h 32m - blue
-    CategoryTimeData(name: "Personal", colorHex: "#FF5950", duration: 45 * 60),  // 45m - red
-    CategoryTimeData(name: "Long category title", colorHex: "#88E5DF", duration: 152 * 60),  // 2h 32m - teal
-    CategoryTimeData(name: "Learning", colorHex: "#5650FF", duration: 32 * 60),  // 32m - purple
-    CategoryTimeData(name: "Personal", colorHex: "#B984FF", duration: 204 * 60),  // 3h 24m - light purple
-    CategoryTimeData(name: "Personal", colorHex: "#E2E2E2", duration: 152 * 60),  // 2h 32m - gray
+    CategoryTimeData(name: "个人", colorHex: "#6AADFF", duration: 92 * 60),  // 1h 32m - blue
+    CategoryTimeData(name: "个人", colorHex: "#FF5950", duration: 45 * 60),  // 45m - red
+    CategoryTimeData(name: "较长分类名称", colorHex: "#88E5DF", duration: 152 * 60),  // 2h 32m - teal
+    CategoryTimeData(name: "学习", colorHex: "#5650FF", duration: 32 * 60),  // 32m - purple
+    CategoryTimeData(name: "个人", colorHex: "#B984FF", duration: 204 * 60),  // 3h 24m - light purple
+    CategoryTimeData(name: "个人", colorHex: "#E2E2E2", duration: 152 * 60),  // 2h 32m - gray
   ]
 
   CategoryDonutChart(data: previewData)

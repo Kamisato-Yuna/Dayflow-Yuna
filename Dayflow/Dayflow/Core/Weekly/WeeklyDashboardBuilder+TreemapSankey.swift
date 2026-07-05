@@ -234,7 +234,8 @@ extension WeeklyDashboardBuilder {
 
   private static func sankeySourceName(for weekRange: WeeklyDateRange) -> String {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MMM d"
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
+    formatter.dateFormat = "M月d日"
     let start = formatter.string(from: weekRange.weekStart)
     let endDate =
       calendar.date(byAdding: .day, value: 6, to: weekRange.weekStart) ?? weekRange.weekEnd

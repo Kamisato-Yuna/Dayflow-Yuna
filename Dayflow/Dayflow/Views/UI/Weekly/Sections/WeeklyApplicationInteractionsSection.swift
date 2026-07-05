@@ -396,27 +396,27 @@ struct WeeklyApplicationInteractionsSnapshot {
     patterns: [
       WeeklyWorkPattern(
         id: "slack-figma",
-        from: .slack(avg: "12m avg"),
+        from: .slack(avg: "平均 12 分钟"),
         via: nil,
-        to: .figma(avg: "1h 25m avg"),
+        to: .figma(avg: "平均 1 小时 25 分钟"),
         count: 9,
         description:
-          "Moves between communicating on project progress on Slack and designing mockups on Figma an average of 9 times per day."
+          "每天平均 9 次在 Slack 项目沟通和 Figma 设计稿之间切换。"
       ),
       WeeklyWorkPattern(
         id: "runway-flora-figma",
-        from: .runway(avg: "32m avg"),
+        from: .runway(avg: "平均 32 分钟"),
         via: .flora(),
-        to: .figma(avg: "42m avg"),
+        to: .figma(avg: "平均 42 分钟"),
         count: 4,
         description:
-          "Moves between generating visuals on xyz and designing mockups on Figma an average of 4 times per day."
+          "每天平均 4 次在生成视觉素材和 Figma 设计稿之间切换。"
       ),
     ],
     rabbitHole: WeeklyRabbitHoleSnapshot(
-      from: .figma(avg: "45m avg"),
+      from: .figma(avg: "平均 45 分钟"),
       targets: [.reddit(), .x(), .substack(), .youtube()],
-      avg: "3h 25m avg"
+      avg: "平均 3 小时 25 分钟"
     )
   )
 }

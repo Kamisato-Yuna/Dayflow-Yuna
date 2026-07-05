@@ -31,7 +31,8 @@ struct ScreenshotSlideshowModal: View {
 
   private static let timeFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "h:mm a"
+    formatter.dateFormat = "HH:mm"
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
     return formatter
   }()
 
@@ -372,7 +373,8 @@ private struct ScreenshotSlideshowDisplayLinkView: NSViewRepresentable {
 
 private let cachedScreenshotScrubberTimeFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "h:mm a"
+  formatter.dateFormat = "HH:mm"
+  formatter.locale = Locale(identifier: "zh_Hans_CN")
   return formatter
 }()
 

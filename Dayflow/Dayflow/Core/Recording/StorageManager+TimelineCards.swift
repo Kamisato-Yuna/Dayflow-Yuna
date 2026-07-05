@@ -221,9 +221,9 @@ extension StorageManager {
     // Calculate day using 4AM boundary
     let (dayString, _, _) = startTime.getDayInfoFor4AMBoundary()
 
-    // Get the first non-idle category, fallback to "Work"
+    // Get the first non-idle category, fallback to "工作"
     let categories = CategoryPersistence.loadPersistedCategories()
-    let category = categories.first(where: { !$0.isIdle })?.name ?? "Work"
+    let category = categories.first(where: { !$0.isIdle })?.name ?? "工作"
 
     // Build summary based on selected LLM provider
     let summary = buildOnboardingSummary()

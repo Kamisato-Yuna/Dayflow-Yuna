@@ -15,19 +15,19 @@ struct WeeklyDonutSnapshot: Sendable {
   static let empty = WeeklyDonutSnapshot(
     items: [],
     totalMinutes: 0,
-    footerLabel: "Heart"
+    footerLabel: "核心"
   )
 
   static let figmaPreview = WeeklyDonutSnapshot(
     items: [
-      WeeklyDonutItem(id: "research", name: "Research", colorHex: "93BCFF", minutes: 618),
-      WeeklyDonutItem(id: "design", name: "Design", colorHex: "DE9DFC", minutes: 618),
-      WeeklyDonutItem(id: "alignment", name: "Alignment", colorHex: "6CDACD", minutes: 618),
-      WeeklyDonutItem(id: "testing", name: "Testing", colorHex: "FFA189", minutes: 618),
-      WeeklyDonutItem(id: "general", name: "General", colorHex: "BFB6AE", minutes: 621),
+      WeeklyDonutItem(id: "research", name: "研究", colorHex: "93BCFF", minutes: 618),
+      WeeklyDonutItem(id: "design", name: "设计", colorHex: "DE9DFC", minutes: 618),
+      WeeklyDonutItem(id: "alignment", name: "协作", colorHex: "6CDACD", minutes: 618),
+      WeeklyDonutItem(id: "testing", name: "测试", colorHex: "FFA189", minutes: 618),
+      WeeklyDonutItem(id: "general", name: "常规", colorHex: "BFB6AE", minutes: 621),
     ],
     totalMinutes: 2573,
-    footerLabel: "Heart"
+    footerLabel: "核心"
   )
 }
 
@@ -121,7 +121,7 @@ enum WeeklyDonutBuilder {
     return WeeklyDonutSnapshot(
       items: visibleItems,
       totalMinutes: visibleItems.reduce(0) { $0 + $1.minutes },
-      footerLabel: "Heart"
+      footerLabel: "核心"
     )
   }
 

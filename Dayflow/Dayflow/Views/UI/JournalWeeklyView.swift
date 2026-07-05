@@ -312,9 +312,9 @@ struct JournalWeeklySummary {
 
   static let placeholder = JournalWeeklySummary(
     title: "本周回顾",
-    dateRange: "October 19 – 25",
+    dateRange: "10月19日 - 10月25日",
     description:
-      "Made progress on the redesign project, shared updates with the leads by the end of the week. Looked at design references and shopped for groceries and necessities.",
+      "推进了重设计项目，并在周末前向负责人同步进展。查阅了一些设计参考，也处理了购物和日用品采购。",
     disableForwardNavigation: true,
     days: JournalWeeklyDay.placeholder
   )
@@ -330,52 +330,52 @@ struct JournalWeeklyDay: Identifiable {
   static var placeholder: [JournalWeeklyDay] {
     [
       JournalWeeklyDay(
-        label: "S", progress: 0.02, isMuted: true,
+        label: "日", progress: 0.02, isMuted: true,
         entry: JournalWeeklyEntry(
           summary:
-            "Worked on design directions with the team. Watched a new episode of Curb Your Enthusiasm.",
+            "和团队一起梳理设计方向。晚上看了一集新剧。",
           position: .below,
           icons: [.figma, .tv]
         )),
       JournalWeeklyDay(
-        label: "M", progress: 0.18, isMuted: false,
+        label: "一", progress: 0.18, isMuted: false,
         entry: JournalWeeklyEntry(
-          summary: "Refined design directions. Shopped for groceries.",
+          summary: "细化设计方向，并采购了一些日用品。",
           position: .above,
           icons: [.figma, .cart]
         )),
       JournalWeeklyDay(
-        label: "T", progress: 0.34, isMuted: false,
+        label: "二", progress: 0.34, isMuted: false,
         entry: JournalWeeklyEntry(
           summary:
-            "Prepared presentation and troubleshooted with Jason. Shopped for home necessities on Amazon.",
+            "准备演示文稿，并和 Jason 一起排查问题。补充购买了家用必需品。",
           position: .below,
           icons: [.slides, .cart]
         )),
       JournalWeeklyDay(
-        label: "W", progress: 0.5, isMuted: false,
+        label: "三", progress: 0.5, isMuted: false,
         entry: JournalWeeklyEntry(
           summary:
-            "Updated mockups and presentation based on new feedback. Spent some time watching YouTube videos.",
+            "根据新反馈更新了 mockup 和演示稿，也花了一些时间看视频。",
           position: .above,
           icons: [.figma, .video]
         )),
       JournalWeeklyDay(
-        label: "T", progress: 0.66, isMuted: false,
+        label: "四", progress: 0.66, isMuted: false,
         entry: JournalWeeklyEntry(
-          summary: "Refined design directions and shared with them with the leads.",
+          summary: "继续完善设计方向，并和负责人同步。",
           position: .below,
           icons: [.figma]
         )),
       JournalWeeklyDay(
-        label: "F", progress: 0.82, isMuted: false,
+        label: "五", progress: 0.82, isMuted: false,
         entry: JournalWeeklyEntry(
           summary:
-            "Read some articles on Substack and jotting down notes. Spent most of the day away from the computer.",
+            "阅读了一些文章并记下笔记。当天大部分时间没有使用电脑。",
           position: .above,
           icons: [.books, .moon]
         )),
-      JournalWeeklyDay(label: "S", progress: 0.98, isMuted: true, entry: nil),
+      JournalWeeklyDay(label: "六", progress: 0.98, isMuted: true, entry: nil),
     ]
   }
 }

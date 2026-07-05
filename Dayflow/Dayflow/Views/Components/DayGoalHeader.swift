@@ -402,7 +402,7 @@ struct DayGoalHeader: View {
   }
 
   private var focusSummarySuffix: String {
-    "/ \(formatCompactHours(focusTargetDuration)) hr fulfilled"
+    "/ \(formatCompactHours(focusTargetDuration)) 小时已完成"
   }
 
   private var distractionSummaryValue: String {
@@ -923,25 +923,25 @@ private struct TargetLegendTail: Shape {
     focusCategories: [
       TargetCategoryProgress(
         id: "research",
-        name: "Research",
+        name: "研究",
         colorHex: "8BAAFF",
         duration: 52 * 60
       ),
       TargetCategoryProgress(
         id: "coding",
-        name: "Coding",
+        name: "编码",
         colorHex: "CF8FFF",
         duration: 46 * 60
       ),
       TargetCategoryProgress(
         id: "code-review",
-        name: "Code review",
+        name: "代码审查",
         colorHex: "90DDF0",
         duration: 28 * 60
       ),
       TargetCategoryProgress(
         id: "debugging",
-        name: "Debugging",
+        name: "调试",
         colorHex: "6E66D4",
         duration: 0
       ),

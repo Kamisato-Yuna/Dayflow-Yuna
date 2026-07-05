@@ -39,12 +39,14 @@ struct TimelineWeekRange: Equatable, Sendable {
 
   private static let titleFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MMMM d"
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
+    formatter.dateFormat = "M月d日"
     return formatter
   }()
 
   private static let weekdayFormatter: DateFormatter = {
     let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
     formatter.dateFormat = "E"
     return formatter
   }()

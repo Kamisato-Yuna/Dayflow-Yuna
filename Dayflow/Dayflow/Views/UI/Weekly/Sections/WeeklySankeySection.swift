@@ -861,15 +861,15 @@ private enum WeeklySankeyModelFactory {
       WeeklySankeyCategoryInput(
         id: "coding", name: "Coding/Debugging", minutes: 686, barColorHex: "93BCFF"),
       WeeklySankeyCategoryInput(
-        id: "research", name: "Research", minutes: 581, barColorHex: "6CDACD"),
+        id: "research", name: "研究", minutes: 581, barColorHex: "6CDACD"),
       WeeklySankeyCategoryInput(
-        id: "communication", name: "Communication", minutes: 34, barColorHex: "DE9DFC"),
+        id: "communication", name: "沟通", minutes: 34, barColorHex: "DE9DFC"),
       WeeklySankeyCategoryInput(
         id: "code_review", name: "Code Review", minutes: 13, barColorHex: "BFB6AE"),
       WeeklySankeyCategoryInput(
-        id: "personal", name: "Personal", minutes: 321, barColorHex: "FFC6B7"),
+        id: "personal", name: "个人", minutes: 321, barColorHex: "FFC6B7"),
       WeeklySankeyCategoryInput(
-        id: "distractions", name: "Distraction", minutes: 466, barColorHex: "FF5950"),
+        id: "distractions", name: "分心", minutes: 466, barColorHex: "FF5950"),
     ]
 
     let apps = [
@@ -942,8 +942,8 @@ private enum WeeklySankeyModelFactory {
 
     return build(
       id: "dayflow-timeline-apr20-apr24",
-      seedLabel: "Timeline data",
-      sourceName: "Apr 20-24",
+      seedLabel: "时间线数据",
+      sourceName: "4月20日-24日",
       categories: categories,
       apps: apps,
       links: links
@@ -953,17 +953,17 @@ private enum WeeklySankeyModelFactory {
   static func figmaBaseline() -> WeeklySankeyModel {
     let categoryTemplates = [
       WeeklySankeyCategoryInput(
-        id: "research", name: "Research", minutes: 430, barColorHex: "93BCFF"),
+        id: "research", name: "研究", minutes: 430, barColorHex: "93BCFF"),
       WeeklySankeyCategoryInput(
-        id: "communication", name: "Communication", minutes: 360, barColorHex: "6CDACD"),
+        id: "communication", name: "沟通", minutes: 360, barColorHex: "6CDACD"),
       WeeklySankeyCategoryInput(
-        id: "design", name: "Design", minutes: 720, barColorHex: "DE9DFC"),
+        id: "design", name: "设计", minutes: 720, barColorHex: "DE9DFC"),
       WeeklySankeyCategoryInput(
-        id: "testing", name: "Testing", minutes: 240, barColorHex: "FFA189"),
+        id: "testing", name: "测试", minutes: 240, barColorHex: "FFA189"),
       WeeklySankeyCategoryInput(
-        id: "distractions", name: "Distractions", minutes: 150, barColorHex: "FF5950"),
+        id: "distractions", name: "分心", minutes: 150, barColorHex: "FF5950"),
       WeeklySankeyCategoryInput(
-        id: "personal", name: "Personal", minutes: 180, barColorHex: "FFC6B7"),
+        id: "personal", name: "个人", minutes: 180, barColorHex: "FFC6B7"),
     ]
     let links = [
       link("research", "chatgpt", 180),
@@ -986,7 +986,7 @@ private enum WeeklySankeyModelFactory {
 
     return build(
       id: "figma-baseline",
-      seedLabel: "Figma baseline",
+      seedLabel: "Figma 基线",
       sourceName: "周报",
       categories: categoryTemplates,
       apps: apps,
@@ -998,19 +998,19 @@ private enum WeeklySankeyModelFactory {
     var random = WeeklySankeyRandom(seed: seed)
     let categoryTemplates = [
       WeeklySankeyCategoryInput(
-        id: "research", name: "Research", minutes: 0, barColorHex: "93BCFF"),
+        id: "research", name: "研究", minutes: 0, barColorHex: "93BCFF"),
       WeeklySankeyCategoryInput(
-        id: "communication", name: "Communication", minutes: 0, barColorHex: "6CDACD"),
+        id: "communication", name: "沟通", minutes: 0, barColorHex: "6CDACD"),
       WeeklySankeyCategoryInput(
-        id: "design", name: "Design", minutes: 0, barColorHex: "DE9DFC"),
+        id: "design", name: "设计", minutes: 0, barColorHex: "DE9DFC"),
       WeeklySankeyCategoryInput(
-        id: "general", name: "General", minutes: 0, barColorHex: "BFB6AE"),
+        id: "general", name: "常规", minutes: 0, barColorHex: "BFB6AE"),
       WeeklySankeyCategoryInput(
-        id: "testing", name: "Testing", minutes: 0, barColorHex: "FFA189"),
+        id: "testing", name: "测试", minutes: 0, barColorHex: "FFA189"),
       WeeklySankeyCategoryInput(
-        id: "distractions", name: "Distractions", minutes: 0, barColorHex: "FF5950"),
+        id: "distractions", name: "分心", minutes: 0, barColorHex: "FF5950"),
       WeeklySankeyCategoryInput(
-        id: "personal", name: "Personal", minutes: 0, barColorHex: "FFC6B7"),
+        id: "personal", name: "个人", minutes: 0, barColorHex: "FFC6B7"),
     ]
     let categories = categoryTemplates.enumerated().map { index, category in
       let wave = 0.72 + sin(Double(seed) * 0.37 + Double(index) * 1.21) * 0.22
@@ -1507,9 +1507,12 @@ private enum WeeklySankeyModelFactory {
     let hours = roundedMinutes / 60
     let remainingMinutes = roundedMinutes % 60
     if hours <= 0 {
-      return "\(remainingMinutes)min"
+      return "\(remainingMinutes)分钟"
     }
-    return "\(hours)hr \(remainingMinutes)min"
+    if remainingMinutes == 0 {
+      return "\(hours)小时"
+    }
+    return "\(hours)小时 \(remainingMinutes)分钟"
   }
 
   private static func formatPercent(minutes: Int, totalMinutes: Int) -> String {

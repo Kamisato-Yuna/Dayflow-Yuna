@@ -11,7 +11,8 @@ import SwiftUI
 
 private let cachedFocusTimeFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "h:mm a"
+  formatter.dateFormat = "HH:mm"
+  formatter.locale = Locale(identifier: "zh_Hans_CN")
   return formatter
 }()
 
