@@ -82,6 +82,8 @@ struct WeeklyDonutSection: View {
 private struct WeeklyDonutChart: View {
   let snapshot: WeeklyDonutSnapshot
   let size: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private let innerRadiusRatio: CGFloat = 0.62
   private let innerGap: CGFloat = 8
@@ -93,9 +95,18 @@ private struct WeeklyDonutChart: View {
   var body: some View {
     ZStack {
       Circle()
-        .fill(Color(nsColor: .controlBackgroundColor))
+        .fill(DayflowWeeklyToken.donutBaseFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .frame(width: size, height: size)
-        .shadow(color: Color(red: 0.39, green: 0.28, blue: 0.22).opacity(0.35), radius: 5)
+        .shadow(
+          color: DayflowWeeklyToken.displayShadow(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ),
+          radius: 5
+        )
 
       Chart(snapshot.items) { item in
         SectorMark(
@@ -125,7 +136,10 @@ private struct WeeklyDonutChart: View {
         .allowsHitTesting(false)
 
       Circle()
-        .fill(Color(nsColor: .controlBackgroundColor))
+        .fill(DayflowWeeklyToken.donutBaseFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .frame(
           width: chartSize * innerRadiusRatio - innerGap,
           height: chartSize * innerRadiusRatio - innerGap
@@ -152,11 +166,11 @@ private struct WeeklyDonutCenterContent: View {
       VStack(spacing: 0) {
         Text("\(totalHours) \(hourLabel)")
           .font(.system(size: 16, weight: .medium, design: .rounded))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartText)
 
         Text("\(remainingMinutes) \(minuteLabel)")
           .font(.system(size: 16, weight: .medium, design: .rounded))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartText)
       }
     }
   }
@@ -206,16 +220,27 @@ private struct WeeklyDonutLegendRow: View {
 
 private struct WeeklyDonutEmptyState: View {
   let size: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   var body: some View {
     ZStack {
       Circle()
-        .fill(Color(nsColor: .controlBackgroundColor))
+        .fill(DayflowWeeklyToken.donutBaseFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .frame(width: size, height: size)
-        .shadow(color: Color(red: 0.39, green: 0.28, blue: 0.22).opacity(0.12), radius: 5)
+        .shadow(
+          color: DayflowWeeklyToken.displayShadow(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ),
+          radius: 5
+        )
 
       Circle()
-        .stroke(Color(hex: "E6E0DB"), lineWidth: 20)
+        .stroke(DayflowWeeklyToken.donutRingStroke(colorScheme: colorScheme), lineWidth: 20)
         .frame(width: size - 20, height: size - 20)
 
       VStack(spacing: 4) {
@@ -225,7 +250,7 @@ private struct WeeklyDonutEmptyState: View {
 
         Text("暂无活动")
           .font(.system(size: 16, weight: .medium, design: .rounded))
-          .foregroundStyle(Color(hex: "777777"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
       }
     }
     .frame(width: size, height: size)

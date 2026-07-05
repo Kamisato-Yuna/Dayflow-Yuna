@@ -145,7 +145,7 @@ private struct WeeklyAccessLockCard: View {
       VStack(spacing: 4) {
         Text("解锁周报")
           .font(.system(size: 22, weight: .semibold, design: .rounded))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.title)
           .multilineTextAlignment(.center)
           .lineLimit(1)
           .minimumScaleFactor(0.76)
@@ -153,7 +153,7 @@ private struct WeeklyAccessLockCard: View {
 
         Text("记录 30 小时的时间线数据后即可解锁周报")
           .font(.custom("Figtree-Regular", size: 14))
-          .foregroundStyle(Color(hex: "796E64"))
+          .foregroundStyle(DayflowWeeklyToken.secondaryText)
           .multilineTextAlignment(.center)
           .lineLimit(1)
           .minimumScaleFactor(0.76)
@@ -236,6 +236,8 @@ private struct WeeklyAccessCountdownPill: View {
 }
 
 private struct WeeklyAccessProgressBar: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var logoRotation = 0.0
 
@@ -251,7 +253,10 @@ private struct WeeklyAccessProgressBar: View {
 
     ZStack(alignment: .leading) {
       Capsule(style: .continuous)
-        .fill(Color(hex: "EAE0DD"))
+        .fill(DayflowWeeklyToken.progressTrackFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .frame(width: barWidth, height: barHeight)
         .offset(x: knobSize / 2)
 

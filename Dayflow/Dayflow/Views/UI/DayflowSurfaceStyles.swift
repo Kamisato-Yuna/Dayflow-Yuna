@@ -428,8 +428,72 @@ enum DayflowWeeklyToken {
       return Color(nsColor: .underPageBackgroundColor)
     }
     return colorScheme == .dark
-      ? Color.white.opacity(0.085)
-      : Color(nsColor: .controlBackgroundColor).opacity(0.58)
+      ? Color.white.opacity(0.075)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.54)
+  }
+
+  static func chartDivider(colorScheme: ColorScheme, increaseContrast: Bool = false) -> Color {
+    let opacity = increaseContrast ? 0.42 : (colorScheme == .dark ? 0.24 : 0.18)
+    return (colorScheme == .dark ? Color.white : Color.black).opacity(opacity)
+  }
+
+  static func progressTrackFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    emptyCellFill(colorScheme: colorScheme, reduceTransparency: reduceTransparency)
+  }
+
+  static func donutBaseFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color(nsColor: .controlBackgroundColor).opacity(0.72)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.64)
+  }
+
+  static func donutRingStroke(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark
+      ? Color.white.opacity(0.14)
+      : Color(nsColor: .separatorColor).opacity(0.74)
+  }
+
+  static func sankeyUnderlayStops(colorScheme: ColorScheme, isSource: Bool) -> [Gradient.Stop] {
+    if colorScheme == .dark {
+      return isSource
+        ? [
+          .init(color: Color.white.opacity(0.16), location: 0),
+          .init(color: Color.white.opacity(0.10), location: 0.42),
+          .init(color: Color.white.opacity(0.06), location: 0.76),
+          .init(color: Color.white.opacity(0.025), location: 1),
+        ]
+        : [
+          .init(color: Color.white.opacity(0.035), location: 0),
+          .init(color: Color.white.opacity(0.055), location: 0.46),
+          .init(color: Color.white.opacity(0.03), location: 1),
+        ]
+    }
+
+    return isSource
+      ? [
+        .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.52), location: 0),
+        .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.38), location: 0.42),
+        .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.22), location: 0.76),
+        .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.10), location: 1),
+      ]
+      : [
+        .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.10), location: 0),
+        .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.14), location: 0.46),
+        .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.08), location: 1),
+      ]
+  }
+
+  static func exportWatermarkText(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark
+      ? Color(nsColor: .secondaryLabelColor)
+      : Color(nsColor: .labelColor).opacity(0.72)
+  }
+
+  static func exportWatermarkBrand(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark ? accent : Color(nsColor: .controlAccentColor)
   }
 
   static func controlFill(

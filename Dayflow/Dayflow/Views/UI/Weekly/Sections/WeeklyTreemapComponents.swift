@@ -169,7 +169,7 @@ struct WeeklyTreemapLeafTile: View {
 
       Text(app.formattedDuration)
         .font(.custom("Figtree-Regular", size: typography.detailFontSize))
-        .foregroundStyle(Color(hex: "333333"))
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
         .lineLimit(1)
         .minimumScaleFactor(0.85)
 
@@ -189,7 +189,7 @@ struct WeeklyTreemapLeafTile: View {
 
       Text(app.formattedDuration)
         .font(.custom("Figtree-Regular", size: max(typography.detailFontSize - 1, 10)))
-        .foregroundStyle(Color(hex: "333333"))
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
         .lineLimit(1)
         .minimumScaleFactor(0.85)
     }

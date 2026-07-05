@@ -126,6 +126,7 @@ private enum WeeklySankeyDataset {
 private struct WeeklySankeyCard: View {
   let model: WeeklySankeyModel
   let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
 
   @State private var hoveredNodeID: String?
   @State private var pinnedNodeID: String?
@@ -199,7 +200,7 @@ private struct WeeklySankeyCard: View {
 
       Text("周报细分")
         .font(.system(size: 20, weight: .semibold, design: .rounded))
-        .foregroundStyle(Color(hex: "B46531"))
+        .foregroundStyle(DayflowWeeklyToken.title)
         .offset(
           x: scale.displayX(72),
           y: scale.displayY(64)
@@ -244,12 +245,10 @@ private struct WeeklySankeyCard: View {
     context.fill(
       sourcePath,
       with: .linearGradient(
-        Gradient(stops: [
-          .init(color: Color(hex: "E6DBD1").opacity(0.48), location: 0),
-          .init(color: Color(hex: "EFE9E3").opacity(0.34), location: 0.42),
-          .init(color: Color(hex: "F4EEE9").opacity(0.2), location: 0.76),
-          .init(color: Color(hex: "F7F2ED").opacity(0.08), location: 1),
-        ]),
+        Gradient(stops: DayflowWeeklyToken.sankeyUnderlayStops(
+          colorScheme: colorScheme,
+          isSource: true
+        )),
         startPoint: scale.point(x: model.source.bar.maxX, y: 0),
         endPoint: scale.point(x: firstCategory.bar.minX, y: 0)
       )
@@ -270,11 +269,10 @@ private struct WeeklySankeyCard: View {
     context.fill(
       rightPath,
       with: .linearGradient(
-        Gradient(stops: [
-          .init(color: Color(hex: "EFE7E0").opacity(0.08), location: 0),
-          .init(color: Color(hex: "F4EEE9").opacity(0.11), location: 0.46),
-          .init(color: Color(hex: "EFE7E0").opacity(0.07), location: 1),
-        ]),
+        Gradient(stops: DayflowWeeklyToken.sankeyUnderlayStops(
+          colorScheme: colorScheme,
+          isSource: false
+        )),
         startPoint: scale.point(
           x: firstCategory.bar.minX + WeeklySankeyLayout.base.categories.width,
           y: 0
@@ -460,7 +458,7 @@ private struct WeeklySankeyPlainLabel: View {
     HStack(alignment: .top, spacing: 4) {
       Text(node.metric)
       Rectangle()
-        .fill(Color(hex: "CFC7C1"))
+        .fill(DayflowWeeklyToken.chartSecondaryText.opacity(0.42))
         .frame(width: 0.5, height: 11)
       Text(node.percent)
     }
@@ -491,7 +489,7 @@ private struct WeeklySankeyAppLabel: View {
         HStack(alignment: .firstTextBaseline, spacing: 3) {
           Text(node.metric)
           Rectangle()
-            .fill(Color(hex: "CFC7C1"))
+            .fill(DayflowWeeklyToken.chartSecondaryText.opacity(0.42))
             .frame(width: 0.5, height: 10)
           Text(node.percent)
         }

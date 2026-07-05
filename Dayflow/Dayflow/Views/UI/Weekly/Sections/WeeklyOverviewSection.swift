@@ -13,8 +13,6 @@ struct WeeklyOverviewSection: View {
     static let titleColor = DayflowWeeklyToken.title
     static let bodyTextColor = DayflowWeeklyToken.text
     static let secondaryTextColor = DayflowWeeklyToken.secondaryText
-    static let chartRowFill = Color(hex: "F2F2F2")
-    static let chartRowBorder = Color(hex: "E5E4E3")
     static let accentUnderline = DayflowWeeklyToken.accent
     static let summaryDividerX: CGFloat = 295
 
@@ -220,8 +218,6 @@ private struct WeeklyOverviewTimelineChart: View {
     static let axisWidth: CGFloat = 837
     static let rowHeight: CGFloat = 18
     static let segmentHeight: CGFloat = 12
-    static let rowFill = Color(hex: "F2F2F2")
-    static let rowBorder = Color(hex: "E5E4E3")
     static let axisLabels = [
       "9点", "10点", "11点", "12点", "13点", "14点", "15点", "16点", "17点", "18点",
     ]
@@ -281,6 +277,8 @@ private struct WeeklyOverviewTimelineChart: View {
 
 private struct WeeklyOverviewTimelineBar: View {
   let row: WeeklyOverviewRow
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private enum Design {
     static let barWidth: CGFloat = 836
@@ -288,18 +286,19 @@ private struct WeeklyOverviewTimelineBar: View {
     static let segmentHeight: CGFloat = 12
     static let visibleStartMinute = 9.0 * 60.0
     static let visibleEndMinute = 18.0 * 60.0
-    static let fill = Color(hex: "F2F2F2")
-    static let border = Color(hex: "E5E4E3")
   }
 
   var body: some View {
     ZStack(alignment: .leading) {
       RoundedRectangle(cornerRadius: 2, style: .continuous)
-        .fill(Design.fill)
+        .fill(DayflowWeeklyToken.emptyCellFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .frame(width: Design.barWidth, height: Design.rowHeight)
         .overlay {
           RoundedRectangle(cornerRadius: 2, style: .continuous)
-            .stroke(Design.border, lineWidth: 0.5)
+            .stroke(DayflowWeeklyToken.chartDivider(colorScheme: colorScheme), lineWidth: 0.5)
         }
 
       ForEach(row.segments) { segment in
@@ -341,19 +340,19 @@ private struct WeeklyOverviewTabStrip: View {
       HStack(spacing: 12) {
         Text("全部")
           .font(.custom("Figtree-Bold", size: 12))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartText)
 
         Text("最长专注时段")
           .font(.custom("Figtree-Medium", size: 12))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
         Text("最少上下文切换")
           .font(.custom("Figtree-Medium", size: 12))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
         Text("最多上下文切换")
           .font(.custom("Figtree-Medium", size: 12))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
       }
 
       Rectangle()
@@ -371,18 +370,18 @@ private struct WeeklyOverviewSummaryGroup: View {
     HStack(alignment: .top, spacing: 20) {
       Text(title)
         .font(.system(size: 16, weight: .medium, design: .rounded))
-        .foregroundStyle(Color(hex: "B46531"))
+        .foregroundStyle(DayflowWeeklyToken.title)
 
       HStack(alignment: .top, spacing: 20) {
         ForEach(metrics) { metric in
           VStack(alignment: .leading, spacing: 8) {
             Text(metric.label)
               .font(.custom("Figtree-Regular", size: 12))
-              .foregroundStyle(Color(hex: "777777"))
+              .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
             Text(metric.value)
               .font(.system(size: 18, weight: .semibold, design: .rounded))
-              .foregroundStyle(Color(hex: "333333"))
+              .foregroundStyle(DayflowWeeklyToken.chartText)
               .lineLimit(1)
           }
         }

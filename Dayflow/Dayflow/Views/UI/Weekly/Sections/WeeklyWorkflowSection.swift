@@ -43,7 +43,7 @@ struct WeeklyWorkflowSection: View {
     static let mutedTextColor = DayflowWeeklyToken.secondaryText
     static let totalTitleColor = DayflowWeeklyToken.chartSecondaryText
     static let totalNameColor = DayflowWeeklyToken.chartText
-    static let axisColor = Color(hex: "E0D9D5")
+    static let axisColor = DayflowWeeklyToken.separator
 
     static let titleTopPadding: CGFloat = 16
     static let titleLeadingPadding: CGFloat = gridPadding.leading + labelWidth + labelToGridSpacing

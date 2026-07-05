@@ -25,7 +25,7 @@ struct WeeklyContextChartsSection: View {
     static let xAxisTopSpacing: CGFloat = 8
     static let lineWidth: CGFloat = 2
     static let pointSize: CGFloat = 42
-    static let axisColor = Color(hex: "5A534C").opacity(0.9)
+    static let axisColor = DayflowWeeklyToken.separator
     static let labelColor = DayflowWeeklyToken.text
   }
 
@@ -60,7 +60,7 @@ struct WeeklyContextChartsSection: View {
       VStack(alignment: .leading, spacing: Design.chartTopSpacing) {
         Text("上下文切换与分心对比")
           .font(.system(size: 20, weight: .semibold, design: .rounded))
-          .foregroundStyle(Color(hex: "B46531"))
+          .foregroundStyle(DayflowWeeklyToken.title)
           .lineLimit(1)
           .minimumScaleFactor(0.82)
           .padding(.bottom, Design.titleSpacing - Design.chartTopSpacing)
@@ -212,7 +212,7 @@ private struct WeeklyContextDistributionCard: View {
     static let plotHeight: CGFloat = 283
     static let contextColor = Color(hex: "B097FF")
     static let distractionColor = Color(hex: "FF7C5A")
-    static let axisColor = Color(hex: "C9C2BC")
+    static let axisColor = DayflowWeeklyToken.separator
   }
 
   init(snapshot: WeeklyContextDistributionSnapshot, width: CGFloat = Design.width) {
@@ -232,7 +232,7 @@ private struct WeeklyContextDistributionCard: View {
     VStack(alignment: .leading, spacing: 0) {
       Text("上下文切换与分心分布")
         .font(.system(size: 18, weight: .semibold, design: .rounded))
-        .foregroundStyle(Color(hex: "B46531"))
+        .foregroundStyle(DayflowWeeklyToken.title)
         .padding(.leading, 25)
         .padding(.top, 18)
 
@@ -353,7 +353,7 @@ private struct WeeklyContextComparisonBarCard: View {
     static let mainHeight: CGFloat = 369
     static let barAreaHeight: CGFloat = 204
     static let maxBarHeight: CGFloat = 180
-    static let axisColor = Color(hex: "C9C2BC")
+    static let axisColor = DayflowWeeklyToken.separator
   }
 
   init(snapshot: WeeklyContextComparisonSnapshot, width: CGFloat = Design.width) {
@@ -370,7 +370,7 @@ private struct WeeklyContextComparisonBarCard: View {
       VStack(alignment: .leading, spacing: 0) {
         Text("上下文切换与分心对比")
           .font(.system(size: 18, weight: .semibold, design: .rounded))
-          .foregroundStyle(Color(hex: "B46531"))
+          .foregroundStyle(DayflowWeeklyToken.title)
           .padding(.top, 22)
           .padding(.leading, 25)
 

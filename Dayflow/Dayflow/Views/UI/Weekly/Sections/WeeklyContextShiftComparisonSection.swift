@@ -20,7 +20,7 @@ struct WeeklyContextShiftComparisonSection: View {
     static let sectionWidth: CGFloat = 958
     static let sectionHeight: CGFloat = 414
     static let cornerRadius: CGFloat = 6
-    static let axisColor = Color(hex: "5A534C").opacity(0.9)
+    static let axisColor = DayflowWeeklyToken.separator
     static let labelColor = DayflowWeeklyToken.text
 
     static let horizontalPadding: CGFloat = 24

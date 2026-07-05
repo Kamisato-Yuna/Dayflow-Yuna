@@ -457,11 +457,11 @@ private struct WeeklyDataRequirementView: View {
         VStack(spacing: 5) {
           Text("继续记录以解锁本周周报")
             .font(.system(size: 24, weight: .semibold, design: .rounded))
-            .foregroundStyle(Color(hex: "333333"))
+            .foregroundStyle(DayflowWeeklyToken.title)
 
           Text("所选周至少需要 15 小时记录活动，才能生成周报洞察。")
             .font(.custom("Figtree-Regular", size: 14))
-            .foregroundStyle(Color(hex: "796E64"))
+            .foregroundStyle(DayflowWeeklyToken.secondaryText)
             .multilineTextAlignment(.center)
             .lineLimit(2)
         }
@@ -472,7 +472,7 @@ private struct WeeklyDataRequirementView: View {
 
         Text(remainingText)
           .font(.custom("Figtree-Medium", size: 13))
-          .foregroundStyle(Color(hex: "8A7768"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
       }
       .padding(.horizontal, 28)
       .frame(maxWidth: 540)
@@ -525,6 +525,9 @@ private struct WeeklyDataRequirementPill: View {
 }
 
 private struct WeeklyDataRequirementProgressBar: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   let progress: Double
 
   var body: some View {
@@ -534,7 +537,10 @@ private struct WeeklyDataRequirementProgressBar: View {
 
       ZStack(alignment: .leading) {
         Capsule(style: .continuous)
-          .fill(Color(hex: "EAE0DD"))
+          .fill(DayflowWeeklyToken.progressTrackFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
 
         LinearGradient(
           colors: [Color(hex: "C6D9FF"), Color(hex: "FF9A78")],
@@ -970,19 +976,21 @@ private struct WeeklyExportWatermark: View {
 }
 
 private struct WeeklyGeneratedWithDayflowText: View {
+  @Environment(\.colorScheme) private var colorScheme
+
   var body: some View {
     HStack(spacing: 3) {
       Text("由")
         .font(.custom("Figtree-SemiBold", size: 10))
-        .foregroundStyle(Color(hex: "786A61"))
+        .foregroundStyle(DayflowWeeklyToken.exportWatermarkText(colorScheme: colorScheme))
 
       Text("Dayflow")
         .font(.custom("Figtree-Bold", size: 10))
-        .foregroundStyle(Color(hex: "B46531"))
+        .foregroundStyle(DayflowWeeklyToken.exportWatermarkBrand(colorScheme: colorScheme))
 
       Text("生成")
         .font(.custom("Figtree-SemiBold", size: 10))
-        .foregroundStyle(Color(hex: "786A61"))
+        .foregroundStyle(DayflowWeeklyToken.exportWatermarkText(colorScheme: colorScheme))
     }
   }
 }
