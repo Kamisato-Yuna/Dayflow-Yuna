@@ -74,12 +74,27 @@ extension MainView {
 
   @ViewBuilder
   private var rightPanel: some View {
-    // Right column: Main surface panel including header + content
+    if selectedIcon == .settings {
+      rightPanelContent
+        .padding(0)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    } else {
+      // Right column: Main surface panel including header + content
+      rightPanelContent
+        .padding(0)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .dayflowContentPanel(cornerRadius: 8)
+    }
+  }
+
+  @ViewBuilder
+  private var rightPanelContent: some View {
     ZStack {
       switch selectedIcon {
       case .settings:
         SettingsView()
-          .padding(15)
       case .chat:
         ChatPanelView()
       case .daily:
@@ -98,10 +113,6 @@ extension MainView {
         }
       }
     }
-    .padding(0)
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-    .dayflowContentPanel(cornerRadius: 8)
   }
 
   private func timelinePanel(geo: GeometryProxy) -> some View {
