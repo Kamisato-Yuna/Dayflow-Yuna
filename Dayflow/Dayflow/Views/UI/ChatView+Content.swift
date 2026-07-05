@@ -307,7 +307,7 @@ extension ChatView {
 
             VStack(alignment: .leading, spacing: 2) {
               Text("询问你的 Dayflow 数据")
-                .font(.custom("InstrumentSerif-Regular", size: 30))
+                .font(.custom("HanziPen SC", size: 30))
                 .foregroundColor(ChatSurfacePalette.primaryText)
 
               Text("提问、分析时间线，并生成图表。")
@@ -367,7 +367,8 @@ extension ChatView {
       // Header: "Unlock Beta" with BETA badge
       HStack(alignment: .top, spacing: 4) {
         Text("解锁测试版")
-          .font(.custom("InstrumentSerif-Italic", size: 38))
+          .font(.system(size: 38, weight: .semibold, design: .rounded))
+          .italic()
           .foregroundColor(ChatSurfacePalette.primaryText)
 
         Text("测试版")

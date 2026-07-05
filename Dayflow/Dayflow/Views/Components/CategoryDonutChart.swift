@@ -156,10 +156,10 @@ struct CategoryDonutChart: View {
       VStack(spacing: 0) {
         let total = formattedTotal
         Text("\(total.hours) 小时")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
+          .font(.system(size: 16, weight: .medium, design: .rounded))
           .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))  // #333333
         Text("\(total.minutes) 分钟")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
+          .font(.system(size: 16, weight: .medium, design: .rounded))
           .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
       }
     }

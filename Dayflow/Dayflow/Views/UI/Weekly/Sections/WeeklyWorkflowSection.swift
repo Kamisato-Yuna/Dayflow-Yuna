@@ -89,7 +89,7 @@ struct WeeklyWorkflowSection: View {
     .dayflowWeeklySectionSurface(cornerRadius: 6)
     .overlay(alignment: .topLeading) {
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Design.titleColor)
         .padding(.top, Design.titleTopPadding)
         .padding(.leading, Design.titleLeadingPadding)
@@ -190,7 +190,7 @@ struct WeeklyWorkflowSection: View {
         .foregroundStyle(Design.mutedTextColor)
       } else {
         Text("本周总计")
-          .font(.custom("InstrumentSerif-Regular", size: 14))
+          .font(.system(size: 14, weight: .medium, design: .rounded))
           .foregroundStyle(Design.totalTitleColor)
 
         ForEach(snapshot.totals) { total in

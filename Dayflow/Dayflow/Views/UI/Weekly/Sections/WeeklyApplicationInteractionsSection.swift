@@ -31,7 +31,7 @@ private struct WeeklyApplicationNetworkPane: View {
 
       VStack(alignment: .leading, spacing: 7) {
         Text("常用应用之间的互动")
-          .font(.custom("InstrumentSerif-Regular", size: 20))
+          .font(.system(size: 20, weight: .semibold, design: .rounded))
           .foregroundStyle(Color(hex: "B46531"))
 
         Text(snapshot.subtitle)
@@ -132,7 +132,7 @@ private struct WeeklyApplicationPatternsPane: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("最常见工作模式")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.top, 28)
         .padding(.leading, 24)
@@ -147,7 +147,7 @@ private struct WeeklyApplicationPatternsPane: View {
       .padding(.leading, 8)
 
       Text("分心与深陷浏览")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.top, 19)
         .padding(.leading, 24)

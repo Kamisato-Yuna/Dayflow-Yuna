@@ -562,7 +562,7 @@ struct WelcomeView: View {
             .opacity(textOpacity)
 
           Text(fullText)
-            .font(.custom("InstrumentSerif-Regular", size: 36))
+            .font(.custom("HanziPen SC", size: 36))
             .multilineTextAlignment(.center)
             .foregroundColor(.black.opacity(0.8))
             .padding(.horizontal, 20)
@@ -860,7 +860,7 @@ struct OnboardingPrototypeReferralStep: View {
         .frame(height: 39)
 
       Text("回答一个快速问题")
-        .font(.custom("InstrumentSerif-Regular", size: 40))
+        .font(.system(size: 40, weight: .semibold, design: .rounded))
         .tracking(-1.2)
         .multilineTextAlignment(.center)
         .foregroundColor(DayflowOnboardingToken.title)
@@ -931,7 +931,7 @@ struct CompletionView: View {
       // Title section
       VStack(spacing: 8) {
         Text("你已准备就绪")
-          .font(.custom("InstrumentSerif-Regular", size: 36))
+          .font(.custom("HanziPen SC", size: 36))
           .foregroundColor(.black.opacity(0.9))
 
         Text(

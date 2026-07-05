@@ -30,7 +30,7 @@ struct OnboardingPrototypeRoleSelectionStep: View {
         .frame(height: 39)
 
       Text("帮 Dayflow 更准确地了解你的工作场景。")
-        .font(.custom("InstrumentSerif-Regular", size: 40))
+        .font(.custom("HanziPen SC", size: 40))
         .tracking(-1.2)
         .multilineTextAlignment(.center)
         .foregroundColor(DayflowOnboardingToken.title)

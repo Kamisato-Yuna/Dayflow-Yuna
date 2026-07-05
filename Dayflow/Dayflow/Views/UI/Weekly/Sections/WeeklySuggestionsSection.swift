@@ -6,7 +6,7 @@ struct WeeklySuggestionsSection: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 24))
+        .font(.system(size: 24, weight: .semibold, design: .rounded))
         .foregroundStyle(DayflowWeeklyToken.title)
 
       ViewThatFits(in: .horizontal) {

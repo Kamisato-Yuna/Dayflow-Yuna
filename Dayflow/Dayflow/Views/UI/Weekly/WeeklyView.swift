@@ -456,7 +456,7 @@ private struct WeeklyDataRequirementView: View {
       VStack(spacing: 18) {
         VStack(spacing: 5) {
           Text("继续记录以解锁本周周报")
-            .font(.custom("InstrumentSerif-Regular", size: 24))
+            .font(.system(size: 24, weight: .semibold, design: .rounded))
             .foregroundStyle(Color(hex: "333333"))
 
           Text("所选周至少需要 15 小时记录活动，才能生成周报洞察。")
@@ -507,7 +507,7 @@ private struct WeeklyDataRequirementPill: View {
 
   var body: some View {
     Text(text)
-      .font(.custom("InstrumentSerif-Regular", size: 22))
+      .font(.system(size: 22, weight: .semibold, design: .rounded))
       .foregroundStyle(Color(hex: "FF7856"))
       .lineLimit(1)
       .minimumScaleFactor(0.75)
@@ -812,7 +812,7 @@ private struct WeeklyGraphicDownloadOverlay: View {
   var body: some View {
     HStack(spacing: 8) {
       Text(headerTitle)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .lineLimit(1)
         .fixedSize()
         .opacity(0)

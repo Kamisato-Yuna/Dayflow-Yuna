@@ -70,7 +70,7 @@ struct DayDistractionSummarySection: View {
   private var header: some View {
     HStack(alignment: .center, spacing: 6) {
       Text("目前分心情况")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundColor(Design.titleColor)
 
       Spacer()

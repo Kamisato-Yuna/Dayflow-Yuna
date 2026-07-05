@@ -45,8 +45,8 @@ struct DistractionSummaryCard: View {
     static let distractedTextColor = DayflowDailyToken.distraction
     static let bodyTextColor = DayflowDailyToken.text
 
-    static let labelFont = Font.custom("InstrumentSerif-Regular", size: 14)
-    static let valueFont = Font.custom("InstrumentSerif-Regular", size: 20)
+    static let labelFont = Font.system(size: 14, weight: .medium, design: .rounded)
+    static let valueFont = Font.system(size: 20, weight: .semibold, design: .rounded)
     static let patternTitleFont = Font.custom("Figtree", size: 12).weight(.bold)
     static let patternBodyFont = Font.custom("Figtree", size: 12)
   }

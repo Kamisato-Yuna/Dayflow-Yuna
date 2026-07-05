@@ -29,7 +29,7 @@ struct WeeklyInteractionGraphPrototypeSection: View {
 
     ZStack(alignment: .topLeading) {
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Design.titleColor)
         .offset(x: Design.titleOrigin.x, y: Design.titleOrigin.y)
 

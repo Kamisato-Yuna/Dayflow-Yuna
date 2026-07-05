@@ -178,15 +178,15 @@ extension JournalHeroSummary {
 extension AttributedString {
   fileprivate static var sampleEntry: AttributedString {
     var base = AttributeContainer()
-    base.font = .custom("InstrumentSerif-Regular", size: 30)
+    base.font = .system(size: 30, weight: .semibold, design: .rounded)
     base.foregroundColor = JournalHeroTokens.entryPrimary
 
     var emphasized = AttributeContainer()
-    emphasized.font = .custom("InstrumentSerif-Regular", size: 32)
+    emphasized.font = .system(size: 32, weight: .semibold, design: .rounded)
     emphasized.foregroundColor = JournalHeroTokens.entryEmphasis
 
     var secondary = AttributeContainer()
-    secondary.font = .custom("InstrumentSerif-Regular", size: 28)
+    secondary.font = .system(size: 28, weight: .semibold, design: .rounded)
     secondary.foregroundColor = JournalHeroTokens.entrySecondary
 
     var text = AttributedString(

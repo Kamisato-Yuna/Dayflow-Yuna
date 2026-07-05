@@ -48,7 +48,7 @@ struct OnboardingLLMSelectionView: View {
       VStack(spacing: 0) {
         // Header
         Text("选择 Dayflow 的运行方式")
-          .font(.custom("InstrumentSerif-Regular", size: titleSize))
+          .font(.custom("HanziPen SC", size: titleSize))
           .multilineTextAlignment(.center)
           .foregroundColor(.black.opacity(0.9))
           .frame(maxWidth: .infinity)

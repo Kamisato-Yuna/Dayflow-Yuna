@@ -41,7 +41,7 @@ struct HowItWorksView: View {
     ScrollView(.vertical, showsIndicators: false) {
       VStack(spacing: 40) {
         Text(fullText)
-          .font(.custom("InstrumentSerif-Regular", size: 48))
+          .font(.custom("HanziPen SC", size: 48))
           .multilineTextAlignment(.center)
           .frame(maxWidth: .infinity, minHeight: 60)
           .foregroundColor(DayflowOnboardingToken.title)

@@ -59,7 +59,7 @@ struct WeeklyContextChartsSection: View {
     VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: Design.chartTopSpacing) {
         Text("上下文切换与分心对比")
-          .font(.custom("InstrumentSerif-Regular", size: 20))
+          .font(.system(size: 20, weight: .semibold, design: .rounded))
           .foregroundStyle(Color(hex: "B46531"))
           .lineLimit(1)
           .minimumScaleFactor(0.82)
@@ -231,7 +231,7 @@ private struct WeeklyContextDistributionCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("上下文切换与分心分布")
-        .font(.custom("InstrumentSerif-Regular", size: 18))
+        .font(.system(size: 18, weight: .semibold, design: .rounded))
         .foregroundStyle(Color(hex: "B46531"))
         .padding(.leading, 25)
         .padding(.top, 18)
@@ -369,7 +369,7 @@ private struct WeeklyContextComparisonBarCard: View {
     VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: 0) {
         Text("上下文切换与分心对比")
-          .font(.custom("InstrumentSerif-Regular", size: 18))
+          .font(.system(size: 18, weight: .semibold, design: .rounded))
           .foregroundStyle(Color(hex: "B46531"))
           .padding(.top, 22)
           .padding(.leading, 25)

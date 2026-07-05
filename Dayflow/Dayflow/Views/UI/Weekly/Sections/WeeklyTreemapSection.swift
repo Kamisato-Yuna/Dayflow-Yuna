@@ -34,7 +34,7 @@ struct WeeklyTreemapSection: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(DayflowWeeklyToken.title)
         .offset(x: Design.titleOrigin.x, y: Design.titleOrigin.y)
 

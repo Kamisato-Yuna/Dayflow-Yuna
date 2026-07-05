@@ -83,7 +83,7 @@ extension DailyView {
         }
 
         Text(dailyDateTitle(for: selectedDate))
-          .font(.custom("InstrumentSerif-Regular", size: 26 * scale))
+          .font(.system(size: 26 * scale, weight: .semibold, design: .rounded))
           .foregroundStyle(DayflowDailyToken.title)
           .lineLimit(1)
           .minimumScaleFactor(0.75)
@@ -129,7 +129,7 @@ extension DailyView {
     return VStack(alignment: .leading, spacing: 8 * scale) {
       HStack {
         Text(headingText)
-          .font(.custom("InstrumentSerif-Regular", size: 24 * scale))
+          .font(.system(size: 24 * scale, weight: .semibold, design: .rounded))
           .foregroundStyle(DayflowDailyToken.title)
 
         Spacer()
@@ -269,7 +269,7 @@ extension DailyView {
       } else {
         HStack(spacing: 8 * scale) {
           Text(totalTitle)
-            .font(.custom("InstrumentSerif-Regular", size: 14 * scale))
+            .font(.system(size: 14 * scale, weight: .medium, design: .rounded))
             .foregroundStyle(DayflowDailyToken.secondaryText)
 
           ForEach(workflowTotals) { total in

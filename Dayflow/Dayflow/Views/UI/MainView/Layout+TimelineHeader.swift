@@ -147,8 +147,7 @@ extension MainView {
   // used in `DateNavigationControls.swift:calculateOptimalPillWidth()`.
   private var measuredDateLabelWidth: CGFloat {
     let font =
-      NSFont(name: "InstrumentSerif-Regular", size: 26)
-      ?? NSFont.systemFont(ofSize: 26)
+      NSFont.systemFont(ofSize: 26, weight: .semibold)
     return timelineTitleText.size(withAttributes: [.font: font]).width
   }
 
@@ -209,7 +208,7 @@ extension MainView {
   //
   // `.frame(height: 30)` on the HStack pins its vertical dimension to the
   // pill height so the date label (which has a ~31pt natural line height
-  // at InstrumentSerif 26pt) can't grow the HStack when it appears. Without
+  // at the date-label font size) can't grow the HStack when it appears. Without
   // this pin, the pills visibly shifted by ~0.5pt when the date entered.
   private func timelineLeadingControls(visibility: TimelineHeaderVisibility) -> some View {
     DayflowGlassSurface(role: .floatingControl, cornerRadius: 18, spacing: 5) {
@@ -515,7 +514,7 @@ extension MainView {
 
   private var timelineHeaderDateLabel: some View {
     Text(timelineTitleText)
-      .font(.custom("InstrumentSerif-Regular", size: 26))
+      .font(.system(size: 26, weight: .semibold, design: .rounded))
       .foregroundColor(Color(nsColor: .labelColor))
       .lineLimit(1)
       .fixedSize(horizontal: true, vertical: false)

@@ -216,7 +216,7 @@ private struct OnboardingPrototypePlaceholderStep: View {
     VStack(spacing: 24) {
         VStack(spacing: 10) {
           Text("原型验收点")
-            .font(.custom("InstrumentSerif-Regular", size: 44))
+            .font(.system(size: 44, weight: .semibold, design: .rounded))
             .foregroundColor(.black.opacity(0.9))
 
         Text(

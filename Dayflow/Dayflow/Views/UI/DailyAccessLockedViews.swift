@@ -121,7 +121,7 @@ struct DailyProviderOnboardingView: View {
       VStack(spacing: 12) {
         VStack(spacing: 6) {
           Text("选择你的每日复盘提供商")
-            .font(.custom("InstrumentSerif-Regular", size: 24))
+            .font(.system(size: 24, weight: .semibold, design: .rounded))
             .foregroundColor(DayflowDailyToken.title)
             .multilineTextAlignment(.center)
 
@@ -236,7 +236,8 @@ private struct DailyAccessHeaderView: View {
   var body: some View {
     HStack(alignment: .top, spacing: 4) {
       Text("Dayflow Daily")
-        .font(.custom("InstrumentSerif-Italic", size: 38))
+        .font(.custom("HanziPen SC", size: 38))
+        .italic()
         .foregroundColor(DayflowDailyToken.title)
 
       Text("测试版")
@@ -347,7 +348,7 @@ private struct DailyNotificationPermissionPanelView: View {
   var body: some View {
     VStack(spacing: 16) {
       Text("开启通知以解锁每日复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 30))
+        .font(.system(size: 30, weight: .semibold, design: .rounded))
         .foregroundColor(DayflowDailyToken.title)
         .multilineTextAlignment(.center)
 

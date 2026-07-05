@@ -33,7 +33,7 @@ struct WeeklyDonutSection: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       Text("周分布")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Design.titleColor)
         .padding(.top, 16)
         .padding(.leading, 18)
@@ -151,11 +151,11 @@ private struct WeeklyDonutCenterContent: View {
 
       VStack(spacing: 0) {
         Text("\(totalHours) \(hourLabel)")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
+          .font(.system(size: 16, weight: .medium, design: .rounded))
           .foregroundStyle(Color(hex: "333333"))
 
         Text("\(remainingMinutes) \(minuteLabel)")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
+          .font(.system(size: 16, weight: .medium, design: .rounded))
           .foregroundStyle(Color(hex: "333333"))
       }
     }
@@ -224,7 +224,7 @@ private struct WeeklyDonutEmptyState: View {
           .foregroundStyle(Color(hex: "A5A5A5"))
 
         Text("暂无活动")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
+          .font(.system(size: 16, weight: .medium, design: .rounded))
           .foregroundStyle(Color(hex: "777777"))
       }
     }

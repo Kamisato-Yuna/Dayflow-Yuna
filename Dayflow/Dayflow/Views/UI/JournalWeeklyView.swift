@@ -27,12 +27,12 @@ struct JournalWeeklyView: View {
 
       VStack(spacing: 6) {
         Text(summary.title)
-          .font(.custom("InstrumentSerif-Regular", size: 32))
+          .font(.system(size: 32, weight: .semibold, design: .rounded))
           .kerning(-0.5)
           .foregroundStyle(JournalWeeklyTokens.primaryText)
 
         Text(summary.dateRange)
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalWeeklyTokens.primaryText.opacity(0.85))
 
         Text(summary.description)

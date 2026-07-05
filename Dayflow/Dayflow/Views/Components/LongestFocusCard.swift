@@ -120,12 +120,12 @@ struct LongestFocusCard: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       Text("最长专注时长")
-        .font(.custom("InstrumentSerif-Regular", size: 16))
+        .font(.system(size: 16, weight: .medium, design: .rounded))
         .foregroundColor(Design.titleColor)
         .offset(x: Design.titleX, y: Design.titleY)
 
       Text(formattedDuration)
-        .font(.custom("InstrumentSerif-Regular", size: 24))
+        .font(.system(size: 24, weight: .semibold, design: .rounded))
         .foregroundColor(Design.focusSolid)
         .offset(x: Design.valueX, y: Design.valueY)
 

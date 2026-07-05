@@ -66,7 +66,7 @@ struct DayFocusSummarySection: View {
   private var header: some View {
     HStack(alignment: .center, spacing: 6) {
       Text("你的专注")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundColor(Design.titleColor)
 
       Image(systemName: "info.circle")
@@ -90,7 +90,7 @@ private struct TotalFocusCard: View {
     VStack(alignment: .leading, spacing: 4) {
       HStack(spacing: 6) {
         Text("总专注时长")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
+          .font(.system(size: 16, weight: .medium, design: .rounded))
           .foregroundColor(DayflowDailyToken.title)
 
         Image(systemName: "info.circle")
@@ -101,7 +101,7 @@ private struct TotalFocusCard: View {
       }
 
       Text(value)
-        .font(.custom("InstrumentSerif-Regular", size: 34))
+        .font(.system(size: 34, weight: .semibold, design: .rounded))
         .foregroundColor(DayflowDailyToken.focus)
         .frame(maxWidth: .infinity, alignment: .leading)
     }

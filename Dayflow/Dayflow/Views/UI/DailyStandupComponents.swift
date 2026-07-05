@@ -83,7 +83,7 @@ struct DailyBulletCard: View {
     VStack(alignment: .leading, spacing: 0) {
       VStack(alignment: .leading, spacing: 18 * scale) {
         Text(title)
-          .font(.custom("InstrumentSerif-Regular", size: 24 * scale))
+          .font(.system(size: 24 * scale, weight: .semibold, design: .rounded))
           .foregroundStyle(DayflowDailyToken.title)
           .frame(maxWidth: .infinity, alignment: .leading)
 

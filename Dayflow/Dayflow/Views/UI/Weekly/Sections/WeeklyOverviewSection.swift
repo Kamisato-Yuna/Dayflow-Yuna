@@ -72,7 +72,7 @@ struct WeeklyOverviewSection: View {
     VStack(alignment: .leading, spacing: Design.headerSpacing) {
       HStack(alignment: .bottom) {
         Text("时间分布")
-          .font(.custom("InstrumentSerif-Regular", size: 20))
+          .font(.system(size: 20, weight: .semibold, design: .rounded))
           .foregroundStyle(Design.titleColor)
 
         Spacer(minLength: 20)
@@ -370,7 +370,7 @@ private struct WeeklyOverviewSummaryGroup: View {
   var body: some View {
     HStack(alignment: .top, spacing: 20) {
       Text(title)
-        .font(.custom("InstrumentSerif-Regular", size: 16))
+        .font(.system(size: 16, weight: .medium, design: .rounded))
         .foregroundStyle(Color(hex: "B46531"))
 
       HStack(alignment: .top, spacing: 20) {
@@ -381,7 +381,7 @@ private struct WeeklyOverviewSummaryGroup: View {
               .foregroundStyle(Color(hex: "777777"))
 
             Text(metric.value)
-              .font(.custom("InstrumentSerif-Regular", size: 18))
+              .font(.system(size: 18, weight: .semibold, design: .rounded))
               .foregroundStyle(Color(hex: "333333"))
               .lineLimit(1)
           }

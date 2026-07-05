@@ -18,7 +18,7 @@ struct WeeklyHighlightsSection: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("重点亮点")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Design.titleColor)
 
       VStack(alignment: .leading, spacing: 19) {

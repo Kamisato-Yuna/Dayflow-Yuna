@@ -15,7 +15,7 @@ struct BugReportView: View {
     VStack(spacing: 36) {
       VStack(spacing: 16) {
         Text("感谢使用 Dayflow")
-          .font(.custom("InstrumentSerif-Regular", size: 40))
+          .font(.custom("HanziPen SC", size: 40))
           .foregroundColor(Color(nsColor: .labelColor))
 
         Text(

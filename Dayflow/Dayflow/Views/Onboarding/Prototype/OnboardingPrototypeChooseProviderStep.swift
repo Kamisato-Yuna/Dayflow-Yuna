@@ -95,7 +95,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
     VStack(spacing: 0) {
       // Title
       Text("选择 Dayflow 的运行方式")
-        .font(.custom("InstrumentSerif-Regular", size: scaledText(40)))
+        .font(.custom("HanziPen SC", size: scaledText(40)))
         .tracking(-1.2 * layoutScale)
         .multilineTextAlignment(.center)
         .foregroundColor(DayflowOnboardingToken.title)

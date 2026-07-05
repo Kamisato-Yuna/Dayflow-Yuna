@@ -411,7 +411,7 @@ struct DaySummaryView: View {
     VStack(alignment: .leading, spacing: Design.donutSectionSpacing) {
       VStack(alignment: .leading, spacing: Design.headerSpacing) {
         Text("今天到目前为止")
-          .font(.custom("InstrumentSerif-Regular", size: 24))
+          .font(.system(size: 24, weight: .semibold, design: .rounded))
           .foregroundColor(Design.titleColor)
       }
 

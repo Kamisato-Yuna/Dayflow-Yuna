@@ -136,7 +136,7 @@ struct WhatsNewView: View {
         HStack(alignment: .top) {
           VStack(alignment: .leading, spacing: 6) {
             Text("\(releaseNote.version) 更新内容 🎉")
-              .font(.custom("InstrumentSerif-Regular", size: 32))
+              .font(.system(size: 32, weight: .semibold, design: .rounded))
               .foregroundColor(Color(nsColor: .labelColor))
 
             Text(releaseNote.title)

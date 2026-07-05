@@ -83,7 +83,7 @@ struct OnboardingCategoryStepView: View {
   private var instructionsColumn: some View {
     VStack(alignment: .leading, spacing: 16) {
       Text("帮助 Dayflow 理解你的工作流")
-        .font(.custom("InstrumentSerif-Regular", size: 28))
+        .font(.custom("HanziPen SC", size: 28))
         .foregroundColor(.black)
         .fixedSize(horizontal: false, vertical: true)
         .padding(.bottom, 24)

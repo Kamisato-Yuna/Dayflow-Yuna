@@ -103,7 +103,7 @@ struct WeeklyFocusHeatmapSection: View {
   private var header: some View {
     HStack(alignment: .top) {
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Design.titleColor)
 
       Spacer(minLength: 24)

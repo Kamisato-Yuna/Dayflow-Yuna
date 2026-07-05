@@ -157,7 +157,7 @@ struct JournalDayView: View {
         toolbar
 
         Text(manager.headline)
-          .font(.custom("InstrumentSerif-Regular", size: 36))
+          .font(.system(size: 36, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalDayTokens.primaryText)
           .transaction { transaction in
             transaction.animation = nil
@@ -541,7 +541,7 @@ private struct IntentionsEditForm: View {
   private var sectionIntentions: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("今日意图")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
         .padding(.leading, titleLeading)
 
@@ -558,7 +558,7 @@ private struct IntentionsEditForm: View {
     VStack(alignment: .leading, spacing: 0) {
       HStack(spacing: 6) {
         Text("今日备注")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalDayTokens.sectionHeader)
           .padding(.leading, titleLeading)
       }
@@ -575,7 +575,7 @@ private struct IntentionsEditForm: View {
     VStack(alignment: .leading, spacing: 0) {
       HStack(spacing: 6) {
         Text("长期目标")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalDayTokens.sectionHeader)
           .padding(.leading, titleLeading)
       }
@@ -722,7 +722,7 @@ private struct JournalLeftCardView: View {
   private func section(_ title: String, content: () -> some View) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
       content()
     }
@@ -765,7 +765,7 @@ private struct ReflectionPromptCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text("今日复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader.opacity(0.4))
 
       Text(
@@ -797,7 +797,7 @@ private struct ReflectionEditorCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text("你的复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
       JournalTextEditor(
@@ -841,7 +841,7 @@ private struct ReflectionSavedCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text("你的复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
       if hasReflections {
@@ -907,7 +907,7 @@ private struct SummaryCard: View {
     VStack(alignment: .leading, spacing: 22) {
       VStack(alignment: .leading, spacing: 8) {
         Text("Dayflow 总结")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.custom("HanziPen SC", size: 22))
           .foregroundStyle(JournalDayTokens.sectionHeader)
 
         if let summary {
@@ -922,7 +922,7 @@ private struct SummaryCard: View {
 
       VStack(alignment: .leading, spacing: 8) {
         Text("你的复盘")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalDayTokens.sectionHeader)
 
         if let reflections, !reflections.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -961,7 +961,7 @@ private struct IntroView: View {
   var body: some View {
     VStack(spacing: 20) {
       Text("设定每日意图并追踪进展")
-        .font(.custom("InstrumentSerif-Regular", size: 34))
+        .font(.system(size: 34, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
         .multilineTextAlignment(.center)
       Text(
@@ -996,7 +996,7 @@ private struct SummaryView: View {
   var body: some View {
     VStack(spacing: 20) {
       Text("昨天的总结")
-        .font(.custom("InstrumentSerif-Regular", size: 30))
+        .font(.system(size: 30, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
       ScrollView(.vertical, showsIndicators: false) {

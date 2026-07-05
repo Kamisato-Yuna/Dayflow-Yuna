@@ -64,7 +64,8 @@ struct JournalView: View {
       // Header: "Dayflow Journal" with BETA badge
       HStack(alignment: .top, spacing: 4) {
         Text("Dayflow 日志")
-          .font(.custom("InstrumentSerif-Italic", size: 38))
+          .font(.custom("HanziPen SC", size: 38))
+          .italic()
           .foregroundColor(JournalViewTokens.title)
 
         // BETA badge
@@ -196,7 +197,7 @@ private struct JournalOnboardingView: View {
 
       // Title
       Text("设定今天的意图")
-        .font(.custom("InstrumentSerif-Regular", size: 42))
+        .font(.system(size: 42, weight: .semibold, design: .rounded))
         .foregroundColor(JournalViewTokens.title)
         .multilineTextAlignment(.center)
 

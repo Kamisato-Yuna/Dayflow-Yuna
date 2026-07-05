@@ -37,7 +37,7 @@ struct ScreenRecordingPermissionView: View {
             .foregroundColor(Color(hex: "F96E00"))
 
           Text("权限")
-            .font(.custom("InstrumentSerif-Regular", size: 28))
+            .font(.system(size: 28, weight: .semibold, design: .rounded))
             .foregroundColor(.black)
 
           Text("Dayflow 可以帮助你理解当日工作。")

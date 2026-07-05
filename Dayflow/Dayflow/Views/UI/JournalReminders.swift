@@ -26,7 +26,7 @@ struct JournalRemindersView: View {
     VStack(spacing: 24) {
       VStack(spacing: 6) {
         Text("设置提醒")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .kerning(-0.22)
           .foregroundColor(JournalReminderTokens.primaryText)
         Text("设置重复通知，提醒自己设定意图并进行复盘。")

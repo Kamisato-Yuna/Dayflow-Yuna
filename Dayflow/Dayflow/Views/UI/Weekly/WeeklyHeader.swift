@@ -13,7 +13,7 @@ struct WeeklyHeader: View {
       }
 
       Text(title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(DayflowWeeklyToken.title)
         .multilineTextAlignment(.center)
         .frame(width: 344)

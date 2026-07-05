@@ -198,7 +198,7 @@ private struct WeeklySankeyCard: View {
       }
 
       Text("周报细分")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Color(hex: "B46531"))
         .offset(
           x: scale.displayX(72),

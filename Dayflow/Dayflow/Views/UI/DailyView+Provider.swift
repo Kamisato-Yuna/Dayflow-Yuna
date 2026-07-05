@@ -82,7 +82,7 @@ extension DailyView {
       HStack(alignment: .firstTextBaseline) {
         VStack(alignment: .leading, spacing: 2 * scale) {
           Text("每日复盘提供商")
-            .font(.custom("InstrumentSerif-Regular", size: 22 * scale))
+            .font(.system(size: 22 * scale, weight: .semibold, design: .rounded))
             .foregroundStyle(DayflowDailyToken.title)
 
           Text("选择每日复盘如何生成，或关闭生成功能。")

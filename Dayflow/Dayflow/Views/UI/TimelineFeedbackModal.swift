@@ -108,7 +108,7 @@ struct TimelineFeedbackModal: View {
     VStack(spacing: 16) {
       VStack(spacing: 12) {
         Text(content.formTitle)
-          .font(Font.custom("InstrumentSerif-Regular", size: 18))
+          .font(Font.system(size: 18, weight: .semibold, design: .rounded))
           .foregroundColor(Color(hex: "333333"))
           .multilineTextAlignment(.center)
 
@@ -191,7 +191,7 @@ struct TimelineFeedbackModal: View {
   private var thanksContent: some View {
     VStack(spacing: 20) {
       Text(content.thanksTitle)
-        .font(Font.custom("InstrumentSerif-Regular", size: 18))
+        .font(Font.system(size: 18, weight: .semibold, design: .rounded))
         .foregroundColor(Color(hex: "333333"))
         .multilineTextAlignment(.center)
         .padding(.bottom, 4)

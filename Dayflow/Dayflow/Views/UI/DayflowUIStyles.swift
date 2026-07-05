@@ -80,7 +80,7 @@ struct DayflowPillButton: View {
 
   init(
     text: String,
-    font: Font = .custom("InstrumentSerif-Regular", size: 18),
+    font: Font = .system(size: 18, weight: .semibold, design: .rounded),
     foregroundColor: Color = Color(red: 0.2, green: 0.2, blue: 0.2),
     horizontalPadding: CGFloat = 11.77829,
     height: CGFloat = 30.4514,

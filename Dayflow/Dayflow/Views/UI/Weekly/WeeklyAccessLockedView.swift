@@ -144,7 +144,7 @@ private struct WeeklyAccessLockCard: View {
     ZStack(alignment: .topLeading) {
       VStack(spacing: 4) {
         Text("解锁周报")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(Color(hex: "333333"))
           .multilineTextAlignment(.center)
           .lineLimit(1)
@@ -225,7 +225,7 @@ private struct WeeklyAccessCountdownPill: View {
         .fill(Color(nsColor: .windowBackgroundColor).opacity(0.05))
 
       Text(text)
-        .font(.custom("InstrumentSerif-Regular", size: 20.5))
+        .font(.system(size: 20.5, weight: .semibold, design: .rounded))
         .foregroundStyle(Color(hex: "FF7856"))
         .lineLimit(1)
         .minimumScaleFactor(0.72)

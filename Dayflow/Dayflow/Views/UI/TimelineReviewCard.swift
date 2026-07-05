@@ -95,7 +95,7 @@ struct TimelineReviewCard: View {
 
         VStack(alignment: .leading, spacing: 12) {
           Text(activity.title)
-            .font(.custom("InstrumentSerif-Regular", size: 24))
+            .font(.system(size: 24, weight: .semibold, design: .rounded))
             .foregroundColor(.primary)
             .lineLimit(2)
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -158,7 +158,7 @@ extension DailyView {
   ) -> some View {
     VStack(alignment: .leading, spacing: 8 * scale) {
       Text(heading)
-        .font(.custom("InstrumentSerif-Regular", size: 24 * scale))
+        .font(.system(size: 24 * scale, weight: .semibold, design: .rounded))
         .foregroundStyle(DayflowDailyToken.title)
 
       if useSingleColumn {

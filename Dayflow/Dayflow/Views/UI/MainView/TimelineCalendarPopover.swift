@@ -130,7 +130,7 @@ struct TimelineCalendarPopover: View {
     return HStack(spacing: Self.columnSpacing) {
       ForEach(labels.indices, id: \.self) { i in
         Text(labels[i])
-          .font(.custom("InstrumentSerif-Regular", size: 12))
+          .font(.system(size: 12, weight: .medium, design: .rounded))
           .foregroundColor(Color(nsColor: .labelColor))
           .frame(width: Self.columnWidth, height: Self.weekdayHeight)
       }

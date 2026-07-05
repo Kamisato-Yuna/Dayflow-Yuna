@@ -216,7 +216,7 @@ struct WeeklyTreemapLeafTile: View {
 
   func nameText(fontSize: CGFloat) -> some View {
     Text(app.name)
-      .font(.custom("InstrumentSerif-Regular", size: fontSize))
+      .font(.system(size: fontSize, weight: .medium, design: .rounded))
       .foregroundStyle(DayflowWeeklyToken.chartText)
       .multilineTextAlignment(.center)
       .lineLimit(1)
@@ -263,7 +263,7 @@ struct WeeklyTreemapHoverCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       Text(app.name)
-        .font(.custom("InstrumentSerif-Regular", size: 17))
+        .font(.system(size: 17, weight: .medium, design: .rounded))
         .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(1)
 

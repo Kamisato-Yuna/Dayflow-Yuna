@@ -234,7 +234,7 @@ struct TimelineReviewOverlay: View {
     return VStack(spacing: 30) {
       VStack(spacing: 12) {
         Text("全部完成！")
-          .font(.custom("InstrumentSerif-Regular", size: 40))
+          .font(.system(size: 40, weight: .semibold, design: .rounded))
           .foregroundColor(Color(hex: "333333"))
         Text(
           "你已回顾目前所有活动。\n时间线右侧面板会根据你的评价更新。"
@@ -265,7 +265,7 @@ struct TimelineReviewOverlay: View {
   private var emptyState: some View {
     VStack(spacing: 12) {
       Text("暂时没有可回顾的内容")
-        .font(.custom("InstrumentSerif-Regular", size: 28))
+        .font(.system(size: 28, weight: .semibold, design: .rounded))
         .foregroundColor(Color(hex: "333333"))
       Text("等时间线出现几张卡片后再回来看看。")
         .font(.custom("Figtree", size: 14).weight(.medium))

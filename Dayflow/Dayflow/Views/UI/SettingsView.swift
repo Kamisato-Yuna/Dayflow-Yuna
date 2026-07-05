@@ -154,7 +154,7 @@ struct SettingsView: View {
   private var sidebar: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("设置")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundColor(SettingsStyle.text)
         .padding(.leading, 10)
         .padding(.bottom, 18)

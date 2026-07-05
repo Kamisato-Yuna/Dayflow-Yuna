@@ -89,7 +89,7 @@ struct TimelineReviewSummaryCard: View {
   private var header: some View {
     VStack(alignment: .leading, spacing: Design.headerSpacing) {
       Text("你的复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundColor(Design.titleColor)
 
       subtitle
