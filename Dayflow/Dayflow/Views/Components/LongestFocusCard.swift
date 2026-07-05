@@ -42,10 +42,10 @@ struct LongestFocusCard: View {
 
   private enum Design {
     // Colors
-    static let titleColor = DayflowWeeklyToken.title
-    static let orangeSolid = Color(hex: "f3854b")
-    static let orangeLight = Color(hex: "f3854b").opacity(0.4)
-    static let axisColor = Color(hex: "9A9393")
+    static let titleColor = DayflowDailyToken.title
+    static let focusSolid = DayflowDailyToken.focus
+    static let focusLight = DayflowDailyToken.focus.opacity(0.38)
+    static let axisColor = DayflowDailyToken.tertiaryText
 
     // Sizing
     static let cardWidth: CGFloat = 322
@@ -126,7 +126,7 @@ struct LongestFocusCard: View {
 
       Text(formattedDuration)
         .font(.custom("InstrumentSerif-Regular", size: 24))
-        .foregroundColor(Design.orangeSolid)
+        .foregroundColor(Design.focusSolid)
         .offset(x: Design.valueX, y: Design.valueY)
 
       timelineVisualization
@@ -195,7 +195,7 @@ struct LongestFocusCard: View {
               bottomTrailingRadius: 0,
               topTrailingRadius: Design.blockCornerRadius
             )
-            .fill(isLongest ? Design.orangeSolid : Design.orangeLight)
+            .fill(isLongest ? Design.focusSolid : Design.focusLight)
             .frame(
               width: max(blockFrame.width, Design.minimumBlockWidth),
               height: isLongest ? Design.tallBlockHeight : Design.shortBlockHeight
@@ -214,7 +214,7 @@ struct LongestFocusCard: View {
     ZStack {
       Text(cachedFocusTimeFormatter.string(from: block.startTime))
         .font(.custom("Figtree-Bold", size: 10))
-        .foregroundColor(Design.orangeSolid)
+        .foregroundColor(Design.focusSolid)
         .position(
           x: Design.labelStartCenterX,
           y: Design.labelTop + (Design.labelHeight / 2)
@@ -222,7 +222,7 @@ struct LongestFocusCard: View {
 
       Text(cachedFocusTimeFormatter.string(from: block.endTime))
         .font(.custom("Figtree-Bold", size: 10))
-        .foregroundColor(Design.orangeSolid)
+        .foregroundColor(Design.focusSolid)
         .position(
           x: Design.labelEndCenterX,
           y: Design.labelTop + (Design.labelHeight / 2)

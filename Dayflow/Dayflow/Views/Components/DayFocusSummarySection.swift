@@ -102,7 +102,7 @@ private struct TotalFocusCard: View {
 
       Text(value)
         .font(.custom("InstrumentSerif-Regular", size: 34))
-        .foregroundColor(DayflowDailyToken.distraction)
+        .foregroundColor(DayflowDailyToken.focus)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     .padding(.horizontal, 16)

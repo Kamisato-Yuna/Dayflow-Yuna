@@ -48,6 +48,8 @@ struct TabFilterBar: View {
   struct CategoryChip: View {
     let category: TimelineCategory
     let isIdle: Bool
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
     var body: some View {
       HStack(spacing: 10) {
@@ -60,19 +62,30 @@ struct TabFilterBar: View {
             Font.custom("Figtree", size: 13)
               .weight(.medium)
           )
-          .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
+          .foregroundColor(DayflowDailyToken.text)
           .lineLimit(1)
           .fixedSize()
       }
       .padding(.horizontal, 8)
       .padding(.vertical, 5)
       .frame(height: 26)
-      .background(.white.opacity(0.76))
+      .background(
+        DayflowContentToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        )
+      )
       .cornerRadius(6)
       .overlay(
         RoundedRectangle(cornerRadius: 6)
           .inset(by: 0.25)
-          .stroke(Color(red: 0.88, green: 0.88, blue: 0.88), lineWidth: 0.5)
+          .stroke(
+            DayflowContentToken.cardBorder(
+              colorScheme: colorScheme,
+              increaseContrast: false
+            ),
+            lineWidth: 0.5
+          )
       )
     }
   }
@@ -119,7 +132,7 @@ struct TabFilterBar: View {
 
   private var overflowGradient: some View {
     LinearGradient(
-      gradient: Gradient(colors: [Color.clear, Color(hex: "FFF8F1")]),
+      gradient: Gradient(colors: [Color.clear, Color(nsColor: .windowBackgroundColor)]),
       startPoint: .leading,
       endPoint: .trailing
     )

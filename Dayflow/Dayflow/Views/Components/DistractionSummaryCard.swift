@@ -13,6 +13,8 @@ struct DistractionSummaryCard: View {
   let distractedRatio: Double
   let patternTitle: String
   let patternDescription: String
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(
     totalCaptured: String,
@@ -39,14 +41,9 @@ struct DistractionSummaryCard: View {
     static let donutInnerMaxSize: CGFloat = 136
     static let donutInnerBottomInset: CGFloat = 4.868
 
-    static let donutFill = Color(hex: "F0F0F0").opacity(0.8)
-    static let donutStroke = Color(hex: "DDDDDD")
-    static let donutGradientStart = Color(hex: "FFE3DE")
-    static let donutGradientEnd = Color(hex: "FF694B")
-
-    static let capturedTextColor = Color(hex: "9C9C9C")
-    static let distractedTextColor = Color(hex: "FF694B")
-    static let bodyTextColor = Color(hex: "333333")
+    static let capturedTextColor = DayflowDailyToken.secondaryText
+    static let distractedTextColor = DayflowDailyToken.distraction
+    static let bodyTextColor = DayflowDailyToken.text
 
     static let labelFont = Font.custom("InstrumentSerif-Regular", size: 14)
     static let valueFont = Font.custom("InstrumentSerif-Regular", size: 20)
@@ -75,13 +72,17 @@ struct DistractionSummaryCard: View {
     let innerDiameter = Design.donutInnerMaxSize * sqrt(clampedRatio)
     let innerX = (Design.donutSize - innerDiameter) / 2
     let innerY = Design.donutSize - Design.donutInnerBottomInset - innerDiameter
+    let donutFill = DayflowDailyToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
 
     return ZStack(alignment: .topLeading) {
       Circle()
-        .fill(Design.donutFill)
+        .fill(donutFill)
         .overlay(
           Circle()
-            .stroke(Design.donutStroke, lineWidth: 1)
+            .stroke(DayflowDailyToken.separator, lineWidth: 1)
         )
         .frame(width: Design.donutSize, height: Design.donutSize)
 
@@ -90,9 +91,9 @@ struct DistractionSummaryCard: View {
           .fill(
             LinearGradient(
               stops: [
-                .init(color: Design.donutGradientStart, location: 0),
-                .init(color: Design.donutGradientEnd, location: 0.78306),
-                .init(color: Design.donutGradientEnd, location: 1),
+                .init(color: DayflowDailyToken.distraction.opacity(0.20), location: 0),
+                .init(color: DayflowDailyToken.distraction.opacity(0.90), location: 0.78306),
+                .init(color: DayflowDailyToken.distraction.opacity(0.90), location: 1),
               ],
               startPoint: .leading,
               endPoint: .trailing

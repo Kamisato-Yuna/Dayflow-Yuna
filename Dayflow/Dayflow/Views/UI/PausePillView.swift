@@ -10,6 +10,7 @@ import SwiftUI
 struct PausePillView: View {
   @ObservedObject private var appState = AppState.shared
   @ObservedObject private var pauseManager = PauseManager.shared
+  @Environment(\.colorScheme) private var colorScheme
 
   private enum Phase { case idle, menu, paused }
 
@@ -67,6 +68,14 @@ struct PausePillView: View {
     .custom("Figtree-Medium", size: 12)
   }
 
+  private var primaryForeground: Color {
+    Color(nsColor: .labelColor)
+  }
+
+  private var activeForeground: Color {
+    Color(nsColor: .selectedMenuItemTextColor)
+  }
+
   private var statusSpacing: CGFloat { 10 }
 
   private var pillScale: CGFloat {
@@ -98,7 +107,7 @@ struct PausePillView: View {
       if isStatusPresented {
         Text(statusText)
           .font(pillLabelFont)
-          .foregroundColor(Color(hex: "F3854B"))
+          .foregroundColor(DayflowSurfaceAccent.primary)
           .tracking(-0.36)
           .monospacedDigit()
           .lineLimit(1)
@@ -128,17 +137,23 @@ struct PausePillView: View {
   private var pill: some View {
     ZStack(alignment: .leading) {
       ZStack {
-        Grad.idle.opacity(phase == .idle ? 1 : 0)
-        Grad.menu.opacity(phase == .menu ? 1 : 0)
-        Grad.paused.opacity(phase == .paused ? 1 : 0)
+        Capsule()
+          .fill(pillStateFill(.idle))
+          .opacity(phase == .idle ? 1 : 0)
+        Capsule()
+          .fill(pillStateFill(.menu))
+          .opacity(phase == .menu ? 1 : 0)
+        Capsule()
+          .fill(pillStateFill(.paused))
+          .opacity(phase == .paused ? 1 : 0)
       }
       .allowsHitTesting(false)
       .animation(.easeInOut(duration: 0.35), value: phase)
 
       ZStack {
-        shineLayer(Col.shineIdle).opacity(phase == .idle ? 1 : 0)
-        shineLayer(Col.shineMenu).opacity(phase == .menu ? 1 : 0)
-        shineLayer(Col.shinePaused).opacity(phase == .paused ? 1 : 0)
+        shineLayer(Color.white.opacity(0.28)).opacity(phase == .idle ? 1 : 0)
+        shineLayer(DayflowSurfaceAccent.primary.opacity(0.22)).opacity(phase == .menu ? 1 : 0)
+        shineLayer(DayflowSurfaceAccent.primary.opacity(0.30)).opacity(phase == .paused ? 1 : 0)
       }
       .allowsHitTesting(false)
       .animation(.easeInOut(duration: 0.35), value: phase)
@@ -164,7 +179,10 @@ struct PausePillView: View {
       }
 
       Capsule()
-        .strokeBorder(Color(hex: "FFE1C9"), lineWidth: 1.25)
+        .strokeBorder(
+          DayflowSurfaceAccent.primary.opacity(phase == .idle ? 0.22 : 0.36),
+          lineWidth: 1.1
+        )
         .allowsHitTesting(false)
     }
     .frame(width: pillWidth, height: 32)
@@ -190,7 +208,7 @@ struct PausePillView: View {
       PillPauseIcon()
       Text("暂停")
         .font(pillLabelFont)
-        .foregroundColor(Color(hex: "786655"))
+        .foregroundColor(primaryForeground)
         .lineLimit(1)
         .fixedSize(horizontal: true, vertical: false)
     }
@@ -214,7 +232,7 @@ struct PausePillView: View {
       PillPlayIcon().offset(x: 0.5)
       Text("继续")
         .font(pillLabelFont)
-        .foregroundColor(.white)
+        .foregroundColor(activeForeground)
         .lineLimit(1)
         .fixedSize(horizontal: true, vertical: false)
     }
@@ -239,6 +257,17 @@ struct PausePillView: View {
     .clipShape(Capsule())
   }
 
+  private func pillStateFill(_ state: Phase) -> Color {
+    switch state {
+    case .idle:
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.12 : 0.08)
+    case .menu:
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.18 : 0.14)
+    case .paused:
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.62 : 0.76)
+    }
+  }
+
   // MARK: - Chip Button
 
   private func chipButton(_ i: Int) -> some View {
@@ -251,15 +280,17 @@ struct PausePillView: View {
     } label: {
       ZStack {
         Capsule().fill(Grad.chip)
-        Capsule().fill(Grad.chipHover).opacity(hovered ? 1 : 0)
-        Capsule().strokeBorder(Color.white.opacity(0.6), lineWidth: 1)
+        Capsule()
+          .fill(DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.50 : 0.62))
+          .opacity(hovered ? 1 : 0)
+        Capsule().strokeBorder(DayflowSurfaceAccent.primary.opacity(0.28), lineWidth: 1)
         Text(chip.label)
           .font(
             chip.isInf
               ? .system(size: 11, weight: .medium)
               : .system(size: 8, weight: .semibold)
           )
-          .foregroundColor(hovered ? .white : Color(hex: "494949"))
+          .foregroundColor(hovered ? activeForeground : primaryForeground)
       }
       .frame(width: 42, height: 20)
       .contentShape(Capsule())
@@ -602,26 +633,19 @@ struct PausePillView: View {
 
 private struct PillPauseIcon: View {
   var body: some View {
-    Canvas { ctx, _ in
-      let color = Color(hex: "786655")
-      ctx.fill(Path(CGRect(x: 3, y: 2.5, width: 2, height: 7)), with: .color(color))
-      ctx.fill(Path(CGRect(x: 7, y: 2.5, width: 2, height: 7)), with: .color(color))
-    }
-    .frame(width: 12, height: 12)
+    Image(systemName: "pause.fill")
+      .font(.system(size: 10, weight: .semibold))
+      .foregroundStyle(Color(nsColor: .labelColor))
+      .frame(width: 12, height: 12)
   }
 }
 
 private struct PillPlayIcon: View {
   var body: some View {
-    Canvas { ctx, _ in
-      var p = Path()
-      p.move(to: CGPoint(x: 4, y: 2.5))
-      p.addLine(to: CGPoint(x: 4, y: 9.5))
-      p.addLine(to: CGPoint(x: 9.5, y: 6))
-      p.closeSubpath()
-      ctx.fill(p, with: .color(.white))
-    }
-    .frame(width: 12, height: 12)
+    Image(systemName: "play.fill")
+      .font(.system(size: 10, weight: .semibold))
+      .foregroundStyle(Color(nsColor: .selectedMenuItemTextColor))
+      .frame(width: 12, height: 12)
   }
 }
 
@@ -638,40 +662,9 @@ private struct PillChipButtonStyle: ButtonStyle {
   }
 }
 
-// MARK: - Gradients (exact from React CSS tokens)
+// MARK: - Chip material
 
 private enum Grad {
-  static let idle = LinearGradient(
-    stops: [
-      .init(color: Color(red: 1, green: 0.973, blue: 0.949).opacity(0.6), location: 0),
-      .init(color: Color(red: 1, green: 0.906, blue: 0.827).opacity(0.6), location: 0.495),
-      .init(color: Color(red: 1, green: 0.804, blue: 0.690).opacity(0.6), location: 0.755),
-      .init(color: Color(red: 1, green: 0.906, blue: 0.827).opacity(0.6), location: 1),
-    ],
-    startPoint: .top, endPoint: .bottom
-  )
-
-  static let menu = LinearGradient(
-    stops: [
-      .init(color: Color(red: 0.973, green: 0.784, blue: 0.675).opacity(0.6), location: 0),
-      .init(color: Color(red: 1, green: 0.906, blue: 0.835).opacity(0.6), location: 0.14),
-      .init(color: Color(red: 1, green: 0.816, blue: 0.694).opacity(0.6), location: 0.688),
-      .init(color: Color(red: 0.973, green: 0.784, blue: 0.675).opacity(0.6), location: 1),
-    ],
-    startPoint: .top, endPoint: .bottom
-  )
-
-  static let paused = LinearGradient(
-    stops: [
-      .init(color: Color(red: 1, green: 0.714, blue: 0.608), location: 0),
-      .init(color: Color(red: 1, green: 0.569, blue: 0.278), location: 0.495),
-      .init(color: Color(red: 1, green: 0.553, blue: 0.251), location: 0.760),
-      .init(color: Color(red: 1, green: 0.643, blue: 0.510), location: 1),
-    ],
-    startPoint: .top, endPoint: .bottom
-  )
-
-  // Chip default — 320deg CSS ≈ bottomTrailing→topLeading
   static let chip = LinearGradient(
     stops: [
       .init(color: Color.white.opacity(0.72), location: 0),
@@ -681,25 +674,6 @@ private enum Grad {
     startPoint: UnitPoint(x: 0.91, y: 0.97),
     endPoint: UnitPoint(x: 0.11, y: 0)
   )
-
-  // Chip hover — orange gradient overlay
-  static let chipHover = LinearGradient(
-    stops: [
-      .init(color: Color(red: 1, green: 0.702, blue: 0.565).opacity(0.82), location: 0),
-      .init(color: Color(red: 1, green: 0.624, blue: 0.416).opacity(0.82), location: 0.42),
-      .init(color: Color(red: 1, green: 0.553, blue: 0.251).opacity(0.82), location: 1),
-    ],
-    startPoint: UnitPoint(x: 0.91, y: 0.97),
-    endPoint: UnitPoint(x: 0.11, y: 0)
-  )
-}
-
-// MARK: - Shine Colors (inset glow per state)
-
-private enum Col {
-  static let shineIdle = Color.white.opacity(0.5)
-  static let shineMenu = Color(red: 0.949, green: 0.749, blue: 0.655).opacity(0.5)
-  static let shinePaused = Color(red: 1, green: 0.894, blue: 0.761).opacity(0.5)
 }
 
 // MARK: - Preview
