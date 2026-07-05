@@ -42,6 +42,7 @@ struct DistractionSummaryCard: View {
     static let donutInnerBottomInset: CGFloat = 4.868
 
     static let capturedTextColor = DayflowDailyToken.secondaryText
+    static let capturedValueColor = DayflowDailyToken.title
     static let distractedTextColor = DayflowDailyToken.distraction
     static let bodyTextColor = DayflowDailyToken.text
 
@@ -112,26 +113,28 @@ struct DistractionSummaryCard: View {
       statText(
         title: "总记录时长",
         value: totalCaptured,
-        color: Design.capturedTextColor
+        labelColor: Design.capturedTextColor,
+        valueColor: Design.capturedValueColor
       )
 
       statText(
         title: "分心总时长",
         value: totalDistracted,
-        color: Design.distractedTextColor
+        labelColor: Design.distractedTextColor.opacity(0.86),
+        valueColor: Design.distractedTextColor
       )
     }
     .frame(width: Design.statsWidth, alignment: .leading)
   }
 
-  private func statText(title: String, value: String, color: Color) -> some View {
+  private func statText(title: String, value: String, labelColor: Color, valueColor: Color) -> some View {
     VStack(alignment: .leading, spacing: 2) {
       Text(title)
         .font(Design.labelFont)
-        .foregroundColor(color)
+        .foregroundColor(labelColor)
       Text(value)
         .font(Design.valueFont)
-        .foregroundColor(color)
+        .foregroundColor(valueColor)
     }
     .lineSpacing(2)
   }

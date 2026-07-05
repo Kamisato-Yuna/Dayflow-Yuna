@@ -14,13 +14,12 @@ struct TimelineReviewSpeedChip: View {
     Button(action: onTap) {
       Text(playbackState.speedLabel)
         .font(.system(size: 14, weight: .semibold))
-        .foregroundColor(.white)
+        .foregroundColor(Color(nsColor: .labelColor))
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(Color.black.opacity(0.8))
-        .cornerRadius(4)
     }
     .buttonStyle(.plain)
+    .dayflowFloatingControl(cornerRadius: 8, groupingSpacing: 8)
     .pointingHandCursor()
   }
 }
@@ -129,34 +128,42 @@ struct TimelineReviewOverlayBadge: View {
 struct TimelineReviewCategoryPill: View {
   let name: String
   let color: Color
+  @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
     HStack(spacing: 4) {
       Circle().fill(color).frame(width: 8, height: 8)
       Text(name)
         .font(.custom("Figtree", size: 10).weight(.bold))
-        .foregroundColor(Color(hex: "333333"))
+        .foregroundColor(Color(nsColor: .labelColor))
     }
     .padding(.horizontal, 6)
     .padding(.vertical, 4)
-    .background(color.opacity(0.1))
+    .background(DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.16 : 0.10))
     .cornerRadius(6)
-    .overlay(RoundedRectangle(cornerRadius: 6).stroke(color, lineWidth: 0.75))
+    .overlay(
+      RoundedRectangle(cornerRadius: 6)
+        .stroke(DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.58 : 0.38), lineWidth: 0.75)
+    )
   }
 }
 
 struct TimelineReviewTimeRangePill: View {
   let timeRange: String
+  @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
     Text(timeRange)
       .font(.custom("Figtree", size: 10).weight(.bold))
-      .foregroundColor(Color(hex: "656565"))
+      .foregroundColor(Color(nsColor: .labelColor))
       .padding(.horizontal, 6)
       .padding(.vertical, 4)
-      .background(Color(hex: "F5F0E9").opacity(0.9))
+      .background(DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.18 : 0.12))
       .cornerRadius(6)
-      .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(hex: "E4E4E4"), lineWidth: 0.75))
+      .overlay(
+        RoundedRectangle(cornerRadius: 6)
+          .stroke(DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.62 : 0.42), lineWidth: 0.75)
+      )
   }
 }
 
@@ -165,12 +172,15 @@ struct TimelineReviewRatingRow: View {
   let onSelect: (TimelineReviewRating) -> Void
 
   var body: some View {
-    HStack(spacing: 44) {
+    HStack(spacing: 38) {
       undoButton
       ratingButton(.distracted)
       ratingButton(.neutral)
       ratingButton(.focused)
     }
+    .padding(.horizontal, 22)
+    .padding(.vertical, 10)
+    .dayflowFloatingControl(cornerRadius: 20, groupingSpacing: 10)
   }
 
   private var undoButton: some View {
@@ -181,7 +191,7 @@ struct TimelineReviewRatingRow: View {
         ZUndoIcon(size: 16)
         Text("撤销")
           .font(.custom("Figtree", size: 12).weight(.medium))
-          .foregroundColor(Color(hex: "98806D"))
+          .foregroundColor(Color(nsColor: .labelColor))
       }
     }
     .buttonStyle(.plain)
@@ -196,7 +206,7 @@ struct TimelineReviewRatingRow: View {
         TimelineReviewFooterIcon(rating: rating, size: 16)
         Text(rating.title)
           .font(.custom("Figtree", size: 12).weight(.medium))
-          .foregroundColor(Color(hex: "98806D"))
+          .foregroundColor(Color(nsColor: .labelColor))
       }
     }
     .buttonStyle(.plain)
@@ -208,7 +218,8 @@ struct ZUndoIcon: View {
   let size: CGFloat
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: 4).fill(Color(hex: "D6AB8A").opacity(0.7))
+      RoundedRectangle(cornerRadius: 4)
+        .fill(DayflowSurfaceAccent.primary.opacity(0.72))
       Text("Z")
         .font(.custom("Figtree", size: size * 0.525).weight(.bold))
         .foregroundColor(.white)
@@ -250,14 +261,15 @@ struct TimelineReviewFooterIcon: View {
   }
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: size * 0.25).fill(Color(hex: "D6AB8A").opacity(0.7))
+      RoundedRectangle(cornerRadius: size * 0.25)
+        .fill(DayflowSurfaceAccent.primary.opacity(0.72))
       Path { path in
         path.move(to: CGPoint(x: size * 0.3125, y: size * 0.5))
         path.addLine(to: CGPoint(x: size * 0.59375, y: size * 0.33762))
         path.addLine(to: CGPoint(x: size * 0.59375, y: size * 0.66238))
         path.closeSubpath()
       }
-      .fill(Color(nsColor: .labelColor).opacity(0.9))
+      .fill(Color.white.opacity(0.92))
     }
     .frame(width: size, height: size)
     .rotationEffect(rotation)
@@ -334,7 +346,7 @@ struct SummaryLabelRow: View {
           }
           Text(formatDuration(duration))
             .font(.custom("Figtree", size: 16).weight(.semibold))
-            .foregroundColor(Color(hex: "333333"))
+            .foregroundColor(Color(nsColor: .labelColor))
             .padding(.leading, 18)
         }
       }

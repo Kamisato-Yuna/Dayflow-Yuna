@@ -30,6 +30,8 @@ struct DayGoalHeader: View {
   let onSetGoals: () -> Void
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.colorScheme) private var colorScheme
 
   @State private var hasInitializedDisplayedProgress = false
   @State private var isAppActive = NSApplication.shared.isActive
@@ -41,23 +43,43 @@ struct DayGoalHeader: View {
   @State private var distractionLoss: DistractionLossSnapshot?
 
   private enum Design {
-    static let panelBackground = DayflowContentToken.cardFill(colorScheme: .light, reduceTransparency: false)
-    static let disabledBackground = DayflowDailyToken.secondaryFill(
-      colorScheme: .light,
-      reduceTransparency: false
-    )
-    static let border = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false)
-    static let disabledBorder = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: true)
     static let title = DayflowDailyToken.title
     static let subtitle = DayflowDailyToken.secondaryText
     static let label = DayflowDailyToken.secondaryText
     static let distraction = DayflowDailyToken.distraction
     static let focusText = DayflowDailyToken.focus
     static let distractionText = DayflowDailyToken.distraction
-    static let inactiveTail = DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: false)
     static let inactiveIcon = DayflowDailyToken.tertiaryText
     static let focusLegendContentWidth: CGFloat = 211.94
     static let focusLegendItemSpacing: CGFloat = 6
+
+    static func panelBackground(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+      DayflowContentToken.cardFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
+    }
+
+    static func disabledBackground(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+      DayflowDailyToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
+    }
+
+    static func border(colorScheme: ColorScheme, increaseContrast: Bool) -> Color {
+      DayflowContentToken.cardBorder(
+        colorScheme: colorScheme,
+        increaseContrast: increaseContrast
+      )
+    }
+
+    static func inactiveTail(colorScheme: ColorScheme) -> Color {
+      DayflowContentToken.cardBorder(
+        colorScheme: colorScheme,
+        increaseContrast: false
+      )
+    }
   }
 
   private var distractionUsedRatio: Double {
@@ -102,17 +124,29 @@ struct DayGoalHeader: View {
 
       ZStack(alignment: .topLeading) {
         if showsDisabledState {
-          Design.disabledBackground
+          Design.disabledBackground(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          )
           disabledContent(xOffset: xOffset)
         } else {
-          Design.panelBackground
+          Design.panelBackground(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          )
           activeContent(xOffset: xOffset)
         }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       .overlay(alignment: .bottom) {
         Rectangle()
-          .fill(showsDisabledState ? Design.disabledBorder : Design.border)
+          .fill(
+            Design.border(
+              colorScheme: colorScheme,
+              increaseContrast: showsDisabledState
+                || NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+            )
+          )
           .frame(height: 1)
       }
     }
@@ -282,7 +316,7 @@ struct DayGoalHeader: View {
     .offset(x: xOffset + 39, y: 98.04)
 
     TargetLegendTail()
-      .fill(Design.inactiveTail)
+      .fill(Design.inactiveTail(colorScheme: colorScheme))
       .frame(width: 236.213, height: 14)
       .offset(x: xOffset + 34.06, y: 112)
 
@@ -300,7 +334,7 @@ struct DayGoalHeader: View {
     .offset(x: xOffset + 57.25, y: 141.65)
 
     TargetLegendTail()
-      .fill(Design.inactiveTail)
+      .fill(Design.inactiveTail(colorScheme: colorScheme))
       .frame(width: 236.213, height: 14)
       .scaleEffect(x: -1, y: 1)
       .offset(x: xOffset + 80.04, y: 157.62)
@@ -355,7 +389,7 @@ struct DayGoalHeader: View {
   private var focusLegend: some View {
     ZStack(alignment: .leading) {
       TargetLegendTail()
-        .fill(Design.inactiveTail)
+        .fill(Design.inactiveTail(colorScheme: colorScheme))
         .frame(width: 232.277, height: 14)
 
       HStack(spacing: Design.focusLegendItemSpacing) {
@@ -601,12 +635,12 @@ private struct GoalMetricSummaryText: View {
           )
       } else {
         Text(value)
-          .font(.custom("Figtree", size: 11))
+          .font(.custom("Figtree", size: 12).weight(.semibold))
           .foregroundColor(accent)
       }
 
       Text(suffix)
-        .font(.custom(isProminent ? "Nunito" : "Figtree", size: 11))
+        .font(.custom(isProminent ? "Nunito" : "Figtree", size: 11).weight(.medium))
         .foregroundColor(DayflowDailyToken.secondaryText)
     }
     .lineLimit(1)
@@ -621,6 +655,8 @@ private struct FocusTargetProgressBar: View {
   private let leadingInset: CGFloat = 3
   private let segmentSpacing: CGFloat = 2.55
   private let trailingGap: CGFloat = 3
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.colorScheme) private var colorScheme
 
   private var isFulfilled: Bool {
     targetDuration > 0 && actualDuration >= targetDuration
@@ -636,7 +672,12 @@ private struct FocusTargetProgressBar: View {
 
       ZStack(alignment: .leading) {
         trackShape
-          .fill(DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
+          .fill(
+            DayflowContentToken.secondaryFill(
+              colorScheme: colorScheme,
+              reduceTransparency: reduceTransparency
+            )
+          )
           .shadow(
             color: isFulfilled ? DayflowDailyToken.focus.opacity(0.5) : .clear,
             radius: isFulfilled ? 3 : 0,
@@ -728,6 +769,8 @@ private struct DistractionLimitBar: View {
   let loss: DistractionLossSnapshot?
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.colorScheme) private var colorScheme
   @State private var lossOpacity = 0.0
   @State private var lossScale: CGFloat = 1
   @State private var flashOpacity = 0.0
@@ -742,8 +785,13 @@ private struct DistractionLimitBar: View {
       let remainingWidth = max(0, geometry.size.width - startX)
 
       ZStack(alignment: .leading) {
-      RoundedRectangle(cornerRadius: 2)
-        .fill(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
+        RoundedRectangle(cornerRadius: 2)
+          .fill(
+            DayflowDailyToken.secondaryFill(
+              colorScheme: colorScheme,
+              reduceTransparency: reduceTransparency
+            )
+          )
 
         RoundedRectangle(cornerRadius: 6)
           .fill(color)
@@ -759,8 +807,8 @@ private struct DistractionLimitBar: View {
             .fill(
               LinearGradient(
                 colors: [
-                  Color(hex: "FFBE71").opacity(0.96),
-                  Color(hex: "FF8469").opacity(0.74),
+                  DayflowSurfaceAccent.warning.opacity(0.96),
+                  DayflowDailyToken.distraction.opacity(0.74),
                 ],
                 startPoint: .leading,
                 endPoint: .trailing
@@ -769,12 +817,12 @@ private struct DistractionLimitBar: View {
             .frame(width: lostWidth, height: fillHeight)
             .scaleEffect(x: lossScale, y: 1, anchor: .trailing)
             .opacity(lossOpacity)
-            .shadow(color: Color(hex: "FF8857").opacity(0.42), radius: 7, x: 0, y: 0)
+            .shadow(color: DayflowDailyToken.distraction.opacity(0.38), radius: 7, x: 0, y: 0)
             .offset(x: lostStartX)
         }
 
         RoundedRectangle(cornerRadius: 2)
-          .fill(Color(hex: "FF6857").opacity(flashOpacity))
+          .fill(DayflowDailyToken.distraction.opacity(flashOpacity))
       }
       .frame(height: geometry.size.height)
     }
@@ -822,15 +870,27 @@ private struct InactiveGoalTrack: View {
   let fillWidth: CGFloat
   let fillOffsetX: CGFloat
   let fillOffsetY: CGFloat
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
     ZStack(alignment: .topLeading) {
       RoundedRectangle(cornerRadius: 2)
-        .fill(DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
+        .fill(
+          DayflowContentToken.secondaryFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          )
+        )
         .frame(width: width, height: height)
 
       Capsule()
-        .fill(DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: true))
+        .fill(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: true
+          )
+        )
         .frame(width: fillWidth, height: 6)
         .offset(x: fillOffsetX, y: fillOffsetY)
     }
@@ -864,19 +924,27 @@ private struct TargetIconBubble: View {
 
   let kind: Kind
   var tint: Color? = nil
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
     ZStack {
       Circle()
         .fill(
-          DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false)
+          DayflowContentToken.secondaryFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          )
         )
         .overlay(
           Circle()
             .stroke(
               tint == nil
-                ? DayflowContentToken.cardBorder(colorScheme: .light, increaseContrast: true)
-                : .white,
+                ? DayflowContentToken.cardBorder(
+                  colorScheme: colorScheme,
+                  increaseContrast: true
+                )
+                : DayflowDailyToken.separator,
               lineWidth: 2
             )
         )

@@ -44,7 +44,7 @@ struct ActivityCard: View {
       ZStack(alignment: .top) {
         activityDetails(for: activity)
           .padding(14)
-          .dayflowCard(cornerRadius: 12)
+          .activityCardDetailSurface(cornerRadius: 12)
           .padding(14)
           .allowsHitTesting(!showCategoryPicker)
           .id(activity.id)
@@ -146,7 +146,7 @@ struct ActivityCard: View {
       }
       .padding(16)
       .frame(maxWidth: .infinity, maxHeight: .infinity)
-      .dayflowCard(cornerRadius: 12)
+      .activityCardDetailSurface(cornerRadius: 12)
       .padding(14)
       .if(maxHeight != nil) { view in
         view.frame(maxHeight: maxHeight!)
@@ -160,12 +160,14 @@ struct ActivityCard: View {
       // Header
       HStack(alignment: .center) {
         VStack(alignment: .leading, spacing: 6) {
-          Text(activity.title)
+          Text(displayTitle(for: activity))
             .font(
               Font.custom("Figtree", size: 16)
                 .weight(.semibold)
             )
             .foregroundColor(Color(nsColor: .labelColor))
+            .lineLimit(2)
+            .fixedSize(horizontal: false, vertical: true)
 
           HStack(alignment: .center, spacing: 6) {
             Text(
@@ -341,6 +343,7 @@ struct ActivityCard: View {
             Font.custom("Figtree", size: 12)
           )
           .foregroundColor(Color(nsColor: .labelColor))
+          .lineSpacing(2)
           .lineLimit(nil)
           .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
@@ -360,6 +363,7 @@ struct ActivityCard: View {
               Font.custom("Figtree", size: 12)
             )
             .foregroundColor(Color(nsColor: .labelColor))
+            .lineSpacing(2)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .textSelection(.enabled)
@@ -370,10 +374,8 @@ struct ActivityCard: View {
     .background(
       RoundedRectangle(cornerRadius: 8, style: .continuous)
         .fill(
-          DayflowContentToken.readingFill(
-            colorScheme: colorScheme,
-            reduceTransparency: reduceTransparency
-          ))
+          activityReadingFill
+        )
     )
     .overlay(
       RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -395,6 +397,25 @@ struct ActivityCard: View {
       return Text(parsed)
     }
     return Text(content)
+  }
+
+  private func displayTitle(for activity: TimelineActivity) -> String {
+    let trimmed = activity.title.trimmingCharacters(in: .whitespacesAndNewlines)
+    let cleaned = trimmed.replacingOccurrences(
+      of: #"^<think>\s*"#,
+      with: "",
+      options: .regularExpression
+    )
+    return cleaned.isEmpty ? activity.title : cleaned
+  }
+
+  private var activityReadingFill: Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color(nsColor: .controlBackgroundColor).opacity(0.72)
+      : Color.white.opacity(0.62)
   }
 
   private func formattedDetailedSummary(_ content: String) -> String {
@@ -715,5 +736,44 @@ private actor ActivityCardTimelapseGenerator {
     }
     let middleIndex = screenshots.count / 2
     return screenshots[middleIndex].fileURL
+  }
+}
+
+private struct ActivityCardDetailSurfaceModifier: ViewModifier {
+  let cornerRadius: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    content
+      .background(
+        shape.fill(
+          reduceTransparency
+            ? Color(nsColor: .controlBackgroundColor)
+            : Color(nsColor: .controlBackgroundColor).opacity(colorScheme == .dark ? 0.82 : 0.78)
+        )
+      )
+      .overlay(
+        shape.stroke(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          ),
+          lineWidth: 0.8
+        )
+      )
+      .shadow(
+        color: Color.black.opacity(colorScheme == .dark && !reduceTransparency ? 0.22 : 0.08),
+        radius: 14,
+        x: 0,
+        y: 6
+      )
+  }
+}
+
+private extension View {
+  func activityCardDetailSurface(cornerRadius: CGFloat) -> some View {
+    modifier(ActivityCardDetailSurfaceModifier(cornerRadius: cornerRadius))
   }
 }

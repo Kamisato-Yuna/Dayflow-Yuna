@@ -49,7 +49,7 @@ struct DayDistractionSummarySection: View {
         patternDescription: patternDescription
       )
       .frame(maxWidth: .infinity)
-      .opacity(isSelectionEmpty ? 0.45 : 1)
+      .opacity(isSelectionEmpty ? 0.72 : 1)
     }
     .overlay(alignment: .topLeading) {
       if isEditingCategories {

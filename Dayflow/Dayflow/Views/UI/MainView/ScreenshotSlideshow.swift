@@ -11,6 +11,8 @@ struct ScreenshotSlideshowModal: View {
   let endTime: Date?
 
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   @StateObject private var playbackModel: ScreenshotSlideshowPlaybackModel
   @State private var keyMonitor: Any?
 
@@ -40,10 +42,13 @@ struct ScreenshotSlideshowModal: View {
     VStack(spacing: 0) {
       HStack(alignment: .center) {
         VStack(alignment: .leading, spacing: 3) {
-          if let title {
-            Text(title)
-              .font(.title3)
+          if let displayTitle {
+            Text(displayTitle)
+              .font(.system(size: 15, weight: .semibold))
               .fontWeight(.semibold)
+              .foregroundColor(Color(nsColor: .labelColor))
+              .lineLimit(2)
+              .fixedSize(horizontal: false, vertical: true)
           }
           if let startTime, let endTime {
             Text(
@@ -56,7 +61,7 @@ struct ScreenshotSlideshowModal: View {
         Spacer()
         Button(action: { dismiss() }) {
           Image(systemName: "xmark.circle.fill")
-            .font(.system(size: 20))
+            .font(.system(size: 18, weight: .semibold))
             .foregroundColor(.secondary)
         }
         .buttonStyle(PlainButtonStyle())
@@ -64,8 +69,15 @@ struct ScreenshotSlideshowModal: View {
         .pointingHandCursorOnHover(reassertOnPressEnd: true)
       }
       .padding(.horizontal, 16)
-      .padding(.vertical, 10)
-      .background(.regularMaterial)
+      .padding(.vertical, 9)
+      .background(
+        Rectangle()
+          .fill(
+            reduceTransparency
+              ? Color(nsColor: .controlBackgroundColor)
+              : Color(nsColor: .controlBackgroundColor).opacity(colorScheme == .dark ? 0.76 : 0.72)
+          )
+      )
 
       Divider()
 
@@ -96,10 +108,13 @@ struct ScreenshotSlideshowModal: View {
           absoluteStart: startTime,
           absoluteEnd: endTime
         )
-        .padding(.horizontal)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .dayflowFloatingControl(cornerRadius: 14)
+        .padding(.horizontal, 14)
         .padding(.bottom, 12)
       }
-      .dayflowCard(cornerRadius: 0)
+      .background(.clear)
     }
     .frame(minWidth: 960, minHeight: 640)
     .dayflowModalSurface(cornerRadius: 18)
@@ -120,6 +135,17 @@ struct ScreenshotSlideshowModal: View {
       playbackModel.stop()
       removeKeyMonitor()
     }
+  }
+
+  private var displayTitle: String? {
+    guard let title else { return nil }
+    let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+    let cleaned = trimmed.replacingOccurrences(
+      of: #"^<think>\s*"#,
+      with: "",
+      options: .regularExpression
+    )
+    return cleaned.isEmpty ? nil : cleaned
   }
 
   private func setupKeyMonitor() {
@@ -177,7 +203,7 @@ private struct ScreenshotSlideshowStageView: View {
   var body: some View {
     GeometryReader { geometry in
       ZStack {
-        Color.black.opacity(0.95)
+        Color.black.opacity(0.90)
 
         if let image = mediaState.currentImage {
           ScreenshotSlideshowLayerBackedImageView(image: image)
@@ -216,14 +242,13 @@ private struct ScreenshotSlideshowStageView: View {
             Spacer()
             Button(action: onCycleSpeed) {
               Text(playbackState.speedLabel)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(Color(nsColor: .labelColor))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(Color.black.opacity(0.8))
-                .cornerRadius(4)
             }
             .buttonStyle(PlainButtonStyle())
+            .dayflowFloatingControl(cornerRadius: 8)
             .hoverScaleEffect(scale: 1.02)
             .pointingHandCursorOnHover(reassertOnPressEnd: true)
             .padding(12)
@@ -523,6 +548,7 @@ private struct ScreenshotScrubberView: View {
 
   @State private var images: [NSImage] = []
   @State private var isDragging: Bool = false
+  @Environment(\.colorScheme) private var colorScheme
 
   private let frameCount = 8
   private let filmstripHeight: CGFloat = 64
@@ -549,10 +575,17 @@ private struct ScreenshotScrubberView: View {
             Color.clear.frame(height: chipRowHeight)
             Text(timeLabel(for: currentTime))
               .font(.system(size: 12, weight: .semibold))
-              .foregroundColor(.white)
+              .foregroundColor(Color(nsColor: .labelColor))
               .padding(.horizontal, 8)
               .padding(.vertical, 4)
-              .background(Color.black.opacity(0.85))
+              .background(
+                Capsule()
+                  .fill(Color(nsColor: .controlBackgroundColor).opacity(colorScheme == .dark ? 0.88 : 0.94))
+              )
+              .overlay(
+                Capsule()
+                  .stroke(Color(nsColor: .separatorColor).opacity(0.55), lineWidth: 0.7)
+              )
               .cornerRadius(12)
               .scaleEffect(0.8)
               .position(x: x, y: chipRowHeight / 2)
@@ -561,7 +594,7 @@ private struct ScreenshotScrubberView: View {
 
           ZStack(alignment: .topLeading) {
             Rectangle()
-              .fill(Color.white)
+              .fill(Color(nsColor: .controlBackgroundColor).opacity(colorScheme == .dark ? 0.72 : 0.88))
 
             let tileWidth = filmstripHeight * aspect
             let columnsNeeded = max(1, Int(ceil(stripWidth / tileWidth)))
@@ -620,6 +653,11 @@ private struct ScreenshotScrubberView: View {
               .allowsHitTesting(false)
           }
           .frame(width: stripWidth, height: filmstripHeight)
+          .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+          .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+              .stroke(Color(nsColor: .separatorColor).opacity(0.55), lineWidth: 0.7)
+          )
           .padding(.horizontal, sideGutter)
         }
       }

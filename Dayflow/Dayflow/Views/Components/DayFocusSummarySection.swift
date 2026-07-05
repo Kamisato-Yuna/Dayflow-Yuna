@@ -45,7 +45,7 @@ struct DayFocusSummarySection: View {
 
         LongestFocusCard(focusBlocks: focusBlocks)
       }
-      .opacity(isSelectionEmpty ? 0.45 : 1)
+      .opacity(isSelectionEmpty ? 0.72 : 1)
     }
     .overlay(alignment: .topLeading) {
       if isEditingCategories {
@@ -106,7 +106,7 @@ private struct TotalFocusCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     .padding(.horizontal, 16)
-    .padding(.vertical, 12)
+    .padding(.vertical, 14)
     .frame(maxWidth: .infinity, alignment: .leading)
     .dayflowContentPanel(cornerRadius: 8)
   }

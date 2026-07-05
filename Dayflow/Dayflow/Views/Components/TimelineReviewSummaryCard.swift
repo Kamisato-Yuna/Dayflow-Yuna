@@ -39,9 +39,9 @@ struct TimelineReviewSummaryCard: View {
     static let headerSpacing: CGFloat = 2
     static let contentSpacing: CGFloat = 16
 
-    static let titleColor = Color.primary
-    static let subtitleColor = Color.secondary
-    static let linkColor = Color(hex: "F96E00")
+    static let titleColor = DayflowDailyToken.title
+    static let subtitleColor = DayflowDailyToken.secondaryText
+    static let linkColor = DayflowDailyToken.accent
 
     static let barHeight: CGFloat = 39
     static let barCornerRadius: CGFloat = 4
@@ -199,10 +199,10 @@ struct TimelineReviewSummaryCard: View {
       ratio: max(CGFloat(summary.distractedRatio), 0),
       durationText: durationText(summary.distractedDuration),
       style: metricStyle(
-        baseColor: Color(hex: "FF8772"),
-        shadow: Color(red: 148 / 255, green: 87 / 255, blue: 77 / 255).opacity(0.25),
-        legendFill: Color(hex: "FF8772").opacity(0.4),
-        legendStroke: Color(hex: "FF8772"),
+        baseColor: DayflowDailyToken.distraction,
+        shadow: DayflowDailyToken.distraction.opacity(0.18),
+        legendFill: DayflowDailyToken.distraction.opacity(0.28),
+        legendStroke: DayflowDailyToken.distraction,
         placeholder: placeholder
       )
     )
@@ -227,10 +227,10 @@ struct TimelineReviewSummaryCard: View {
       ratio: max(CGFloat(summary.productiveRatio), 0),
       durationText: durationText(summary.productiveDuration),
       style: metricStyle(
-        baseColor: Color(hex: "42D0BB"),
-        shadow: Color(red: 77 / 255, green: 156 / 255, blue: 145 / 255).opacity(0.25),
-        legendFill: Color(hex: "42D0BB").opacity(0.4),
-        legendStroke: Color(hex: "42D0BB"),
+        baseColor: DayflowDailyToken.success,
+        shadow: DayflowDailyToken.success.opacity(0.18),
+        legendFill: DayflowDailyToken.success.opacity(0.28),
+        legendStroke: DayflowDailyToken.success,
         placeholder: placeholder
       )
     )

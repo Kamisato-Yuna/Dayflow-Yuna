@@ -51,15 +51,15 @@ struct DaySummaryView: View {
     static let horizontalPadding: CGFloat = 18
     static let topPadding: CGFloat = 18
     static let bottomPadding: CGFloat = 48
-    static let sectionSpacing: CGFloat = 26
+    static let sectionSpacing: CGFloat = 24
     static let targetsHeight: CGFloat = 213
     static let headerSpacing: CGFloat = 6
     static let donutSectionSpacing: CGFloat = 20
 
-    static let dividerColor = Color(nsColor: .separatorColor).opacity(0.45)
+    static let dividerColor = DayflowDailyToken.separator.opacity(0.72)
 
-    static let titleColor = Color.primary
-    static let subtitleColor = Color.secondary
+    static let titleColor = DayflowDailyToken.title
+    static let subtitleColor = DayflowDailyToken.secondaryText
 
     static let focusGapMinutes: Int = 5
     static let timelineDayStartMinutes: Int = 4 * 60
@@ -434,12 +434,12 @@ struct DaySummaryView: View {
   private var emptyChartPlaceholder: some View {
     VStack(spacing: 12) {
       Circle()
-        .stroke(Color.gray.opacity(0.2), lineWidth: 20)
+        .stroke(DayflowDailyToken.separator.opacity(0.30), lineWidth: 20)
         .frame(width: 140, height: 140)
 
       Text("暂无活动数据")
         .font(.custom("Figtree", size: 12))
-        .foregroundColor(Color.gray.opacity(0.6))
+        .foregroundColor(Design.subtitleColor)
     }
     .padding(.vertical, 20)
   }
@@ -451,7 +451,7 @@ struct DaySummaryView: View {
       onReviewTap: onReviewTap
     )
     .padding(12)
-    .dayflowCard(cornerRadius: 12)
+    .dayflowCard(cornerRadius: 8)
   }
 
   // MARK: - Focus Section

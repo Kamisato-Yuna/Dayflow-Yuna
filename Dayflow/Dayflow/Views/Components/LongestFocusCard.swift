@@ -46,7 +46,7 @@ struct LongestFocusCard: View {
     static let titleColor = DayflowDailyToken.title
     static let focusSolid = DayflowDailyToken.focus
     static let focusLight = DayflowDailyToken.focus.opacity(0.38)
-    static let axisColor = DayflowDailyToken.tertiaryText
+    static let axisColor = DayflowDailyToken.separator
 
     // Sizing
     static let cardWidth: CGFloat = 322
@@ -126,7 +126,7 @@ struct LongestFocusCard: View {
         .offset(x: Design.titleX, y: Design.titleY)
 
       Text(formattedDuration)
-        .font(.system(size: 24, weight: .semibold, design: .rounded))
+        .font(.system(size: 26, weight: .semibold, design: .rounded))
         .foregroundColor(Design.focusSolid)
         .offset(x: Design.valueX, y: Design.valueY)
 
@@ -135,7 +135,7 @@ struct LongestFocusCard: View {
         .offset(x: Design.timelineX, y: Design.timelineY)
     }
     .frame(width: Design.cardWidth, height: Design.cardHeight, alignment: .topLeading)
-    .dayflowWeeklySectionSurface(cornerRadius: Design.cardCornerRadius)
+    .dayflowContentPanel(cornerRadius: Design.cardCornerRadius)
   }
 
   // MARK: - Timeline Visualization
