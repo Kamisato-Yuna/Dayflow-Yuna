@@ -112,6 +112,8 @@ struct WeekTimelineGridView: View {
   @State private var measuredExpandedHeights: [String: CGFloat] = [:]
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   @AppStorage("showTimelineAppIcons") private var showTimelineAppIcons = true
   @EnvironmentObject private var appState: AppState
@@ -979,17 +981,18 @@ struct WeekTimelineGridView: View {
     let fallback = categoryStore.categories.first ?? CategoryPersistence.defaultCategories.first!
     let category = matched ?? fallback
     let accentNSColor = NSColor(hex: category.colorHex) ?? .systemBlue
-    let fillColor =
-      accentNSColor.blended(with: 0.90, of: .controlBackgroundColor)
-      ?? NSColor.controlBackgroundColor
-    let borderColor =
-      accentNSColor.blended(with: 0.62, of: .separatorColor) ?? NSColor.separatorColor
 
     return WeekTimelineCardPalette(
       accent: Color(nsColor: accentNSColor),
-      fill: Color(nsColor: fillColor),
-      border: Color(nsColor: borderColor),
-      title: .primary
+      fill: DayflowContentToken.timelineCardFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      border: DayflowContentToken.timelineCardBorder(
+        colorScheme: colorScheme,
+        isSelected: false
+      ),
+      title: Color(nsColor: .labelColor)
     )
   }
 }

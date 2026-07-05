@@ -167,6 +167,8 @@ struct CanvasTimelineDataView: View {
   @EnvironmentObject private var categoryStore: CategoryStore
   @EnvironmentObject private var appState: AppState
   @EnvironmentObject private var retryCoordinator: RetryCoordinator
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private let storageManager = StorageManager.shared
 
@@ -1196,10 +1198,18 @@ struct CanvasTimelineDataView: View {
     let baseNSColor = NSColor(hex: category.colorHex) ?? NSColor(hex: "#4F80EB") ?? .systemBlue
 
     return CanvasActivityCardStyle(
-      text: Color.black.opacity(0.9),
-      time: Color.secondary,
+      text: Color(nsColor: .labelColor),
+      time: Color(nsColor: .secondaryLabelColor),
       accent: Color(nsColor: baseNSColor),
-      isIdle: category.isIdle
+      isIdle: category.isIdle,
+      fill: DayflowContentToken.timelineCardFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      border: DayflowContentToken.timelineCardBorder(
+        colorScheme: colorScheme,
+        isSelected: false
+      )
     )
   }
 }
@@ -1242,6 +1252,8 @@ struct CanvasActivityCardStyle {
   let time: Color
   let accent: Color
   let isIdle: Bool
+  let fill: Color
+  let border: Color
 }
 
 struct CanvasActivityCard: View {
@@ -1406,7 +1418,7 @@ struct CanvasActivityCard: View {
       .background(
         isFailedCard
           ? Color(nsColor: .systemRed).opacity(0.10)
-          : Color(nsColor: .controlBackgroundColor).opacity(0.74)
+          : style.fill
       )
       .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
       .overlay(
@@ -1415,7 +1427,7 @@ struct CanvasActivityCard: View {
           .stroke(
             isFailedCard
               ? Color(nsColor: .systemRed).opacity(0.9)
-              : Color(nsColor: .separatorColor).opacity(0.5),
+              : style.border,
             style: isFailedCard
               ? StrokeStyle(lineWidth: 0.5, dash: [2.5, 2.5]) : StrokeStyle(lineWidth: 0.25)
           )

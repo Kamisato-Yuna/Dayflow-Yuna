@@ -7,6 +7,9 @@ struct CategoryPickerOverlay: View {
   var onSelect: (TimelineCategory) -> Void
   var onNavigateToEditor: () -> Void
 
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   private var orderedCategories: [TimelineCategory] {
     let trimmedCurrent = currentCategoryName.trimmingCharacters(in: .whitespacesAndNewlines)
       .lowercased()
@@ -47,7 +50,12 @@ struct CategoryPickerOverlay: View {
       .frame(maxWidth: .infinity, alignment: .leading)
 
       Rectangle()
-        .fill(Color(nsColor: .separatorColor).opacity(0.62))
+        .fill(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          )
+        )
         .frame(height: 1)
 
       helperContent
@@ -76,7 +84,13 @@ struct CategoryPickerOverlay: View {
           topTrailing: 6
         )
       )
-      .stroke(Color(red: 0.91, green: 0.88, blue: 0.87), lineWidth: 1)
+      .stroke(
+        DayflowContentToken.cardBorder(
+          colorScheme: colorScheme,
+          increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+        ),
+        lineWidth: 1
+      )
     )
   }
 
@@ -127,6 +141,9 @@ private struct CategoryPickerPill: View {
   let category: TimelineCategory
   let isSelected: Bool
 
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   private var categoryColor: Color {
     if let nsColor = NSColor(hex: category.colorHex) {
       return Color(nsColor: nsColor)
@@ -139,23 +156,29 @@ private struct CategoryPickerPill: View {
       if isSelected {
         LinearGradient(
           colors: [
-            DayflowSurfaceAccent.primary.opacity(0.16),
-            DayflowSurfaceAccent.primary.opacity(0.08),
+            DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.30 : 0.18),
+            DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.18 : 0.10),
           ],
           startPoint: .leading,
           endPoint: .trailing
         )
       } else {
-        Color(nsColor: .controlBackgroundColor).opacity(0.58)
+        DayflowContentToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        )
       }
     }
   }
 
   private var borderColor: Color {
     if isSelected {
-      return DayflowDailyToken.accent.opacity(0.62)
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.86 : 0.62)
     }
-    return Color(red: 0.88, green: 0.88, blue: 0.88)
+    return DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+    )
   }
 
   var body: some View {
@@ -169,7 +192,7 @@ private struct CategoryPickerPill: View {
           Font.custom("Figtree", size: 13)
             .weight(.medium)
         )
-        .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
+        .foregroundColor(Color(nsColor: .labelColor))
         .lineLimit(1)
     }
     .padding(.horizontal, 6)

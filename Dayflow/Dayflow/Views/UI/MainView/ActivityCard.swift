@@ -15,6 +15,8 @@ struct ActivityCard: View {
   @EnvironmentObject private var appState: AppState
   @EnvironmentObject private var categoryStore: CategoryStore
   @EnvironmentObject private var retryCoordinator: RetryCoordinator
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   @AppStorage(TimelapsePreferences.saveAllTimelapsesToDiskKey) private var saveAllTimelapsesToDisk =
     false
 
@@ -162,7 +164,7 @@ struct ActivityCard: View {
               Font.custom("Figtree", size: 16)
                 .weight(.semibold)
             )
-            .foregroundColor(.primary)
+            .foregroundColor(Color(nsColor: .labelColor))
 
           HStack(alignment: .center, spacing: 6) {
             Text(
@@ -171,11 +173,16 @@ struct ActivityCard: View {
             .font(
               Font.custom("Figtree", size: 12)
             )
-            .foregroundColor(.secondary)
+            .foregroundColor(Color(nsColor: .secondaryLabelColor))
             .lineLimit(1)
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
-            .background(Color(nsColor: .controlBackgroundColor).opacity(0.72))
+            .background(
+              DayflowContentToken.secondaryFill(
+                colorScheme: colorScheme,
+                reduceTransparency: reduceTransparency
+              )
+            )
             .cornerRadius(6)
             .overlay(
               RoundedRectangle(cornerRadius: 6)
@@ -194,12 +201,17 @@ struct ActivityCard: View {
 
                   Text(badge.name)
                     .font(Font.custom("Figtree", size: 12))
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color(nsColor: .labelColor))
                     .lineLimit(1)
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color(nsColor: .controlBackgroundColor).opacity(0.72))
+                .background(
+                  DayflowContentToken.secondaryFill(
+                    colorScheme: colorScheme,
+                    reduceTransparency: reduceTransparency
+                  )
+                )
                 .cornerRadius(6)
                 .overlay(
                   RoundedRectangle(cornerRadius: 6)
@@ -214,10 +226,36 @@ struct ActivityCard: View {
                     showCategoryPicker.toggle()
                   }
                 }) {
-                  Image("CategorySwapButton")
-                    .resizable()
-                    .renderingMode(.original)
-                    .frame(width: 24, height: 24)
+                  Image(systemName: "pencil")
+                    .font(.system(size: 13, weight: .semibold))
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundColor(DayflowSurfaceAccent.primary)
+                    .frame(width: 28, height: 28)
+                    .background(
+                      Circle()
+                        .fill(
+                          showCategoryPicker
+                            ? DayflowSurfaceAccent.primary.opacity(
+                              colorScheme == .dark ? 0.26 : 0.18)
+                            : DayflowContentToken.secondaryFill(
+                              colorScheme: colorScheme,
+                              reduceTransparency: reduceTransparency
+                            )
+                        )
+                    )
+                    .overlay(
+                      Circle()
+                        .stroke(
+                          DayflowSurfaceAccent.primary.opacity(showCategoryPicker ? 0.72 : 0.42),
+                          lineWidth: showCategoryPicker ? 1.1 : 0.8
+                        )
+                    )
+                    .shadow(
+                      color: DayflowSurfaceAccent.primary.opacity(showCategoryPicker ? 0.22 : 0.12),
+                      radius: showCategoryPicker ? 5 : 2,
+                      x: 0,
+                      y: 1
+                    )
                 }
                 .buttonStyle(PlainButtonStyle())
                 .hoverScaleEffect(scale: 1.02)
@@ -241,7 +279,7 @@ struct ActivityCard: View {
       {
         Text(statusLine)
           .font(.custom("Figtree", size: 11))
-          .foregroundColor(.secondary)
+          .foregroundColor(Color(nsColor: .secondaryLabelColor))
           .lineLimit(1)
       }
 
@@ -295,13 +333,13 @@ struct ActivityCard: View {
             Font.custom("Figtree", size: 12)
               .weight(.semibold)
           )
-          .foregroundColor(.secondary)
+          .foregroundColor(Color(nsColor: .secondaryLabelColor))
 
         renderMarkdownText(activity.summary)
           .font(
             Font.custom("Figtree", size: 12)
           )
-          .foregroundColor(.primary)
+          .foregroundColor(Color(nsColor: .labelColor))
           .lineLimit(nil)
           .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
@@ -314,19 +352,38 @@ struct ActivityCard: View {
               Font.custom("Figtree", size: 12)
                 .weight(.semibold)
             )
-            .foregroundColor(.secondary)
+            .foregroundColor(Color(nsColor: .secondaryLabelColor))
 
           renderMarkdownText(formattedDetailedSummary(activity.detailedSummary))
             .font(
               Font.custom("Figtree", size: 12)
             )
-            .foregroundColor(.primary)
+            .foregroundColor(Color(nsColor: .labelColor))
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .textSelection(.enabled)
         }
       }
     }
+    .padding(10)
+    .background(
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .fill(
+          DayflowContentToken.readingFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
+    )
+    .overlay(
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .stroke(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          ),
+          lineWidth: 0.7
+        )
+    )
   }
 
   private func renderMarkdownText(_ content: String) -> Text {

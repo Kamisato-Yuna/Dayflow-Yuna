@@ -303,6 +303,32 @@ enum DayflowContentToken {
       ? Color.white.opacity(0.07)
       : Color.white.opacity(0.48)
   }
+
+  static func timelineCardFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color.white.opacity(0.13)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.78)
+  }
+
+  static func timelineCardBorder(colorScheme: ColorScheme, isSelected: Bool) -> Color {
+    if isSelected {
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.86 : 0.74)
+    }
+    return (colorScheme == .dark ? Color.white : Color.black)
+      .opacity(colorScheme == .dark ? 0.18 : 0.12)
+  }
+
+  static func readingFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color.black.opacity(0.18)
+      : Color.white.opacity(0.38)
+  }
 }
 
 enum DayflowDailyToken {
