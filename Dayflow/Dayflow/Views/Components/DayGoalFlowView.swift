@@ -84,6 +84,19 @@ private struct GoalSetupStatPair {
   }
 }
 
+private enum GoalSetupVisibility {
+  static let title = Color.white.opacity(0.94)
+  static let text = Color.white.opacity(0.9)
+  static let secondaryText = Color.white.opacity(0.72)
+  static let tertiaryText = Color.white.opacity(0.5)
+  static let panelFill = Color.black.opacity(0.18)
+  static let insetFill = Color.black.opacity(0.22)
+  static let footerFill = Color.black.opacity(0.28)
+  static let pickerFill = Color.black.opacity(0.24)
+  static let border = Color.white.opacity(0.16)
+  static let brightBorder = Color.white.opacity(0.28)
+}
+
 struct DayGoalFlowOverlay: View {
   let presentation: DayGoalFlowPresentation
   var onDismiss: () -> Void
@@ -244,8 +257,8 @@ struct DayGoalFlowView: View {
 
     return ZStack(alignment: .topLeading) {
       Text("今天你想把时间花在哪里？")
-        .font(.custom("Instrument Serif", size: 24))
-        .foregroundColor(DayflowDailyToken.title)
+        .font(.system(size: 24, weight: .semibold, design: .rounded))
+        .foregroundColor(GoalSetupVisibility.title)
         .multilineTextAlignment(.center)
         .frame(width: 620, height: 30)
         .position(x: 602, y: 64)
@@ -533,7 +546,7 @@ private struct GoalCategoryPool: View {
     VStack(alignment: .leading, spacing: 8) {
       Text("拖放来设置你想追踪的分类")
         .font(.custom("Figtree", size: 12))
-        .foregroundColor(DayflowDailyToken.secondaryText)
+        .foregroundColor(GoalSetupVisibility.secondaryText)
 
       DayGoalFlowLayout(spacing: 8, rowSpacing: 6) {
         ForEach(categories) { category in
@@ -559,7 +572,12 @@ private struct GoalCategoryPool: View {
     .padding(.horizontal, 16)
     .padding(.vertical, 14)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .background(GoalSetupVisibility.panelFill)
     .dayflowContentPanel(cornerRadius: 6)
+    .overlay(
+      RoundedRectangle(cornerRadius: 6, style: .continuous)
+        .stroke(GoalSetupVisibility.border, lineWidth: 0.8)
+    )
   }
 
   private func status(for category: TimelineCategory) -> GoalCategoryChip.Status {
@@ -628,7 +646,7 @@ private struct GoalSetupPanel: View {
 
         Text(title)
           .font(.custom("Figtree", size: 14))
-          .foregroundColor(Color(nsColor: .windowBackgroundColor))
+          .foregroundColor(GoalSetupVisibility.title)
 
         Spacer()
       }
@@ -647,20 +665,30 @@ private struct GoalSetupPanel: View {
       .padding(.bottom, 23)
       .padding(.horizontal, 24)
       .frame(maxWidth: .infinity)
+      .background(GoalSetupVisibility.panelFill)
       .dayflowContentPanel(cornerRadius: 6)
+      .overlay(
+        RoundedRectangle(cornerRadius: 6, style: .continuous)
+          .stroke(GoalSetupVisibility.border, lineWidth: 0.8)
+      )
 
       footer
         .frame(height: 59)
     }
     .frame(width: panelWidth)
+    .background(GoalSetupVisibility.panelFill)
     .dayflowContentPanel(cornerRadius: 6)
+    .overlay(
+      RoundedRectangle(cornerRadius: 6, style: .continuous)
+        .stroke(GoalSetupVisibility.brightBorder, lineWidth: 0.9)
+    )
   }
 
   private var categoryBox: some View {
     VStack(alignment: .leading, spacing: 10) {
       Text("分类")
         .font(.custom("Figtree", size: 12))
-        .foregroundColor(Color(hex: "7A7A7A"))
+        .foregroundColor(GoalSetupVisibility.secondaryText)
 
       VStack(alignment: .leading, spacing: 6) {
         ForEach(selectedCategories) { category in
@@ -682,7 +710,12 @@ private struct GoalSetupPanel: View {
     }
     .padding(11)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .background(GoalSetupVisibility.insetFill)
     .dayflowContentPanel(cornerRadius: 4)
+    .overlay(
+      RoundedRectangle(cornerRadius: 4, style: .continuous)
+        .stroke(GoalSetupVisibility.border, lineWidth: 0.8)
+    )
     .onDrop(of: [.plainText], isTargeted: nil, perform: handleCategoryDrop)
   }
 
@@ -724,14 +757,19 @@ private struct GoalSetupPanel: View {
     }
     .padding(.horizontal, 16)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-    .background(DayflowDailyToken.secondaryFill(colorScheme: .light, reduceTransparency: false))
+    .background(GoalSetupVisibility.footerFill)
+    .overlay(alignment: .top) {
+      Rectangle()
+        .fill(GoalSetupVisibility.border)
+        .frame(height: 0.8)
+    }
   }
 
   private func goalStat(title: String, minutes: Int) -> some View {
     VStack(alignment: .leading, spacing: 5) {
       Text(title)
         .font(.custom("Figtree", size: 12))
-        .foregroundColor(DayflowDailyToken.text)
+        .foregroundColor(GoalSetupVisibility.text)
         .lineLimit(1)
         .minimumScaleFactor(0.82)
 
@@ -742,7 +780,7 @@ private struct GoalSetupPanel: View {
 
         Text(formatShort(minutes: minutes))
           .font(.custom("Figtree", size: 12))
-          .foregroundColor(DayflowDailyToken.text)
+          .foregroundColor(GoalSetupVisibility.text)
           .lineLimit(1)
           .minimumScaleFactor(0.86)
       }
@@ -847,7 +885,7 @@ private struct GoalNumberColumn: View {
 
       Text(label)
         .font(.custom("Figtree", size: 14))
-        .foregroundColor(DayflowDailyToken.secondaryText)
+        .foregroundColor(GoalSetupVisibility.secondaryText)
         .lineLimit(1)
         .frame(width: labelWidth, alignment: .leading)
         .offset(x: labelLeft, y: 72)
@@ -873,16 +911,20 @@ private struct GoalNumberColumn: View {
     .background(
       LinearGradient(
         colors: [
-          DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false),
-          DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false),
-          DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false),
-          DayflowContentToken.secondaryFill(colorScheme: .light, reduceTransparency: false),
+          GoalSetupVisibility.pickerFill,
+          GoalSetupVisibility.pickerFill.opacity(0.9),
+          GoalSetupVisibility.pickerFill.opacity(0.9),
+          GoalSetupVisibility.pickerFill,
         ],
         startPoint: .top,
         endPoint: .bottom
       )
     )
     .dayflowContentPanel(cornerRadius: 6)
+    .overlay(
+      RoundedRectangle(cornerRadius: 6, style: .continuous)
+        .stroke(GoalSetupVisibility.border, lineWidth: 0.8)
+    )
     .contentShape(Rectangle())
     .simultaneousGesture(numberDragGesture)
     .background(
@@ -896,11 +938,11 @@ private struct GoalNumberColumn: View {
   private func rowColor(for offset: Int) -> Color {
     switch abs(offset) {
     case 0:
-      return DayflowDailyToken.text
+      return GoalSetupVisibility.title
     case 1:
-      return DayflowDailyToken.secondaryText
+      return GoalSetupVisibility.secondaryText
     default:
-      return DayflowDailyToken.tertiaryText
+      return GoalSetupVisibility.tertiaryText
     }
   }
 
@@ -1329,11 +1371,11 @@ private struct GoalCategoryChip: View {
   private var background: Color {
     switch status {
     case .focus:
-      return color.opacity(0.16)
+      return color.opacity(0.30)
     case .distraction:
-      return Color(hex: "FFEDED")
+      return Color(hex: "FA8282").opacity(0.24)
     case .untracked:
-      return color.opacity(0.16)
+      return color.opacity(0.20)
     }
   }
 
@@ -1344,14 +1386,14 @@ private struct GoalCategoryChip: View {
 
       Text(title)
         .font(.custom("Figtree", size: 12))
-        .foregroundColor(Color(hex: "333333"))
+        .foregroundColor(GoalSetupVisibility.text)
         .lineLimit(1)
         .minimumScaleFactor(0.8)
 
       if showsRemove {
         Image(systemName: "xmark")
           .font(.system(size: 7, weight: .semibold))
-          .foregroundColor(Color(hex: "777777"))
+          .foregroundColor(GoalSetupVisibility.secondaryText)
       }
     }
     .padding(4)
@@ -1359,7 +1401,7 @@ private struct GoalCategoryChip: View {
     .clipShape(RoundedRectangle(cornerRadius: 6))
     .overlay(
       RoundedRectangle(cornerRadius: 6)
-        .stroke(color.opacity(status == .untracked ? 0.75 : 1), lineWidth: 0.5)
+        .stroke(color.opacity(status == .untracked ? 0.85 : 1), lineWidth: 0.9)
     )
   }
 }

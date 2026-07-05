@@ -28,10 +28,13 @@ struct SetupContinueButton: View {
           .font(.custom("Figtree", size: 16))
           .fontWeight(.semibold)
           .foregroundColor(DayflowOnboardingToken.primaryButtonText)
+          .lineLimit(1)
+          .minimumScaleFactor(0.82)
+          .allowsTightening(true)
       }
-      .padding(.horizontal, 59)
+      .padding(.horizontal, 28)
       .padding(.vertical, 18)
-      .frame(width: 160, alignment: .center)
+      .frame(minWidth: 160, alignment: .center)
       .background(
         DayflowOnboardingToken.primaryButtonFill
       )
