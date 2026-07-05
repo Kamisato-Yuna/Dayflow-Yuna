@@ -54,12 +54,15 @@ extension DailyView {
   }
   var dailyLockScreenBackground: some View {
     GeometryReader { geo in
-      Image("JournalPreview")
-        .resizable()
-        .scaledToFill()
-        .frame(width: geo.size.width, height: geo.size.height)
-        .clipped()
-        .allowsHitTesting(false)
+      DayflowContentPreviewFrame(cornerRadius: 18) {
+        Image("JournalPreview")
+          .resizable()
+          .scaledToFill()
+          .frame(width: geo.size.width, height: geo.size.height)
+          .clipped()
+          .overlay(Color(nsColor: .windowBackgroundColor).opacity(0.16))
+      }
+      .allowsHitTesting(false)
     }
   }
   var isNotificationPermissionButtonDisabled: Bool {

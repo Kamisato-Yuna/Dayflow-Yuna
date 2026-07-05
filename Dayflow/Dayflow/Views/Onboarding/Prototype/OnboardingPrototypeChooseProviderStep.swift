@@ -191,7 +191,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
           Text(title)
             .font(.custom("Figtree", size: scaledText(18)))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(DayflowOnboardingToken.title)
           Spacer()
         }
         .padding(.bottom, scaled(8))
@@ -253,7 +253,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
           Text(info.title)
             .font(.custom("Figtree", size: scaledText(18)))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(DayflowOnboardingToken.title)
             .lineLimit(1)
         }
 
@@ -319,13 +319,17 @@ struct OnboardingPrototypeChooseProviderStep: View {
           .fontWeight(.semibold)
           .frame(maxWidth: .infinity)
       },
-      background: DayflowOnboardingToken.primaryButtonFill,
-      foreground: DayflowOnboardingToken.primaryButtonText,
-      borderColor: .clear,
+      background: DayflowContentToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      foreground: DayflowOnboardingToken.title,
+      borderColor: contentBorder,
       cornerRadius: scaled(8),
       horizontalPadding: scaled(24),
       verticalPadding: scaled(12),
-      showOverlayStroke: true
+      showOverlayStroke: true,
+      isSecondaryStyle: true
     )
   }
 }

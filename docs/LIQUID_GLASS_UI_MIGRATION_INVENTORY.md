@@ -128,6 +128,26 @@ that must be preserved.
   static token/code paths in this pass, not by changing system settings through
   Computer Use.
 
+## Brand And Content Asset Governance (2026-07-05)
+
+This pass brings brand logos, external app/site favicons, and explanatory
+preview images under the Liquid Glass visual system without deleting useful
+recognition cues.
+
+| Category | Runtime call points | Governance |
+| --- | --- | --- |
+| Brand identity | `DayflowLogo`, `DayflowLogoMainApp` in provider cards, sidebar/app badges, Weekly export/progress affordances, onboarding welcome/completion | Keep as Dayflow brand marks. Route reusable usages through `DayflowBrandIconView`; template only where the mark is a small functional affordance. |
+| External app/favicon | `GithubIcon`, `DiscordGlyph`, `ChatGPTLogo`, `ClaudeLogo`, `GeminiLogo`, `*Favicon` overrides in `FaviconService`, Timeline cards, Week grid, Weekly treemap/sankey, Feedback, HowItWorks, Chat CLI detection, Settings provider routing | Preserve recognisable originals, but seat them in `DayflowExternalIconBadge` / `DayflowFaviconBadge` wells for consistent sizing, corner radius, border, material fill, dark/light contrast, and Reduce Transparency behaviour. |
+| Provider/LLM logos | `ProviderIconView`, `ChatCLIDetectionViews`, `SettingsProvidersTabView`, provider setup entry points | Gemini remains original colour; ChatGPT/Claude remain original in provider contexts. Local/system providers use a template symbol inside the same well. |
+| Content previews / explanatory screenshots | `OnboardingTimeline`, `JournalPreview`, `ScreenRecordingPermissions` | Treat as content previews, not icons. Wrap in `DayflowContentPreviewFrame` to add neutral material, border, masking, and dark-aware overlay while preserving readability of the underlying screenshot. |
+| Legacy warm backgrounds | `OnboardingBackgroundv2` in prototype onboarding | Remove from runtime background use; prototype onboarding now uses `dayflowWindowBackground()` so it matches the neutral app shell. |
+| Replaceable functional icons | SF Symbols used for email/calendar/copy/provider status and local provider fallback | Keep as template symbols and seat small provider symbols in the shared external icon well when they represent an app/provider. |
+
+Known baseline issue fixed by this pass: Settings provider configuration sheets
+opened from the Providers tab were forced into a light/white surface by
+`LLMProviderSetupView`. The setup flow now inherits system appearance and uses
+the shared window/surface tokens.
+
 ### LG23 扫描结论（截至 2026-07-04）
 
 - 已清理的运行时以外 bundled 预置视频资产不应再出现在代码路径中。

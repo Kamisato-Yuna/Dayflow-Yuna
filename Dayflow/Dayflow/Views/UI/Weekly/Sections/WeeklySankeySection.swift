@@ -522,10 +522,12 @@ private struct WeeklySankeyIconView: View {
     switch icon {
     case .asset(let name):
       if let image = NSImage(named: name) {
-        Image(nsImage: image)
-          .resizable()
-          .interpolation(.high)
-          .scaledToFit()
+        DayflowExternalIconBadge(size: 14, cornerRadius: 3, contentScale: 0.72) {
+          Image(nsImage: image)
+            .resizable()
+            .interpolation(.high)
+            .scaledToFit()
+        }
       } else {
         fallbackMonogram("?")
       }

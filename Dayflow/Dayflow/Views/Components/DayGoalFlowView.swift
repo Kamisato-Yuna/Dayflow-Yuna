@@ -1336,9 +1336,10 @@ private struct GoalIconBubble: View {
         .fill(Color(hex: "E4E4E4"))
         .overlay(Circle().stroke(accent, lineWidth: 1))
 
-      Image(kind == .focus ? "DayGoalFocus" : "DayGoalDistraction")
-        .resizable()
-        .scaledToFit()
+      Image(systemName: kind == .focus ? "bullseye" : "exclamationmark.triangle.fill")
+        .font(.system(size: 17, weight: .semibold))
+        .symbolRenderingMode(.hierarchical)
+        .foregroundStyle(accent)
         .frame(width: 24, height: 24)
     }
     .frame(width: 36, height: 36)

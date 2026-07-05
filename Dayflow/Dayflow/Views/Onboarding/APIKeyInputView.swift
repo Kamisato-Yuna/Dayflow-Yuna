@@ -29,11 +29,11 @@ struct APIKeyInputView: View {
       Text(title)
         .font(.custom("Figtree", size: 16))
         .fontWeight(.semibold)
-        .foregroundColor(.black.opacity(0.9))
+        .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
 
       Text(subtitle)
         .font(.custom("Figtree", size: 14))
-        .foregroundColor(.black.opacity(0.6))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
 
       // Input field container
       VStack(alignment: .leading, spacing: 8) {
@@ -61,7 +61,7 @@ struct APIKeyInputView: View {
           Button(action: { showPassword.toggle() }) {
             Image(systemName: showPassword ? "eye.slash" : "eye")
               .font(.system(size: 14, weight: .medium))
-              .foregroundColor(.black.opacity(0.4))
+              .foregroundColor(Color(nsColor: .tertiaryLabelColor))
           }
           .buttonStyle(.plain)
           .pointingHandCursor()
@@ -105,7 +105,7 @@ struct APIKeyInputView: View {
 
         Text("你的密钥会经过加密后存储在系统钥匙串，不会上传到任何地方")
           .font(.custom("Figtree", size: 12))
-          .foregroundColor(.black.opacity(0.5))
+          .foregroundColor(Color(nsColor: .tertiaryLabelColor))
       }
     }
   }
@@ -121,7 +121,7 @@ struct APIKeyInputView: View {
         return DayflowOnboardingToken.accent.opacity(0.6)
       }
     } else {
-      return Color.black.opacity(0.1)
+      return Color(nsColor: .separatorColor).opacity(0.34)
     }
   }
 

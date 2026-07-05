@@ -943,10 +943,7 @@ private struct WeeklyExportWatermark: View {
 
   var body: some View {
     HStack(spacing: 6) {
-      Image("DayflowLogo")
-        .resizable()
-        .scaledToFit()
-        .frame(width: 16, height: 16)
+      DayflowBrandIconView(imageName: "DayflowLogo", size: 16, cornerRadius: 4)
 
       WeeklyGeneratedWithDayflowText()
     }

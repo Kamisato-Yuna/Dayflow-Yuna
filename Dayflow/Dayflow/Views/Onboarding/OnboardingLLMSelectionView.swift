@@ -50,7 +50,7 @@ struct OnboardingLLMSelectionView: View {
         Text("选择 Dayflow 的运行方式")
           .font(.custom("HanziPen SC", size: titleSize))
           .multilineTextAlignment(.center)
-          .foregroundColor(.black.opacity(0.9))
+          .foregroundColor(DayflowOnboardingToken.title)
           .frame(maxWidth: .infinity)
           .frame(height: headerHeight)
           .opacity(titleOpacity)
@@ -81,20 +81,20 @@ struct OnboardingLLMSelectionView: View {
           Group {
             if cliDetected {
               Text("你已安装 Codex/Claude CLI！")
-                .foregroundColor(.black.opacity(0.6))
+                .foregroundColor(DayflowOnboardingToken.secondaryText)
                 + Text("建议你用它来获得最佳体验。")
                 .fontWeight(.semibold)
-                .foregroundColor(.black.opacity(0.8))
+                .foregroundColor(DayflowOnboardingToken.title)
                 + Text(" 你可随时在设置中切换。")
-                .foregroundColor(.black.opacity(0.6))
+                .foregroundColor(DayflowOnboardingToken.secondaryText)
             } else {
               Text("不知道该选哪个？")
-                .foregroundColor(.black.opacity(0.6))
+                .foregroundColor(DayflowOnboardingToken.secondaryText)
                 + Text("带自有密钥是最简单的设置方式（30 秒）。")
                 .fontWeight(.semibold)
-                .foregroundColor(.black.opacity(0.8))
+                .foregroundColor(DayflowOnboardingToken.title)
                 + Text(" 你可随时在设置中切换。")
-                .foregroundColor(.black.opacity(0.6))
+                .foregroundColor(DayflowOnboardingToken.secondaryText)
             }
           }
           .font(.custom("Figtree", size: 14))

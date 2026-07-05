@@ -257,7 +257,6 @@ struct OnboardingFlow: View {
       restoreSavedStep()
     }
     .dayflowWindowBackground()
-    .preferredColorScheme(.light)
   }
 
   private func restoreSavedStep() {
@@ -564,7 +563,7 @@ struct WelcomeView: View {
           Text(fullText)
             .font(.custom("HanziPen SC", size: 36))
             .multilineTextAlignment(.center)
-            .foregroundColor(.black.opacity(0.8))
+            .foregroundColor(Color(nsColor: .labelColor).opacity(0.86))
             .padding(.horizontal, 20)
             .minimumScaleFactor(0.5)
             .lineLimit(3)
@@ -600,18 +599,20 @@ struct WelcomeView: View {
       // Timeline image
       VStack {
         Spacer()
-        Image("OnboardingTimeline")
-          .resizable()
-          .aspectRatio(contentMode: .fit)
-          .frame(maxWidth: 800)
-          .offset(y: timelineOffset)
-          .opacity(timelineOffset > 0 ? 0 : 1)
-          .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0).delay(0.3))
-            {
-              timelineOffset = 0
-            }
+        DayflowContentPreviewFrame(cornerRadius: 18) {
+          Image("OnboardingTimeline")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+        }
+        .frame(maxWidth: 800)
+        .offset(y: timelineOffset)
+        .opacity(timelineOffset > 0 ? 0 : 1)
+        .onAppear {
+          withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0).delay(0.3))
+          {
+            timelineOffset = 0
           }
+        }
       }
     }
   }
@@ -932,13 +933,13 @@ struct CompletionView: View {
       VStack(spacing: 8) {
         Text("你已准备就绪")
           .font(.custom("HanziPen SC", size: 36))
-          .foregroundColor(.black.opacity(0.9))
+          .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
 
         Text(
           "想要拿到有用的分析，请让 Dayflow 在后台运行一到两小时来收集上下文后再回来查看。"
         )
         .font(.custom("Figtree", size: 15))
-        .foregroundColor(.black.opacity(0.6))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         .multilineTextAlignment(.center)
         .fixedSize(horizontal: false, vertical: true)
       }

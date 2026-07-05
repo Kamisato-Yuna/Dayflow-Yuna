@@ -49,7 +49,7 @@ private struct TimelineHeaderVisibility {
 }
 
 private struct TimelineNavigationButton: View {
-  let assetName: String
+  let systemName: String
   var isEnabled = true
   var arrowSize: CGFloat = TimelineNavigationLayout.arrowSize
   var hoverCircleSize: CGFloat = TimelineNavigationLayout.hoverCircleSize
@@ -77,11 +77,10 @@ private struct TimelineNavigationButton: View {
           .frame(width: hoverCircleSize, height: hoverCircleSize)
           .opacity(isHovering && isEnabled ? 1 : 0)
 
-        Image(assetName)
-          .resizable()
-          .renderingMode(.template)
-          .scaledToFit()
-          .foregroundColor(iconColor)
+        Image(systemName: systemName)
+          .font(.system(size: arrowSize * 0.58, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
+          .foregroundStyle(iconColor)
           .frame(width: arrowSize, height: arrowSize)
           .opacity(isEnabled ? 1 : 0.35)
       }
@@ -250,7 +249,7 @@ extension MainView {
   private var timelineNavigationButtons: some View {
     HStack(spacing: 2) {
       TimelineNavigationButton(
-        assetName: "LeftArrow",
+        systemName: "chevron.left",
         arrowSize: TimelineNavigationLayout.arrowSize,
         hoverCircleSize: TimelineNavigationLayout.hoverCircleSize
       ) {
@@ -258,7 +257,7 @@ extension MainView {
       }
 
       TimelineNavigationButton(
-        assetName: "RightArrow",
+        systemName: "chevron.right",
         isEnabled: canNavigateTimelineForward,
         arrowSize: TimelineNavigationLayout.arrowSize,
         hoverCircleSize: TimelineNavigationLayout.hoverCircleSize
@@ -294,11 +293,10 @@ extension MainView {
             y: showTimelineCalendarPopover ? 2 : 0
           )
 
-        Image("CalendarIcon")
-          .resizable()
-          .renderingMode(.template)
-          .scaledToFit()
-          .foregroundColor(timelineCalendarIconColor)
+        Image(systemName: "calendar")
+          .font(.system(size: 14, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
+          .foregroundStyle(timelineCalendarIconColor)
           .frame(width: 16, height: 16)
       }
       .frame(width: 36, height: 30)

@@ -465,11 +465,9 @@ extension MainView {
           .transition(.asymmetric(insertion: enterTransition, removal: exitTransition))
         } else {
           HStack(spacing: 4) {
-            Image("复制")
-              .resizable()
-              .interpolation(.high)
-              .renderingMode(.template)
-              .scaledToFit()
+            Image(systemName: "doc.on.doc")
+              .font(.system(size: 11.5, weight: .medium))
+              .symbolRenderingMode(.hierarchical)
               .frame(width: 11.5, height: 11.5)
             Text("复制时间线")
               .font(Font.custom("Figtree", size: 11.5).weight(.medium))

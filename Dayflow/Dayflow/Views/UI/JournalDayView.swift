@@ -315,9 +315,9 @@ extension JournalDayView {
           onSetReminders?()
         }) {
           HStack(alignment: .center, spacing: 4) {
-            Image("JournalReminderIcon")
-              .resizable()
-              .renderingMode(.template)
+            Image(systemName: "bell.badge.fill")
+              .font(.system(size: 13, weight: .semibold))
+              .symbolRenderingMode(.hierarchical)
               .foregroundStyle(JournalDayTokens.reminderText)
               .frame(width: 16, height: 16)
 
@@ -1046,11 +1046,11 @@ private struct JournalDayCircleButton: View {
       ZStack {
         Circle().fill(JournalDayTokens.navCircleFill)
         Circle().stroke(JournalDayTokens.navCircleStroke, lineWidth: 1)
-        Image("JournalArrow")
-          .renderingMode(.template).resizable().aspectRatio(contentMode: .fit)
+        Image(systemName: direction == .right ? "chevron.right" : "chevron.left")
+          .font(.system(size: 10, weight: .bold))
+          .symbolRenderingMode(.hierarchical)
           .frame(width: 9, height: 9)
           .foregroundStyle(JournalDayTokens.navArrow.opacity(isDisabled ? 0.35 : 1))
-          .scaleEffect(x: direction == .right ? -1 : 1, y: 1)
       }
       .frame(width: 26, height: 26)
       .shadow(color: JournalDayTokens.navCircleShadow, radius: 2, x: 0, y: 0)

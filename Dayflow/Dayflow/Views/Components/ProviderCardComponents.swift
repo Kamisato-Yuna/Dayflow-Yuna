@@ -458,13 +458,11 @@ struct ProviderIconView: View {
   private var iconContent: some View {
     switch icon {
     case "dayflow_asset":
-      Image("DayflowLogo")
-        .resizable()
-        .renderingMode(.original)
-        .interpolation(.high)
-        .antialiased(true)
-        .scaledToFit()
-        .frame(width: 40 * scale, height: 40 * scale)
+      DayflowBrandIconView(
+        imageName: "DayflowLogo",
+        size: 40 * scale,
+        cornerRadius: 10 * scale
+      )
     case "gemini_asset":
       logoBox(name: "GeminiLogo")
     case "chatgpt_claude_asset":
@@ -479,42 +477,22 @@ struct ProviderIconView: View {
 
   @ViewBuilder
   private func logoBox(name: String) -> some View {
-    Image(name)
-      .resizable()
-      .renderingMode(.original)
-      .interpolation(.high)
-      .antialiased(true)
-      .scaledToFit()
-      .frame(width: 28 * scale, height: 28 * scale)
-      .padding(6 * scale)
-      .background(.regularMaterial)
-      .cornerRadius(6 * scale)
-      .shadow(color: Color.black.opacity(0.05), radius: 2 * scale, x: 0, y: 2 * scale)
-      .overlay(
-        RoundedRectangle(cornerRadius: 6 * scale)
-          .stroke(Color.black.opacity(0.05), lineWidth: 0.5 * scale)
-      )
+    DayflowExternalImageBadge(
+      imageName: name,
+      size: 40 * scale,
+      cornerRadius: 8 * scale,
+      contentScale: 0.70
+    )
   }
 
   @ViewBuilder
   private func logoBox(systemName: String) -> some View {
-    Image(systemName: systemName)
-      .font(.system(size: 20 * scale, weight: .medium))
-      .foregroundColor(.black.opacity(0.7))
-      .frame(width: 40 * scale, height: 40 * scale)
-      .background(.regularMaterial)
-      .cornerRadius(3 * scale)
-      .shadow(
-        color: Color(red: 0.92, green: 0.91, blue: 0.91),
-        radius: 1 * scale,
-        x: -1 * scale,
-        y: 2 * scale
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 3 * scale)
-          .inset(by: 0.23)
-          .stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 0.46508 * scale)
-      )
+    DayflowSystemIconBadge(
+      systemName: systemName,
+      size: 40 * scale,
+      cornerRadius: 8 * scale,
+      symbolSize: 20 * scale
+    )
   }
 }
 

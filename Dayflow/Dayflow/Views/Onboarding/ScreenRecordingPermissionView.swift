@@ -38,7 +38,7 @@ struct ScreenRecordingPermissionView: View {
 
           Text("权限")
             .font(.system(size: 28, weight: .semibold, design: .rounded))
-            .foregroundColor(.black)
+            .foregroundColor(DayflowOnboardingToken.title)
 
           Text("Dayflow 可以帮助你理解当日工作。")
             .font(.custom("Figtree-Medium", size: 14))
@@ -168,11 +168,12 @@ struct ScreenRecordingPermissionView: View {
 
         // Right side - image
         if let image = NSImage(named: "ScreenRecordingPermissions") {
-          Image(nsImage: image)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(maxWidth: 486)
-            .dayflowCard(cornerRadius: 12)
+          DayflowContentPreviewFrame(cornerRadius: 16) {
+            Image(nsImage: image)
+              .resizable()
+              .aspectRatio(contentMode: .fit)
+          }
+          .frame(maxWidth: 486)
         }
       }
 

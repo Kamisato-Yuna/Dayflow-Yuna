@@ -57,11 +57,12 @@ struct BugReportView: View {
               action: openDiscord,
               content: {
                 HStack(spacing: 12) {
-                  Image("DiscordGlyph")
-                    .resizable()
-                    .renderingMode(.original)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 22, height: 18)
+                  DayflowExternalImageBadge(
+                    imageName: "DiscordGlyph",
+                    size: 26,
+                    cornerRadius: 7,
+                    contentScale: 0.62
+                  )
                   Text("加入社区")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }

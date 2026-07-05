@@ -883,31 +883,21 @@ private struct TargetIconBubble: View {
 
       switch kind {
       case .focus:
-        assetImage("DayGoalFocus")
+        symbolImage("bullseye")
           .frame(width: 25, height: 26)
 
       case .distraction:
-        assetImage("DayGoalDistraction")
+        symbolImage("exclamationmark.triangle.fill")
           .frame(width: 23, height: 23)
       }
     }
   }
 
-  private func assetImage(_ name: String) -> some View {
-    let image = Image(name)
-      .resizable()
-
-    return Group {
-      if let tint {
-        image
-          .renderingMode(.template)
-          .foregroundStyle(tint)
-      } else {
-        image
-          .renderingMode(.original)
-      }
-    }
-    .scaledToFit()
+  private func symbolImage(_ systemName: String) -> some View {
+    Image(systemName: systemName)
+      .font(.system(size: 17, weight: .semibold))
+      .symbolRenderingMode(.hierarchical)
+      .foregroundStyle(tint ?? (kind == .focus ? DayflowDailyToken.focus : DayflowDailyToken.distraction))
   }
 }
 

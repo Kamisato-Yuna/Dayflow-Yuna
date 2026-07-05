@@ -78,7 +78,7 @@ extension DailyView {
 
     return HStack {
       HStack(spacing: 8 * scale) {
-        DailyNavigationButton(assetName: "LeftArrow", scale: scale) {
+        DailyNavigationButton(systemName: "chevron.left", scale: scale) {
           shiftDate(by: -1)
         }
 
@@ -91,7 +91,7 @@ extension DailyView {
           .frame(width: Self.maxDateTitleWidth * scale, alignment: .center)
 
         DailyNavigationButton(
-          assetName: "RightArrow",
+          systemName: "chevron.right",
           isEnabled: canMoveToNextDay,
           scale: scale
         ) {
@@ -428,7 +428,7 @@ extension DailyView {
 }
 
 private struct DailyNavigationButton: View {
-  let assetName: String
+  let systemName: String
   var isEnabled = true
   let scale: CGFloat
   let action: () -> Void
@@ -450,9 +450,10 @@ private struct DailyNavigationButton: View {
           .frame(width: hoverCircleSize, height: hoverCircleSize)
           .opacity(isHovering && isEnabled ? 1 : 0)
 
-        Image(assetName)
-          .resizable()
-          .scaledToFit()
+        Image(systemName: systemName)
+          .font(.system(size: arrowSize * 0.58, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
+          .foregroundStyle(DayflowDailyToken.text)
           .frame(width: arrowSize, height: arrowSize)
           .opacity(isEnabled ? 1 : 0.35)
       }

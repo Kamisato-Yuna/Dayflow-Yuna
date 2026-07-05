@@ -78,7 +78,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
         "Dayflow 可连接 ChatGPT（通过 Codex CLI）或 Claude Code。你只需在本机安装并登录其一。安装后，请在 Terminal 中执行 `codex auth` 或 `claude login` 来绑定账号。"
       )
       .font(.custom("Figtree", size: 14))
-      .foregroundColor(.black.opacity(0.6))
+      .foregroundColor(Color(nsColor: .secondaryLabelColor))
 
       HStack(alignment: .top, spacing: 14) {
         ChatCLIToolStatusRow(
@@ -97,13 +97,13 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
         "提示：安装完成后，你可在“设置 → AI Provider”中选择偏好 provider。"
       )
       .font(.custom("Figtree", size: 12))
-      .foregroundColor(.black.opacity(0.5))
+      .foregroundColor(Color(nsColor: .tertiaryLabelColor))
 
       VStack(alignment: .leading, spacing: 10) {
         Text("选择 Dayflow 使用的 provider")
           .font(.custom("Figtree", size: 13))
           .fontWeight(.semibold)
-          .foregroundColor(.black.opacity(0.65))
+          .foregroundColor(Color(nsColor: .secondaryLabelColor))
         HStack(spacing: 12) {
           ForEach(CLITool.allCases, id: \.self) { tool in
             selectionButton(for: tool)
@@ -183,10 +183,10 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
           Text(tool.shortName)
             .font(.custom("Figtree", size: 13))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(enabled ? 0.85 : 0.4))
+            .foregroundColor(Color(nsColor: enabled ? .labelColor : .tertiaryLabelColor))
           Text(enabled ? "可直接使用" : "安装后可用")
             .font(.custom("Figtree", size: 11))
-            .foregroundColor(.black.opacity(enabled ? 0.5 : 0.35))
+            .foregroundColor(Color(nsColor: enabled ? .secondaryLabelColor : .tertiaryLabelColor))
         }
       }
       .padding(.horizontal, 12)
@@ -203,7 +203,7 @@ struct ChatCLIDetectionStepView<NextButton: View>: View {
       .overlay(
         RoundedRectangle(cornerRadius: 10)
           .stroke(
-            selectedTool == tool ? accentColor.opacity(0.4) : Color.black.opacity(0.05),
+            selectedTool == tool ? accentColor.opacity(0.4) : Color(nsColor: .separatorColor).opacity(0.30),
             lineWidth: 1)
       )
     }
@@ -225,15 +225,17 @@ struct ChatCLIToolStatusRow: View {
     VStack(alignment: .leading, spacing: 10) {
       // Icon and title row
       HStack(spacing: 10) {
-        Image(tool.logoAssetName)
-          .resizable()
-          .aspectRatio(contentMode: .fit)
-          .frame(width: 30, height: 30)
+        DayflowExternalImageBadge(
+          imageName: tool.logoAssetName,
+          size: 34,
+          cornerRadius: 8,
+          contentScale: 0.68
+        )
 
         Text(tool.shortName)
           .font(.custom("Figtree", size: 15))
           .fontWeight(.semibold)
-          .foregroundColor(.black.opacity(0.9))
+          .foregroundColor(Color(nsColor: .labelColor))
 
         Spacer()
 

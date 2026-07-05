@@ -189,10 +189,19 @@ struct SettingsProvidersTabView: View {
 
     return VStack(alignment: .leading, spacing: 10) {
       HStack(alignment: .center, spacing: 10) {
-        Text(provider.providerTableName)
-          .font(.custom("Figtree", size: 14))
-          .fontWeight(.semibold)
-          .foregroundColor(SettingsStyle.text)
+        ProviderIconView(icon: provider.icon, scale: 0.72)
+
+        VStack(alignment: .leading, spacing: 2) {
+          Text(provider.providerTableName)
+            .font(.custom("Figtree", size: 14))
+            .fontWeight(.semibold)
+            .foregroundColor(SettingsStyle.text)
+
+          Text(provider.summary)
+            .font(.custom("Figtree", size: 12))
+            .foregroundColor(SettingsStyle.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+        }
 
         Spacer()
 
@@ -206,11 +215,6 @@ struct SettingsProvidersTabView: View {
           SettingsBadge(text: "未设置")
         }
       }
-
-      Text(provider.summary)
-        .font(.custom("Figtree", size: 12))
-        .foregroundColor(SettingsStyle.secondary)
-        .fixedSize(horizontal: false, vertical: true)
 
       HStack(spacing: 8) {
         if !isConfigured {

@@ -40,12 +40,11 @@ struct ThumbRatingButtons: View {
       guard isEnabled else { return }
       onRate(direction)
     }) {
-      Image("ThumbsUp")
-        .renderingMode(.original)
-        .resizable()
-        .scaledToFit()
+      Image(systemName: direction == .up ? "hand.thumbsup.fill" : "hand.thumbsdown.fill")
+        .font(.system(size: 13, weight: .semibold))
+        .symbolRenderingMode(.hierarchical)
+        .foregroundStyle(isSelected ? DayflowSurfaceAccent.primary : Color(nsColor: .secondaryLabelColor))
         .frame(width: 14, height: 14)
-        .scaleEffect(x: direction == .down ? -1 : 1, y: direction == .down ? -1 : 1)
         .padding(4)
         .frame(width: 22, height: 22)
         .background(

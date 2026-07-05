@@ -151,13 +151,7 @@ struct OnboardingPrototypeFlow: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background {
-      Image("OnboardingBackgroundv2")
-        .resizable()
-        .aspectRatio(contentMode: .fill)
-        .ignoresSafeArea()
-    }
-    .preferredColorScheme(.light)
+    .dayflowWindowBackground()
     .onAppear {
       guard !hasTrackedStart else { return }
       hasTrackedStart = true
@@ -217,13 +211,13 @@ private struct OnboardingPrototypePlaceholderStep: View {
         VStack(spacing: 10) {
           Text("原型验收点")
             .font(.system(size: 44, weight: .semibold, design: .rounded))
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
 
         Text(
           "已接入介绍视频、职业选择页和偏好选择页。你可以在不影响正式引导流程的情况下，逐步替换剩余占位页面。"
         )
         .font(.custom("Figtree", size: 17))
-        .foregroundColor(.black.opacity(0.65))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         .multilineTextAlignment(.center)
         .frame(maxWidth: 620)
       }
@@ -236,8 +230,8 @@ private struct OnboardingPrototypePlaceholderStep: View {
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           },
-          background: .white,
-          foreground: Color(red: 0.25, green: 0.17, blue: 0),
+          background: Color(nsColor: .controlBackgroundColor).opacity(0.72),
+          foreground: DayflowOnboardingToken.secondaryButtonText,
           borderColor: .clear,
           cornerRadius: 8,
           horizontalPadding: 28,
@@ -253,8 +247,8 @@ private struct OnboardingPrototypePlaceholderStep: View {
               .font(.custom("Figtree", size: 15))
               .fontWeight(.semibold)
           },
-          background: Color(red: 0.25, green: 0.17, blue: 0),
-          foreground: .white,
+          background: DayflowOnboardingToken.primaryButtonFill,
+          foreground: DayflowOnboardingToken.primaryButtonText,
           borderColor: .clear,
           cornerRadius: 8,
           horizontalPadding: 28,

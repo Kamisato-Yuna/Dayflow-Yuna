@@ -381,18 +381,21 @@ struct FaviconImageView: View {
   }
 
   var body: some View {
-    Group {
-      if let image {
-        Image(nsImage: image)
-          .resizable()
-          .interpolation(.high)
-          .aspectRatio(contentMode: .fit)
-          .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-      } else {
-        Color.clear
+    DayflowFaviconBadge(size: size, cornerRadius: cornerRadius) {
+      Group {
+        if let image {
+          Image(nsImage: image)
+            .resizable()
+            .interpolation(.high)
+            .aspectRatio(contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: max(2, cornerRadius - 1), style: .continuous))
+        } else {
+          Image(systemName: "app.dashed")
+            .font(.system(size: max(10, size * 0.5), weight: .medium))
+            .foregroundColor(Color(nsColor: .secondaryLabelColor))
+        }
       }
     }
-    .frame(width: size, height: size)
     .task(id: requestKey) {
       let initialImage = FaviconService.shared.cachedOrRawFavicon(
         primaryRaw: effectivePrimaryRaw,

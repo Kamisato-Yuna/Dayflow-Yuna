@@ -487,9 +487,10 @@ private struct EditableCategoryCard: View {
           focusedField = nil
           onSave()
         } label: {
-          Image("CategoriesCheckmark")
-            .resizable()
-            .frame(width: 20, height: 20)
+          Image(systemName: "checkmark.circle.fill")
+            .font(.system(size: 19, weight: .semibold))
+            .symbolRenderingMode(.hierarchical)
+            .foregroundStyle(CategorySetupGlassToken.accentText)
             .accessibilityLabel("保存分类编辑")
         }
         .buttonStyle(.plain)
@@ -866,14 +867,14 @@ struct ColorOrganizerRoot: View {
 
       VStack(alignment: .leading, spacing: 16) {
         instructionRow(
-          icon: "CategoriesOrganize",
+          systemName: "square.grid.2x2.fill",
           text:
             "Dayflow 会基于你填写的分类标题与说明整理活动记录。"
         )
         .frame(maxWidth: isCompact ? .infinity : 280, alignment: .leading)
 
         instructionRow(
-          icon: "CategoriesTextSelect",
+          systemName: "text.alignleft",
           text:
             "请尽可能在说明里补充细节，帮助 Dayflow 更好理解你的工作流与习惯。"
         )
@@ -889,12 +890,12 @@ struct ColorOrganizerRoot: View {
     }
   }
 
-  private func instructionRow(icon: String, text: String) -> some View {
+  private func instructionRow(systemName: String, text: String) -> some View {
     HStack(alignment: .top, spacing: 10) {
-      Image(icon)
-        .resizable()
-        .renderingMode(.template)
-        .foregroundColor(CategorySetupGlassToken.accentText)
+      Image(systemName: systemName)
+        .font(.system(size: 17, weight: .semibold))
+        .symbolRenderingMode(.hierarchical)
+        .foregroundStyle(CategorySetupGlassToken.accentText)
         .frame(width: 24, height: 24)
         .padding(6)
         .background(CategorySetupGlassToken.cardFill)

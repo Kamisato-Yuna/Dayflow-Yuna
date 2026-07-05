@@ -139,8 +139,10 @@ struct DistractionSummaryCard: View {
   private var patternBlock: some View {
     VStack(alignment: .leading, spacing: 2) {
       HStack(spacing: 2) {
-        Image("DistractionSummaryIcon")
-          .resizable()
+        Image(systemName: "exclamationmark.triangle.fill")
+          .font(.system(size: 13, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
+          .foregroundStyle(DayflowDailyToken.distraction)
           .frame(width: 16, height: 16)
 
         Text(patternTitle)

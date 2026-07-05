@@ -84,25 +84,25 @@ struct OnboardingCategoryStepView: View {
     VStack(alignment: .leading, spacing: 16) {
       Text("帮助 Dayflow 理解你的工作流")
         .font(.custom("HanziPen SC", size: 28))
-        .foregroundColor(.black)
+        .foregroundColor(DayflowOnboardingToken.title)
         .fixedSize(horizontal: false, vertical: true)
         .padding(.bottom, 24)
 
       Text("Dayflow 会根据你提供的分类整理活动。")
         .font(.custom("Figtree", size: 14).weight(.medium))
-        .foregroundColor(Color(hex: "5B5B5B"))
+        .foregroundColor(DayflowOnboardingToken.secondaryText)
         .fixedSize(horizontal: false, vertical: true)
 
       Text(
         "以下是为你的工作准备的默认分类。填写更贴合你的内容有助于 Dayflow 更准确地理解你的行为。"
       )
       .font(.custom("Figtree", size: 14).weight(.medium))
-      .foregroundColor(Color(hex: "5B5B5B"))
+      .foregroundColor(DayflowOnboardingToken.secondaryText)
       .fixedSize(horizontal: false, vertical: true)
 
       Text("你可以随时自定义或新增分类。")
         .font(.custom("Figtree", size: 14).weight(.medium))
-        .foregroundColor(Color(hex: "5B5B5B"))
+        .foregroundColor(DayflowOnboardingToken.secondaryText)
         .fixedSize(horizontal: false, vertical: true)
     }
   }
@@ -135,7 +135,7 @@ struct OnboardingCategoryStepView: View {
       TextField("分类名称", text: $draftName)
         .font(.custom("Figtree", size: 12).weight(.bold))
         .textFieldStyle(.plain)
-        .foregroundColor(.black)
+        .foregroundColor(DayflowOnboardingToken.title)
 
       Spacer()
 
@@ -153,9 +153,10 @@ struct OnboardingCategoryStepView: View {
         Button {
           requestDelete(category)
         } label: {
-          Image("CategoriesDelete")
-            .resizable()
-            .frame(width: 16, height: 16)
+          Image(systemName: "trash.fill")
+            .font(.system(size: 13, weight: .semibold))
+            .symbolRenderingMode(.hierarchical)
+            .foregroundStyle(Color(hex: "F44336"))
             .accessibilityLabel("删除分类")
         }
         .buttonStyle(.plain)
@@ -185,7 +186,7 @@ struct OnboardingCategoryStepView: View {
 
       Text(category.name)
         .font(.custom("Figtree", size: 12).weight(.bold))
-        .foregroundColor(.black)
+        .foregroundColor(DayflowOnboardingToken.title)
 
       Spacer()
 
@@ -196,7 +197,7 @@ struct OnboardingCategoryStepView: View {
           } label: {
             Image(systemName: "pencil")
               .font(.system(size: 12))
-              .foregroundColor(.black.opacity(0.4))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
           }
           .buttonStyle(.plain)
           .pointingHandCursor()
@@ -204,9 +205,10 @@ struct OnboardingCategoryStepView: View {
           Button {
             requestDelete(category)
           } label: {
-            Image("CategoriesDelete")
-              .resizable()
-              .frame(width: 16, height: 16)
+            Image(systemName: "trash.fill")
+              .font(.system(size: 13, weight: .semibold))
+              .symbolRenderingMode(.hierarchical)
+              .foregroundStyle(Color(hex: "F44336"))
             .accessibilityLabel("删除分类")
           }
           .buttonStyle(.plain)
@@ -258,7 +260,7 @@ struct OnboardingCategoryStepView: View {
     } label: {
       Text("+ 添加分类")
         .font(.custom("Figtree", size: 12).weight(.medium))
-        .foregroundColor(Color(hex: "2B2B2B"))
+        .foregroundColor(DayflowOnboardingToken.title)
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 10)
         .padding(.vertical, 6)

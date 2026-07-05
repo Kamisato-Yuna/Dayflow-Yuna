@@ -7,8 +7,7 @@ private enum SidebarMetrics {
   static let surfaceCornerRadius: CGFloat = 22
   static let surfacePadding: CGFloat = 6
   static let selectedBackgroundSize: CGFloat = 30 * scale
-  static let iconSize: CGFloat = 16 * scale
-  static let fallbackSymbolSize: CGFloat = 15 * scale
+  static let symbolSize: CGFloat = 15.5 * scale
   static let badgeSize: CGFloat = 8 * scale
   static let badgeOffsetX: CGFloat = 10 * scale
   static let badgeOffsetY: CGFloat = -10 * scale
@@ -26,23 +25,15 @@ enum SidebarIcon: CaseIterable {
   case bug
   case settings
 
-  var assetName: String? {
+  var systemName: String {
     switch self {
-    case .timeline: return "TimelineIcon"
-    case .daily: return "DailyIcon"
-    case .weekly: return "WeeklyIcon"
-    case .chat: return "ChatIcon"
-    case .journal: return "JournalIcon"
-    case .bug: return nil
-    case .settings: return nil
-    }
-  }
-
-  var systemNameFallback: String? {
-    switch self {
+    case .timeline: return "clock.fill"
+    case .daily: return "calendar"
+    case .weekly: return "chart.bar.fill"
+    case .chat: return "bubble.left.and.bubble.right.fill"
+    case .journal: return "book.closed.fill"
     case .bug: return "exclamationmark.bubble.fill"
     case .settings: return "gearshape.fill"
-    default: return nil
     }
   }
 
@@ -162,22 +153,10 @@ struct SidebarIconButton: View {
               )
           }
 
-          if let asset = icon.assetName {
-            Image(asset)
-              .resizable()
-              .interpolation(.high)
-              .renderingMode(.template)
-              .foregroundColor(
-                isSelected ? selectedAccent : inactiveForeground
-              )
-              .aspectRatio(contentMode: .fit)
-              .frame(width: SidebarMetrics.iconSize, height: SidebarMetrics.iconSize)
-          } else if let sys = icon.systemNameFallback {
-            Image(systemName: sys)
-              .font(.system(size: SidebarMetrics.fallbackSymbolSize))
-              .foregroundColor(
-                isSelected ? selectedAccent : inactiveForeground)
-          }
+          Image(systemName: icon.systemName)
+            .font(.system(size: SidebarMetrics.symbolSize, weight: .semibold))
+            .symbolRenderingMode(.hierarchical)
+            .foregroundStyle(isSelected ? selectedAccent : inactiveForeground)
 
           if showBadge {
             Circle()

@@ -30,11 +30,9 @@ extension DailyView {
               .font(.system(size: 12 * scale, weight: .semibold))
               .transition(transition)
           } else {
-            Image("复制")
-              .resizable()
-              .interpolation(.high)
-              .renderingMode(.template)
-              .scaledToFit()
+            Image(systemName: "doc.on.doc")
+              .font(.system(size: 12 * scale, weight: .semibold))
+              .symbolRenderingMode(.hierarchical)
               .frame(width: 16 * scale, height: 16 * scale)
               .transition(transition)
           }
