@@ -517,7 +517,7 @@ enum CategoryPersistence {
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
     if let categories = try? decoder.decode([TimelineCategory].self, from: data) {
-      return ensureIdleCategoryPresent(in: categories)
+      return ensureIdleCategoryPresent(in: categories.map(migrateLegacyPresetCopy))
     }
     struct LegacyColorCategory: Codable {
       let id: Int64
@@ -530,7 +530,7 @@ enum CategoryPersistence {
       var order = 0
       let converted = legacy.map { item -> TimelineCategory in
         defer { order += 1 }
-        return TimelineCategory(
+        let category = TimelineCategory(
           id: UUID(),
           name: item.name,
           colorHex: item.color ?? "#E5E7EB",
@@ -540,10 +540,188 @@ enum CategoryPersistence {
           isIdle: false,
           isNew: item.isNew ?? false
         )
+        return migrateLegacyPresetCopy(category)
       }
       return ensureIdleCategoryPresent(in: converted)
     }
     return []
+  }
+
+  private static func migrateLegacyPresetCopy(_ category: TimelineCategory) -> TimelineCategory {
+    var migrated = category
+    switch (category.name, category.details) {
+    case (
+      "Coding / Debugging",
+      "Writing, refactoring, and fixing code in an IDE or terminal"
+    ):
+      migrated.name = "编码与调试"
+      migrated.details = "在 IDE 或终端中编写、重构并修复代码"
+
+    case (
+      "Code Review",
+      "Reviewing PRs, reading diffs, and leaving comments"
+    ):
+      migrated.name = "代码审查"
+      migrated.details = "审查 PR、阅读代码差异并留下评审意见"
+
+    case (
+      "Research",
+      "Reading docs, Stack Overflow, exploring tools and APIs, and writing design docs or technical specs"
+    ):
+      migrated.name = "研究"
+      migrated.details = "阅读文档、Stack Overflow、探索工具和 API，并撰写设计文档或技术说明"
+
+    case (
+      "Communication",
+      "Meetings, standups, Slack, email, video calls, messaging, and syncs"
+    ):
+      migrated.name = "沟通"
+      migrated.details = "会议、站会、Slack、邮件、视频通话、消息同步与群聊"
+
+    case (
+      "Engineering / Product",
+      "Coding, design work, shipping features, and hands-on building"
+    ):
+      migrated.name = "工程与产品"
+      migrated.details = "编写代码、设计工作、交付功能并动手实现"
+
+    case (
+      "Research & Strategy",
+      "Competitive research, positioning, long-form thinking, and investor prep"
+    ):
+      migrated.name = "研究与策略"
+      migrated.details = "竞品研究、市场定位、深度思考与投资人材料准备"
+
+    case (
+      "Data & Insights",
+      "Dashboards, retention data, funnels, and financials"
+    ):
+      migrated.name = "数据与洞察"
+      migrated.details = "仪表盘、留存数据、漏斗与财务数据"
+
+    case (
+      "Communication",
+      "Team syncs, investor calls, user demos, and hiring"
+    ):
+      migrated.name = "沟通"
+      migrated.details = "团队同步、投资人通话、用户演示与招聘"
+
+    case (
+      "Design",
+      "Prototyping, UI components, user flows, visual design, and handoff specs"
+    ):
+      migrated.name = "设计"
+      migrated.details = "制作原型、UI 组件、用户流程、视觉设计与交付规范"
+
+    case (
+      "Research",
+      "Browsing patterns, competitive audits, user studies, and reviewing metrics"
+    ):
+      migrated.name = "研究"
+      migrated.details = "观察浏览模式、竞品审计、用户研究并复盘指标"
+
+    case (
+      "Communication",
+      "Design reviews, standups, critique sessions, and presenting concepts"
+    ):
+      migrated.name = "沟通"
+      migrated.details = "设计评审、站会、评审讨论与概念展示"
+
+    case (
+      "Studying",
+      "Lectures, reading, reviewing slides, flashcards, and course material"
+    ):
+      migrated.name = "学习"
+      migrated.details = "听课、阅读、复盘幻灯片、刷题卡与课程资料"
+
+    case (
+      "Assignments",
+      "Papers, problem sets, coding projects, and lab reports"
+    ):
+      migrated.name = "作业"
+      migrated.details = "论文、问题集、编程项目与实验报告"
+
+    case (
+      "Communication",
+      "Study groups, office hours, group chats, and emailing professors"
+    ):
+      migrated.name = "沟通"
+      migrated.details = "学习小组、助教答疑、群聊和给老师发邮件"
+
+    case (
+      "Specs & Planning",
+      "PRDs, roadmaps, backlog grooming, sprint planning, and tickets"
+    ):
+      migrated.name = "方案与规划"
+      migrated.details = "PRD、路线图、待办梳理、冲刺规划与工单"
+
+    case (
+      "Research & Analysis",
+      "User research, metrics review, competitive analysis, and A/B tests"
+    ):
+      migrated.name = "研究与分析"
+      migrated.details = "用户研究、指标复盘、竞品分析与 A/B 测试"
+
+    case (
+      "Communication",
+      "Standups, stakeholder syncs, design reviews, and engineering check-ins"
+    ):
+      migrated.name = "沟通"
+      migrated.details = "站会、利益相关人同步、设计评审与工程对齐"
+
+    case (
+      "Analysis & Modeling",
+      "Notebooks, statistical analysis, ML training, and data exploration"
+    ):
+      migrated.name = "分析与建模"
+      migrated.details = "Notebook、统计分析、ML 训练与数据探索"
+
+    case (
+      "Data Engineering",
+      "SQL queries, pipelines, data cleaning, and ETL scripts"
+    ):
+      migrated.name = "数据工程"
+      migrated.details = "SQL 查询、数据管道、清洗与 ETL 脚本"
+
+    case (
+      "Research",
+      "Reading papers, docs, and exploring new methods and tools"
+    ):
+      migrated.name = "研究"
+      migrated.details = "阅读论文、文档并探索新方法和工具"
+
+    case (
+      "Communication",
+      "Presenting findings, stakeholder syncs, and team discussions"
+    ):
+      migrated.name = "沟通"
+      migrated.details = "汇报发现、与利益相关人同步并进行团队讨论"
+
+    case (
+      "Work",
+      "Focused work tasks and professional responsibilities that do not fit a more specific category"
+    ):
+      migrated.name = "工作"
+      migrated.details = "不属于更具体分类的聚焦工作任务与职业责任"
+
+    case (
+      "Distraction",
+      "Unfocused browsing and passive content consumption: social media feeds, random videos, idle scrolling, entertainment with no clear intent, and gaming"
+    ):
+      migrated.name = "分心"
+      migrated.details = "无目的的浏览与被动消费：社媒动态、随机视频、刷屏浏览、缺乏明确目标的娱乐和游戏"
+
+    case (
+      "Personal",
+      "Intentional non-work activity with a purpose: messaging friends and family, managing finances, booking travel, errands, life admin, and hobbies"
+    ):
+      migrated.name = "个人"
+      migrated.details = "有目的的非工作活动，如与朋友和家人交流、管理财务、订票、跑腿、生活事务与兴趣爱好"
+
+    default:
+      break
+    }
+    return migrated
   }
 
   static var defaultCategories: [TimelineCategory] {

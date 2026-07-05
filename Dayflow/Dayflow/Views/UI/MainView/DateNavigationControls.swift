@@ -101,7 +101,7 @@ struct DateNavigationControls: View {
   }
 
   private func calculateOptimalPillWidth() -> CGFloat {
-    let sampleText = "Today, Sep 30"
+    let sampleText = "今天，12月30日"
     let nsFont = NSFont.systemFont(ofSize: 18, weight: .semibold)
     let textSize = sampleText.size(withAttributes: [.font: nsFont])
     let horizontalPadding: CGFloat = 11.77829 * 2

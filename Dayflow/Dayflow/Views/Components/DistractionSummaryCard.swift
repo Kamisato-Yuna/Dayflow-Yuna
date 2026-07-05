@@ -110,13 +110,13 @@ struct DistractionSummaryCard: View {
   private var statsBlock: some View {
     VStack(alignment: .leading, spacing: Design.statsSpacing) {
       statText(
-        title: "Total time captured",
+        title: "总记录时长",
         value: totalCaptured,
         color: Design.capturedTextColor
       )
 
       statText(
-        title: "Total time distracted",
+        title: "分心总时长",
         value: totalDistracted,
         color: Design.distractedTextColor
       )
@@ -160,11 +160,12 @@ struct DistractionSummaryCard: View {
 
 #Preview("Distraction Summary Card") {
   DistractionSummaryCard(
-    totalCaptured: "8 hours 49 minutes",
-    totalDistracted: "2 hours 7 minutes",
+    totalCaptured: "8小时49分钟",
+    totalDistracted: "2小时7分钟",
     distractedRatio: 0.24,
+    patternTitle: "主要分心模式",
     patternDescription:
-      "YouTube recommendations pull attention from one video to the next for extended periods."
+      "YouTube 推荐内容会把注意力从一个视频带到下一个视频，持续占用较长时间。"
   )
   .padding(24)
   .dayflowCard(cornerRadius: 12)
