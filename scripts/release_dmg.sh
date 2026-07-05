@@ -9,7 +9,8 @@ set -euo pipefail
 # Optional env vars:
 #   SCHEME           - Xcode scheme (default: Dayflow)
 #   CONFIG           - Xcode configuration (default: Release)
-#   DERIVED_DATA     - Derived data path (default: build)
+#   DERIVED_DATA     - Derived data path (default: build/release-derived)
+#   CLEAN_RELEASE_BUILD - Remove previous release derived data before building (default: 1)
 #   APP_NAME         - App name (default: Dayflow)
 #   ENTITLEMENTS     - Entitlements plist path (default: Dayflow/Dayflow/Dayflow.entitlements)
 #   SIGN_ID          - Codesign identity (e.g. "Developer ID Application: Your Name (TEAMID)")
@@ -25,6 +26,7 @@ set -euo pipefail
 
 # Load optional per-developer config
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(cd "${SCRIPT_DIR}/.." && pwd)
 if [[ -f "${SCRIPT_DIR}/release.env" ]]; then
   # shellcheck disable=SC1090
   source "${SCRIPT_DIR}/release.env"
@@ -32,7 +34,8 @@ fi
 
 SCHEME=${SCHEME:-Dayflow}
 CONFIG=${CONFIG:-Release}
-DERIVED_DATA=${DERIVED_DATA:-build}
+DERIVED_DATA=${DERIVED_DATA:-build/release-derived}
+CLEAN_RELEASE_BUILD=${CLEAN_RELEASE_BUILD:-1}
 APP_NAME=${APP_NAME:-Dayflow}
 ENTITLEMENTS=${ENTITLEMENTS:-Dayflow/Dayflow/Dayflow.entitlements}
 VOL_NAME=${VOL_NAME:-$APP_NAME}
@@ -51,7 +54,48 @@ if [[ ! -d "$PROJECT_PATH" ]]; then
   exit 1
 fi
 
-echo "[1/7] Building ${APP_NAME} (${SCHEME}|${CONFIG}) using project ${PROJECT_PATH} with code signing disabled…"
+absolute_path() {
+  local path="$1"
+  if [[ "$path" = /* ]]; then
+    printf '%s\n' "$path"
+  else
+    printf '%s\n' "${REPO_ROOT}/${path}"
+  fi
+}
+
+absolute_derived_data=$(absolute_path "${DERIVED_DATA}")
+
+assert_repo_build_path() {
+  local path
+  path=$(absolute_path "$1")
+  case "$path" in
+    "${REPO_ROOT}/build/"*|"${REPO_ROOT}/build")
+      ;;
+    *)
+      echo "ERROR: Refusing to clean path outside repo build directory: $path" >&2
+      exit 1
+      ;;
+  esac
+}
+
+if [[ "${CLEAN_RELEASE_BUILD}" == "1" ]]; then
+  assert_repo_build_path "${DERIVED_DATA}"
+  echo "[0/8] Cleaning previous release build at ${DERIVED_DATA}…"
+  if [[ "${absolute_derived_data}" == "${REPO_ROOT}/build" ]]; then
+    rm -rf \
+      "${DERIVED_DATA}/Build" \
+      "${DERIVED_DATA}/Index.noindex" \
+      "${DERIVED_DATA}/Logs" \
+      "${DERIVED_DATA}/ModuleCache.noindex"
+  else
+    rm -rf "${DERIVED_DATA}"
+  fi
+else
+  echo "[0/8] Skipping release build cleanup because CLEAN_RELEASE_BUILD=${CLEAN_RELEASE_BUILD}"
+fi
+rm -f "${DMG_NAME}"
+
+echo "[1/8] Building ${APP_NAME} (${SCHEME}|${CONFIG}) using project ${PROJECT_PATH} with code signing disabled…"
 xcodebuild \
   -project "${PROJECT_PATH}" \
   -scheme "${SCHEME}" \
@@ -228,16 +272,13 @@ if ! command -v create-dmg >/dev/null 2>&1; then
 fi
 
 # Default to project's background image
-SCRIPT_PARENT=$(cd "$SCRIPT_DIR/.." && pwd)
-DEFAULT_BG="${SCRIPT_PARENT}/docs/assets/dmg-background.png"
+DEFAULT_BG="${REPO_ROOT}/docs/assets/dmg-background.png"
 DMG_BG=${DMG_BG:-$DEFAULT_BG}
 
 if [[ ! -f "${DMG_BG}" ]]; then
   echo "ERROR: Background image not found at ${DMG_BG}" >&2
   exit 1
 fi
-
-rm -f "${DMG_NAME}"
 
 # Window size and positions tuned for docs/assets/dmg-background.png (1550×960 @2x, displays as 775×480)
 # Dayflow app on left, Applications folder on right (swapped from typical layout)
