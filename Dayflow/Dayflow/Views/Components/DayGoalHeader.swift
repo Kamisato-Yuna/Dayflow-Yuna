@@ -45,13 +45,14 @@ struct DayGoalHeader: View {
   private enum Design {
     static let title = DayflowDailyToken.title
     static let subtitle = DayflowDailyToken.secondaryText
-    static let label = DayflowDailyToken.secondaryText
+    static let label = DayflowDailyToken.text
     static let distraction = DayflowDailyToken.distraction
     static let focusText = DayflowDailyToken.focus
     static let distractionText = DayflowDailyToken.distraction
     static let inactiveIcon = DayflowDailyToken.tertiaryText
     static let focusLegendContentWidth: CGFloat = 211.94
     static let focusLegendItemSpacing: CGFloat = 6
+    static let iconBubbleSize: CGFloat = 40
 
     static func panelBackground(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
       DayflowContentToken.cardFill(
@@ -226,8 +227,8 @@ struct DayGoalHeader: View {
       .offset(x: xOffset + 38, y: 120)
 
     TargetIconBubble(kind: .focus)
-      .frame(width: 36, height: 36)
-      .offset(x: xOffset + 11, y: 102)
+      .frame(width: Design.iconBubbleSize, height: Design.iconBubbleSize)
+      .offset(x: xOffset + 9, y: 100)
 
     distractionRow
       .modifier(
@@ -254,8 +255,8 @@ struct DayGoalHeader: View {
       .offset(x: 57.25, y: 19.04)
 
       TargetIconBubble(kind: .distraction)
-        .frame(width: 36, height: 36)
-        .offset(x: 305.25, y: 3.08)
+        .frame(width: Design.iconBubbleSize, height: Design.iconBubbleSize)
+        .offset(x: 303.25, y: 1.08)
     }
     .frame(width: 360, height: 56, alignment: .topLeading)
   }
@@ -321,8 +322,8 @@ struct DayGoalHeader: View {
       .offset(x: xOffset + 34.06, y: 112)
 
     TargetIconBubble(kind: .focus, tint: Design.inactiveIcon)
-      .frame(width: 36, height: 36)
-      .offset(x: xOffset + 11, y: 94)
+      .frame(width: Design.iconBubbleSize, height: Design.iconBubbleSize)
+      .offset(x: xOffset + 9, y: 92)
 
     InactiveGoalTrack(
       width: 259,
@@ -340,8 +341,8 @@ struct DayGoalHeader: View {
       .offset(x: xOffset + 80.04, y: 157.62)
 
     TargetIconBubble(kind: .distraction, tint: Design.inactiveIcon)
-      .frame(width: 36, height: 36)
-      .offset(x: xOffset + 305.25, y: 137.65)
+      .frame(width: Design.iconBubbleSize, height: Design.iconBubbleSize)
+      .offset(x: xOffset + 303.25, y: 135.65)
   }
 
   private var setGoalsButton: some View {
@@ -924,48 +925,96 @@ private struct TargetIconBubble: View {
 
   let kind: Kind
   var tint: Color? = nil
-  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
     ZStack {
       Circle()
-        .fill(
-          DayflowContentToken.secondaryFill(
-            colorScheme: colorScheme,
-            reduceTransparency: reduceTransparency
-          )
-        )
-        .overlay(
+        .fill(innerBadgeFill)
+        .frame(width: 30, height: 30)
+        .overlay {
           Circle()
-            .stroke(
-              tint == nil
-                ? DayflowContentToken.cardBorder(
-                  colorScheme: colorScheme,
-                  increaseContrast: true
-                )
-                : DayflowDailyToken.separator,
-              lineWidth: 2
-            )
-        )
+            .stroke(innerBadgeStroke, lineWidth: 1)
+        }
 
       switch kind {
       case .focus:
-        symbolImage("bullseye")
-          .frame(width: 25, height: 26)
+        FocusTargetGlyph(tint: resolvedTint)
+          .frame(width: 22, height: 22)
 
       case .distraction:
         symbolImage("exclamationmark.triangle.fill")
-          .frame(width: 23, height: 23)
+          .frame(width: 21, height: 21)
       }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .dayflowFloatingControl(
+      cornerRadius: 20,
+      shape: .circle,
+      isInteractive: false
+    )
+    .overlay {
+      Circle()
+        .stroke(
+          outerStroke,
+          lineWidth: tint == nil ? 1.6 : 1
+        )
     }
   }
 
   private func symbolImage(_ systemName: String) -> some View {
     Image(systemName: systemName)
-      .font(.system(size: 17, weight: .semibold))
+      .font(.system(size: 18, weight: .bold))
       .symbolRenderingMode(.hierarchical)
-      .foregroundStyle(tint ?? (kind == .focus ? DayflowDailyToken.focus : DayflowDailyToken.distraction))
+      .foregroundStyle(resolvedTint)
+  }
+
+  private var resolvedTint: Color {
+    tint ?? (kind == .focus ? DayflowDailyToken.focus : DayflowDailyToken.distraction)
+  }
+
+  private var innerBadgeFill: Color {
+    resolvedTint.opacity(colorScheme == .dark ? 0.17 : 0.11)
+  }
+
+  private var innerBadgeStroke: Color {
+    resolvedTint.opacity(colorScheme == .dark ? 0.44 : 0.32)
+  }
+
+  private var outerStroke: Color {
+    if tint != nil {
+      return DayflowDailyToken.separator
+    }
+    return DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: true
+    )
+    .opacity(colorScheme == .dark ? 1 : 0.82)
+  }
+}
+
+private struct FocusTargetGlyph: View {
+  let tint: Color
+
+  var body: some View {
+    ZStack {
+      Circle()
+        .stroke(tint.opacity(0.95), lineWidth: 2.4)
+
+      Circle()
+        .stroke(tint.opacity(0.62), lineWidth: 1.5)
+        .frame(width: 12, height: 12)
+
+      Circle()
+        .fill(tint)
+        .frame(width: 5, height: 5)
+        .overlay {
+          Circle()
+            .fill(Color.white.opacity(0.48))
+            .frame(width: 1.8, height: 1.8)
+            .offset(x: -0.7, y: -0.7)
+        }
+    }
   }
 }
 
