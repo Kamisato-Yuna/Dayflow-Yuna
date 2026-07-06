@@ -202,8 +202,8 @@ private struct WeeklySankeyCard: View {
         .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(DayflowWeeklyToken.title)
         .offset(
-          x: scale.displayX(72),
-          y: scale.displayY(64)
+          x: DayflowWeeklySectionChrome.titleLeading,
+          y: DayflowWeeklySectionChrome.titleTop
         )
     }
     .frame(

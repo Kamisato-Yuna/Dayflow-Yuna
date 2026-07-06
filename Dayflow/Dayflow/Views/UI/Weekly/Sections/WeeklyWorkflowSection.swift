@@ -39,15 +39,15 @@ struct WeeklyWorkflowSection: View {
     static let cornerRadius: CGFloat = 4
     static let dividerColor = DayflowWeeklyToken.separator
     static let titleColor = DayflowWeeklyToken.title
-    static let textColor = DayflowWeeklyToken.text
-    static let mutedTextColor = DayflowWeeklyToken.secondaryText
-    static let totalTitleColor = DayflowWeeklyToken.chartSecondaryText
-    static let totalNameColor = DayflowWeeklyToken.chartText
+    static let textColor = DayflowWeeklyToken.axisText
+    static let mutedTextColor = DayflowWeeklyToken.footerText
+    static let totalTitleColor = DayflowWeeklyToken.footerText
+    static let totalNameColor = DayflowWeeklyToken.footerEmphasisText
     static let axisColor = DayflowWeeklyToken.separator
 
-    static let titleTopPadding: CGFloat = 16
-    static let titleLeadingPadding: CGFloat = gridPadding.leading + labelWidth + labelToGridSpacing
-    static let gridPadding = EdgeInsets(top: 53, leading: 36, bottom: 6, trailing: 52)
+    static let titleTopPadding: CGFloat = DayflowWeeklySectionChrome.titleTop
+    static let titleLeadingPadding: CGFloat = DayflowWeeklySectionChrome.titleLeading
+    static let gridPadding = EdgeInsets(top: 76, leading: 36, bottom: 6, trailing: 52)
     static let footerPadding = EdgeInsets(top: 14, leading: 16, bottom: 12, trailing: 16)
     static let labelWidth: CGFloat = 30
     static let labelToGridSpacing: CGFloat = 13
@@ -154,7 +154,7 @@ struct WeeklyWorkflowSection: View {
           ForEach(snapshot.timeLabels) { label in
             Text(label.label)
               .font(.custom("Figtree-Regular", size: 10))
-              .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
+              .foregroundStyle(DayflowWeeklyToken.axisText)
               .frame(width: Design.axisLabelWidth, alignment: axisAlignment(for: label))
               .offset(x: axisOffset(for: label))
           }

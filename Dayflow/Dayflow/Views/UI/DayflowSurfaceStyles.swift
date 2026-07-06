@@ -379,6 +379,17 @@ enum DayflowWeeklyToken {
   static let chartText = Color(nsColor: .labelColor)
   static let chartSecondaryText = Color(nsColor: .secondaryLabelColor)
   static let chartTertiaryText = Color(nsColor: .tertiaryLabelColor)
+  static let axisText = Color(nsColor: .secondaryLabelColor)
+  static let legendText = Color(nsColor: .secondaryLabelColor)
+  static let footerText = Color(nsColor: .secondaryLabelColor)
+  static let footerEmphasisText = Color(nsColor: .labelColor)
+  static func treemapTileText(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark ? Color(nsColor: .labelColor) : Color(hex: "22242A")
+  }
+
+  static func treemapTileSecondaryText(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark ? Color(nsColor: .secondaryLabelColor) : Color(hex: "5F6673")
+  }
 
   static func cardFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
     DayflowContentToken.cardFill(
@@ -414,6 +425,19 @@ enum DayflowWeeklyToken {
       : Color(nsColor: .controlBackgroundColor).opacity(0.64)
   }
 
+  static func sectionSurfaceMaterial() -> Material {
+    .thinMaterial
+  }
+
+  static func sectionSurfaceFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
+    if reduceTransparency {
+      return cardFill(colorScheme: colorScheme, reduceTransparency: reduceTransparency)
+    }
+    return colorScheme == .dark
+      ? Color(nsColor: .controlBackgroundColor).opacity(0.30)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.54)
+  }
+
   static func secondaryChartFill(colorScheme: ColorScheme, reduceTransparency: Bool) -> Color {
     if reduceTransparency {
       return Color(nsColor: .underPageBackgroundColor)
@@ -428,8 +452,8 @@ enum DayflowWeeklyToken {
       return Color(nsColor: .underPageBackgroundColor)
     }
     return colorScheme == .dark
-      ? Color.white.opacity(0.075)
-      : Color(nsColor: .controlBackgroundColor).opacity(0.54)
+      ? Color(nsColor: .controlBackgroundColor).opacity(0.48)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.50)
   }
 
   static func chartDivider(colorScheme: ColorScheme, increaseContrast: Bool = false) -> Color {
@@ -518,6 +542,14 @@ enum DayflowWeeklyToken {
     guard !reduceTransparency else { return .clear }
     return Color.black.opacity(colorScheme == .dark ? 0.18 : 0.07)
   }
+}
+
+enum DayflowWeeklySectionChrome {
+  static let titleLeading: CGFloat = 40
+  static let titleTop: CGFloat = 34
+  static let titleToContentSpacing: CGFloat = 28
+  static let contentTrailing: CGFloat = 40
+  static let contentBottom: CGFloat = 42
 }
 
 enum DayflowOnboardingToken {
@@ -712,8 +744,8 @@ private struct DayflowWeeklySectionSurfaceModifier: ViewModifier {
             reduceTransparency: reduceTransparency
           ))
         } else {
-          shape.fill(.regularMaterial)
-          shape.fill(DayflowWeeklyToken.chartFill(
+          shape.fill(DayflowWeeklyToken.sectionSurfaceMaterial())
+          shape.fill(DayflowWeeklyToken.sectionSurfaceFill(
             colorScheme: colorScheme,
             reduceTransparency: reduceTransparency
           ))

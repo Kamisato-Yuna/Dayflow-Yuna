@@ -5,22 +5,23 @@ let weeklyTreemapContentCoordinateSpace = "weekly-treemap-content"
 struct WeeklyTreemapSection: View {
   let snapshot: WeeklyTreemapSnapshot
   let width: CGFloat
+  let paletteColorScheme: ColorScheme?
+  @Environment(\.colorScheme) private var colorScheme
   @State var hoveredLeaf: WeeklyTreemapHoverState?
 
   init(
     snapshot: WeeklyTreemapSnapshot,
-    width: CGFloat = Design.sectionSize.width
+    width: CGFloat = Design.sectionSize.width,
+    paletteColorScheme: ColorScheme? = nil
   ) {
     self.snapshot = snapshot
     self.width = width
+    self.paletteColorScheme = paletteColorScheme
   }
 
   enum Design {
     static let sectionSize = CGSize(width: 958, height: 549)
     static let cornerRadius: CGFloat = 4
-    static let titleOrigin = CGPoint(x: 40, y: 34)
-    static let contentOrigin = CGPoint(x: 40, y: 86)
-    static let contentTrailingInset: CGFloat = 40
     static let contentSize = CGSize(width: 797, height: 400)
     static let categoryGap: CGFloat = 6
     static let hoverCardSize = CGSize(width: 176, height: 92)
@@ -28,21 +29,32 @@ struct WeeklyTreemapSection: View {
   }
 
   private var contentWidth: CGFloat {
-    max(Design.contentSize.width, width - Design.contentOrigin.x - Design.contentTrailingInset)
+    max(
+      1,
+      width - DayflowWeeklySectionChrome.titleLeading - DayflowWeeklySectionChrome.contentTrailing
+    )
+  }
+
+  private var resolvedPaletteColorScheme: ColorScheme {
+    paletteColorScheme ?? colorScheme
   }
 
   var body: some View {
-    ZStack(alignment: .topLeading) {
+    VStack(alignment: .leading, spacing: DayflowWeeklySectionChrome.titleToContentSpacing) {
       Text(snapshot.title)
         .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(DayflowWeeklyToken.title)
-        .offset(x: Design.titleOrigin.x, y: Design.titleOrigin.y)
+        .lineLimit(1)
+        .minimumScaleFactor(0.8)
 
       contentLayer
         .frame(width: contentWidth, height: Design.contentSize.height)
-        .offset(x: Design.contentOrigin.x, y: Design.contentOrigin.y)
     }
-    .frame(width: width, height: Design.sectionSize.height)
+    .padding(.top, DayflowWeeklySectionChrome.titleTop)
+    .padding(.leading, DayflowWeeklySectionChrome.titleLeading)
+    .padding(.trailing, DayflowWeeklySectionChrome.contentTrailing)
+    .padding(.bottom, DayflowWeeklySectionChrome.contentBottom)
+    .frame(width: width, height: Design.sectionSize.height, alignment: .topLeading)
     .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 
@@ -60,6 +72,7 @@ struct WeeklyTreemapSection: View {
         ForEach(placements) { placement in
           WeeklyTreemapCategoryCard(
             category: placement.item,
+            colorScheme: resolvedPaletteColorScheme,
             onLeafHover: { state in
               withAnimation(.easeOut(duration: 0.14)) {
                 hoveredLeaf = state
@@ -73,7 +86,8 @@ struct WeeklyTreemapSection: View {
         if let hoveredLeaf {
           WeeklyTreemapHoverCard(
             app: hoveredLeaf.app,
-            palette: hoveredLeaf.palette
+            palette: hoveredLeaf.palette,
+            colorScheme: resolvedPaletteColorScheme
           )
           .frame(width: Design.hoverCardSize.width, height: Design.hoverCardSize.height)
           .offset(

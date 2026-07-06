@@ -136,7 +136,7 @@ struct WeeklyFocusHeatmapSection: View {
         Text(snapshot.distractedLabel)
       }
       .font(.custom("Figtree-Regular", size: 10))
-      .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
+      .foregroundStyle(DayflowWeeklyToken.legendText)
       .frame(width: legendWidth)
     }
   }
@@ -167,7 +167,7 @@ struct WeeklyFocusHeatmapSection: View {
       ForEach(snapshot.rows) { row in
         Text(row.label)
           .font(.custom("Figtree-Regular", size: 10))
-          .foregroundStyle(DayflowWeeklyToken.chartText)
+          .foregroundStyle(DayflowWeeklyToken.axisText)
           .frame(width: Design.labelsWidth, height: Design.rowHeight, alignment: .leading)
       }
     }
@@ -192,7 +192,7 @@ struct WeeklyFocusHeatmapSection: View {
         ForEach(snapshot.timeLabels) { label in
           Text(label.label)
             .font(.custom("Figtree-Regular", size: 10))
-            .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
+            .foregroundStyle(DayflowWeeklyToken.axisText)
             .frame(width: 34, alignment: axisAlignment(for: label))
             .offset(x: axisOffset(for: label))
         }

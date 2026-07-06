@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WeeklyTreemapCategoryCard: View {
   let category: WeeklyTreemapCategory
+  let colorScheme: ColorScheme
   let onLeafHover: (WeeklyTreemapHoverState?) -> Void
 
   enum Design {
@@ -18,14 +19,14 @@ struct WeeklyTreemapCategoryCard: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(category.palette.shellFill)
+        .fill(category.palette.resolvedShellFill(colorScheme: colorScheme))
         .overlay(
           RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-            .stroke(category.palette.shellBorder, lineWidth: 1)
+            .stroke(category.palette.resolvedShellBorder(colorScheme: colorScheme), lineWidth: 1)
         )
 
       VStack(spacing: 0) {
-        WeeklyTreemapCategoryHeader(category: category)
+        WeeklyTreemapCategoryHeader(category: category, colorScheme: colorScheme)
           .padding(.horizontal, Design.headerHorizontalPadding)
           .padding(.top, Design.headerTopPadding)
           .padding(.bottom, Design.headerBottomPadding)
@@ -50,6 +51,7 @@ struct WeeklyTreemapCategoryCard: View {
               WeeklyTreemapLeafTile(
                 app: placement.item,
                 palette: category.palette,
+                colorScheme: colorScheme,
                 onHoverChanged: onLeafHover
               )
               .frame(width: placement.frame.width, height: placement.frame.height)
@@ -67,6 +69,7 @@ struct WeeklyTreemapCategoryCard: View {
 
 struct WeeklyTreemapCategoryHeader: View {
   let category: WeeklyTreemapCategory
+  let colorScheme: ColorScheme
 
   var body: some View {
     ViewThatFits {
@@ -89,7 +92,7 @@ struct WeeklyTreemapCategoryHeader: View {
   var titleText: some View {
     Text(category.name)
       .font(.custom("Figtree-Regular", size: 12))
-      .foregroundStyle(category.palette.headerText)
+      .foregroundStyle(category.palette.resolvedHeaderText(colorScheme: colorScheme))
       .lineLimit(1)
       .minimumScaleFactor(0.8)
   }
@@ -97,7 +100,7 @@ struct WeeklyTreemapCategoryHeader: View {
   var durationText: some View {
     Text(category.formattedDuration)
       .font(.custom("Figtree-Regular", size: 12))
-      .foregroundStyle(category.palette.headerText)
+      .foregroundStyle(category.palette.resolvedHeaderText(colorScheme: colorScheme))
       .lineLimit(1)
       .minimumScaleFactor(0.8)
   }
@@ -106,6 +109,7 @@ struct WeeklyTreemapCategoryHeader: View {
 struct WeeklyTreemapLeafTile: View {
   let app: WeeklyTreemapApp
   let palette: WeeklyTreemapPalette
+  let colorScheme: ColorScheme
   let onHoverChanged: (WeeklyTreemapHoverState?) -> Void
 
   enum Design {
@@ -122,10 +126,10 @@ struct WeeklyTreemapLeafTile: View {
       )
 
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(palette.tileFill)
+        .fill(palette.resolvedTileFill(colorScheme: colorScheme))
         .overlay(
           RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-            .stroke(palette.tileBorder, lineWidth: 1)
+            .stroke(palette.resolvedTileBorder(colorScheme: colorScheme), lineWidth: 1)
         )
         .overlay {
           if app.isPlaceholder {
@@ -169,7 +173,7 @@ struct WeeklyTreemapLeafTile: View {
 
       Text(app.formattedDuration)
         .font(.custom("Figtree-Regular", size: typography.detailFontSize))
-        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
+        .foregroundStyle(DayflowWeeklyToken.treemapTileSecondaryText(colorScheme: colorScheme))
         .lineLimit(1)
         .minimumScaleFactor(0.85)
 
@@ -189,7 +193,7 @@ struct WeeklyTreemapLeafTile: View {
 
       Text(app.formattedDuration)
         .font(.custom("Figtree-Regular", size: max(typography.detailFontSize - 1, 10)))
-        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
+        .foregroundStyle(DayflowWeeklyToken.treemapTileSecondaryText(colorScheme: colorScheme))
         .lineLimit(1)
         .minimumScaleFactor(0.85)
     }
@@ -217,7 +221,7 @@ struct WeeklyTreemapLeafTile: View {
   func nameText(fontSize: CGFloat) -> some View {
     Text(app.name)
       .font(.system(size: fontSize, weight: .medium, design: .rounded))
-      .foregroundStyle(DayflowWeeklyToken.chartText)
+      .foregroundStyle(DayflowWeeklyToken.treemapTileText(colorScheme: colorScheme))
       .multilineTextAlignment(.center)
       .lineLimit(1)
       .minimumScaleFactor(0.7)
@@ -253,7 +257,7 @@ struct WeeklyTreemapLeafTile: View {
 struct WeeklyTreemapHoverCard: View {
   let app: WeeklyTreemapApp
   let palette: WeeklyTreemapPalette
-  @Environment(\.colorScheme) private var colorScheme
+  let colorScheme: ColorScheme
   @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   enum Design {
@@ -289,12 +293,12 @@ struct WeeklyTreemapHoverCard: View {
         ))
         .overlay(
           RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-            .fill(palette.shellFill.opacity(0.85))
+            .fill(palette.resolvedShellFill(colorScheme: colorScheme).opacity(0.85))
         )
     )
     .overlay(
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(palette.shellBorder.opacity(0.95), lineWidth: 1)
+        .stroke(palette.resolvedShellBorder(colorScheme: colorScheme).opacity(0.95), lineWidth: 1)
     )
     .shadow(
       color: DayflowWeeklyToken.displayShadow(
@@ -305,6 +309,28 @@ struct WeeklyTreemapHoverCard: View {
       x: 0,
       y: 6
     )
+  }
+}
+
+private extension WeeklyTreemapPalette {
+  func resolvedShellFill(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark ? shellBorder.opacity(0.13) : shellFill
+  }
+
+  func resolvedShellBorder(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark ? shellBorder.opacity(0.38) : shellBorder
+  }
+
+  func resolvedTileFill(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark ? shellBorder.opacity(0.20) : tileFill
+  }
+
+  func resolvedTileBorder(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark ? shellBorder.opacity(0.46) : tileBorder
+  }
+
+  func resolvedHeaderText(colorScheme: ColorScheme) -> Color {
+    colorScheme == .dark ? shellBorder.opacity(0.95) : headerText
   }
 }
 
