@@ -432,7 +432,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 113;
+				CURRENT_PROJECT_VERSION = 114;
 				DEVELOPMENT_ASSET_PATHS = "\"Dayflow/Preview Content\"";
 				DEVELOPMENT_TEAM = 852H844JG2;
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -446,9 +446,11 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.14.1;
-				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.Dayflow;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_KEY_CFBundleDisplayName = "Dayflow-Yuna";
+				INFOPLIST_KEY_CFBundleName = "Dayflow-Yuna";
+				MARKETING_VERSION = 1.15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.DayflowYuna;
+				PRODUCT_NAME = "Dayflow-Yuna";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -466,7 +468,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 113;
+				CURRENT_PROJECT_VERSION = 114;
 				DEVELOPMENT_ASSET_PATHS = "\"Dayflow/Preview Content\"";
 				DEVELOPMENT_TEAM = 852H844JG2;
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -480,9 +482,11 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.14.1;
-				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.Dayflow;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_KEY_CFBundleDisplayName = "Dayflow-Yuna";
+				INFOPLIST_KEY_CFBundleName = "Dayflow-Yuna";
+				MARKETING_VERSION = 1.15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.DayflowYuna;
+				PRODUCT_NAME = "Dayflow-Yuna";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -494,16 +498,16 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 113;
+				CURRENT_PROJECT_VERSION = 114;
 				DEVELOPMENT_TEAM = 852H844JG2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.14.1;
-				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.AmiTimeTests;
+				MARKETING_VERSION = 1.15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.DayflowYunaTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dayflow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dayflow";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dayflow-Yuna.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dayflow-Yuna";
 			};
 			name = Debug;
 		};
@@ -512,16 +516,16 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 113;
+				CURRENT_PROJECT_VERSION = 114;
 				DEVELOPMENT_TEAM = 852H844JG2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
-				MARKETING_VERSION = 1.14.1;
-				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.AmiTimeTests;
+				MARKETING_VERSION = 1.15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.DayflowYunaTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dayflow.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dayflow";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dayflow-Yuna.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dayflow-Yuna";
 			};
 			name = Release;
 		};
@@ -529,11 +533,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 113;
+				CURRENT_PROJECT_VERSION = 114;
 				DEVELOPMENT_TEAM = 852H844JG2;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.14.1;
-				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.AmiTimeUITests;
+				MARKETING_VERSION = 1.15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.DayflowYunaUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -545,11 +549,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 113;
+				CURRENT_PROJECT_VERSION = 114;
 				DEVELOPMENT_TEAM = 852H844JG2;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.14.1;
-				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.AmiTimeUITests;
+				MARKETING_VERSION = 1.15.0;
+				PRODUCT_BUNDLE_IDENTIFIER = teleportlabs.com.DayflowYunaUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;

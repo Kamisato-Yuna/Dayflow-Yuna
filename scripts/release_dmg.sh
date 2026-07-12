@@ -11,11 +11,14 @@ set -euo pipefail
 #   CONFIG           - Xcode configuration (default: Release)
 #   DERIVED_DATA     - Derived data path (default: build/release-derived)
 #   CLEAN_RELEASE_BUILD - Remove previous release derived data before building (default: 1)
-#   APP_NAME         - App name (default: Dayflow)
+#   ARCHS            - Architectures to build (default: arm64)
+#   ONLY_ACTIVE_ARCH - Whether to build only the active architecture (default: YES)
+#   APP_NAME         - App name (default: Dayflow-Yuna)
 #   ENTITLEMENTS     - Entitlements plist path (default: Dayflow/Dayflow/Dayflow.entitlements)
 #   SIGN_ID          - Codesign identity (e.g. "Developer ID Application: Your Name (TEAMID)")
 #   VOL_NAME         - DMG volume name (defaults to APP_NAME)
 #   DMG_NAME         - Output DMG name (defaults to "${APP_NAME}.dmg")
+#   SIGNED_APP_OUTPUT - Optional path under build/ to copy the signed app bundle
 #   NOTARY_PROFILE   - Saved notarytool keychain profile (optional)
 #   NOTARY_APPLE_ID  - Apple ID for notarytool (optional)
 #   NOTARY_TEAM_ID   - Team ID for notarytool (optional)
@@ -36,7 +39,9 @@ SCHEME=${SCHEME:-Dayflow}
 CONFIG=${CONFIG:-Release}
 DERIVED_DATA=${DERIVED_DATA:-build/release-derived}
 CLEAN_RELEASE_BUILD=${CLEAN_RELEASE_BUILD:-1}
-APP_NAME=${APP_NAME:-Dayflow}
+ARCHS=${ARCHS:-arm64}
+ONLY_ACTIVE_ARCH=${ONLY_ACTIVE_ARCH:-YES}
+APP_NAME=${APP_NAME:-Dayflow-Yuna}
 ENTITLEMENTS=${ENTITLEMENTS:-Dayflow/Dayflow/Dayflow.entitlements}
 VOL_NAME=${VOL_NAME:-$APP_NAME}
 DMG_NAME=${DMG_NAME:-"${APP_NAME}.dmg"}
@@ -101,6 +106,8 @@ xcodebuild \
   -scheme "${SCHEME}" \
   -configuration "${CONFIG}" \
   -derivedDataPath "${DERIVED_DATA}" \
+  ARCHS="${ARCHS}" \
+  ONLY_ACTIVE_ARCH="${ONLY_ACTIVE_ARCH}" \
   CODE_SIGN_IDENTITY="" \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGNING_ALLOWED=NO \
@@ -251,10 +258,10 @@ if command -v rg >/dev/null 2>&1; then
   if ! printf "%s" "$ENT_DUMP" | rg -q "com.apple.security.temporary-exception.mach-lookup.global-name"; then
     echo "WARNING: mach-lookup entitlement missing on app. Check entitlements substitution." >&2
   fi
-  if ! printf "%s" "$ENT_DUMP" | rg -q "-spks|teleportlabs.com.Dayflow-spks"; then
+  if ! printf "%s" "$ENT_DUMP" | rg -q -- "-spks|${BUNDLE_ID}-spks"; then
     echo "WARNING: Sparkle status mach service (-spks) not present in entitlements." >&2
   fi
-  if ! printf "%s" "$ENT_DUMP" | rg -q "-spki|teleportlabs.com.Dayflow-spki"; then
+  if ! printf "%s" "$ENT_DUMP" | rg -q -- "-spki|${BUNDLE_ID}-spki"; then
     echo "WARNING: Sparkle installer mach service (-spki) not present in entitlements." >&2
   fi
 fi
@@ -262,6 +269,14 @@ fi
 echo "[6/8] Verifying signature…"
 codesign --verify --deep --strict --verbose=2 "${SANITIZED_APP}"
 spctl -a -vvv --type execute "${SANITIZED_APP}" || true
+
+if [[ -n "${SIGNED_APP_OUTPUT:-}" ]]; then
+  assert_repo_build_path "${SIGNED_APP_OUTPUT}"
+  echo "[6/8] Copying signed app to ${SIGNED_APP_OUTPUT}…"
+  rm -rf "${SIGNED_APP_OUTPUT}"
+  mkdir -p "$(dirname "${SIGNED_APP_OUTPUT}")"
+  ditto --noextattr --norsrc "${SANITIZED_APP}" "${SIGNED_APP_OUTPUT}"
+fi
 
 echo "[7/8] Creating DMG with create-dmg…"
 # Require create-dmg for reliable DMG styling

@@ -600,7 +600,7 @@ private struct WeeklySectionLoadingView: View {
   let message: String
 
   var body: some View {
-    HStack(spacing: 16) {
+    WeeklySectionStatusCard(title: title, message: message) {
       ZStack {
         Circle()
           .stroke(DayflowWeeklyToken.accent.opacity(0.18), lineWidth: 5)
@@ -624,29 +624,13 @@ private struct WeeklySectionLoadingView: View {
           .font(.system(size: 14, weight: .semibold))
           .foregroundStyle(DayflowWeeklyToken.accent)
       }
-      .frame(width: 46, height: 46)
       .onAppear {
         guard !reduceMotion else { return }
         withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) {
           isAnimating = true
         }
       }
-
-      VStack(alignment: .leading, spacing: 4) {
-        Text(title)
-          .font(.system(size: 17, weight: .semibold, design: .rounded))
-          .foregroundStyle(DayflowWeeklyToken.title)
-
-        Text(message)
-          .font(.custom("Figtree-Regular", size: 13))
-          .foregroundStyle(DayflowWeeklyToken.secondaryText)
-          .lineLimit(2)
-      }
-
-      Spacer(minLength: 0)
     }
-    .padding(.horizontal, 24)
-    .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 }
 
@@ -655,27 +639,55 @@ private struct WeeklySectionPlaceholderView: View {
   let message: String
 
   var body: some View {
-    HStack(spacing: 14) {
+    WeeklySectionStatusCard(title: title, message: message) {
       Image(systemName: "rectangle.3.group")
         .font(.system(size: 18, weight: .semibold))
         .foregroundStyle(DayflowWeeklyToken.accent.opacity(0.82))
         .frame(width: 38, height: 38)
         .dayflowFloatingControl(cornerRadius: 8)
+    }
+  }
+}
 
-      VStack(alignment: .leading, spacing: 3) {
+private struct WeeklySectionStatusCard<Icon: View>: View {
+  let title: String
+  let message: String
+  let icon: Icon
+
+  init(
+    title: String,
+    message: String,
+    @ViewBuilder icon: () -> Icon
+  ) {
+    self.title = title
+    self.message = message
+    self.icon = icon()
+  }
+
+  var body: some View {
+    HStack(alignment: .center, spacing: 16) {
+      icon
+        .frame(width: 46, height: 46)
+
+      VStack(alignment: .leading, spacing: 4) {
         Text(title)
-          .font(.system(size: 15, weight: .semibold, design: .rounded))
+          .font(.system(size: 17, weight: .semibold, design: .rounded))
           .foregroundStyle(DayflowWeeklyToken.title)
+          .lineLimit(1)
+          .minimumScaleFactor(0.85)
 
         Text(message)
-          .font(.custom("Figtree-Regular", size: 12))
+          .font(.custom("Figtree-Regular", size: 13))
           .foregroundStyle(DayflowWeeklyToken.secondaryText)
           .lineLimit(2)
+          .fixedSize(horizontal: false, vertical: true)
       }
-
-      Spacer(minLength: 0)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .layoutPriority(1)
     }
-    .padding(.horizontal, 22)
+    .padding(.horizontal, 24)
+    .padding(.vertical, 18)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 }

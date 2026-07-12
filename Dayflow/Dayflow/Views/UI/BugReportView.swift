@@ -56,7 +56,7 @@ struct BugReportView: View {
             DayflowSurfaceButton(
               action: openDiscord,
               content: {
-                HStack(spacing: 12) {
+                HStack(spacing: 11) {
                   DayflowExternalImageBadge(
                     imageName: "DiscordGlyph",
                     size: 26,

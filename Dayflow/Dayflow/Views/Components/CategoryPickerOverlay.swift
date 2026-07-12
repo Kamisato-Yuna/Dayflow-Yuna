@@ -98,7 +98,7 @@ struct CategoryPickerOverlay: View {
     let baseFont = Font.custom("Figtree", size: 12)
     let baseColor = Color(nsColor: .secondaryLabelColor)
     let linkColor = DayflowSurfaceAccent.primary
-    let linkURL = URL(string: "dayflow://category-editor")!
+    let linkURL = URL(string: "dayflow-yuna://category-editor")!
 
     var intro = AttributedString(
       "想让 Dayflow 更准确地整理你的活动记录，请在分类说明中补充更多细节，"

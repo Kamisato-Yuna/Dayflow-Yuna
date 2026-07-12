@@ -32,7 +32,9 @@ final class AppDeepLinkRouter {
   }
 
   private func resolveAction(from url: URL) -> Action? {
-    guard let scheme = url.scheme, scheme.caseInsensitiveCompare("dayflow") == .orderedSame else {
+    guard let scheme = url.scheme,
+      scheme.caseInsensitiveCompare("dayflow-yuna") == .orderedSame
+    else {
       return nil
     }
 

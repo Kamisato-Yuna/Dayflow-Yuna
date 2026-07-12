@@ -24,7 +24,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPO_ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
 
 PLIST=${PLIST:-"$REPO_ROOT/Dayflow/Dayflow/Info.plist"}
-APP_NAME=${APP_NAME:-Dayflow}
+APP_NAME=${APP_NAME:-Dayflow-Yuna}
 SCHEME=${SCHEME:-Dayflow}
 CONFIG=${CONFIG:-Release}
 # Optional: override Keychain account name for sign_update; defaults to "ed25519"
