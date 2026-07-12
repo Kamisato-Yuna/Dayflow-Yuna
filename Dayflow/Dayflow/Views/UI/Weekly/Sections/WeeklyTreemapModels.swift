@@ -128,15 +128,15 @@ struct WeeklyTreemapChange {
   let color: Color
 
   static func positive(_ minutes: Int) -> WeeklyTreemapChange {
-    WeeklyTreemapChange(text: "+ \(minutes)m", color: Color(hex: "3AA34C"))
+    WeeklyTreemapChange(text: "+ \(minutes)分钟", color: Color(hex: "3AA34C"))
   }
 
   static func negative(_ minutes: Int) -> WeeklyTreemapChange {
-    WeeklyTreemapChange(text: "- \(minutes)m", color: Color(hex: "DE2121"))
+    WeeklyTreemapChange(text: "- \(minutes)分钟", color: Color(hex: "DE2121"))
   }
 
   static func neutral(_ minutes: Int) -> WeeklyTreemapChange {
-    WeeklyTreemapChange(text: "\(minutes)m", color: Color(hex: "8D8C8A"))
+    WeeklyTreemapChange(text: "\(minutes)分钟", color: Color(hex: "8D8C8A"))
   }
 }
 
@@ -195,14 +195,14 @@ extension TimeInterval {
     let minutes = totalMinutes % 60
 
     if hours > 0, minutes > 0 {
-      return "\(hours)hr \(minutes)m"
+      return "\(hours)小时 \(minutes)分钟"
     }
 
     if hours > 0 {
-      return "\(hours)hr"
+      return "\(hours)小时"
     }
 
-    return "\(minutes)m"
+    return "\(minutes)分钟"
   }
 }
 

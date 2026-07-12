@@ -49,13 +49,22 @@ private struct TimelineHeaderVisibility {
 }
 
 private struct TimelineNavigationButton: View {
-  let assetName: String
+  let systemName: String
   var isEnabled = true
   var arrowSize: CGFloat = TimelineNavigationLayout.arrowSize
   var hoverCircleSize: CGFloat = TimelineNavigationLayout.hoverCircleSize
   let action: () -> Void
 
   @State private var isHovering = false
+  @Environment(\.colorScheme) private var colorScheme
+
+  private var iconColor: Color {
+    isEnabled ? Color(nsColor: .labelColor) : Color(nsColor: .tertiaryLabelColor)
+  }
+
+  private var hoverFill: Color {
+    DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.18 : 0.12)
+  }
 
   var body: some View {
     Button(action: {
@@ -64,13 +73,14 @@ private struct TimelineNavigationButton: View {
     }) {
       ZStack {
         Circle()
-          .fill(Color(hex: "FFEBD3").opacity(0.79))
+          .fill(hoverFill)
           .frame(width: hoverCircleSize, height: hoverCircleSize)
           .opacity(isHovering && isEnabled ? 1 : 0)
 
-        Image(assetName)
-          .resizable()
-          .scaledToFit()
+        Image(systemName: systemName)
+          .font(.system(size: arrowSize * 0.58, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
+          .foregroundStyle(iconColor)
           .frame(width: arrowSize, height: arrowSize)
           .opacity(isEnabled ? 1 : 0.35)
       }
@@ -136,8 +146,7 @@ extension MainView {
   // used in `DateNavigationControls.swift:calculateOptimalPillWidth()`.
   private var measuredDateLabelWidth: CGFloat {
     let font =
-      NSFont(name: "InstrumentSerif-Regular", size: 26)
-      ?? NSFont.systemFont(ofSize: 26)
+      NSFont.systemFont(ofSize: 26, weight: .semibold)
     return timelineTitleText.size(withAttributes: [.font: font]).width
   }
 
@@ -198,28 +207,32 @@ extension MainView {
   //
   // `.frame(height: 30)` on the HStack pins its vertical dimension to the
   // pill height so the date label (which has a ~31pt natural line height
-  // at InstrumentSerif 26pt) can't grow the HStack when it appears. Without
+  // at the date-label font size) can't grow the HStack when it appears. Without
   // this pin, the pills visibly shifted by ~0.5pt when the date entered.
   private func timelineLeadingControls(visibility: TimelineHeaderVisibility) -> some View {
-    HStack(spacing: TimelineNavigationLayout.calendarGap) {
-      timelineNavigationButtons
-      timelineCalendarButton
+    DayflowGlassSurface(role: .floatingControl, cornerRadius: 18, spacing: 5) {
+      HStack(spacing: TimelineNavigationLayout.calendarGap) {
+        timelineNavigationButtons
+        timelineCalendarButton
 
-      if visibility.showDayWeekToggle {
-        timelineModeSwitch
-      }
+        if visibility.showDayWeekToggle {
+          timelineModeSwitch
+        }
 
-      if visibility.showTodayButton {
-        timelineTodayButton
-          .transition(.opacity.combined(with: .scale(scale: 0.94)))
-      }
+        if visibility.showTodayButton {
+          timelineTodayButton
+            .transition(.opacity.combined(with: .scale(scale: 0.94)))
+        }
 
-      if visibility.showInlineDate {
-        timelineHeaderDateLabel
-          .padding(.leading, 10)
+        if visibility.showInlineDate {
+          timelineHeaderDateLabel
+            .padding(.leading, 10)
+        }
       }
+      .frame(height: 30)
+      .padding(.horizontal, 5)
+      .padding(.vertical, 3)
     }
-    .frame(height: 30)
     .offset(x: timelineOffset + TimelineAlignment.pickerRowOffset)
     .opacity(timelineOpacity)
   }
@@ -236,7 +249,7 @@ extension MainView {
   private var timelineNavigationButtons: some View {
     HStack(spacing: 2) {
       TimelineNavigationButton(
-        assetName: "LeftArrow",
+        systemName: "chevron.left",
         arrowSize: TimelineNavigationLayout.arrowSize,
         hoverCircleSize: TimelineNavigationLayout.hoverCircleSize
       ) {
@@ -244,7 +257,7 @@ extension MainView {
       }
 
       TimelineNavigationButton(
-        assetName: "RightArrow",
+        systemName: "chevron.right",
         isEnabled: canNavigateTimelineForward,
         arrowSize: TimelineNavigationLayout.arrowSize,
         hoverCircleSize: TimelineNavigationLayout.hoverCircleSize
@@ -280,9 +293,10 @@ extension MainView {
             y: showTimelineCalendarPopover ? 2 : 0
           )
 
-        Image("CalendarIcon")
-          .resizable()
-          .scaledToFit()
+        Image(systemName: "calendar")
+          .font(.system(size: 14, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
+          .foregroundStyle(timelineCalendarIconColor)
           .frame(width: 16, height: 16)
       }
       .frame(width: 36, height: 30)
@@ -300,11 +314,19 @@ extension MainView {
   }
 
   private var timelineCalendarButtonFillColor: Color {
-    showTimelineCalendarPopover ? Color(hex: "FFB38E") : Color(hex: "FFA777")
+    showTimelineCalendarPopover
+      ? DayflowSurfaceAccent.primary.opacity(0.18)
+      : Color(nsColor: .controlBackgroundColor).opacity(0.36)
   }
 
   private var timelineCalendarButtonBorderColor: Color {
-    showTimelineCalendarPopover ? Color(hex: "E8BDA1") : Color(hex: "F2D2BD")
+    showTimelineCalendarPopover
+      ? DayflowSurfaceAccent.primary.opacity(0.34)
+      : Color(nsColor: .separatorColor).opacity(0.36)
+  }
+
+  private var timelineCalendarIconColor: Color {
+    showTimelineCalendarPopover ? DayflowSurfaceAccent.primary : Color(nsColor: .labelColor)
   }
 
   private var timelineCalendarButtonShadowColor: Color {
@@ -413,18 +435,11 @@ extension MainView {
           ZStack {
             if isSelected {
               Capsule(style: .continuous)
-                .fill(
-                  LinearGradient(
-                    colors: [
-                      Color(hex: "FFB18D").opacity(0.6),
-                      Color(hex: "FFA46F"),
-                      Color(hex: "FFB18D"),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                  )
+                .fill(DayflowSurfaceAccent.primary.opacity(0.18))
+                .overlay(
+                  Capsule(style: .continuous)
+                    .stroke(DayflowSurfaceAccent.primary.opacity(0.30), lineWidth: 0.8)
                 )
-                .shadow(color: Color(hex: "E89A6C").opacity(0.18), radius: 4, x: 0, y: 1)
                 .matchedGeometryEffect(
                   id: "timeline_mode_highlight",
                   in: timelineModeSwitchNamespace
@@ -433,7 +448,11 @@ extension MainView {
 
             Text(mode.title)
               .font(.custom("Figtree", size: 12).weight(.medium))
-              .foregroundColor(isSelected ? .white : Color(hex: "796E64"))
+              .foregroundColor(
+                isSelected
+                  ? Color(nsColor: .labelColor)
+                  : Color(nsColor: .secondaryLabelColor)
+              )
               // Concrete width (52pt × 2 = 104pt container) instead of
               // `.frame(maxWidth: .infinity)`. The infinity was being fought
               // by the `.fixedSize(horizontal: true)` ancestor on
@@ -456,11 +475,11 @@ extension MainView {
       }
     }
     .frame(width: 104, height: 30)
-    .background(Color(hex: "FFEFE4"))
+    .background(Color(nsColor: .controlBackgroundColor).opacity(0.30))
     .clipShape(Capsule(style: .continuous))
     .overlay(
       Capsule(style: .continuous)
-        .stroke(Color(hex: "F2D2BD"), lineWidth: 1)
+        .stroke(Color(nsColor: .separatorColor).opacity(0.36), lineWidth: 1)
     )
     .animation(timelineModeSwitchAnimation, value: timelineMode)
   }
@@ -471,7 +490,7 @@ extension MainView {
     }) {
       Text("今天")
         .font(.custom("Figtree", size: 12).weight(.medium))
-        .foregroundColor(Color(hex: "796E64"))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         .padding(.horizontal, 10)
         // Explicit width pinned (natural ~52pt + 4pt safety margin). Same
         // rationale as the calendar pill: under the ancestor's `.fixedSize`
@@ -479,11 +498,11 @@ extension MainView {
         // values mid-transition, nudging the Day/Week toggle's position and
         // desyncing its `matchedGeometryEffect` anchors during a mode flip.
         .frame(width: 56, height: 30)
-        .background(Color(hex: "FFEFE4"))
+        .background(Color(nsColor: .controlBackgroundColor).opacity(0.30))
         .clipShape(Capsule(style: .continuous))
         .overlay(
           Capsule(style: .continuous)
-            .stroke(Color(hex: "F2D2BD"), lineWidth: 1)
+            .stroke(Color(nsColor: .separatorColor).opacity(0.36), lineWidth: 1)
         )
     }
     .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
@@ -493,8 +512,8 @@ extension MainView {
 
   private var timelineHeaderDateLabel: some View {
     Text(timelineTitleText)
-      .font(.custom("InstrumentSerif-Regular", size: 26))
-      .foregroundColor(Color.black)
+      .font(.system(size: 26, weight: .semibold, design: .rounded))
+      .foregroundColor(Color(nsColor: .labelColor))
       .lineLimit(1)
       .fixedSize(horizontal: true, vertical: false)
       .onTapGesture {

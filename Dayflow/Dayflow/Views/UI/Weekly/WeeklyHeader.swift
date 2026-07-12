@@ -8,17 +8,17 @@ struct WeeklyHeader: View {
 
   var body: some View {
     HStack(spacing: 14) {
-      WeeklyNavigationButton(assetName: "LeftArrow") {
+      WeeklyNavigationButton(systemName: "chevron.left") {
         onPrevious()
       }
 
       Text(title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
-        .foregroundStyle(Color.black)
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
+        .foregroundStyle(DayflowWeeklyToken.title)
         .multilineTextAlignment(.center)
         .frame(width: 344)
 
-      WeeklyNavigationButton(assetName: "RightArrow", isEnabled: canNavigateForward) {
+      WeeklyNavigationButton(systemName: "chevron.right", isEnabled: canNavigateForward) {
         onNext()
       }
     }
@@ -28,9 +28,11 @@ struct WeeklyHeader: View {
 }
 
 private struct WeeklyNavigationButton: View {
-  let assetName: String
+  let systemName: String
   var isEnabled = true
   let action: () -> Void
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   @State private var isHovering = false
 
@@ -44,14 +46,19 @@ private struct WeeklyNavigationButton: View {
     } label: {
       ZStack {
         Circle()
-          .fill(Color(hex: "FFEBD3").opacity(0.79))
+          .fill(DayflowWeeklyToken.controlFill(
+            isSelected: true,
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
           .frame(width: hoverCircleSize, height: hoverCircleSize)
           .opacity(isHovering && isEnabled ? 1 : 0)
 
-        Image(assetName)
-          .resizable()
-          .scaledToFit()
+        Image(systemName: systemName)
+          .font(.system(size: arrowSize * 0.58, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
           .frame(width: arrowSize, height: arrowSize)
+          .foregroundStyle(isEnabled ? DayflowWeeklyToken.chartText : DayflowWeeklyToken.chartTertiaryText)
           .opacity(isEnabled ? 1 : 0.35)
       }
       .frame(width: hoverCircleSize, height: hoverCircleSize)

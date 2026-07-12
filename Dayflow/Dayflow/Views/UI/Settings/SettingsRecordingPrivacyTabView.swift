@@ -42,14 +42,7 @@ struct SettingsRecordingPrivacyTabView: View {
     }
     .padding(.horizontal, 12)
     .padding(.vertical, 9)
-    .background(
-      RoundedRectangle(cornerRadius: 8, style: .continuous)
-        .fill(Color.black.opacity(0.04))
-    )
-    .overlay(
-      RoundedRectangle(cornerRadius: 8, style: .continuous)
-        .stroke(SettingsStyle.divider, lineWidth: 1)
-    )
+    .settingsControlSurface(cornerRadius: 8)
   }
 
   private var installedAppsGrid: some View {
@@ -98,14 +91,7 @@ struct SettingsRecordingPrivacyTabView: View {
           .padding(8)
         }
         .frame(maxHeight: .infinity)
-        .background(
-          RoundedRectangle(cornerRadius: 8, style: .continuous)
-            .fill(Color.black.opacity(0.025))
-        )
-        .overlay(
-          RoundedRectangle(cornerRadius: 8, style: .continuous)
-            .stroke(SettingsStyle.divider, lineWidth: 1)
-        )
+        .settingsControlSurface(cornerRadius: 8)
       }
     }
     .frame(maxHeight: .infinity, alignment: .top)
@@ -157,17 +143,7 @@ struct SettingsRecordingPrivacyTabView: View {
       }
       .frame(maxWidth: .infinity)
       .padding(8)
-      .background(
-        RoundedRectangle(cornerRadius: 8, style: .continuous)
-          .fill(Color.black.opacity(isBlockedTrayTargeted ? 0.08 : 0.035))
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 8, style: .continuous)
-          .stroke(
-            isBlockedTrayTargeted ? SettingsStyle.ink.opacity(0.35) : SettingsStyle.divider,
-            lineWidth: 1
-          )
-      )
+      .settingsControlSurface(isActive: isBlockedTrayTargeted, cornerRadius: 8)
       .onDrop(
         of: [UTType.text],
         isTargeted: $isBlockedTrayTargeted,
@@ -191,10 +167,10 @@ private struct RecordingPrivacyGridAppButton: View {
           if isBlocked {
             Image(systemName: "lock.fill")
               .font(.system(size: 9, weight: .bold))
-              .foregroundColor(.white)
+              .foregroundColor(Color(nsColor: .selectedMenuItemTextColor))
               .frame(width: 18, height: 18)
               .background(Circle().fill(SettingsStyle.ink))
-              .overlay(Circle().stroke(Color.white, lineWidth: 1.5))
+              .overlay(Circle().stroke(Color(nsColor: .windowBackgroundColor), lineWidth: 1.5))
               .offset(x: 4, y: 4)
           }
         }
@@ -211,7 +187,11 @@ private struct RecordingPrivacyGridAppButton: View {
       .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
       .background(
         RoundedRectangle(cornerRadius: 8, style: .continuous)
-          .fill(isBlocked ? SettingsStyle.ink.opacity(0.08) : Color.clear)
+          .fill(isBlocked ? SettingsStyle.selectedFill : Color.clear)
+      )
+      .overlay(
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
+          .stroke(isBlocked ? SettingsStyle.ink.opacity(0.24) : Color.clear, lineWidth: 0.8)
       )
     }
     .buttonStyle(.plain)

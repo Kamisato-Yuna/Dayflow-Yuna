@@ -6,13 +6,15 @@ import SwiftUI
 
 let cachedTodayDisplayFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "'Today,' MMM d"
+  formatter.locale = Locale(identifier: "zh_Hans_CN")
+  formatter.dateFormat = "'今天，'M月d日"
   return formatter
 }()
 
 let cachedOtherDayDisplayFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "E, MMM d"
+  formatter.locale = Locale(identifier: "zh_Hans_CN")
+  formatter.dateFormat = "M月d日 E"
   return formatter
 }()
 
@@ -184,9 +186,9 @@ extension MainView {
     let totalHours = Int(weeklyTrackedMinutes / 60)
     switch timelineMode {
     case .day:
-      return ("\(totalHours) hours", " tracked this week")
+      return ("\(totalHours) 小时", " 本周已记录")
     case .week:
-      return ("\(totalHours) hours", " of activities tracked this week")
+      return ("\(totalHours) 小时", " 本周活动已记录")
     }
   }
 

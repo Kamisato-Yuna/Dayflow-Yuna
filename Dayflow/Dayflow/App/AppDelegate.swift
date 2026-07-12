@@ -206,6 +206,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     return .terminateCancel
   }
 
+  func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+    guard !flag else { return true }
+
+    showMainWindowFromBackground()
+    return false
+  }
+
   // MARK: - Foreground Tracking
 
   private func setupForegroundTracking() {
@@ -244,6 +251,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private func applySavedDockIconPreference() {
     let showDockIcon = UserDefaults.standard.object(forKey: "showDockIcon") as? Bool ?? true
     NSApp.setActivationPolicy(showDockIcon ? .regular : .accessory)
+  }
+
+  private func showMainWindowFromBackground() {
+    let showDockIcon = UserDefaults.standard.object(forKey: "showDockIcon") as? Bool ?? true
+    if showDockIcon {
+      NSApp.setActivationPolicy(.regular)
+    }
+
+    NSApp.unhide(nil)
+    MainWindowController.shared.showMainWindow()
+    NSApp.activate(ignoringOtherApps: true)
   }
 
   // Start Gemini analysis as a background task

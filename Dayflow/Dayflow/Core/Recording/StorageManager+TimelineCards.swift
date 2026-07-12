@@ -221,9 +221,9 @@ extension StorageManager {
     // Calculate day using 4AM boundary
     let (dayString, _, _) = startTime.getDayInfoFor4AMBoundary()
 
-    // Get the first non-idle category, fallback to "Work"
+    // Get the first non-idle category, fallback to "工作"
     let categories = CategoryPersistence.loadPersistedCategories()
-    let category = categories.first(where: { !$0.isIdle })?.name ?? "Work"
+    let category = categories.first(where: { !$0.isIdle })?.name ?? "工作"
 
     // Build summary based on selected LLM provider
     let summary = buildOnboardingSummary()
@@ -315,37 +315,7 @@ extension StorageManager {
                 ORDER BY start ASC
             """, arguments: [batchId]
         ).map { row in
-          var distractions: [Distraction]? = nil
-          var appSites: AppSites? = nil
-          var isBackupGenerated: Bool? = nil
-          if let metadataString: String = row["metadata"],
-            let jsonData = metadataString.data(using: .utf8)
-          {
-            if let meta = try? decoder.decode(TimelineMetadata.self, from: jsonData) {
-              distractions = meta.distractions
-              appSites = meta.appSites
-              isBackupGenerated = meta.isBackupGenerated
-            } else if let legacy = try? decoder.decode([Distraction].self, from: jsonData) {
-              distractions = legacy
-            }
-          }
-          return TimelineCard(
-            recordId: row["id"],
-            batchId: batchId,
-            startTimestamp: row["start"] ?? "",
-            endTimestamp: row["end"] ?? "",
-            category: row["category"],
-            subcategory: row["subcategory"],
-            title: row["title"],
-            summary: row["summary"],
-            detailedSummary: row["detailed_summary"],
-            day: row["day"],
-            distractions: distractions,
-            videoSummaryURL: row["video_summary_url"],
-            otherVideoSummaryURLs: nil,
-            appSites: appSites,
-            isBackupGenerated: isBackupGenerated
-          )
+          timelineCard(from: row, decoder: decoder, fallbackBatchId: batchId)
         }
       }) ?? []
   }
@@ -427,40 +397,7 @@ extension StorageManager {
           """, arguments: [startTs, endTs]
       )
       .map { row in
-        // Decode metadata JSON (supports object or legacy array)
-        var distractions: [Distraction]? = nil
-        var appSites: AppSites? = nil
-        var isBackupGenerated: Bool? = nil
-        if let metadataString: String = row["metadata"],
-          let jsonData = metadataString.data(using: .utf8)
-        {
-          if let meta = try? decoder.decode(TimelineMetadata.self, from: jsonData) {
-            distractions = meta.distractions
-            appSites = meta.appSites
-            isBackupGenerated = meta.isBackupGenerated
-          } else if let legacy = try? decoder.decode([Distraction].self, from: jsonData) {
-            distractions = legacy
-          }
-        }
-
-        // Create TimelineCard instance using renamed columns
-        return TimelineCard(
-          recordId: row["id"],
-          batchId: row["batch_id"],
-          startTimestamp: row["start"] ?? "",  // Use row["start"]
-          endTimestamp: row["end"] ?? "",  // Use row["end"]
-          category: row["category"],
-          subcategory: row["subcategory"],
-          title: row["title"],
-          summary: row["summary"],
-          detailedSummary: row["detailed_summary"],
-          day: row["day"],
-          distractions: distractions,
-          videoSummaryURL: row["video_summary_url"],
-          otherVideoSummaryURLs: nil,
-          appSites: appSites,
-          isBackupGenerated: isBackupGenerated
-        )
+        timelineCard(from: row, decoder: decoder)
       }
     }
     return cards ?? []
@@ -488,40 +425,7 @@ extension StorageManager {
           """, arguments: [toTs, fromTs, fromTs, toTs]
       )
       .map { row in
-        // Decode metadata JSON (supports object or legacy array)
-        var distractions: [Distraction]? = nil
-        var appSites: AppSites? = nil
-        var isBackupGenerated: Bool? = nil
-        if let metadataString: String = row["metadata"],
-          let jsonData = metadataString.data(using: .utf8)
-        {
-          if let meta = try? decoder.decode(TimelineMetadata.self, from: jsonData) {
-            distractions = meta.distractions
-            appSites = meta.appSites
-            isBackupGenerated = meta.isBackupGenerated
-          } else if let legacy = try? decoder.decode([Distraction].self, from: jsonData) {
-            distractions = legacy
-          }
-        }
-
-        // Create TimelineCard instance using renamed columns
-        return TimelineCard(
-          recordId: row["id"],
-          batchId: row["batch_id"],
-          startTimestamp: row["start"] ?? "",
-          endTimestamp: row["end"] ?? "",
-          category: row["category"],
-          subcategory: row["subcategory"],
-          title: row["title"],
-          summary: row["summary"],
-          detailedSummary: row["detailed_summary"],
-          day: row["day"],
-          distractions: distractions,
-          videoSummaryURL: row["video_summary_url"],
-          otherVideoSummaryURLs: nil,
-          appSites: appSites,
-          isBackupGenerated: isBackupGenerated
-        )
+        timelineCard(from: row, decoder: decoder)
       }
     }
     let result = cards ?? []
@@ -700,33 +604,7 @@ extension StorageManager {
             """, arguments: [id])
       else { return nil }
 
-      // Decode distractions from metadata JSON
-      var distractions: [Distraction]? = nil
-      if let metadataString: String = row["metadata"],
-        let jsonData = metadataString.data(using: .utf8)
-      {
-        if let meta = try? decoder.decode(TimelineMetadata.self, from: jsonData) {
-          distractions = meta.distractions
-        } else if let legacy = try? decoder.decode([Distraction].self, from: jsonData) {
-          distractions = legacy
-        }
-      }
-
-      return TimelineCardWithTimestamps(
-        id: id,
-        startTimestamp: row["start"] ?? "",
-        endTimestamp: row["end"] ?? "",
-        startTs: row["start_ts"] ?? 0,
-        endTs: row["end_ts"] ?? 0,
-        category: row["category"],
-        subcategory: row["subcategory"],
-        title: row["title"],
-        summary: row["summary"],
-        detailedSummary: row["detailed_summary"],
-        day: row["day"],
-        distractions: distractions,
-        videoSummaryURL: row["video_summary_url"]
-      )
+      return timelineCardWithTimestamps(from: row, decoder: decoder, fallbackId: id)
     }
   }
 
@@ -752,32 +630,7 @@ extension StorageManager {
         return nil
       }
 
-      var distractions: [Distraction]? = nil
-      if let metadataString: String = row["metadata"],
-        let jsonData = metadataString.data(using: .utf8)
-      {
-        if let meta = try? decoder.decode(TimelineMetadata.self, from: jsonData) {
-          distractions = meta.distractions
-        } else if let legacy = try? decoder.decode([Distraction].self, from: jsonData) {
-          distractions = legacy
-        }
-      }
-
-      return TimelineCardWithTimestamps(
-        id: row["id"],
-        startTimestamp: row["start"] ?? "",
-        endTimestamp: row["end"] ?? "",
-        startTs: row["start_ts"] ?? 0,
-        endTs: row["end_ts"] ?? 0,
-        category: row["category"],
-        subcategory: row["subcategory"],
-        title: row["title"],
-        summary: row["summary"],
-        detailedSummary: row["detailed_summary"],
-        day: row["day"],
-        distractions: distractions,
-        videoSummaryURL: row["video_summary_url"]
-      )
+      return timelineCardWithTimestamps(from: row, decoder: decoder)
     }
   }
 
@@ -942,4 +795,81 @@ extension StorageManager {
 
   // Note: Transcript storage methods removed in favor of Observations table
 
+}
+
+extension StorageManager {
+  fileprivate func timelineCard(
+    from row: Row,
+    decoder: JSONDecoder,
+    fallbackBatchId: Int64? = nil
+  ) -> TimelineCard {
+    let metadata = timelineMetadata(from: row, decoder: decoder)
+    let rawCategory: String = row["category"] ?? ""
+
+    let rowBatchId: Int64? = row["batch_id"]
+
+    return TimelineCard(
+      recordId: row["id"],
+      batchId: rowBatchId ?? fallbackBatchId,
+      startTimestamp: row["start"] ?? "",
+      endTimestamp: row["end"] ?? "",
+      category: CategoryAliasResolver.displayName(for: rawCategory),
+      subcategory: row["subcategory"],
+      title: row["title"],
+      summary: row["summary"],
+      detailedSummary: row["detailed_summary"],
+      day: row["day"],
+      distractions: metadata.distractions,
+      videoSummaryURL: row["video_summary_url"],
+      otherVideoSummaryURLs: nil,
+      appSites: metadata.appSites,
+      isBackupGenerated: metadata.isBackupGenerated
+    )
+  }
+
+  fileprivate func timelineCardWithTimestamps(
+    from row: Row,
+    decoder: JSONDecoder,
+    fallbackId: Int64? = nil
+  ) -> TimelineCardWithTimestamps {
+    let metadata = timelineMetadata(from: row, decoder: decoder)
+    let rawCategory: String = row["category"] ?? ""
+
+    let rowId: Int64? = row["id"]
+
+    return TimelineCardWithTimestamps(
+      id: rowId ?? fallbackId ?? 0,
+      startTimestamp: row["start"] ?? "",
+      endTimestamp: row["end"] ?? "",
+      startTs: row["start_ts"] ?? 0,
+      endTs: row["end_ts"] ?? 0,
+      category: CategoryAliasResolver.displayName(for: rawCategory),
+      subcategory: row["subcategory"],
+      title: row["title"],
+      summary: row["summary"],
+      detailedSummary: row["detailed_summary"],
+      day: row["day"],
+      distractions: metadata.distractions,
+      videoSummaryURL: row["video_summary_url"]
+    )
+  }
+
+  private func timelineMetadata(
+    from row: Row,
+    decoder: JSONDecoder
+  ) -> (distractions: [Distraction]?, appSites: AppSites?, isBackupGenerated: Bool?) {
+    guard let metadataString: String = row["metadata"],
+      let jsonData = metadataString.data(using: .utf8)
+    else {
+      return (nil, nil, nil)
+    }
+
+    if let meta = try? decoder.decode(TimelineMetadata.self, from: jsonData) {
+      return (meta.distractions, meta.appSites, meta.isBackupGenerated)
+    }
+    if let legacy = try? decoder.decode([Distraction].self, from: jsonData) {
+      return (legacy, nil, nil)
+    }
+    return (nil, nil, nil)
+  }
 }

@@ -33,7 +33,7 @@ enum LogoPosition {
 
 extension MainView {
   var contentStack: some View {
-    // Two-column layout: left logo + sidebar; right white panel with header, filters, timeline
+    // Two-column layout: left logo + sidebar; right surface panel with header, filters, timeline
     HStack(alignment: .top, spacing: 0) {
       leftColumn
       rightPanel
@@ -74,12 +74,27 @@ extension MainView {
 
   @ViewBuilder
   private var rightPanel: some View {
-    // Right column: Main white panel including header + content
+    if selectedIcon == .settings {
+      rightPanelContent
+        .padding(0)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    } else {
+      // Right column: Main surface panel including header + content
+      rightPanelContent
+        .padding(0)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .dayflowContentPanel(cornerRadius: 8)
+    }
+  }
+
+  @ViewBuilder
+  private var rightPanelContent: some View {
     ZStack {
       switch selectedIcon {
       case .settings:
         SettingsView()
-          .padding(15)
       case .chat:
         ChatPanelView()
       case .daily:
@@ -98,24 +113,6 @@ extension MainView {
         }
       }
     }
-    .padding(0)
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-    .background(mainPanelBackground)
-  }
-
-  private var mainPanelBackground: some View {
-    ZStack {
-      RoundedRectangle(cornerRadius: 8, style: .continuous)
-        .fill(Color.white)
-        .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 0)
-      RoundedRectangle(cornerRadius: 8, style: .continuous)
-        .fill(Color.white)
-        .blendMode(.destinationOut)
-      RoundedRectangle(cornerRadius: 8, style: .continuous)
-        .fill(.white.opacity(0.22))
-    }
-    .compositingGroup()
   }
 
   private func timelinePanel(geo: GeometryProxy) -> some View {
@@ -124,7 +121,7 @@ extension MainView {
         timelineLeftColumn
           .zIndex(1)
         Rectangle()
-          .fill(Color(hex: "ECECEC"))
+          .fill(Color(nsColor: .separatorColor).opacity(0.5))
           .frame(width: timelineInspectorDividerWidth)
           .opacity(timelineInspectorDividerWidth == 0 ? 0 : 1)
           .frame(maxHeight: .infinity)
@@ -279,7 +276,8 @@ extension MainView {
   private func timelineRightColumn(geo: GeometryProxy) -> some View {
     ZStack(alignment: .topLeading) {
       if timelineInspectorWidth > 0 {
-        Color.white.opacity(0.7)
+        Color.clear
+          .dayflowInspectorPanel(cornerRadius: 8)
       }
 
       switch timelineMode {
@@ -432,7 +430,7 @@ extension MainView {
   }
 
   private var weeklyHoursText: some View {
-    let textColor = Color(red: 0.84, green: 0.65, blue: 0.52)
+    let textColor = Color(nsColor: .secondaryLabelColor)
     let parts = timelineTrackedMinutesParts
 
     return
@@ -453,9 +451,7 @@ extension MainView {
   }
 
   private var copyTimelineButton: some View {
-    let background = Color(red: 0.99, green: 0.93, blue: 0.88)
-    let stroke = Color(red: 0.97, green: 0.89, blue: 0.81)
-    let textColor = Color(red: 0.84, green: 0.65, blue: 0.52)
+    let textColor = Color(nsColor: .secondaryLabelColor)
 
     // Slide up + fade: no text scaling (scaling distorts letterforms)
     let enterTransition = AnyTransition.opacity
@@ -480,11 +476,9 @@ extension MainView {
           .transition(.asymmetric(insertion: enterTransition, removal: exitTransition))
         } else {
           HStack(spacing: 4) {
-            Image("复制")
-              .resizable()
-              .interpolation(.high)
-              .renderingMode(.template)
-              .scaledToFit()
+            Image(systemName: "doc.on.doc")
+              .font(.system(size: 11.5, weight: .medium))
+              .symbolRenderingMode(.hierarchical)
               .frame(width: 11.5, height: 11.5)
             Text("复制时间线")
               .font(Font.custom("Figtree", size: 11.5).weight(.medium))
@@ -495,13 +489,7 @@ extension MainView {
       .animation(.spring(response: 0.3, dampingFraction: 0.85), value: copyTimelineState)
       .frame(width: 104, height: 23)
       .foregroundColor(textColor)
-      .background(background)
-      .clipShape(RoundedRectangle(cornerRadius: 7))
-      .overlay(
-        RoundedRectangle(cornerRadius: 7)
-          .inset(by: 0.5)
-          .stroke(stroke, lineWidth: 1)
-      )
+      .dayflowFloatingControl(cornerRadius: 7)
       .contentShape(Rectangle())
     }
     .buttonStyle(ShrinkButtonStyle())

@@ -34,8 +34,7 @@ struct StatusMenuView: View {
     .padding(.vertical, 9)
     .padding(.horizontal, 9)
     .frame(minWidth: 200, maxWidth: 210)
-    .background(.regularMaterial)
-    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    .dayflowPopoverSurface(cornerRadius: 12)
   }
 
   private func pauseRecording(duration: PauseDuration) {
@@ -143,12 +142,7 @@ private struct DurationPicker: View {
         }
       }
     }
-    .background(Color.primary.opacity(0.06))
-    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 6, style: .continuous)
-        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5)
-    )
+    .dayflowFloatingControl(cornerRadius: 6)
   }
 }
 
@@ -222,12 +216,11 @@ private struct CountdownBadge: View {
       Text(remainingTime)
         .font(.system(size: 11, weight: .bold).monospacedDigit())
     }
-    .foregroundStyle(.white)
+    .foregroundStyle(.primary)
     .padding(.horizontal, 12)
     .padding(.vertical, 6)
     .frame(maxWidth: .infinity)
-    .background(Color.accentColor)
-    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+    .dayflowFloatingControl(cornerRadius: 6)
   }
 }
 

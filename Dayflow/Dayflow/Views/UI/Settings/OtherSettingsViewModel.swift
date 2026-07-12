@@ -49,6 +49,14 @@ final class OtherSettingsViewModel: ObservableObject {
   @Published var reprocessStatusMessage: String?
   @Published var reprocessErrorMessage: String?
   @Published var showReprocessDayConfirm = false
+  @Published var isCategoryMigrationPresented = false
+  @Published var categoryMigrationMappings = CategoryAliasResolver.defaultMappings
+  @Published var isScanningCategoryMigration = false
+  @Published var isPerformingCategoryMigration = false
+  @Published var categoryMigrationScanResult: CategoryMigrationScanResult?
+  @Published var categoryMigrationResult: CategoryMigrationResult?
+  @Published var categoryMigrationStatusMessage: String?
+  @Published var categoryMigrationErrorMessage: String?
 
   init() {
     analyticsEnabled = AnalyticsService.shared.isOptedIn
@@ -174,6 +182,84 @@ final class OtherSettingsViewModel: ObservableObject {
           self.isReprocessingDay = false
         }
       })
+  }
+
+  func presentCategoryMigration() {
+    if categoryMigrationMappings.isEmpty {
+      categoryMigrationMappings = CategoryAliasResolver.defaultMappings
+    }
+    categoryMigrationScanResult = nil
+    categoryMigrationResult = nil
+    categoryMigrationStatusMessage = nil
+    categoryMigrationErrorMessage = nil
+    isCategoryMigrationPresented = true
+  }
+
+  func resetCategoryMigrationMappings() {
+    categoryMigrationMappings = CategoryAliasResolver.defaultMappings
+    categoryMigrationScanResult = nil
+    categoryMigrationResult = nil
+    categoryMigrationStatusMessage = nil
+    categoryMigrationErrorMessage = nil
+  }
+
+  func scanCategoryMigration() {
+    guard !isScanningCategoryMigration, !isPerformingCategoryMigration else { return }
+
+    isScanningCategoryMigration = true
+    categoryMigrationScanResult = nil
+    categoryMigrationResult = nil
+    categoryMigrationStatusMessage = "正在扫描分类数据…"
+    categoryMigrationErrorMessage = nil
+
+    let mappings = categoryMigrationMappings
+    Task.detached(priority: .userInitiated) {
+      do {
+        let result = try StorageManager.shared.scanCategoryNameMigration(mappings: mappings)
+        await MainActor.run {
+          self.categoryMigrationScanResult = result
+          self.categoryMigrationStatusMessage =
+            result.isEmpty ? "没有发现需要迁移的分类数据。" : "扫描完成，命中 \(result.totalRows) 行。"
+          self.isScanningCategoryMigration = false
+        }
+      } catch {
+        await MainActor.run {
+          self.categoryMigrationErrorMessage = "扫描失败：\(error.localizedDescription)"
+          self.categoryMigrationStatusMessage = nil
+          self.isScanningCategoryMigration = false
+        }
+      }
+    }
+  }
+
+  func performCategoryMigration() {
+    guard !isScanningCategoryMigration, !isPerformingCategoryMigration else { return }
+
+    isPerformingCategoryMigration = true
+    categoryMigrationResult = nil
+    categoryMigrationStatusMessage = "正在创建备份并迁移分类数据…"
+    categoryMigrationErrorMessage = nil
+
+    let mappings = categoryMigrationMappings
+    Task.detached(priority: .userInitiated) {
+      do {
+        let result = try StorageManager.shared.performCategoryNameMigration(mappings: mappings)
+        await MainActor.run {
+          self.categoryMigrationResult = result
+          self.categoryMigrationScanResult = result.scanResult
+          self.categoryMigrationStatusMessage =
+            "迁移完成：已更新 \(result.totalUpdatedRows) 行。备份：\(result.backupURL.path)"
+          self.isPerformingCategoryMigration = false
+          NotificationCenter.default.post(name: .timelineDataUpdated, object: nil)
+        }
+      } catch {
+        await MainActor.run {
+          self.categoryMigrationErrorMessage = "迁移失败：\(error.localizedDescription)"
+          self.categoryMigrationStatusMessage = nil
+          self.isPerformingCategoryMigration = false
+        }
+      }
+    }
   }
 
   @MainActor

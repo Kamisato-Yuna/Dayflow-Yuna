@@ -16,7 +16,7 @@ struct MainView: View {
   @EnvironmentObject var appState: AppState
   @EnvironmentObject var categoryStore: CategoryStore
   @Environment(\.accessibilityReduceMotion) var reduceMotion
-  @State var selectedIcon: SidebarIcon = .timeline
+  @State var selectedIcon: SidebarIcon = Self.initialSidebarIcon()
   @State var selectedDate = timelineDisplayDate(from: Date())
   @State var cachedTimelineWeekRange: TimelineWeekRange = TimelineWeekRange.containing(
     timelineDisplayDate(from: Date()))
@@ -99,6 +99,32 @@ struct MainView: View {
 
   init(goalFlowPresentation: Binding<DayGoalFlowPresentation?> = .constant(nil)) {
     _goalFlowPresentation = goalFlowPresentation
+  }
+
+  private static func initialSidebarIcon(arguments: [String] = ProcessInfo.processInfo.arguments)
+    -> SidebarIcon
+  {
+    guard
+      let argumentIndex = arguments.firstIndex(of: "--dayflow-initial-tab"),
+      arguments.indices.contains(argumentIndex + 1)
+    else {
+      return .timeline
+    }
+
+    switch arguments[argumentIndex + 1].lowercased() {
+    case "daily":
+      return .daily
+    case "weekly":
+      return .weekly
+    case "chat":
+      return .chat
+    case "feedback", "bug":
+      return .bug
+    case "settings":
+      return .settings
+    default:
+      return .timeline
+    }
   }
 
   var body: some View {

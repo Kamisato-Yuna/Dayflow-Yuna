@@ -17,7 +17,7 @@ struct OnboardingPrototypePreferencesStep: View {
       VStack(spacing: 24) {
         Text("你有 ChatGPT 或 Claude 的付费账号吗？")
           .font(.custom("Figtree", size: 20))
-          .foregroundColor(Color(hex: "89380E"))
+          .foregroundColor(DayflowOnboardingToken.title)
           .multilineTextAlignment(.center)
 
         HStack(spacing: 8) {
@@ -27,25 +27,19 @@ struct OnboardingPrototypePreferencesStep: View {
             } label: {
               Text(option)
                 .font(.custom("Figtree", size: 16))
-                .foregroundColor(Color(hex: "492304"))
+                .foregroundColor(DayflowOnboardingToken.title)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 8)
-                .background(Color.white.opacity(0.4))
-                .clipShape(Capsule())
-                .overlay(
-                  Capsule()
-                    .stroke(Color(hex: "E4D3C2"), lineWidth: 1)
-                )
-                .shadow(
-                  color: Color(hex: "AF7246").opacity(0.15),
-                  radius: 2, x: 0, y: 0
-                )
+                .dayflowOnboardingOptionCard(isSelected: false, cornerRadius: 18)
             }
             .buttonStyle(.plain)
             .pointingHandCursor()
           }
         }
       }
+      .padding(.horizontal, 28)
+      .padding(.vertical, 28)
+      .dayflowOnboardingPanel()
 
       Spacer()
     }

@@ -22,7 +22,7 @@ enum WeeklyDashboardBuilder {
   ) -> WeeklyDashboardSnapshot {
     let categoryLookup = firstCategoryLookup(
       from: categories.sorted { $0.order < $1.order },
-      normalizedKey: normalizedKey
+      normalizedKey: CategoryAliasResolver.normalizedKey
     )
     let facts = cardFacts(from: cards, categories: categoryLookup, weekRange: weekRange)
     let previousFacts = cardFacts(
@@ -65,8 +65,8 @@ enum WeeklyDashboardBuilder {
       let durationMinutes = max(Int((normalizedRange.end - normalizedRange.start).rounded()), 0)
       guard durationMinutes > 0 else { return nil }
 
-      let categoryName = displayName(card.category, fallback: "未分类")
-      let categoryKey = normalizedKey(categoryName)
+      let categoryName = CategoryAliasResolver.displayName(for: card.category)
+      let categoryKey = CategoryAliasResolver.normalizedKey(categoryName)
       let category = categories[categoryKey]
       let app = appIdentity(for: card)
       let faviconPrimaryRaw = card.appSites?.primary
@@ -209,7 +209,7 @@ enum WeeklyDashboardBuilder {
       .first { !$0.isEmpty }
 
     let name = prettyAppName(from: rawApp, fallbackText: "\(card.title) \(card.summary)")
-    let key = normalizedKey(name)
+    let key = CategoryAliasResolver.rawNormalizedKey(name)
     return WeeklyAppIdentity(
       key: key.isEmpty ? otherKey : key,
       name: name,
@@ -360,14 +360,14 @@ enum WeeklyDashboardBuilder {
 
   private static func dayLabel(for offset: Int) -> String {
     switch offset {
-    case 0: return "Mon"
-    case 1: return "Tue"
-    case 2: return "Wed"
-    case 3: return "Thur"
-    case 4: return "Fri"
-    case 5: return "Sat"
-    case 6: return "Sun"
-    default: return "Day"
+    case 0: return "周一"
+    case 1: return "周二"
+    case 2: return "周三"
+    case 3: return "周四"
+    case 4: return "周五"
+    case 5: return "周六"
+    case 6: return "周日"
+    default: return "日期"
     }
   }
 
@@ -436,12 +436,8 @@ enum WeeklyDashboardBuilder {
     if let recordId = card.recordId {
       return "card-\(recordId)"
     }
-    return "\(card.day)-\(card.startTimestamp)-\(card.endTimestamp)-\(normalizedKey(card.title))"
-  }
-
-  private static func displayName(_ value: String, fallback: String) -> String {
-    let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-    return trimmed.isEmpty ? fallback : trimmed
+    return
+      "\(card.day)-\(card.startTimestamp)-\(card.endTimestamp)-\(CategoryAliasResolver.normalizedKey(card.title))"
   }
 
   private static func factDurationSort(_ lhs: WeeklyCardFact, _ rhs: WeeklyCardFact) -> Bool {
@@ -474,18 +470,6 @@ enum WeeklyDashboardBuilder {
       adjustedEnd += 1440
     }
     return (adjustedStart, adjustedEnd)
-  }
-
-  private static func normalizedKey(_ value: String) -> String {
-    let folded =
-      value
-      .trimmingCharacters(in: .whitespacesAndNewlines)
-      .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-      .lowercased()
-    let parts = folded.map { character -> String in
-      character.isLetter || character.isNumber ? String(character) : "-"
-    }
-    return parts.joined().split(separator: "-").joined(separator: "_")
   }
 
   private static func normalizedColorHex(_ value: String) -> String {

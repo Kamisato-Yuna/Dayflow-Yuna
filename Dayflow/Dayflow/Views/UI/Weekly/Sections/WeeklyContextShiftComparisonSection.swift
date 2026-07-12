@@ -1,9 +1,12 @@
+import AppKit
 import Charts
 import SwiftUI
 
 struct WeeklyContextShiftComparisonSection: View {
   let snapshot: WeeklyContextShiftComparisonSnapshot
   let onPinpoint: () -> Void
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(
     snapshot: WeeklyContextShiftComparisonSnapshot,
@@ -17,10 +20,8 @@ struct WeeklyContextShiftComparisonSection: View {
     static let sectionWidth: CGFloat = 958
     static let sectionHeight: CGFloat = 414
     static let cornerRadius: CGFloat = 6
-    static let background = Color(hex: "FBF6F0")
-    static let axisColor = Color(hex: "5A534C").opacity(0.9)
-    static let labelColor = Color.black
-    static let insightBorder = Color(hex: "EBE6E3")
+    static let axisColor = DayflowWeeklyToken.separator
+    static let labelColor = DayflowWeeklyToken.text
 
     static let horizontalPadding: CGFloat = 24
     static let topPadding: CGFloat = 28
@@ -66,10 +67,7 @@ struct WeeklyContextShiftComparisonSection: View {
     .padding(.horizontal, Design.horizontalPadding)
     .padding(.bottom, Design.bottomPadding)
     .frame(width: Design.sectionWidth, height: Design.sectionHeight, alignment: .topLeading)
-    .background(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(Design.background)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: Design.cornerRadius)
   }
 
   private var legend: some View {
@@ -174,10 +172,16 @@ struct WeeklyContextShiftComparisonSection: View {
         }
         .padding(.horizontal, Design.buttonHorizontalPadding)
         .padding(.vertical, Design.buttonVerticalPadding)
-        .background(Color.white)
+        .background(DayflowWeeklyToken.secondaryChartFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .overlay(
           Capsule(style: .continuous)
-            .stroke(Design.insightBorder, lineWidth: 1)
+            .stroke(DayflowWeeklyToken.border(
+              colorScheme: colorScheme,
+              increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+            ), lineWidth: 1)
         )
         .clipShape(Capsule(style: .continuous))
       }
@@ -187,10 +191,16 @@ struct WeeklyContextShiftComparisonSection: View {
     }
     .padding(Design.calloutPadding)
     .frame(width: Design.calloutWidth, alignment: .leading)
-    .background(Color.white.opacity(0.45))
+    .background(DayflowWeeklyToken.secondaryChartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
     .overlay(
       RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Color.white, lineWidth: 1)
+        .stroke(DayflowWeeklyToken.border(
+          colorScheme: colorScheme,
+          increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+        ), lineWidth: 1)
     )
     .clipShape(RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous))
   }
@@ -203,11 +213,11 @@ struct WeeklyContextShiftComparisonSnapshot {
   let callToAction: String
 
   static let figmaPreview = WeeklyContextShiftComparisonSnapshot(
-    dayLabels: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat"],
+    dayLabels: ["周一", "周二", "周三", "周四", "周五", "周六"],
     series: [
       WeeklyContextShiftComparisonSeries(
         id: "distractions",
-        label: "Number of times distracted",
+        label: "分心次数",
         colorHex: "FF8A8A",
         points: [
           .init(dayIndex: 0, value: 12),
@@ -220,7 +230,7 @@ struct WeeklyContextShiftComparisonSnapshot {
       ),
       WeeklyContextShiftComparisonSeries(
         id: "context-shifts",
-        label: "Number of context shifts",
+        label: "上下文切换次数",
         colorHex: "A78CFF",
         points: [
           .init(dayIndex: 0, value: 15),
@@ -233,8 +243,8 @@ struct WeeklyContextShiftComparisonSnapshot {
       ),
     ],
     insightText:
-      "Your interruptions are driven by context shifts and distractions.",
-    callToAction: "Pinpoint"
+      "你的打断主要来自上下文切换和分心。",
+    callToAction: "定位原因"
   )
 }
 
@@ -254,5 +264,5 @@ struct WeeklyContextShiftComparisonPoint: Identifiable {
 #Preview("Weekly Context Shift Comparison", traits: .fixedLayout(width: 958, height: 414)) {
   WeeklyContextShiftComparisonSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
 }

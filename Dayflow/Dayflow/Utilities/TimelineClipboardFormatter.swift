@@ -4,13 +4,13 @@ struct TimelineClipboardFormatter {
   static func makeClipboardText(for date: Date, cards: [TimelineCard], now: Date = Date()) -> String
   {
     let timelineDate = timelineDisplayDate(from: date, now: now)
-    let header = "Dayflow timeline · \(formattedTimelineDay(timelineDate, now: now))"
+    let header = "Dayflow 时间线 · \(formattedTimelineDay(timelineDate, now: now))"
 
     guard !cards.isEmpty else {
       return """
         \(header)
 
-        No timeline activities were recorded for this day.
+        今天还没有记录时间线活动。
         """
     }
 
@@ -26,13 +26,13 @@ struct TimelineClipboardFormatter {
     cards: [TimelineCard],
     now: Date = Date()
   ) -> String {
-    let header = "Dayflow timeline · \(weekRange.title)"
+    let header = "Dayflow 时间线 · \(weekRange.title)"
 
     guard !cards.isEmpty else {
       return """
         \(header)
 
-        No timeline activities were recorded for this week.
+        本周还没有记录时间线活动。
         """
     }
 
@@ -54,13 +54,13 @@ struct TimelineClipboardFormatter {
 
   static func makeMarkdown(for date: Date, cards: [TimelineCard], now: Date = Date()) -> String {
     let timelineDate = timelineDisplayDate(from: date, now: now)
-    let header = "## Dayflow timeline · \(formattedTimelineDay(timelineDate, now: now))"
+    let header = "## Dayflow 时间线 · \(formattedTimelineDay(timelineDate, now: now))"
 
     guard !cards.isEmpty else {
       return """
         \(header)
 
-        _No timeline activities were recorded for this day._
+        _今天还没有记录时间线活动。_
         """
     }
 
@@ -80,9 +80,9 @@ struct TimelineClipboardFormatter {
       if let summary = cleanedParagraph(card.summary) {
         let summaryLines = normalizedLines(summary)
         if summaryLines.count == 1 {
-          lines.append("   - Summary: \(summaryLines[0])")
+          lines.append("   - 摘要: \(summaryLines[0])")
         } else {
-          lines.append("   - Summary:")
+          lines.append("   - 摘要:")
           summaryLines.forEach { lines.append("      \($0)") }
         }
       }
@@ -92,9 +92,9 @@ struct TimelineClipboardFormatter {
       {
         let detailLines = normalizedLines(details)
         if detailLines.count == 1 {
-          lines.append("   - Details: \(detailLines[0])")
+          lines.append("   - 详情: \(detailLines[0])")
         } else {
-          lines.append("   - Details:")
+          lines.append("   - 详情:")
           detailLines.forEach { lines.append("      \($0)") }
         }
       }
@@ -161,9 +161,11 @@ struct TimelineClipboardFormatter {
     let formatter = DateFormatter()
 
     if calendar.isDate(date, inSameDayAs: timelineToday) {
-      formatter.dateFormat = "'Today,' MMM d"
+      formatter.locale = Locale(identifier: "zh_Hans_CN")
+      formatter.dateFormat = "'今天，'M月d日"
     } else {
-      formatter.dateFormat = "EEEE, MMM d"
+      formatter.locale = Locale(identifier: "zh_Hans_CN")
+      formatter.dateFormat = "EEEE，M月d日"
     }
 
     return formatter.string(from: date)
@@ -183,13 +185,13 @@ struct TimelineClipboardFormatter {
     }
 
     if let summary = cleanedParagraph(card.summary) {
-      lines.append(block(label: "Summary", text: summary))
+      lines.append(block(label: "摘要", text: summary))
     }
 
     if let details = cleanedParagraph(card.detailedSummary),
       details != cleanedParagraph(card.summary)
     {
-      lines.append(block(label: "Details", text: details))
+      lines.append(block(label: "详情", text: details))
     }
 
     return lines.joined(separator: "\n")

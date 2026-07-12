@@ -13,6 +13,8 @@ struct DistractionSummaryCard: View {
   let distractedRatio: Double
   let patternTitle: String
   let patternDescription: String
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(
     totalCaptured: String,
@@ -39,17 +41,13 @@ struct DistractionSummaryCard: View {
     static let donutInnerMaxSize: CGFloat = 136
     static let donutInnerBottomInset: CGFloat = 4.868
 
-    static let donutFill = Color(hex: "F0F0F0").opacity(0.8)
-    static let donutStroke = Color(hex: "DDDDDD")
-    static let donutGradientStart = Color(hex: "FFE3DE")
-    static let donutGradientEnd = Color(hex: "FF694B")
+    static let capturedTextColor = DayflowDailyToken.secondaryText
+    static let capturedValueColor = DayflowDailyToken.title
+    static let distractedTextColor = DayflowDailyToken.distraction
+    static let bodyTextColor = DayflowDailyToken.text
 
-    static let capturedTextColor = Color(hex: "9C9C9C")
-    static let distractedTextColor = Color(hex: "FF694B")
-    static let bodyTextColor = Color(hex: "333333")
-
-    static let labelFont = Font.custom("InstrumentSerif-Regular", size: 14)
-    static let valueFont = Font.custom("InstrumentSerif-Regular", size: 20)
+    static let labelFont = Font.system(size: 14, weight: .medium, design: .rounded)
+    static let valueFont = Font.system(size: 20, weight: .semibold, design: .rounded)
     static let patternTitleFont = Font.custom("Figtree", size: 12).weight(.bold)
     static let patternBodyFont = Font.custom("Figtree", size: 12)
   }
@@ -75,13 +73,17 @@ struct DistractionSummaryCard: View {
     let innerDiameter = Design.donutInnerMaxSize * sqrt(clampedRatio)
     let innerX = (Design.donutSize - innerDiameter) / 2
     let innerY = Design.donutSize - Design.donutInnerBottomInset - innerDiameter
+    let donutFill = DayflowDailyToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
 
     return ZStack(alignment: .topLeading) {
       Circle()
-        .fill(Design.donutFill)
+        .fill(donutFill)
         .overlay(
           Circle()
-            .stroke(Design.donutStroke, lineWidth: 1)
+            .stroke(DayflowDailyToken.separator, lineWidth: 1)
         )
         .frame(width: Design.donutSize, height: Design.donutSize)
 
@@ -90,9 +92,9 @@ struct DistractionSummaryCard: View {
           .fill(
             LinearGradient(
               stops: [
-                .init(color: Design.donutGradientStart, location: 0),
-                .init(color: Design.donutGradientEnd, location: 0.78306),
-                .init(color: Design.donutGradientEnd, location: 1),
+                .init(color: DayflowDailyToken.distraction.opacity(0.20), location: 0),
+                .init(color: DayflowDailyToken.distraction.opacity(0.90), location: 0.78306),
+                .init(color: DayflowDailyToken.distraction.opacity(0.90), location: 1),
               ],
               startPoint: .leading,
               endPoint: .trailing
@@ -109,28 +111,30 @@ struct DistractionSummaryCard: View {
   private var statsBlock: some View {
     VStack(alignment: .leading, spacing: Design.statsSpacing) {
       statText(
-        title: "Total time captured",
+        title: "总记录时长",
         value: totalCaptured,
-        color: Design.capturedTextColor
+        labelColor: Design.capturedTextColor,
+        valueColor: Design.capturedValueColor
       )
 
       statText(
-        title: "Total time distracted",
+        title: "分心总时长",
         value: totalDistracted,
-        color: Design.distractedTextColor
+        labelColor: Design.distractedTextColor.opacity(0.86),
+        valueColor: Design.distractedTextColor
       )
     }
     .frame(width: Design.statsWidth, alignment: .leading)
   }
 
-  private func statText(title: String, value: String, color: Color) -> some View {
+  private func statText(title: String, value: String, labelColor: Color, valueColor: Color) -> some View {
     VStack(alignment: .leading, spacing: 2) {
       Text(title)
         .font(Design.labelFont)
-        .foregroundColor(color)
+        .foregroundColor(labelColor)
       Text(value)
         .font(Design.valueFont)
-        .foregroundColor(color)
+        .foregroundColor(valueColor)
     }
     .lineSpacing(2)
   }
@@ -138,8 +142,10 @@ struct DistractionSummaryCard: View {
   private var patternBlock: some View {
     VStack(alignment: .leading, spacing: 2) {
       HStack(spacing: 2) {
-        Image("DistractionSummaryIcon")
-          .resizable()
+        Image(systemName: "exclamationmark.triangle.fill")
+          .font(.system(size: 13, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
+          .foregroundStyle(DayflowDailyToken.distraction)
           .frame(width: 16, height: 16)
 
         Text(patternTitle)
@@ -159,12 +165,13 @@ struct DistractionSummaryCard: View {
 
 #Preview("Distraction Summary Card") {
   DistractionSummaryCard(
-    totalCaptured: "8 hours 49 minutes",
-    totalDistracted: "2 hours 7 minutes",
+    totalCaptured: "8小时49分钟",
+    totalDistracted: "2小时7分钟",
     distractedRatio: 0.24,
+    patternTitle: "主要分心模式",
     patternDescription:
-      "YouTube recommendations pull attention from one video to the next for extended periods."
+      "YouTube 推荐内容会把注意力从一个视频带到下一个视频，持续占用较长时间。"
   )
   .padding(24)
-  .background(Color.white)
+  .dayflowCard(cornerRadius: 12)
 }

@@ -167,6 +167,8 @@ struct CanvasTimelineDataView: View {
   @EnvironmentObject private var categoryStore: CategoryStore
   @EnvironmentObject private var appState: AppState
   @EnvironmentObject private var retryCoordinator: RetryCoordinator
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private let storageManager = StorageManager.shared
 
@@ -346,7 +348,7 @@ struct CanvasTimelineDataView: View {
       ForEach(0..<(CanvasConfig.endHour - CanvasConfig.startHour), id: \.self) { _ in
         VStack(spacing: 0) {
           Rectangle()
-            .fill(Color.black.opacity(0.1))
+            .fill(Color(nsColor: .separatorColor).opacity(0.42))
             .frame(height: 0.75)
           Spacer()
         }
@@ -361,7 +363,7 @@ struct CanvasTimelineDataView: View {
         let hourIndex = hour - CanvasConfig.startHour
         Text(formatHour(hour))
           .font(.custom("Figtree", size: timeLabelFontSize))
-          .foregroundColor(Color(hex: "594838"))
+          .foregroundColor(.secondary)
           .padding(.trailing, 5)
           .padding(.top, 2)
           .frame(width: CanvasConfig.timeColumnWidth, alignment: .trailing)
@@ -1172,10 +1174,7 @@ struct CanvasTimelineDataView: View {
 
   private func formatHour(_ hour: Int) -> String {
     let normalizedHour = hour >= 24 ? hour - 24 : hour
-    let adjustedHour =
-      normalizedHour > 12 ? normalizedHour - 12 : (normalizedHour == 0 ? 12 : normalizedHour)
-    let period = normalizedHour >= 12 ? "PM" : "AM"
-    return "\(adjustedHour):00 \(period)"
+    return "\(normalizedHour)点"
   }
 
   nonisolated private static func formatRange(start: Date, end: Date) -> String {
@@ -1196,10 +1195,18 @@ struct CanvasTimelineDataView: View {
     let baseNSColor = NSColor(hex: category.colorHex) ?? NSColor(hex: "#4F80EB") ?? .systemBlue
 
     return CanvasActivityCardStyle(
-      text: Color.black.opacity(0.9),
-      time: Color.black.opacity(0.7),
+      text: Color(nsColor: .labelColor),
+      time: Color(nsColor: .secondaryLabelColor),
       accent: Color(nsColor: baseNSColor),
-      isIdle: category.isIdle
+      isIdle: category.isIdle,
+      fill: DayflowContentToken.timelineCardFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      border: DayflowContentToken.timelineCardBorder(
+        colorScheme: colorScheme,
+        isSelected: false
+      )
     )
   }
 }
@@ -1242,6 +1249,8 @@ struct CanvasActivityCardStyle {
   let time: Color
   let accent: Color
   let isIdle: Bool
+  let fill: Color
+  let border: Color
 }
 
 struct CanvasActivityCard: View {
@@ -1296,15 +1305,15 @@ struct CanvasActivityCard: View {
   private var backupIndicator: some View {
     Text("!")
       .font(Font.custom("Figtree", size: 9).weight(.semibold))
-      .foregroundColor(Color(red: 0.4, green: 0.4, blue: 0.4))
+      .foregroundColor(.secondary)
       .frame(width: 14, height: 14)
       .background(
         Circle()
-          .fill(Color(red: 0.96, green: 0.94, blue: 0.91).opacity(0.9))
+          .fill(Color(nsColor: .controlBackgroundColor).opacity(0.82))
       )
       .overlay(
         Circle()
-          .stroke(Color(red: 0.9, green: 0.9, blue: 0.9), lineWidth: 0.75)
+          .stroke(Color(nsColor: .separatorColor).opacity(0.5), lineWidth: 0.75)
       )
       .help(
         "由于触发频率限制，这张卡片已回退到质量较低的 Gemini 模型，输出质量可能会降低。"
@@ -1403,13 +1412,19 @@ struct CanvasActivityCard: View {
         maxHeight: height,
         alignment: isCompactCard ? .leading : .topLeading
       )
-      .background(isFailedCard ? Color(hex: "FFECE4") : Color(hex: "FFFBF8"))
+      .background(
+        isFailedCard
+          ? Color(nsColor: .systemRed).opacity(0.10)
+          : style.fill
+      )
       .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
       .overlay(
         RoundedRectangle(cornerRadius: 2, style: .continuous)
           .inset(by: 0.25)
           .stroke(
-            isFailedCard ? Color(red: 1, green: 0.16, blue: 0.11) : Color(hex: "E8E8E8"),
+            isFailedCard
+              ? Color(nsColor: .systemRed).opacity(0.9)
+              : style.border,
             style: isFailedCard
               ? StrokeStyle(lineWidth: 0.5, dash: [2.5, 2.5]) : StrokeStyle(lineWidth: 0.25)
           )

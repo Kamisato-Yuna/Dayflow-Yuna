@@ -15,14 +15,14 @@ struct BugReportView: View {
     VStack(spacing: 36) {
       VStack(spacing: 16) {
         Text("感谢使用 Dayflow")
-          .font(.custom("InstrumentSerif-Regular", size: 40))
-          .foregroundColor(.black.opacity(0.9))
+          .font(.custom("HanziPen SC", size: 40))
+          .foregroundColor(Color(nsColor: .labelColor))
 
         Text(
           "如果你想快速留言，可以发邮件；如果想加入社区，可以来 Discord；如果更想直接聊聊，也可以在我的日历里约个时间。我很想了解 Dayflow 哪些地方好用，哪些地方还不够好。"
         )
         .font(.custom("Figtree", size: 16))
-        .foregroundColor(.black.opacity(0.65))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         .multilineTextAlignment(.center)
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: 520)
@@ -31,7 +31,7 @@ struct BugReportView: View {
         VStack(spacing: 12) {
           Text("联系我们")
             .font(.custom("Figtree", size: 14).weight(.medium))
-            .foregroundColor(.black.opacity(0.55))
+            .foregroundColor(Color(nsColor: .tertiaryLabelColor))
             .textCase(.uppercase)
             .tracking(0.75)
 
@@ -46,35 +46,32 @@ struct BugReportView: View {
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 18,
               horizontalPadding: 28,
               verticalPadding: 16,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
 
             DayflowSurfaceButton(
               action: openDiscord,
               content: {
-                HStack(spacing: 12) {
-                  Image("DiscordGlyph")
-                    .resizable()
-                    .renderingMode(.original)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 22, height: 18)
+                HStack(spacing: 11) {
+                  DayflowExternalImageBadge(
+                    imageName: "DiscordGlyph",
+                    size: 26,
+                    cornerRadius: 7,
+                    contentScale: 0.62
+                  )
                   Text("加入社区")
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 18,
               horizontalPadding: 28,
               verticalPadding: 16,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
 
             DayflowSurfaceButton(
@@ -87,13 +84,11 @@ struct BugReportView: View {
                     .font(.custom("Figtree", size: 16).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 18,
               horizontalPadding: 28,
               verticalPadding: 16,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
           }
         }
@@ -101,7 +96,7 @@ struct BugReportView: View {
         VStack(spacing: 12) {
           Text("快捷工具")
             .font(.custom("Figtree", size: 14).weight(.medium))
-            .foregroundColor(.black.opacity(0.55))
+            .foregroundColor(Color(nsColor: .tertiaryLabelColor))
             .textCase(.uppercase)
             .tracking(0.75)
 
@@ -116,13 +111,11 @@ struct BugReportView: View {
                     .font(.custom("Figtree", size: 15).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 14,
               horizontalPadding: 22,
               verticalPadding: 14,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
             .opacity(didCopyEmail ? 0.85 : 1.0)
 
@@ -139,13 +132,11 @@ struct BugReportView: View {
                   .font(.custom("Figtree", size: 15).weight(.semibold))
                 }
               },
-              background: Color.white,
-              foreground: Color.black,
-              borderColor: Color.black.opacity(0.12),
               cornerRadius: 14,
               horizontalPadding: 20,
               verticalPadding: 14,
-              showShadow: true
+              showShadow: false,
+              isSecondaryStyle: true,
             )
             .opacity(didCopyDebugLogs ? 0.85 : 1.0)
           }

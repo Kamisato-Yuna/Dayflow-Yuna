@@ -2,12 +2,12 @@ import SwiftUI
 
 struct SunriseGlassPillToggleStyle: ToggleStyle {
   var onColors: [Color] = [
-    Color(red: 1.00, green: 0.85, blue: 0.72),  // slightly deeper peach
-    Color(hex: "FF7506"),  // darker brand orange
+    DayflowSurfaceAccent.primary.opacity(0.34),
+    DayflowSurfaceAccent.primary.opacity(0.72),
   ]
   var offColors: [Color] = [
-    Color(hex: "F0E9E6"),
-    Color(hex: "F0E9E6"),
+    Color(nsColor: .controlBackgroundColor).opacity(0.52),
+    Color(nsColor: .controlBackgroundColor).opacity(0.32),
   ]
   var trackWidth: CGFloat = 64
   var trackHeight: CGFloat = 32
@@ -37,18 +37,24 @@ struct SunriseGlassPillToggleStyle: ToggleStyle {
           )
           .overlay(
             Capsule()
-              .strokeBorder(.white.opacity(isOn ? 0.35 : 0.45), lineWidth: 1)
+              .strokeBorder(
+                Color(nsColor: .highlightColor).opacity(isOn ? 0.28 : 0.36),
+                lineWidth: 1
+              )
               .blendMode(.overlay)
           )
           .overlay(
             Capsule()
-              .stroke(Color(hex: "E5E5E5"), lineWidth: 1)
-              .opacity(0.9)
+              .stroke(
+                isOn
+                  ? DayflowSurfaceAccent.primary.opacity(0.36)
+                  : Color(nsColor: .separatorColor).opacity(0.42),
+                lineWidth: 1
+              )
           )
           .overlay(
-            // Subtle top highlight to match chips/date pill gloss
             Capsule()
-              .fill(.white.opacity(isOn ? 0.18 : 0.12))
+              .fill(Color(nsColor: .highlightColor).opacity(isOn ? 0.18 : 0.12))
               .frame(height: trackHeight * 0.55)
               .offset(y: -trackHeight * 0.22)
               .blur(radius: 2)
@@ -56,18 +62,23 @@ struct SunriseGlassPillToggleStyle: ToggleStyle {
           .background(
             Capsule().fill(.ultraThinMaterial)
           )
+          .dayflowFloatingControl(cornerRadius: trackHeight / 2)
           .frame(width: trackWidth, height: trackHeight)
 
         // Knob
         Circle()
           .fill(
             RadialGradient(
-              colors: [Color.white, Color.white.opacity(0.65)],
+              colors: [
+                Color(nsColor: .controlBackgroundColor),
+                Color(nsColor: .controlBackgroundColor).opacity(0.65),
+              ],
               center: .center, startRadius: 1, endRadius: knobSize
             )
           )
           .overlay(
-            Circle().strokeBorder(.black.opacity(0.06), lineWidth: 0.75)
+            Circle()
+              .strokeBorder(Color(nsColor: .separatorColor).opacity(0.30), lineWidth: 0.75)
           )
           .frame(width: knobSize, height: knobSize)
           .padding(2)

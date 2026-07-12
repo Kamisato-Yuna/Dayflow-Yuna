@@ -30,11 +30,11 @@ struct OnboardingPrototypeRoleSelectionStep: View {
         .frame(height: 39)
 
       Text("帮 Dayflow 更准确地了解你的工作场景。")
-        .font(.custom("InstrumentSerif-Regular", size: 40))
+        .font(.custom("HanziPen SC", size: 40))
         .tracking(-1.2)
         .multilineTextAlignment(.center)
-        .foregroundColor(Color(hex: "492304"))
-          .lineSpacing(40 * 0.2)
+        .foregroundColor(DayflowOnboardingToken.title)
+        .lineSpacing(40 * 0.2)
         .frame(maxWidth: 708)
         .fixedSize(horizontal: false, vertical: true)
 
@@ -45,11 +45,11 @@ struct OnboardingPrototypeRoleSelectionStep: View {
         VStack(spacing: 4) {
           Text("你是做什么工作的？")
             .font(.custom("Figtree", size: 20))
-            .foregroundColor(Color(hex: "89380E"))
+            .foregroundColor(DayflowOnboardingToken.title)
 
-            Text("这会帮助 Dayflow 生成更贴合你的分类。")
+          Text("这会帮助 Dayflow 生成更贴合你的分类。")
             .font(.custom("Figtree", size: 20))
-            .foregroundColor(Color(hex: "89380E"))
+            .foregroundColor(DayflowOnboardingToken.secondaryText)
         }
         .multilineTextAlignment(.center)
 
@@ -66,29 +66,23 @@ struct OnboardingPrototypeRoleSelectionStep: View {
           }
         }
       }
+      .padding(.horizontal, 28)
+      .padding(.vertical, 28)
+      .dayflowOnboardingPanel()
 
       if selectedRole == "其他" {
         VStack(spacing: 16) {
           Text("请填写")
             .font(.custom("Figtree", size: 20))
-            .foregroundColor(Color(hex: "89380E"))
+            .foregroundColor(DayflowOnboardingToken.title)
 
           TextField("", text: $otherText)
             .font(.custom("Figtree", size: 16))
-            .foregroundColor(Color(hex: "492304"))
+            .foregroundColor(DayflowOnboardingToken.title)
             .textFieldStyle(.plain)
             .padding(.horizontal, 12)
             .frame(width: 353, height: 34)
-            .background(Color.white.opacity(0.4))
-            .cornerRadius(5)
-            .overlay(
-              RoundedRectangle(cornerRadius: 5)
-                .stroke(Color(hex: "E4D3C2"), lineWidth: 1)
-            )
-            .shadow(
-              color: Color(hex: "AF7246").opacity(0.15),
-              radius: 2, x: 0, y: 0
-            )
+            .dayflowOnboardingTextField()
         }
         .padding(.top, 32)
         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -107,8 +101,8 @@ struct OnboardingPrototypeRoleSelectionStep: View {
             .font(.custom("Figtree", size: 14))
             .fontWeight(.semibold)
         },
-        background: Color(hex: "402C00"),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 59,
@@ -134,28 +128,10 @@ struct OnboardingPrototypeRoleSelectionStep: View {
     } label: {
       Text(role)
         .font(.custom("Figtree", size: 16))
-        .foregroundColor(Color(hex: "492304"))
+        .foregroundColor(DayflowOnboardingToken.title)
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
-        .background(
-          isSelected
-            ? Color(red: 1, green: 0.898, blue: 0.812).opacity(0.4)
-            : Color.white.opacity(0.4)
-        )
-        .clipShape(Capsule())
-        .overlay(
-          Capsule()
-            .stroke(
-              isSelected ? Color(hex: "FFCCA7") : Color(hex: "E4D3C2"),
-              lineWidth: 1
-            )
-        )
-        .shadow(
-          color: isSelected
-            ? Color(red: 1, green: 0.416, blue: 0).opacity(0.5)
-            : Color(hex: "AF7246").opacity(0.15),
-          radius: isSelected ? 3 : 2, x: 0, y: 0
-        )
+        .dayflowOnboardingOptionCard(isSelected: isSelected, cornerRadius: 18)
     }
     .buttonStyle(.plain)
     .pointingHandCursor()

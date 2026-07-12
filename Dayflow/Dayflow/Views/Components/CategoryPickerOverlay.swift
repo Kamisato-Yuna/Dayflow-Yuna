@@ -7,6 +7,9 @@ struct CategoryPickerOverlay: View {
   var onSelect: (TimelineCategory) -> Void
   var onNavigateToEditor: () -> Void
 
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   private var orderedCategories: [TimelineCategory] {
     let trimmedCurrent = currentCategoryName.trimmingCharacters(in: .whitespacesAndNewlines)
       .lowercased()
@@ -47,7 +50,12 @@ struct CategoryPickerOverlay: View {
       .frame(maxWidth: .infinity, alignment: .leading)
 
       Rectangle()
-        .fill(Color(red: 0.91, green: 0.89, blue: 0.86))
+        .fill(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          )
+        )
         .frame(height: 1)
 
       helperContent
@@ -56,7 +64,7 @@ struct CategoryPickerOverlay: View {
     .padding(.horizontal, 12)
     .padding(.vertical, 12)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(backgroundView)
+    .dayflowPopoverSurface(cornerRadius: 6, groupingSpacing: 8)
     .clipShape(
       UnevenRoundedRectangle(
         cornerRadii: .init(
@@ -76,20 +84,21 @@ struct CategoryPickerOverlay: View {
           topTrailing: 6
         )
       )
-      .stroke(Color(red: 0.91, green: 0.88, blue: 0.87), lineWidth: 1)
+      .stroke(
+        DayflowContentToken.cardBorder(
+          colorScheme: colorScheme,
+          increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+        ),
+        lineWidth: 1
+      )
     )
-  }
-
-  private var backgroundView: some View {
-    Color(red: 0.98, green: 0.96, blue: 0.95).opacity(0.86)
-      .background(.ultraThinMaterial)
   }
 
   private var helperContent: some View {
     let baseFont = Font.custom("Figtree", size: 12)
-    let baseColor = Color(red: 0.39, green: 0.35, blue: 0.33)
-    let linkColor = Color(red: 1.0, green: 0.4, blue: 0.0)
-    let linkURL = URL(string: "dayflow://category-editor")!
+    let baseColor = Color(nsColor: .secondaryLabelColor)
+    let linkColor = DayflowSurfaceAccent.primary
+    let linkURL = URL(string: "dayflow-yuna://category-editor")!
 
     var intro = AttributedString(
       "想让 Dayflow 更准确地整理你的活动记录，请在分类说明中补充更多细节，"
@@ -132,6 +141,9 @@ private struct CategoryPickerPill: View {
   let category: TimelineCategory
   let isSelected: Bool
 
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   private var categoryColor: Color {
     if let nsColor = NSColor(hex: category.colorHex) {
       return Color(nsColor: nsColor)
@@ -144,23 +156,29 @@ private struct CategoryPickerPill: View {
       if isSelected {
         LinearGradient(
           colors: [
-            Color(red: 1.0, green: 0.99, blue: 0.97),
-            Color(red: 1.0, green: 0.91, blue: 0.83),
+            DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.30 : 0.18),
+            DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.18 : 0.10),
           ],
           startPoint: .leading,
           endPoint: .trailing
         )
       } else {
-        Color.white.opacity(0.76)
+        DayflowContentToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        )
       }
     }
   }
 
   private var borderColor: Color {
     if isSelected {
-      return Color(red: 0.98, green: 0.73, blue: 0.50)
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.86 : 0.62)
     }
-    return Color(red: 0.88, green: 0.88, blue: 0.88)
+    return DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+    )
   }
 
   var body: some View {
@@ -174,7 +192,7 @@ private struct CategoryPickerPill: View {
           Font.custom("Figtree", size: 13)
             .weight(.medium)
         )
-        .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
+        .foregroundColor(Color(nsColor: .labelColor))
         .lineLimit(1)
     }
     .padding(.horizontal, 6)

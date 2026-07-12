@@ -142,12 +142,10 @@ private struct WeeklyAccessLockCard: View {
 
   var body: some View {
     ZStack(alignment: .topLeading) {
-      WeeklyAccessCardBackground()
-
       VStack(spacing: 4) {
         Text("解锁周报")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
-          .foregroundStyle(Color(hex: "333333"))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
+          .foregroundStyle(DayflowWeeklyToken.title)
           .multilineTextAlignment(.center)
           .lineLimit(1)
           .minimumScaleFactor(0.76)
@@ -155,7 +153,7 @@ private struct WeeklyAccessLockCard: View {
 
         Text("记录 30 小时的时间线数据后即可解锁周报")
           .font(.custom("Figtree-Regular", size: 14))
-          .foregroundStyle(Color(hex: "796E64"))
+          .foregroundStyle(DayflowWeeklyToken.secondaryText)
           .multilineTextAlignment(.center)
           .lineLimit(1)
           .minimumScaleFactor(0.76)
@@ -174,7 +172,7 @@ private struct WeeklyAccessLockCard: View {
       Button(action: onNotify) {
         Text(buttonTitle)
           .font(.custom("Figtree-Medium", size: 14))
-          .foregroundStyle(Color.white)
+          .foregroundStyle(Color(nsColor: .windowBackgroundColor))
           .lineLimit(1)
           .minimumScaleFactor(0.72)
           .frame(width: 140)
@@ -182,7 +180,7 @@ private struct WeeklyAccessLockCard: View {
       .frame(width: 188, height: 36)
       .background(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
-          .fill(Color(hex: "402B00").opacity(isButtonDisabled ? 0.62 : 1))
+          .fill(DayflowWeeklyToken.accent.opacity(isButtonDisabled ? 0.48 : 1))
       )
       .buttonStyle(.plain)
       .disabled(isButtonDisabled)
@@ -190,82 +188,30 @@ private struct WeeklyAccessLockCard: View {
       .position(x: 247.94, y: 229)
     }
     .frame(width: 485, height: 276)
-    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 10, style: .continuous)
-        .stroke(Color.white, lineWidth: 1)
-    )
-    .shadow(color: Color(hex: "80450D").opacity(0.2), radius: 12, x: 0, y: 2)
-  }
-}
-
-private struct WeeklyAccessCardBackground: View {
-  var body: some View {
-    ZStack {
-      RoundedRectangle(cornerRadius: 10, style: .continuous)
-        .fill(Color(hex: "FFF7EF"))
-
-      WeeklyAccessGlowCircle(size: 287, colors: [Color(hex: "FFE6A3"), Color(hex: "FF8A1E")])
-        .position(x: 185.4, y: -160.4)
-
-      WeeklyAccessGlowCircle(size: 127, colors: [Color(hex: "FFF2BD"), Color(hex: "FF9F2F")])
-        .position(x: 286.1, y: -219.2)
-
-      WeeklyAccessGlowCircle(size: 115, colors: [Color(hex: "FFF4C9"), Color(hex: "FF7A00")])
-        .position(x: 318.7, y: -172.7)
-
-      WeeklyAccessGlowCircle(size: 112, colors: [Color(hex: "FFE3B3"), Color(hex: "FF7D2D")])
-        .position(x: 265.6, y: 437.1)
-
-      WeeklyAccessGlowCircle(size: 73, colors: [Color(hex: "FFF6D0"), Color(hex: "FF7A00")])
-        .position(x: 96.1, y: 415.5)
-    }
-  }
-}
-
-private struct WeeklyAccessGlowCircle: View {
-  let size: CGFloat
-  let colors: [Color]
-
-  var body: some View {
-    Circle()
-      .fill(
-        RadialGradient(
-          colors: [
-            colors.first?.opacity(0.44) ?? Color.white.opacity(0.44),
-            colors.last?.opacity(0.22) ?? Color.orange.opacity(0.22),
-            Color.clear,
-          ],
-          center: .center,
-          startRadius: 0,
-          endRadius: size / 2
-        )
-      )
-      .frame(width: size, height: size)
-      .rotationEffect(.degrees(105))
-      .blur(radius: 1.5)
+    .dayflowContentPanel(cornerRadius: 10)
   }
 }
 
 private struct WeeklyAccessCountdownPill: View {
+  @Environment(\.colorScheme) private var colorScheme
+
   let text: String
 
   var body: some View {
     ZStack {
       Capsule(style: .continuous)
-        .fill(Color(hex: "FFEBD6"))
+        .fill(DayflowWeeklyToken.subtleAccentFill(colorScheme: colorScheme))
         .overlay(
           Capsule(style: .continuous)
-            .stroke(Color(hex: "FF8904").opacity(0.5), lineWidth: 1)
+            .stroke(DayflowWeeklyToken.accent.opacity(0.38), lineWidth: 1)
         )
-        .shadow(color: Color(hex: "FDE7D1"), radius: 8, x: 0, y: 2)
 
       Ellipse()
         .fill(
           RadialGradient(
             colors: [
-              Color.white.opacity(0.34),
-              Color.white.opacity(0.11),
+              Color(nsColor: .windowBackgroundColor).opacity(0.22),
+              Color(nsColor: .windowBackgroundColor).opacity(0.08),
               Color.clear,
             ],
             center: .center,
@@ -276,10 +222,10 @@ private struct WeeklyAccessCountdownPill: View {
         .frame(width: 134, height: 39)
 
       Capsule(style: .continuous)
-        .fill(Color.white.opacity(0.06))
+        .fill(Color(nsColor: .windowBackgroundColor).opacity(0.05))
 
       Text(text)
-        .font(.custom("InstrumentSerif-Regular", size: 20.5))
+        .font(.system(size: 20.5, weight: .semibold, design: .rounded))
         .foregroundStyle(Color(hex: "FF7856"))
         .lineLimit(1)
         .minimumScaleFactor(0.72)
@@ -290,6 +236,8 @@ private struct WeeklyAccessCountdownPill: View {
 }
 
 private struct WeeklyAccessProgressBar: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var logoRotation = 0.0
 
@@ -305,7 +253,10 @@ private struct WeeklyAccessProgressBar: View {
 
     ZStack(alignment: .leading) {
       Capsule(style: .continuous)
-        .fill(Color(hex: "EAE0DD"))
+        .fill(DayflowWeeklyToken.progressTrackFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .frame(width: barWidth, height: barHeight)
         .offset(x: knobSize / 2)
 
@@ -326,7 +277,7 @@ private struct WeeklyAccessProgressBar: View {
             .renderingMode(.template)
             .resizable()
             .scaledToFit()
-            .foregroundStyle(Color.white)
+            .foregroundStyle(Color(nsColor: .windowBackgroundColor))
             .frame(width: 13.5, height: 13.5)
             .rotationEffect(.degrees(reduceMotion ? 0 : logoRotation))
         )
@@ -358,13 +309,13 @@ private struct WeeklyAccessProgressBar: View {
 private struct WeeklyAccessLockedBackground: View {
   var body: some View {
     ZStack {
-      Color(hex: "FFF8F0").opacity(0.28)
+      Color(nsColor: .windowBackgroundColor).opacity(0.26)
 
       LinearGradient(
         colors: [
-          Color.white.opacity(0.68),
-          Color(hex: "FDF3EA").opacity(0.42),
-          Color(hex: "FFE2C4").opacity(0.22),
+          Color(nsColor: .windowBackgroundColor).opacity(0.58),
+          Color(nsColor: .controlBackgroundColor).opacity(0.38),
+          DayflowWeeklyToken.accent.opacity(0.06),
         ],
         startPoint: .topTrailing,
         endPoint: .bottomLeading

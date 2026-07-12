@@ -2,15 +2,14 @@ import SwiftUI
 
 // MARK: - Settings design system
 //
-// One visual language, enforced here. If you find yourself reaching outside
-// these tokens / components while building a settings screen, stop and ask
-// whether what you're about to build needs its own grammar or whether an
-// existing primitive can carry the weight. Almost always the latter.
+// One visual language, enforced here. Settings should feel like a compact
+// desktop tool: neutral, scannable, and calm. Functional chrome uses the
+// shared surface system; content rows stay readable and lightly framed.
 //
 // Principles:
-//   1. The warm paper background IS the surface. No cards on top.
-//   2. Hierarchy from typography + opacity, not borders + backgrounds.
-//   3. One accent color (ink brown) for everything that needs emphasis.
+//   1. Use semantic material/card surfaces instead of hard white or warm fills.
+//   2. Hierarchy from typography, spacing, separators, and subtle control fills.
+//   3. Keep the accent restrained; most surfaces are neutral system colors.
 //   4. Exactly three button treatments. No one-offs.
 //   5. Rows always read label-left, control-right. Always.
 
@@ -22,17 +21,16 @@ enum SettingsStyle {
   static let rowVerticalPadding: CGFloat = 14
 
   // Type colors
-  static let text = Color.black.opacity(0.9)
-  static let secondary = Color.black.opacity(0.55)
-  static let meta = Color.black.opacity(0.4)
+  static let text = Color(nsColor: .labelColor).opacity(0.9)
+  static let secondary = Color(nsColor: .secondaryLabelColor)
+  static let meta = Color(nsColor: .tertiaryLabelColor)
 
   // Structure
-  static let divider = Color.black.opacity(0.08)
+  static let divider = Color(nsColor: .separatorColor).opacity(0.42)
 
-  // The one accent — used for primary buttons, active tab pill, progress
-  // fills, inline links, focused states. Deliberately the only branded
-  // color on this surface.
-  static let ink = Color(red: 0.25, green: 0.17, blue: 0)
+  // The restrained accent for primary buttons, active pills, progress fills,
+  // inline links, and focused states.
+  static let ink = Color(nsColor: .controlAccentColor)
 
   // Destructive — only for red-stroked confirm buttons and error copy.
   static let destructive = Color(red: 0.76, green: 0.19, blue: 0.19)
@@ -40,9 +38,48 @@ enum SettingsStyle {
   // Status dots (paired with 13pt labels — the dot carries the color, the
   // label carries the word).
   static let statusGood = Color(red: 0.25, green: 0.62, blue: 0.32)
-  static let statusIdle = Color.black.opacity(0.3)
+  static let statusIdle = Color(nsColor: .tertiaryLabelColor)
   static let statusWarn = Color(red: 0.86, green: 0.6, blue: 0.1)
   static let statusBad = Color(red: 0.76, green: 0.19, blue: 0.19)
+
+  static let selectedFill = Color(nsColor: .selectedContentBackgroundColor).opacity(0.12)
+  static let neutralControlFill = Color(nsColor: .controlBackgroundColor).opacity(0.52)
+  static let neutralControlFillHover = Color(nsColor: .controlBackgroundColor).opacity(0.72)
+}
+
+// MARK: - Local surfaces
+
+private struct SettingsControlSurfaceModifier: ViewModifier {
+  var isActive = false
+  var cornerRadius: CGFloat = 8
+
+  func body(content: Content) -> some View {
+    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    content
+      .background {
+        shape
+          .fill(isActive ? SettingsStyle.selectedFill : SettingsStyle.neutralControlFill)
+          .overlay(
+            shape
+              .fill(Color(nsColor: .controlBackgroundColor).opacity(0.05))
+              .blendMode(.plusLighter)
+          )
+      }
+      .dayflowFloatingControl(cornerRadius: cornerRadius)
+      .overlay(
+        shape.stroke(
+          isActive ? SettingsStyle.ink.opacity(0.34) : SettingsStyle.divider,
+          lineWidth: isActive ? 1 : 0.8
+        )
+      )
+      .clipShape(shape)
+  }
+}
+
+extension View {
+  func settingsControlSurface(isActive: Bool = false, cornerRadius: CGFloat = 8) -> some View {
+    modifier(SettingsControlSurfaceModifier(isActive: isActive, cornerRadius: cornerRadius))
+  }
 }
 
 // MARK: - SettingsSection
@@ -188,7 +225,7 @@ struct SettingsPrimaryButton: View {
         if isLoading {
           ProgressView()
             .controlSize(.small)
-            .tint(.white)
+            .tint(Color(nsColor: .selectedMenuItemTextColor))
         } else if let systemImage {
           Image(systemName: systemImage)
             .font(.system(size: 12, weight: .semibold))
@@ -197,17 +234,19 @@ struct SettingsPrimaryButton: View {
           .font(.custom("Figtree", size: 13))
           .fontWeight(.semibold)
       }
-      .foregroundColor(.white)
+      .foregroundColor(Color(nsColor: .windowBackgroundColor))
       .padding(.horizontal, 18)
       .padding(.vertical, 9)
       .background(
         RoundedRectangle(cornerRadius: 8, style: .continuous)
-          .fill(SettingsStyle.ink.opacity(isDisabled ? 0.4 : 1))
+          .fill(SettingsStyle.ink.opacity(isDisabled ? 0.18 : 0.92))
       )
+      .dayflowFloatingControl(cornerRadius: 8)
     }
     .buttonStyle(SettingsButtonPressStyle())
     .disabled(isDisabled || isLoading)
     .pointingHandCursor()
+    .opacity(isDisabled || isLoading ? 0.78 : 1)
   }
 }
 
@@ -231,10 +270,7 @@ struct SettingsSecondaryButton: View {
       .foregroundColor(SettingsStyle.ink.opacity(isDisabled ? 0.4 : 1))
       .padding(.horizontal, 12)
       .padding(.vertical, 7)
-      .background(
-        RoundedRectangle(cornerRadius: 7, style: .continuous)
-          .fill(Color.black.opacity(isDisabled ? 0.02 : 0.05))
-      )
+      .settingsControlSurface(cornerRadius: 7)
     }
     .buttonStyle(SettingsButtonPressStyle())
     .disabled(isDisabled)
@@ -291,7 +327,7 @@ struct SettingsStatusDot: View {
   private var color: Color {
     switch state {
     case .good: return SettingsStyle.statusGood
-    case .idle: return Color.black.opacity(0.5)
+    case .idle: return SettingsStyle.meta
     case .warn: return SettingsStyle.statusWarn
     case .bad: return SettingsStyle.statusBad
     }
@@ -337,7 +373,7 @@ struct SettingsToggle: View {
 // MARK: - SettingsBadge
 //
 // A flat, uppercase chip replacing the legacy `BadgeView` on settings
-// surfaces. Deliberately has only two tones: accent (ink-brown fill) for
+// surfaces. Deliberately has only two tones: accent fill for
 // the one-per-group "this is the active thing" signal, and neutral (gray
 // fill) for everything else. Multiple colored variants were a legacy
 // design choice that added noise without carrying semantic value — the
@@ -357,7 +393,11 @@ struct SettingsBadge: View {
       .padding(.vertical, 3)
       .background(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
-          .fill(isAccent ? SettingsStyle.ink.opacity(0.1) : Color.black.opacity(0.05))
+          .fill(isAccent ? SettingsStyle.selectedFill : SettingsStyle.neutralControlFill)
+      )
+      .overlay(
+        RoundedRectangle(cornerRadius: 4, style: .continuous)
+          .stroke(isAccent ? SettingsStyle.ink.opacity(0.28) : SettingsStyle.divider, lineWidth: 0.6)
       )
   }
 }

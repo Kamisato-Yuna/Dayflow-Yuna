@@ -25,9 +25,9 @@ struct DayFocusSummarySection: View {
     static let editorWidth: CGFloat = 358
     static let editorOffsetX: CGFloat = -18
     static let editorOffsetY: CGFloat = 28
-    static let titleColor = Color(hex: "333333")
-    static let subtitleColor = Color(hex: "707070")
-    static let iconColor = Color(hex: "CFC7BE")
+    static let titleColor = DayflowDailyToken.title
+    static let subtitleColor = DayflowDailyToken.secondaryText
+    static let iconColor = DayflowDailyToken.tertiaryText
   }
 
   var body: some View {
@@ -45,7 +45,7 @@ struct DayFocusSummarySection: View {
 
         LongestFocusCard(focusBlocks: focusBlocks)
       }
-      .opacity(isSelectionEmpty ? 0.45 : 1)
+      .opacity(isSelectionEmpty ? 0.72 : 1)
     }
     .overlay(alignment: .topLeading) {
       if isEditingCategories {
@@ -66,7 +66,7 @@ struct DayFocusSummarySection: View {
   private var header: some View {
     HStack(alignment: .center, spacing: 6) {
       Text("你的专注")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundColor(Design.titleColor)
 
       Image(systemName: "info.circle")
@@ -90,29 +90,24 @@ private struct TotalFocusCard: View {
     VStack(alignment: .leading, spacing: 4) {
       HStack(spacing: 6) {
         Text("总专注时长")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
-          .foregroundColor(Color(hex: "333333"))
+          .font(.system(size: 16, weight: .medium, design: .rounded))
+          .foregroundColor(DayflowDailyToken.title)
 
         Image(systemName: "info.circle")
           .font(.system(size: 12))
-          .foregroundColor(Color(hex: "CFC7BE"))
+          .foregroundColor(DayflowDailyToken.secondaryText)
 
         Spacer()
       }
 
       Text(value)
-        .font(.custom("InstrumentSerif-Regular", size: 34))
-        .foregroundColor(Color(hex: "F3854B"))
+        .font(.system(size: 34, weight: .semibold, design: .rounded))
+        .foregroundColor(DayflowDailyToken.focus)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     .padding(.horizontal, 16)
-    .padding(.vertical, 12)
+    .padding(.vertical, 14)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Color(hex: "F7F7F7"))
-    .overlay(
-      RoundedRectangle(cornerRadius: 8)
-        .stroke(Color.white, lineWidth: 1)
-    )
-    .clipShape(RoundedRectangle(cornerRadius: 8))
+    .dayflowContentPanel(cornerRadius: 8)
   }
 }

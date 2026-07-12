@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct WeeklyApplicationInteractionsSection: View {
@@ -12,25 +13,30 @@ struct WeeklyApplicationInteractionsSection: View {
         .frame(width: 393, height: 561)
     }
     .frame(width: 958, height: 561, alignment: .topLeading)
-    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 }
 
 private struct WeeklyApplicationNetworkPane: View {
   let snapshot: WeeklyApplicationInteractionsSnapshot
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   var body: some View {
     ZStack(alignment: .topLeading) {
-      Color(hex: "FBF6F0")
+      DayflowWeeklyToken.secondaryChartFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
 
       VStack(alignment: .leading, spacing: 7) {
         Text("常用应用之间的互动")
-          .font(.custom("InstrumentSerif-Regular", size: 20))
-          .foregroundStyle(Color(hex: "B46531"))
+          .font(.system(size: 20, weight: .semibold, design: .rounded))
+          .foregroundStyle(DayflowWeeklyToken.title)
 
         Text(snapshot.subtitle)
           .font(.custom("Figtree-Regular", size: 12))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
       }
       .offset(x: 29, y: 28)
 
@@ -81,7 +87,7 @@ private struct WeeklyApplicationNetworkPane: View {
 
       Text(title)
         .font(.custom("Figtree-Regular", size: 12))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
     }
   }
 }
@@ -120,12 +126,14 @@ private struct WeeklyApplicationNodeView: View {
 
 private struct WeeklyApplicationPatternsPane: View {
   let snapshot: WeeklyApplicationInteractionsSnapshot
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("最常见工作模式")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
-        .foregroundStyle(Color(hex: "B46531"))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
+        .foregroundStyle(DayflowWeeklyToken.title)
         .padding(.top, 28)
         .padding(.leading, 24)
 
@@ -139,8 +147,8 @@ private struct WeeklyApplicationPatternsPane: View {
       .padding(.leading, 8)
 
       Text("分心与深陷浏览")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
-        .foregroundStyle(Color(hex: "B46531"))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
+        .foregroundStyle(DayflowWeeklyToken.title)
         .padding(.top, 19)
         .padding(.leading, 24)
 
@@ -149,7 +157,10 @@ private struct WeeklyApplicationPatternsPane: View {
         .padding(.leading, 14)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .background(Color.white)
+    .background(DayflowWeeklyToken.chartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
   }
 }
 
@@ -179,7 +190,7 @@ private struct WeeklyPatternFlow: View {
 
       Text(pattern.description)
         .font(.custom("Figtree-Regular", size: 10))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
         .lineSpacing(1)
         .frame(width: 340, alignment: .leading)
     }
@@ -193,12 +204,12 @@ private struct WeeklyPatternFlow: View {
         .overlay {
           Text(app.initial)
             .font(.custom("Figtree-Bold", size: 8))
-            .foregroundStyle(Color.white)
+            .foregroundStyle(Color(nsColor: .selectedMenuItemTextColor))
         }
 
       Text(app.name)
         .font(.custom("Figtree-Regular", size: 14))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(1)
     }
   }
@@ -206,6 +217,8 @@ private struct WeeklyPatternFlow: View {
 
 private struct WeeklyRabbitHoleFlow: View {
   let snapshot: WeeklyRabbitHoleSnapshot
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
@@ -229,7 +242,10 @@ private struct WeeklyRabbitHoleFlow: View {
     .padding(.horizontal, 9)
     .padding(.vertical, 16)
     .frame(width: 365, height: 84, alignment: .topLeading)
-    .background(Color(hex: "F5F5F5"))
+    .background(DayflowWeeklyToken.secondaryChartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
   }
 
   private func appName(_ app: WeeklyPatternApp) -> some View {
@@ -240,12 +256,12 @@ private struct WeeklyRabbitHoleFlow: View {
         .overlay {
           Text(app.initial)
             .font(.custom("Figtree-Bold", size: 8))
-            .foregroundStyle(Color.white)
+            .foregroundStyle(Color(nsColor: .selectedMenuItemTextColor))
         }
 
       Text(app.name)
         .font(.custom("Figtree-Regular", size: 14))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(1)
     }
   }
@@ -270,14 +286,14 @@ private func averagePill(
       .frame(width: 12, height: 12)
       .overlay {
         Rectangle()
-          .fill(Color.white)
+          .fill(Color(nsColor: .selectedMenuItemTextColor))
           .frame(width: 1, height: 4)
           .offset(y: -1)
       }
 
     Text(text)
       .font(.custom("Figtree-Regular", size: 12))
-      .foregroundStyle(Color.black)
+      .foregroundStyle(DayflowWeeklyToken.chartText)
       .lineLimit(1)
   }
   .padding(.horizontal, 7)
@@ -298,7 +314,7 @@ private func flowCounter(_ count: Int, color: Color) -> some View {
 
     Text("\(count)")
       .font(.custom("Figtree-Regular", size: 8))
-      .foregroundStyle(Color.white)
+      .foregroundStyle(Color(nsColor: .selectedMenuItemTextColor))
       .frame(minWidth: 16, minHeight: 14)
       .background(color)
 
@@ -380,27 +396,27 @@ struct WeeklyApplicationInteractionsSnapshot {
     patterns: [
       WeeklyWorkPattern(
         id: "slack-figma",
-        from: .slack(avg: "12m avg"),
+        from: .slack(avg: "平均 12 分钟"),
         via: nil,
-        to: .figma(avg: "1h 25m avg"),
+        to: .figma(avg: "平均 1 小时 25 分钟"),
         count: 9,
         description:
-          "Moves between communicating on project progress on Slack and designing mockups on Figma an average of 9 times per day."
+          "每天平均 9 次在 Slack 项目沟通和 Figma 设计稿之间切换。"
       ),
       WeeklyWorkPattern(
         id: "runway-flora-figma",
-        from: .runway(avg: "32m avg"),
+        from: .runway(avg: "平均 32 分钟"),
         via: .flora(),
-        to: .figma(avg: "42m avg"),
+        to: .figma(avg: "平均 42 分钟"),
         count: 4,
         description:
-          "Moves between generating visuals on xyz and designing mockups on Figma an average of 4 times per day."
+          "每天平均 4 次在生成视觉素材和 Figma 设计稿之间切换。"
       ),
     ],
     rabbitHole: WeeklyRabbitHoleSnapshot(
-      from: .figma(avg: "45m avg"),
+      from: .figma(avg: "平均 45 分钟"),
       targets: [.reddit(), .x(), .substack(), .youtube()],
-      avg: "3h 25m avg"
+      avg: "平均 3 小时 25 分钟"
     )
   )
 }
@@ -581,5 +597,5 @@ struct WeeklyPatternApp: Identifiable {
 #Preview("Application Interactions", traits: .fixedLayout(width: 958, height: 561)) {
   WeeklyApplicationInteractionsSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "FBF6EF"))
+    .dayflowWindowBackground()
 }

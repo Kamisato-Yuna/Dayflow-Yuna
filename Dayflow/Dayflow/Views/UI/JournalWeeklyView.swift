@@ -27,12 +27,12 @@ struct JournalWeeklyView: View {
 
       VStack(spacing: 6) {
         Text(summary.title)
-          .font(.custom("InstrumentSerif-Regular", size: 32))
+          .font(.system(size: 32, weight: .semibold, design: .rounded))
           .kerning(-0.5)
           .foregroundStyle(JournalWeeklyTokens.primaryText)
 
         Text(summary.dateRange)
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalWeeklyTokens.primaryText.opacity(0.85))
 
         Text(summary.description)
@@ -47,17 +47,7 @@ struct JournalWeeklyView: View {
     }
     .padding(.vertical, 34)
     .padding(.horizontal, 38)
-    .background(
-      ZStack {
-        Rectangle().fill(.thickMaterial)
-        Color.white.opacity(0.35)
-      }
-      .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-    )
-    .overlay(
-      RoundedRectangle(cornerRadius: 28, style: .continuous)
-        .stroke(.white.opacity(0.35), lineWidth: 1)
-    )
+    .dayflowContentPanel(cornerRadius: 28)
   }
 
   private var headerToolbar: some View {
@@ -90,7 +80,7 @@ struct JournalWeeklyView: View {
               .frame(width: 24, height: 24)
             Image(systemName: "sun.max.fill")
               .font(.system(size: 12, weight: .semibold))
-              .foregroundStyle(Color.white)
+              .foregroundStyle(JournalWeeklyTokens.selectedText)
           }
 
           Text("设置提醒")
@@ -99,12 +89,7 @@ struct JournalWeeklyView: View {
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 10)
-        .background(JournalWeeklyTokens.setReminderBackground)
-        .clipShape(Capsule())
-        .overlay(
-          Capsule()
-            .stroke(JournalWeeklyTokens.setReminderBorder, lineWidth: 1)
-        )
+        .dayflowFloatingControl(cornerRadius: 18)
       }
       .buttonStyle(.plain)
       .pointingHandCursor()
@@ -239,11 +224,7 @@ private struct JournalWeeklyCircleButton: View {
             ? JournalWeeklyTokens.secondaryText.opacity(0.6) : JournalWeeklyTokens.primaryText
         )
         .frame(width: 34, height: 34)
-        .background(
-          Circle()
-            .fill(Color.white)
-            .shadow(color: Color.black.opacity(0.08), radius: 8, y: 4)
-        )
+        .dayflowFloatingControl(cornerRadius: 17)
     }
     .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
     .disabled(isDisabled)
@@ -262,7 +243,9 @@ private struct JournalWeeklySegmentedControl: View {
         Button(action: { selection = option }) {
           Text(option.rawValue)
             .font(.custom("Figtree-SemiBold", size: 13))
-            .foregroundStyle(selection == option ? Color.white : JournalWeeklyTokens.secondaryText)
+            .foregroundStyle(
+              selection == option ? JournalWeeklyTokens.selectedText : JournalWeeklyTokens.secondaryText
+            )
             .padding(.horizontal, 18)
             .padding(.vertical, 6)
             .background(
@@ -314,9 +297,7 @@ private struct JournalWeeklyEntryCard: View {
     .padding(.horizontal, 18)
     .padding(.vertical, 16)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Color.white)
-    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-    .shadow(color: Color.black.opacity(0.08), radius: 14, y: 10)
+    .dayflowCard(cornerRadius: 18)
   }
 }
 
@@ -331,9 +312,9 @@ struct JournalWeeklySummary {
 
   static let placeholder = JournalWeeklySummary(
     title: "本周回顾",
-    dateRange: "October 19 – 25",
+    dateRange: "10月19日 - 10月25日",
     description:
-      "Made progress on the redesign project, shared updates with the leads by the end of the week. Looked at design references and shopped for groceries and necessities.",
+      "推进了重设计项目，并在周末前向负责人同步进展。查阅了一些设计参考，也处理了购物和日用品采购。",
     disableForwardNavigation: true,
     days: JournalWeeklyDay.placeholder
   )
@@ -349,52 +330,52 @@ struct JournalWeeklyDay: Identifiable {
   static var placeholder: [JournalWeeklyDay] {
     [
       JournalWeeklyDay(
-        label: "S", progress: 0.02, isMuted: true,
+        label: "日", progress: 0.02, isMuted: true,
         entry: JournalWeeklyEntry(
           summary:
-            "Worked on design directions with the team. Watched a new episode of Curb Your Enthusiasm.",
+            "和团队一起梳理设计方向。晚上看了一集新剧。",
           position: .below,
           icons: [.figma, .tv]
         )),
       JournalWeeklyDay(
-        label: "M", progress: 0.18, isMuted: false,
+        label: "一", progress: 0.18, isMuted: false,
         entry: JournalWeeklyEntry(
-          summary: "Refined design directions. Shopped for groceries.",
+          summary: "细化设计方向，并采购了一些日用品。",
           position: .above,
           icons: [.figma, .cart]
         )),
       JournalWeeklyDay(
-        label: "T", progress: 0.34, isMuted: false,
+        label: "二", progress: 0.34, isMuted: false,
         entry: JournalWeeklyEntry(
           summary:
-            "Prepared presentation and troubleshooted with Jason. Shopped for home necessities on Amazon.",
+            "准备演示文稿，并和 Jason 一起排查问题。补充购买了家用必需品。",
           position: .below,
           icons: [.slides, .cart]
         )),
       JournalWeeklyDay(
-        label: "W", progress: 0.5, isMuted: false,
+        label: "三", progress: 0.5, isMuted: false,
         entry: JournalWeeklyEntry(
           summary:
-            "Updated mockups and presentation based on new feedback. Spent some time watching YouTube videos.",
+            "根据新反馈更新了 mockup 和演示稿，也花了一些时间看视频。",
           position: .above,
           icons: [.figma, .video]
         )),
       JournalWeeklyDay(
-        label: "T", progress: 0.66, isMuted: false,
+        label: "四", progress: 0.66, isMuted: false,
         entry: JournalWeeklyEntry(
-          summary: "Refined design directions and shared with them with the leads.",
+          summary: "继续完善设计方向，并和负责人同步。",
           position: .below,
           icons: [.figma]
         )),
       JournalWeeklyDay(
-        label: "F", progress: 0.82, isMuted: false,
+        label: "五", progress: 0.82, isMuted: false,
         entry: JournalWeeklyEntry(
           summary:
-            "Read some articles on Substack and jotting down notes. Spent most of the day away from the computer.",
+            "阅读了一些文章并记下笔记。当天大部分时间没有使用电脑。",
           position: .above,
           icons: [.books, .moon]
         )),
-      JournalWeeklyDay(label: "S", progress: 0.98, isMuted: true, entry: nil),
+      JournalWeeklyDay(label: "六", progress: 0.98, isMuted: true, entry: nil),
     ]
   }
 }
@@ -419,20 +400,20 @@ struct JournalWeeklyIcon: Identifiable {
   var foreground: Color
 
   static let figma = JournalWeeklyIcon(
-    systemName: "paintpalette.fill", background: Color(hex: "FFB859"), foreground: .white)
+    systemName: "paintpalette.fill", background: DayflowWeeklyToken.focus, foreground: Color(nsColor: .selectedControlTextColor))
   static let cart = JournalWeeklyIcon(
-    systemName: "cart.fill", background: Color(hex: "553000"), foreground: Color(hex: "F9E2C9"))
+    systemName: "cart.fill", background: Color(nsColor: .labelColor), foreground: Color(nsColor: .windowBackgroundColor))
   static let slides = JournalWeeklyIcon(
-    systemName: "rectangle.and.pencil.and.ellipsis", background: Color(hex: "FFD082"),
-    foreground: Color(hex: "4A2606"))
+    systemName: "rectangle.and.pencil.and.ellipsis", background: Color.accentColor.opacity(0.24),
+    foreground: Color(nsColor: .labelColor))
   static let video = JournalWeeklyIcon(
-    systemName: "play.rectangle.fill", background: Color(hex: "F06543"), foreground: .white)
+    systemName: "play.rectangle.fill", background: Color(nsColor: .systemRed), foreground: Color(nsColor: .selectedControlTextColor))
   static let books = JournalWeeklyIcon(
-    systemName: "book.fill", background: Color(hex: "5B3A2E"), foreground: Color(hex: "F9E2C9"))
+    systemName: "book.fill", background: Color(nsColor: .secondaryLabelColor), foreground: Color(nsColor: .windowBackgroundColor))
   static let moon = JournalWeeklyIcon(
-    systemName: "moon.stars.fill", background: Color(hex: "2D1E2F"), foreground: .white)
+    systemName: "moon.stars.fill", background: Color(nsColor: .tertiaryLabelColor), foreground: Color(nsColor: .selectedControlTextColor))
   static let tv = JournalWeeklyIcon(
-    systemName: "tv.fill", background: Color(hex: "FFB2A6"), foreground: Color(hex: "4A1D12"))
+    systemName: "tv.fill", background: Color(nsColor: .controlAccentColor).opacity(0.20), foreground: Color(nsColor: .labelColor))
 }
 
 enum JournalWeeklyViewPeriod: String, CaseIterable, Identifiable {
@@ -444,34 +425,38 @@ enum JournalWeeklyViewPeriod: String, CaseIterable, Identifiable {
 
 private enum JournalWeeklyTokens {
   static let background = LinearGradient(
-    colors: [Color(hex: "FFF6EE"), Color(hex: "FFE0C8"), Color(hex: "FFD9BD")],
+    colors: [
+      Color(nsColor: .windowBackgroundColor),
+      Color(nsColor: .controlBackgroundColor).opacity(0.70),
+    ],
     startPoint: .top,
     endPoint: .bottom
   )
-  static let primaryText = Color(hex: "2F1607")
-  static let secondaryText = Color(hex: "6B4D3A")
-  static let accentText = Color(hex: "5A320E")
+  static let primaryText = Color(nsColor: .labelColor)
+  static let secondaryText = Color(nsColor: .secondaryLabelColor)
+  static let accentText = Color(nsColor: .labelColor)
+  static let selectedText = Color(nsColor: .selectedControlTextColor)
   static let timelineGradient = LinearGradient(
-    colors: [Color(hex: "FFB859"), Color(hex: "FF8F4A")],
+    colors: [Color.accentColor.opacity(0.78), Color.accentColor.opacity(0.36)],
     startPoint: .leading,
     endPoint: .trailing
   )
-  static let timelineShadow = Color(hex: "F7B47C")
-  static let dayActive = Color(hex: "FFB859")
-  static let dayMuted = Color(hex: "F2E4D4")
-  static let toggleBackground = Color(hex: "F5EEE6")
-  static let toggleContainer = Color.white.opacity(0.8)
+  static let timelineShadow = Color.accentColor.opacity(0.24)
+  static let dayActive = Color.accentColor
+  static let dayMuted = Color(nsColor: .controlBackgroundColor)
+  static let toggleBackground = Color(nsColor: .controlBackgroundColor).opacity(0.62)
+  static let toggleContainer = Color(nsColor: .controlBackgroundColor).opacity(0.56)
   static let setReminderBackground = LinearGradient(
-    colors: [Color(hex: "FFE5C5"), Color(hex: "FFD29D")], startPoint: .top, endPoint: .bottom)
-  static let setReminderBorder = Color(hex: "FFC689").opacity(0.7)
-  static let setReminderBadge = Color(hex: "FFAA5F")
-  static let dayConnector = Color(hex: "FFB859").opacity(0.4)
+    colors: [Color.accentColor.opacity(0.18), Color.accentColor.opacity(0.10)], startPoint: .top, endPoint: .bottom)
+  static let setReminderBorder = Color(nsColor: .separatorColor).opacity(0.24)
+  static let setReminderBadge = Color.accentColor
+  static let dayConnector = Color.accentColor.opacity(0.34)
 }
 
 #Preview("Weekly Review", traits: .fixedLayout(width: 1000, height: 600)) {
   JournalWeeklyView()
     .padding()
-    .background(Color(hex: "F6F0EA"))
+    .background(Color(nsColor: .windowBackgroundColor))
 }
 
 // MARK: - Reference curve helpers

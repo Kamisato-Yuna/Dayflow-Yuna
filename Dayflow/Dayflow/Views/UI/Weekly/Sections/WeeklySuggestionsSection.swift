@@ -6,8 +6,8 @@ struct WeeklySuggestionsSection: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 24))
-        .foregroundStyle(Color(hex: "B46531"))
+        .font(.system(size: 24, weight: .semibold, design: .rounded))
+        .foregroundStyle(DayflowWeeklyToken.title)
 
       ViewThatFits(in: .horizontal) {
         HStack(alignment: .top, spacing: 32) {
@@ -38,19 +38,14 @@ struct WeeklySuggestionsSection: View {
     .padding(.horizontal, 36)
     .padding(.vertical, 28)
     .frame(maxWidth: .infinity, alignment: .topLeading)
-    .background(Color.white.opacity(0.75))
-    .overlay(
-      RoundedRectangle(cornerRadius: 4, style: .continuous)
-        .stroke(Color(hex: "EBE6E3"), lineWidth: 1)
-    )
-    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+    .dayflowCard(cornerRadius: 4)
   }
 
   private func suggestionColumn(title: String, items: [WeeklySuggestionEntry]) -> some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(title)
         .font(.custom("Figtree-Bold", size: 14))
-        .foregroundStyle(Color(hex: "B46531"))
+        .foregroundStyle(DayflowWeeklyToken.title)
 
       VStack(alignment: .leading, spacing: 12) {
         ForEach(items) { item in
@@ -64,7 +59,7 @@ struct WeeklySuggestionsSection: View {
   private func suggestionRow(for item: WeeklySuggestionEntry) -> some View {
     HStack(alignment: .top, spacing: 10) {
       Rectangle()
-        .fill(Color(hex: "FF8F64"))
+        .fill(DayflowWeeklyToken.accent)
         .frame(width: 2)
         .frame(maxHeight: .infinity)
         .padding(.vertical, 2)
@@ -150,5 +145,5 @@ struct WeeklySuggestionEntry: Identifiable {
 #Preview("1:1 Suggestions", traits: .fixedLayout(width: 958, height: 328)) {
   WeeklySuggestionsSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
 }

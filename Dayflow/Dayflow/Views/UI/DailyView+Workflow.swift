@@ -78,20 +78,20 @@ extension DailyView {
 
     return HStack {
       HStack(spacing: 8 * scale) {
-        DailyNavigationButton(assetName: "LeftArrow", scale: scale) {
+        DailyNavigationButton(systemName: "chevron.left", scale: scale) {
           shiftDate(by: -1)
         }
 
         Text(dailyDateTitle(for: selectedDate))
-          .font(.custom("InstrumentSerif-Regular", size: 26 * scale))
-          .foregroundStyle(Color(hex: "1E1B18"))
+          .font(.system(size: 26 * scale, weight: .semibold, design: .rounded))
+          .foregroundStyle(DayflowDailyToken.title)
           .lineLimit(1)
           .minimumScaleFactor(0.75)
           .allowsTightening(true)
           .frame(width: Self.maxDateTitleWidth * scale, alignment: .center)
 
         DailyNavigationButton(
-          assetName: "RightArrow",
+          systemName: "chevron.right",
           isEnabled: canMoveToNextDay,
           scale: scale
         ) {
@@ -129,8 +129,8 @@ extension DailyView {
     return VStack(alignment: .leading, spacing: 8 * scale) {
       HStack {
         Text(headingText)
-          .font(.custom("InstrumentSerif-Regular", size: 24 * scale))
-          .foregroundStyle(Color(hex: "B46531"))
+          .font(.system(size: 24 * scale, weight: .semibold, design: .rounded))
+          .foregroundStyle(DayflowDailyToken.title)
 
         Spacer()
       }
@@ -147,7 +147,7 @@ extension DailyView {
         )
 
         Divider()
-          .overlay(Color(hex: "E5DFD9"))
+          .overlay(DayflowDailyToken.separator)
 
         workflowTotalsView(scale: scale, isViewingToday: isViewingToday)
           .padding(.horizontal, 16 * scale)
@@ -156,11 +156,22 @@ extension DailyView {
       }
       .background(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
-          .fill(Color.white.opacity(0.78))
+          .fill(
+            DayflowContentToken.cardFill(
+              colorScheme: colorScheme,
+              reduceTransparency: reduceTransparency
+            )
+          )
       )
       .overlay(
         RoundedRectangle(cornerRadius: 4, style: .continuous)
-          .stroke(Color(hex: "E8E1DA"), lineWidth: max(0.7, 1 * scale))
+          .stroke(
+            DayflowContentToken.cardBorder(
+              colorScheme: colorScheme,
+              increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+            ),
+            lineWidth: max(0.7, 1 * scale)
+          )
           .allowsHitTesting(false)
       )
       .overlayPreferenceValue(DailyWorkflowHoverBoundsPreferenceKey.self) { anchors in
@@ -189,7 +200,9 @@ extension DailyView {
                 durationMinutes: cardInfo.durationMinutes,
                 title: cardInfo.title,
                 accentColor: Color(hex: "D77A43"),
-                layoutScale: layoutScale
+                layoutScale: layoutScale,
+                colorScheme: colorScheme,
+                reduceTransparency: reduceTransparency
               )
             }
             .position(x: frame.midX, y: frame.minY - (4 * layoutScale))
@@ -208,7 +221,9 @@ extension DailyView {
                 durationMinutes: marker.endMinute - marker.startMinute,
                 title: marker.title,
                 accentColor: Color(hex: "FF5950"),
-                layoutScale: layoutScale
+                layoutScale: layoutScale,
+                colorScheme: colorScheme,
+                reduceTransparency: reduceTransparency
               )
             }
             .position(x: frame.midX, y: frame.minY - (4 * layoutScale))
@@ -250,18 +265,18 @@ extension DailyView {
           : "\(totalTitle)  9:00-21:00 期间没有捕获到活动。"
         Text(emptyDescription)
           .font(.custom("Figtree-Regular", size: 12 * scale))
-          .foregroundStyle(Color(hex: "7F7062"))
+          .foregroundStyle(DayflowDailyToken.secondaryText)
       } else {
         HStack(spacing: 8 * scale) {
           Text(totalTitle)
-            .font(.custom("InstrumentSerif-Regular", size: 14 * scale))
-            .foregroundStyle(Color(hex: "777777"))
+            .font(.system(size: 14 * scale, weight: .medium, design: .rounded))
+            .foregroundStyle(DayflowDailyToken.secondaryText)
 
           ForEach(workflowTotals) { total in
             HStack(spacing: 2 * scale) {
               Text(total.name)
                 .font(.custom("Figtree-Regular", size: 12 * scale))
-                .foregroundStyle(Color(hex: "1F1B18"))
+                .foregroundStyle(DayflowDailyToken.text)
               Text(formatDuration(minutes: total.minutes))
                 .font(.custom("Figtree-SemiBold", size: 12 * scale))
                 .foregroundStyle(Color(hex: total.colorHex))
@@ -413,12 +428,13 @@ extension DailyView {
 }
 
 private struct DailyNavigationButton: View {
-  let assetName: String
+  let systemName: String
   var isEnabled = true
   let scale: CGFloat
   let action: () -> Void
 
   @State private var isHovering = false
+  @Environment(\.colorScheme) private var colorScheme
 
   private var arrowSize: CGFloat { 24 * scale }
   private var hoverCircleSize: CGFloat { 30 * scale }
@@ -430,13 +446,14 @@ private struct DailyNavigationButton: View {
     } label: {
       ZStack {
         Circle()
-          .fill(Color(hex: "FFEBD3").opacity(0.79))
+          .fill(DayflowDailyToken.selectedFill(colorScheme: colorScheme))
           .frame(width: hoverCircleSize, height: hoverCircleSize)
           .opacity(isHovering && isEnabled ? 1 : 0)
 
-        Image(assetName)
-          .resizable()
-          .scaledToFit()
+        Image(systemName: systemName)
+          .font(.system(size: arrowSize * 0.58, weight: .semibold))
+          .symbolRenderingMode(.hierarchical)
+          .foregroundStyle(DayflowDailyToken.text)
           .frame(width: arrowSize, height: arrowSize)
           .opacity(isEnabled ? 1 : 0.35)
       }

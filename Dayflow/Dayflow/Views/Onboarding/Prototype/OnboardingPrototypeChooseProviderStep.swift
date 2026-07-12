@@ -3,6 +3,7 @@
 //  Dayflow
 //
 
+import AppKit
 import SwiftUI
 
 // MARK: - Choose Provider Step
@@ -14,6 +15,9 @@ struct OnboardingPrototypeChooseProviderStep: View {
   let onSelect: (String) -> Void
 
   @State private var showAllOptions = false
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   private let layoutScale: CGFloat = 0.8
   private let textScale: CGFloat = 1.1
@@ -91,10 +95,10 @@ struct OnboardingPrototypeChooseProviderStep: View {
     VStack(spacing: 0) {
       // Title
       Text("选择 Dayflow 的运行方式")
-        .font(.custom("InstrumentSerif-Regular", size: scaledText(40)))
+        .font(.custom("HanziPen SC", size: scaledText(40)))
         .tracking(-1.2 * layoutScale)
         .multilineTextAlignment(.center)
-        .foregroundColor(Color(hex: "492304"))
+        .foregroundColor(DayflowOnboardingToken.title)
         .frame(maxWidth: .infinity)
         .padding(.top, scaled(25))
         .padding(.bottom, scaled(30))
@@ -138,28 +142,27 @@ struct OnboardingPrototypeChooseProviderStep: View {
       Spacer()
 
       // Toggle pill
-      Button {
-        withAnimation(.easeInOut(duration: 0.3)) {
+      DayflowSurfaceButton(
+        action: {
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.3)) {
           showAllOptions.toggle()
         }
-      } label: {
-        Text(showAllOptions ? "仅看推荐" : "查看全部")
-          .font(.custom("Figtree", size: scaledText(16)))
-          .foregroundColor(Color(hex: "492304"))
-          .padding(.horizontal, scaled(20))
-          .padding(.vertical, scaled(8))
-          .background(Color.white.opacity(0.4))
-          .clipShape(Capsule())
-          .overlay(Capsule().stroke(Color(hex: "E4D3C2"), lineWidth: 1))
-          .shadow(
-            color: Color(hex: "AF7246").opacity(0.15),
-            radius: scaled(2),
-            x: 0,
-            y: 0
-          )
-      }
-      .buttonStyle(.plain)
-      .pointingHandCursor()
+        },
+        content: {
+          Text(showAllOptions ? "仅看推荐" : "查看全部")
+            .font(.custom("Figtree", size: scaledText(16)))
+        },
+        background: DayflowContentToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ),
+        foreground: DayflowOnboardingToken.title,
+        borderColor: contentBorder,
+        cornerRadius: 999,
+        horizontalPadding: scaled(20),
+        verticalPadding: scaled(8),
+        isSecondaryStyle: true
+      )
       .padding(.bottom, scaled(30))
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -188,7 +191,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
           Text(title)
             .font(.custom("Figtree", size: scaledText(18)))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(DayflowOnboardingToken.title)
           Spacer()
         }
         .padding(.bottom, scaled(8))
@@ -222,7 +225,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
     .frame(maxWidth: .infinity)
     .frame(maxHeight: scaled(432))
     .background(
-      isHighlighted ? AnyView(SelectedCardBackground()) : AnyView(Color.white.opacity(0.3))
+      isHighlighted ? AnyView(SelectedCardBackground()) : AnyView(contentFill)
     )
     .cornerRadius(4)
     .overlay(
@@ -230,7 +233,9 @@ struct OnboardingPrototypeChooseProviderStep: View {
         ? AnyView(SelectedCardOverlay())
         : AnyView(
           RoundedRectangle(cornerRadius: 4).inset(by: 0.5).stroke(
-            Color.black.opacity(0.06), lineWidth: 1)
+            contentBorder,
+            lineWidth: borderLineWidth
+          )
         )
     )
     .modifier(CardShadowModifier(isSelected: isHighlighted))
@@ -248,7 +253,7 @@ struct OnboardingPrototypeChooseProviderStep: View {
           Text(info.title)
             .font(.custom("Figtree", size: scaledText(18)))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(DayflowOnboardingToken.title)
             .lineLimit(1)
         }
 
@@ -275,12 +280,32 @@ struct OnboardingPrototypeChooseProviderStep: View {
     .padding(.vertical, scaled(18))
     .frame(maxWidth: .infinity)
     .frame(height: scaled(205))
-    .background(Color.white.opacity(0.3))
+    .background(contentFill)
     .cornerRadius(4)
     .overlay(
       RoundedRectangle(cornerRadius: 4).inset(by: 0.5).stroke(
-        Color.black.opacity(0.06), lineWidth: 1)
+        contentBorder,
+        lineWidth: borderLineWidth
+      )
     )
+  }
+
+  private var contentFill: Color {
+    DayflowContentToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
+  }
+
+  private var contentBorder: Color {
+    DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+    )
+  }
+
+  private var borderLineWidth: CGFloat {
+    NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast ? 1.2 : 1
   }
 
   private func selectButton(title: String) -> some View {
@@ -294,13 +319,17 @@ struct OnboardingPrototypeChooseProviderStep: View {
           .fontWeight(.semibold)
           .frame(maxWidth: .infinity)
       },
-      background: Color(red: 0.25, green: 0.17, blue: 0),
-      foreground: .white,
-      borderColor: .clear,
+      background: DayflowContentToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      foreground: DayflowOnboardingToken.title,
+      borderColor: contentBorder,
       cornerRadius: scaled(8),
       horizontalPadding: scaled(24),
       verticalPadding: scaled(12),
-      showOverlayStroke: true
+      showOverlayStroke: true,
+      isSecondaryStyle: true
     )
   }
 }

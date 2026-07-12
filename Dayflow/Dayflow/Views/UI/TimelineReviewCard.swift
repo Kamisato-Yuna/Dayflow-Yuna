@@ -23,6 +23,8 @@ struct TimelineReviewCard: View {
   @State private var previewImage: CGImage?
   @State private var previewRequestID: Int = 0
   @State private var wasPlayingBeforeScrub = false
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(
     activity: TimelineActivity,
@@ -48,10 +50,6 @@ struct TimelineReviewCard: View {
 
   var body: some View {
     ZStack(alignment: .top) {
-      RoundedRectangle(cornerRadius: 8)
-        .fill(Color.white)
-        .shadow(color: Color.black.opacity(0.18), radius: 14, x: 0, y: 8)
-
       VStack(spacing: 0) {
         TimelineReviewCardMedia(
           previewImage: previewImage,
@@ -98,10 +96,11 @@ struct TimelineReviewCard: View {
         }
 
         VStack(alignment: .leading, spacing: 12) {
-          Text(activity.title)
-            .font(.custom("InstrumentSerif-Regular", size: 24))
-            .foregroundColor(Color.black)
+          Text(displayTitle)
+            .font(.system(size: 24, weight: .semibold, design: .rounded))
+            .foregroundColor(Color(nsColor: .labelColor))
             .lineLimit(2)
+            .minimumScaleFactor(0.82)
             .frame(maxWidth: .infinity, alignment: .leading)
 
           HStack(alignment: .center) {
@@ -113,8 +112,8 @@ struct TimelineReviewCard: View {
           ScrollView(.vertical, showsIndicators: true) {
             Text(summaryText)
               .font(.custom("Figtree", size: 14).weight(.medium))
-              .foregroundColor(Color(hex: "333333"))
-              .lineSpacing(3)
+              .foregroundColor(Color(nsColor: .labelColor))
+              .lineSpacing(4)
               .frame(maxWidth: .infinity, alignment: .leading)
               .padding(.trailing, 4)
           }
@@ -126,21 +125,30 @@ struct TimelineReviewCard: View {
             Spacer()
             Text(progressText)
               .font(.custom("Figtree", size: 10).weight(.medium))
-              .foregroundColor(Color(hex: "AFAFAF"))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
           }
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .padding(.horizontal, 20)
         .padding(.vertical, 18)
-      }
-      .clipShape(RoundedRectangle(cornerRadius: 8))
+        .background(
+          Rectangle()
+            .fill(
+              reduceTransparency
+                ? Color(nsColor: .controlBackgroundColor)
+                : Color(nsColor: .controlBackgroundColor).opacity(colorScheme == .dark ? 0.68 : 0.74)
+            )
+        )
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 8))
 
       if let overlayRating = overlayRating {
         TimelineReviewOverlayBadge(rating: overlayRating)
-          .clipShape(RoundedRectangle(cornerRadius: 8))
-          .transition(.opacity)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .transition(.opacity)
       }
     }
+    .dayflowCard(cornerRadius: 8)
     .opacity(highlightOpacity)
     .overlay {
       if !usingVideoPlayer {
@@ -165,6 +173,16 @@ struct TimelineReviewCard: View {
 
   private var summaryText: String {
     activity.summary.trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+
+  private var displayTitle: String {
+    let trimmed = activity.title.trimmingCharacters(in: .whitespacesAndNewlines)
+    let cleaned = trimmed.replacingOccurrences(
+      of: #"^<think>\s*"#,
+      with: "",
+      options: .regularExpression
+    )
+    return cleaned.isEmpty ? activity.title : cleaned
   }
 
   private var timeRangeText: String {

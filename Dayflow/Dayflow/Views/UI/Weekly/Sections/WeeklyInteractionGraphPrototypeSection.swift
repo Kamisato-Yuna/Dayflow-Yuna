@@ -3,13 +3,13 @@ import SwiftUI
 
 struct WeeklyInteractionGraphPrototypeSection: View {
   let snapshot: WeeklyInteractionGraphSnapshot
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   enum Design {
     static let sectionSize = CGSize(width: 660, height: 631)
     static let cornerRadius: CGFloat = 6
-    static let borderColor = Color(hex: "E7DDD5")
-    static let background = Color(hex: "FBF6F0")
-    static let titleColor = Color(hex: "B46531")
+    static let titleColor = DayflowWeeklyToken.title
     static let titleOrigin = CGPoint(x: 29, y: 22)
     static let subtitleOrigin = CGPoint(x: 29, y: 56)
     static let graphOrigin = CGPoint(x: 24, y: 92)
@@ -28,11 +28,8 @@ struct WeeklyInteractionGraphPrototypeSection: View {
     let layout = layout
 
     ZStack(alignment: .topLeading) {
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(Design.background)
-
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Design.titleColor)
         .offset(x: Design.titleOrigin.x, y: Design.titleOrigin.y)
 
@@ -50,11 +47,7 @@ struct WeeklyInteractionGraphPrototypeSection: View {
         .offset(y: Design.legendY)
     }
     .frame(width: Design.sectionSize.width, height: Design.sectionSize.height)
-    .clipShape(RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: Design.cornerRadius)
   }
 
   func graphLayer(layout: WeeklyInteractionGraphLayout) -> some View {
@@ -76,7 +69,10 @@ struct WeeklyInteractionGraphPrototypeSection: View {
             height: dot.diameter
           )
           let path = Path(ellipseIn: rect)
-          context.fill(path, with: .color(Design.background))
+          context.fill(path, with: .color(DayflowWeeklyToken.chartFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          )))
           context.stroke(
             path,
             with: .color(dot.color),

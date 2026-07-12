@@ -560,7 +560,7 @@ final class ChatService: ObservableObject {
       **timeline_cards** - High-level activity summaries (start here)
       - day (YYYY-MM-DD), start_ts/end_ts (epoch seconds)
       - title, summary, detailed_summary, category, subcategory (detailed_summary is large—only pull if you really need the granularity)
-      - category values: Work, Personal, Distraction, Idle, System
+      - category values may include current Chinese names and legacy English aliases; normalize legacy aliases such as Work, Personal, Distraction, Idle, Communication, Specs & Planning, and Research & Analysis to the current category meaning when analyzing.
       - is_deleted (0=active, 1=deleted) - ALWAYS filter is_deleted=0
       - Ignore "processing failed" cards unless user explicitly asks about them
       - Duration in minutes: (end_ts - start_ts)/60
@@ -631,27 +631,27 @@ final class ChatService: ObservableObject {
       You may include inline charts inside your markdown response. Use fenced chart blocks exactly like this:
 
       ```chart type=bar
-      { "title": "Time by activity (today)", "x": ["Research", "YouTube"], "y": [45, 20], "color": "#F96E00" }
+      { "title": "今日活动时长", "x": ["研究", "YouTube"], "y": [45, 20], "color": "#F96E00" }
       ```
 
       ```chart type=line
-      { "title": "Focus time by day", "x": ["Mon", "Tue", "Wed"], "y": [2.5, 3.0, 1.8], "color": "#1F6FEB" }
+      { "title": "每日专注时长", "x": ["周一", "周二", "周三"], "y": [2.5, 3.0, 1.8], "color": "#1F6FEB" }
       ```
 
       ```chart type=stacked_bar
-      { "title": "Work vs Personal by day", "x": ["Mon", "Tue"], "series": [{ "name": "Work", "values": [2.5, 3.1], "color": "#1F6FEB" }, { "name": "Personal", "values": [1.2, 0.8], "color": "#F96E00" }] }
+      { "title": "每日工作与个人时间", "x": ["周一", "周二"], "series": [{ "name": "工作", "values": [2.5, 3.1], "color": "#1F6FEB" }, { "name": "个人", "values": [1.2, 0.8], "color": "#F96E00" }] }
       ```
 
       ```chart type=donut
-      { "title": "Time split (today)", "labels": ["Work", "Personal"], "values": [3.0, 5.7], "colors": ["#1F6FEB", "#F96E00"] }
+      { "title": "今日时间分布", "labels": ["工作", "个人"], "values": [3.0, 5.7], "colors": ["#1F6FEB", "#F96E00"] }
       ```
 
       ```chart type=heatmap
-      { "title": "Focus by daypart", "x": ["Mon", "Tue", "Wed"], "y": ["Morning", "Afternoon", "Evening"], "values": [[1.2, 0.8, 1.5], [2.0, 1.6, 1.1], [0.7, 1.0, 0.9]], "color": "#1F6FEB" }
+      { "title": "分时段专注热力", "x": ["周一", "周二", "周三"], "y": ["上午", "下午", "晚上"], "values": [[1.2, 0.8, 1.5], [2.0, 1.6, 1.1], [0.7, 1.0, 0.9]], "color": "#1F6FEB" }
       ```
 
       ```chart type=gantt
-      { "title": "Focus blocks (today)", "items": [{ "label": "Research", "start": 9.0, "end": 10.5, "color": "#1F6FEB" }, { "label": "Break", "start": 10.5, "end": 11.0, "color": "#F96E00" }] }
+      { "title": "今日专注区块", "items": [{ "label": "研究", "start": 9.0, "end": 10.5, "color": "#1F6FEB" }, { "label": "休息", "start": 10.5, "end": 11.0, "color": "#F96E00" }] }
       ```
 
       RULES:

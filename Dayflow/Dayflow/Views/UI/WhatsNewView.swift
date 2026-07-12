@@ -136,13 +136,13 @@ struct WhatsNewView: View {
         HStack(alignment: .top) {
           VStack(alignment: .leading, spacing: 6) {
             Text("\(releaseNote.version) 更新内容 🎉")
-              .font(.custom("InstrumentSerif-Regular", size: 32))
-              .foregroundColor(.black.opacity(0.9))
+              .font(.system(size: 32, weight: .semibold, design: .rounded))
+              .foregroundColor(Color(nsColor: .labelColor))
 
             Text(releaseNote.title)
               .font(.custom("Figtree", size: 17))
               .fontWeight(.semibold)
-              .foregroundColor(.black.opacity(0.78))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
           }
 
           Spacer()
@@ -151,10 +151,9 @@ struct WhatsNewView: View {
             Image(systemName: "xmark")
               .font(.system(size: 13, weight: .semibold))
               .padding(8)
-              .background(Color.black.opacity(0.05))
-              .clipShape(Circle())
           }
           .buttonStyle(PlainButtonStyle())
+          .dayflowFloatingControl(cornerRadius: 16, groupingSpacing: 8)
           .pointingHandCursor()
           .accessibilityLabel("关闭")
           .keyboardShortcut(.cancelAction)
@@ -164,13 +163,13 @@ struct WhatsNewView: View {
           ForEach(Array(releaseNote.highlights.enumerated()), id: \.offset) { _, highlight in
             HStack(alignment: .top, spacing: 12) {
               Circle()
-                .fill(Color(red: 0.25, green: 0.17, blue: 0).opacity(0.6))
+                .fill(DayflowSurfaceAccent.primary.opacity(0.72))
                 .frame(width: 6, height: 6)
                 .padding(.top, 7)
 
               Text(highlight)
                 .font(.custom("Figtree", size: 15))
-                .foregroundColor(.black.opacity(0.75))
+                .foregroundColor(Color(nsColor: .labelColor))
                 .fixedSize(horizontal: false, vertical: true)
             }
           }
@@ -198,7 +197,7 @@ struct WhatsNewView: View {
                 .frame(maxWidth: .infinity)
                 .background(
                   RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color(red: 0.985, green: 0.985, blue: 0.985))
+                    .fill(Color(nsColor: .controlBackgroundColor).opacity(0.62))
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(
@@ -225,11 +224,7 @@ struct WhatsNewView: View {
     }
     .frame(maxHeight: 760)
     .frame(width: 780)
-    .background(
-      RoundedRectangle(cornerRadius: 16, style: .continuous)
-        .fill(Color.white)
-        .shadow(color: Color.black.opacity(0.25), radius: 40, x: 0, y: 20)
-    )
+    .dayflowModalSurface(cornerRadius: 18, groupingSpacing: 8)
     .onAppear {
       AnalyticsService.shared.screen("whats_new")
       if didHydrateSurveyState == false {
@@ -257,14 +252,14 @@ struct WhatsNewView: View {
       Text("目前你觉得周报怎么样？")
         .font(.custom("Figtree", size: 15))
         .fontWeight(.semibold)
-        .foregroundColor(.black.opacity(0.85))
+        .foregroundColor(Color(nsColor: .labelColor))
         .fixedSize(horizontal: false, vertical: true)
 
       Text(
         "简单回答一下，就能帮助我们决定周报接下来怎么改进。"
       )
       .font(.custom("Figtree", size: 13))
-      .foregroundColor(.black.opacity(0.62))
+      .foregroundColor(Color(nsColor: .secondaryLabelColor))
       .fixedSize(horizontal: false, vertical: true)
 
       HStack(spacing: 10) {
@@ -286,7 +281,7 @@ struct WhatsNewView: View {
         .frame(minHeight: 78)
         .background(
           RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .fill(Color.white)
+            .fill(Color(nsColor: .textBackgroundColor).opacity(0.72))
         )
         .overlay(
           RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -314,7 +309,7 @@ struct WhatsNewView: View {
                 .fontWeight(.semibold)
             }
           },
-          background: Color(red: 0.25, green: 0.17, blue: 0),
+          background: DayflowSurfaceAccent.primary,
           foreground: .white,
           borderColor: .clear,
           cornerRadius: 8,
@@ -329,7 +324,7 @@ struct WhatsNewView: View {
         if hasSubmittedWeeklyFeedback {
           Label("已保存。", systemImage: "checkmark.circle.fill")
             .font(.custom("Figtree", size: 14))
-            .foregroundColor(Color(red: 0.25, green: 0.17, blue: 0))
+            .foregroundColor(DayflowSurfaceAccent.positive)
         }
       }
     }
@@ -348,7 +343,7 @@ struct WhatsNewView: View {
         Text(option.title)
           .font(.custom("Figtree", size: 14))
           .fontWeight(isSelected ? .semibold : .regular)
-          .foregroundColor(.black.opacity(0.82))
+          .foregroundColor(Color(nsColor: .labelColor))
           .fixedSize(horizontal: false, vertical: true)
       }
       .frame(maxWidth: .infinity)
@@ -358,15 +353,15 @@ struct WhatsNewView: View {
         RoundedRectangle(cornerRadius: 10, style: .continuous)
           .fill(
             isSelected
-              ? Color(red: 0.25, green: 0.17, blue: 0).opacity(0.06)
-              : Color.white
+              ? DayflowSurfaceAccent.primary.opacity(0.12)
+              : Color(nsColor: .controlBackgroundColor).opacity(0.58)
           )
       )
       .overlay(
         RoundedRectangle(cornerRadius: 10, style: .continuous)
           .stroke(
             isSelected
-              ? Color(red: 0.25, green: 0.17, blue: 0).opacity(0.28)
+              ? DayflowSurfaceAccent.primary.opacity(0.34)
               : Color.black.opacity(0.1),
             lineWidth: 1
           )
@@ -382,11 +377,11 @@ struct WhatsNewView: View {
       Text(cta.title)
         .font(.custom("Figtree", size: 16))
         .fontWeight(.bold)
-        .foregroundColor(.black.opacity(0.86))
+        .foregroundColor(Color(nsColor: .labelColor))
 
       Text(cta.description)
         .font(.custom("Figtree", size: 14))
-        .foregroundColor(.black.opacity(0.75))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         .fixedSize(horizontal: false, vertical: true)
 
       DayflowSurfaceButton(
@@ -400,7 +395,7 @@ struct WhatsNewView: View {
               .fontWeight(.semibold)
           }
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
+        background: DayflowSurfaceAccent.primary,
         foreground: .white,
         borderColor: .clear,
         cornerRadius: 8,

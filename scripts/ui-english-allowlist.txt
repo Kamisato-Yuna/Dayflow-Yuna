@@ -34,7 +34,6 @@ Base URL	url
 Figtree	brand
 Figtree-Regular	internal-key
 Figtree-Medium	internal-key
-InstrumentSerif-Regular	internal-key
 caller_qos	internal-key
 LeftArrow	ui-icon
 RightArrow	ui-icon

@@ -9,12 +9,16 @@ set -euo pipefail
 # Optional env vars:
 #   SCHEME           - Xcode scheme (default: Dayflow)
 #   CONFIG           - Xcode configuration (default: Release)
-#   DERIVED_DATA     - Derived data path (default: build)
-#   APP_NAME         - App name (default: Dayflow)
+#   DERIVED_DATA     - Derived data path (default: build/release-derived)
+#   CLEAN_RELEASE_BUILD - Remove previous release derived data before building (default: 1)
+#   ARCHS            - Architectures to build (default: arm64)
+#   ONLY_ACTIVE_ARCH - Whether to build only the active architecture (default: YES)
+#   APP_NAME         - App name (default: Dayflow-Yuna)
 #   ENTITLEMENTS     - Entitlements plist path (default: Dayflow/Dayflow/Dayflow.entitlements)
 #   SIGN_ID          - Codesign identity (e.g. "Developer ID Application: Your Name (TEAMID)")
 #   VOL_NAME         - DMG volume name (defaults to APP_NAME)
 #   DMG_NAME         - Output DMG name (defaults to "${APP_NAME}.dmg")
+#   SIGNED_APP_OUTPUT - Optional path under build/ to copy the signed app bundle
 #   NOTARY_PROFILE   - Saved notarytool keychain profile (optional)
 #   NOTARY_APPLE_ID  - Apple ID for notarytool (optional)
 #   NOTARY_TEAM_ID   - Team ID for notarytool (optional)
@@ -25,6 +29,7 @@ set -euo pipefail
 
 # Load optional per-developer config
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(cd "${SCRIPT_DIR}/.." && pwd)
 if [[ -f "${SCRIPT_DIR}/release.env" ]]; then
   # shellcheck disable=SC1090
   source "${SCRIPT_DIR}/release.env"
@@ -32,8 +37,11 @@ fi
 
 SCHEME=${SCHEME:-Dayflow}
 CONFIG=${CONFIG:-Release}
-DERIVED_DATA=${DERIVED_DATA:-build}
-APP_NAME=${APP_NAME:-Dayflow}
+DERIVED_DATA=${DERIVED_DATA:-build/release-derived}
+CLEAN_RELEASE_BUILD=${CLEAN_RELEASE_BUILD:-1}
+ARCHS=${ARCHS:-arm64}
+ONLY_ACTIVE_ARCH=${ONLY_ACTIVE_ARCH:-YES}
+APP_NAME=${APP_NAME:-Dayflow-Yuna}
 ENTITLEMENTS=${ENTITLEMENTS:-Dayflow/Dayflow/Dayflow.entitlements}
 VOL_NAME=${VOL_NAME:-$APP_NAME}
 DMG_NAME=${DMG_NAME:-"${APP_NAME}.dmg"}
@@ -51,12 +59,55 @@ if [[ ! -d "$PROJECT_PATH" ]]; then
   exit 1
 fi
 
-echo "[1/7] Building ${APP_NAME} (${SCHEME}|${CONFIG}) using project ${PROJECT_PATH} with code signing disabled…"
+absolute_path() {
+  local path="$1"
+  if [[ "$path" = /* ]]; then
+    printf '%s\n' "$path"
+  else
+    printf '%s\n' "${REPO_ROOT}/${path}"
+  fi
+}
+
+absolute_derived_data=$(absolute_path "${DERIVED_DATA}")
+
+assert_repo_build_path() {
+  local path
+  path=$(absolute_path "$1")
+  case "$path" in
+    "${REPO_ROOT}/build/"*|"${REPO_ROOT}/build")
+      ;;
+    *)
+      echo "ERROR: Refusing to clean path outside repo build directory: $path" >&2
+      exit 1
+      ;;
+  esac
+}
+
+if [[ "${CLEAN_RELEASE_BUILD}" == "1" ]]; then
+  assert_repo_build_path "${DERIVED_DATA}"
+  echo "[0/8] Cleaning previous release build at ${DERIVED_DATA}…"
+  if [[ "${absolute_derived_data}" == "${REPO_ROOT}/build" ]]; then
+    rm -rf \
+      "${DERIVED_DATA}/Build" \
+      "${DERIVED_DATA}/Index.noindex" \
+      "${DERIVED_DATA}/Logs" \
+      "${DERIVED_DATA}/ModuleCache.noindex"
+  else
+    rm -rf "${DERIVED_DATA}"
+  fi
+else
+  echo "[0/8] Skipping release build cleanup because CLEAN_RELEASE_BUILD=${CLEAN_RELEASE_BUILD}"
+fi
+rm -f "${DMG_NAME}"
+
+echo "[1/8] Building ${APP_NAME} (${SCHEME}|${CONFIG}) using project ${PROJECT_PATH} with code signing disabled…"
 xcodebuild \
   -project "${PROJECT_PATH}" \
   -scheme "${SCHEME}" \
   -configuration "${CONFIG}" \
   -derivedDataPath "${DERIVED_DATA}" \
+  ARCHS="${ARCHS}" \
+  ONLY_ACTIVE_ARCH="${ONLY_ACTIVE_ARCH}" \
   CODE_SIGN_IDENTITY="" \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGNING_ALLOWED=NO \
@@ -207,10 +258,10 @@ if command -v rg >/dev/null 2>&1; then
   if ! printf "%s" "$ENT_DUMP" | rg -q "com.apple.security.temporary-exception.mach-lookup.global-name"; then
     echo "WARNING: mach-lookup entitlement missing on app. Check entitlements substitution." >&2
   fi
-  if ! printf "%s" "$ENT_DUMP" | rg -q "-spks|teleportlabs.com.Dayflow-spks"; then
+  if ! printf "%s" "$ENT_DUMP" | rg -q -- "-spks|${BUNDLE_ID}-spks"; then
     echo "WARNING: Sparkle status mach service (-spks) not present in entitlements." >&2
   fi
-  if ! printf "%s" "$ENT_DUMP" | rg -q "-spki|teleportlabs.com.Dayflow-spki"; then
+  if ! printf "%s" "$ENT_DUMP" | rg -q -- "-spki|${BUNDLE_ID}-spki"; then
     echo "WARNING: Sparkle installer mach service (-spki) not present in entitlements." >&2
   fi
 fi
@@ -218,6 +269,14 @@ fi
 echo "[6/8] Verifying signature…"
 codesign --verify --deep --strict --verbose=2 "${SANITIZED_APP}"
 spctl -a -vvv --type execute "${SANITIZED_APP}" || true
+
+if [[ -n "${SIGNED_APP_OUTPUT:-}" ]]; then
+  assert_repo_build_path "${SIGNED_APP_OUTPUT}"
+  echo "[6/8] Copying signed app to ${SIGNED_APP_OUTPUT}…"
+  rm -rf "${SIGNED_APP_OUTPUT}"
+  mkdir -p "$(dirname "${SIGNED_APP_OUTPUT}")"
+  ditto --noextattr --norsrc "${SANITIZED_APP}" "${SIGNED_APP_OUTPUT}"
+fi
 
 echo "[7/8] Creating DMG with create-dmg…"
 # Require create-dmg for reliable DMG styling
@@ -228,16 +287,13 @@ if ! command -v create-dmg >/dev/null 2>&1; then
 fi
 
 # Default to project's background image
-SCRIPT_PARENT=$(cd "$SCRIPT_DIR/.." && pwd)
-DEFAULT_BG="${SCRIPT_PARENT}/docs/assets/dmg-background.png"
+DEFAULT_BG="${REPO_ROOT}/docs/assets/dmg-background.png"
 DMG_BG=${DMG_BG:-$DEFAULT_BG}
 
 if [[ ! -f "${DMG_BG}" ]]; then
   echo "ERROR: Background image not found at ${DMG_BG}" >&2
   exit 1
 fi
-
-rm -f "${DMG_NAME}"
 
 # Window size and positions tuned for docs/assets/dmg-background.png (1550×960 @2x, displays as 775×480)
 # Dayflow app on left, Applications folder on right (swapped from typical layout)

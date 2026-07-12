@@ -5,6 +5,7 @@
 //  A donut chart showing time breakdown by category using Swift Charts
 //
 
+import AppKit
 import Charts
 import SwiftUI
 
@@ -49,11 +50,11 @@ struct CategoryTimeData: Identifiable {
     let minutes = totalMinutes % 60
 
     if hours > 0 && minutes > 0 {
-      return "\(hours)h \(minutes)m"
+      return "\(hours)小时 \(minutes)分钟"
     } else if hours > 0 {
-      return "\(hours)h"
+      return "\(hours)小时"
     } else {
-      return "\(minutes)m"
+      return "\(minutes)分钟"
     }
   }
 }
@@ -63,6 +64,8 @@ struct CategoryTimeData: Identifiable {
 struct CategoryDonutChart: View {
   let data: [CategoryTimeData]
   let size: CGFloat
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.colorScheme) private var colorScheme
 
   init(data: [CategoryTimeData], size: CGFloat = 205) {
     self.data = data
@@ -99,10 +102,10 @@ struct CategoryDonutChart: View {
     return ZStack {
       // Background circle with light grey fill and shadow
       Circle()
-        .fill(Color(red: 0.95, green: 0.94, blue: 0.94))  // Light grey background
+        .fill(ringBackground)
         .frame(width: size, height: size)
         .shadow(
-          color: Color(red: 0.39, green: 0.28, blue: 0.22).opacity(0.35), radius: 5, x: 0, y: 0)
+          color: ringShadow, radius: colorScheme == .dark ? 10 : 5, x: 0, y: 0)
 
       // Swift Charts donut
       Chart(data) { item in
@@ -136,10 +139,14 @@ struct CategoryDonutChart: View {
       // White circle in center - slightly smaller than donut hole to show grey gap on inner edge
       let innerGap: CGFloat = 8  // 4px gap on each side (matches outer gap)
       Circle()
-        .fill(Color.white)
+        .fill(centerFill)
         .frame(
           width: chartSize * innerRadiusRatio - innerGap,
           height: chartSize * innerRadiusRatio - innerGap)
+        .overlay {
+          Circle()
+            .stroke(centerBorder, lineWidth: 0.8)
+        }
 
       // Center content
       centerContent
@@ -151,16 +158,16 @@ struct CategoryDonutChart: View {
     VStack(spacing: 4) {
       Text("总计")
         .font(.custom("Figtree", size: 8).weight(.bold))
-        .foregroundColor(Color(red: 0.65, green: 0.65, blue: 0.65))  // #a5a5a5
+        .foregroundColor(DayflowDailyToken.secondaryText)
 
       VStack(spacing: 0) {
         let total = formattedTotal
         Text("\(total.hours) 小时")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
-          .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))  // #333333
+          .font(.system(size: 16, weight: .medium, design: .rounded))
+          .foregroundColor(DayflowDailyToken.title)
         Text("\(total.minutes) 分钟")
-          .font(.custom("InstrumentSerif-Regular", size: 16))
-          .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))
+          .font(.system(size: 16, weight: .medium, design: .rounded))
+          .foregroundColor(DayflowDailyToken.title)
       }
     }
   }
@@ -168,7 +175,7 @@ struct CategoryDonutChart: View {
   // MARK: - Legend Grid
 
   private var legendGrid: some View {
-    let columns = Array(repeating: GridItem(.fixed(84.667), spacing: 14), count: 3)
+    let columns = Array(repeating: GridItem(.flexible(minimum: 86, maximum: 104), spacing: 12), count: 3)
 
     return LazyVGrid(columns: columns, spacing: 14) {
       ForEach(data) { item in
@@ -193,19 +200,51 @@ struct CategoryDonutChart: View {
         // Category name
         Text(item.name)
           .font(.custom("FigtreeSans-Regular", size: 10))
-          .foregroundColor(Color(red: 0.39, green: 0.39, blue: 0.39))  // #636363
+          .foregroundColor(DayflowDailyToken.secondaryText)
           .lineLimit(1)
           .truncationMode(.tail)
-          .frame(width: 70, alignment: .leading)
+          .frame(maxWidth: .infinity, alignment: .leading)
       }
 
       // Duration
       Text(item.formattedDuration)
         .font(.custom("FigtreeSans-SemiBold", size: 12))
-        .foregroundColor(Color(red: 0.2, green: 0.2, blue: 0.2))  // #333333
+        .foregroundColor(DayflowDailyToken.text)
         .padding(.leading, 14)  // Align with text above
     }
-    .frame(width: 84.667, alignment: .leading)
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private var ringBackground: Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color(nsColor: .labelColor).opacity(0.13)
+      : Color(red: 0.95, green: 0.94, blue: 0.94)
+  }
+
+  private var centerFill: Color {
+    if reduceTransparency {
+      return Color(nsColor: .controlBackgroundColor)
+    }
+    return colorScheme == .dark
+      ? Color(nsColor: .windowBackgroundColor).opacity(0.82)
+      : Color(nsColor: .controlBackgroundColor)
+  }
+
+  private var centerBorder: Color {
+    DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+    )
+    .opacity(colorScheme == .dark ? 0.9 : 0.55)
+  }
+
+  private var ringShadow: Color {
+    colorScheme == .dark
+      ? Color.black.opacity(0.32)
+      : Color(red: 0.39, green: 0.28, blue: 0.22).opacity(0.35)
   }
 }
 
@@ -214,21 +253,21 @@ struct CategoryDonutChart: View {
 #Preview("Category Donut Chart") {
   // Dummy data matching the Figma design
   let previewData: [CategoryTimeData] = [
-    CategoryTimeData(name: "Personal", colorHex: "#6AADFF", duration: 92 * 60),  // 1h 32m - blue
-    CategoryTimeData(name: "Personal", colorHex: "#FF5950", duration: 45 * 60),  // 45m - red
-    CategoryTimeData(name: "Long category title", colorHex: "#88E5DF", duration: 152 * 60),  // 2h 32m - teal
-    CategoryTimeData(name: "Learning", colorHex: "#5650FF", duration: 32 * 60),  // 32m - purple
-    CategoryTimeData(name: "Personal", colorHex: "#B984FF", duration: 204 * 60),  // 3h 24m - light purple
-    CategoryTimeData(name: "Personal", colorHex: "#E2E2E2", duration: 152 * 60),  // 2h 32m - gray
+    CategoryTimeData(name: "个人", colorHex: "#6AADFF", duration: 92 * 60),  // 1h 32m - blue
+    CategoryTimeData(name: "个人", colorHex: "#FF5950", duration: 45 * 60),  // 45m - red
+    CategoryTimeData(name: "较长分类名称", colorHex: "#88E5DF", duration: 152 * 60),  // 2h 32m - teal
+    CategoryTimeData(name: "学习", colorHex: "#5650FF", duration: 32 * 60),  // 32m - purple
+    CategoryTimeData(name: "个人", colorHex: "#B984FF", duration: 204 * 60),  // 3h 24m - light purple
+    CategoryTimeData(name: "个人", colorHex: "#E2E2E2", duration: 152 * 60),  // 2h 32m - gray
   ]
 
   CategoryDonutChart(data: previewData)
     .padding(40)
-    .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+    .dayflowWindowBackground()
 }
 
 #Preview("Empty State") {
   CategoryDonutChart(data: [])
     .padding(40)
-    .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+    .dayflowWindowBackground()
 }

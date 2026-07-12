@@ -46,10 +46,10 @@ struct OnboardingFlow: View {
       switch step {
       case .introVideo:
         OnboardingPrototypeVideoIntroStep(
-          videoName: "DayflowOnboarding",
+          animationName: "dayflow_onboarding_line_animation",
           onPlaybackStarted: {
             AnalyticsService.shared.capture(
-              "onboarding_video_started", ["asset": "DayflowOnboarding.mp4"])
+              "onboarding_video_started", ["asset": "dayflow_onboarding_line_animation"])
           },
           onPlaybackCompleted: { reason in
             AnalyticsService.shared.capture("onboarding_video_completed", ["reason": reason])
@@ -256,14 +256,7 @@ struct OnboardingFlow: View {
     .onAppear {
       restoreSavedStep()
     }
-    .background {
-      // Background at parent level - fills entire window!
-      Image("OnboardingBackgroundv2")
-        .resizable()
-        .aspectRatio(contentMode: .fill)
-        .ignoresSafeArea()
-    }
-    .preferredColorScheme(.light)
+    .dayflowWindowBackground()
   }
 
   private func restoreSavedStep() {
@@ -568,9 +561,9 @@ struct WelcomeView: View {
             .opacity(textOpacity)
 
           Text(fullText)
-            .font(.custom("InstrumentSerif-Regular", size: 36))
+            .font(.custom("HanziPen SC", size: 36))
             .multilineTextAlignment(.center)
-            .foregroundColor(.black.opacity(0.8))
+            .foregroundColor(Color(nsColor: .labelColor).opacity(0.86))
             .padding(.horizontal, 20)
             .minimumScaleFactor(0.5)
             .lineLimit(3)
@@ -585,8 +578,8 @@ struct WelcomeView: View {
           DayflowSurfaceButton(
             action: onStart,
             content: { Text("开始").font(.custom("Figtree", size: 16)).fontWeight(.semibold) },
-            background: Color(red: 0.25, green: 0.17, blue: 0),
-            foreground: .white,
+            background: DayflowOnboardingToken.primaryButtonFill,
+            foreground: DayflowOnboardingToken.primaryButtonText,
             borderColor: .clear,
             cornerRadius: 8,
             horizontalPadding: 28,
@@ -606,18 +599,20 @@ struct WelcomeView: View {
       // Timeline image
       VStack {
         Spacer()
-        Image("OnboardingTimeline")
-          .resizable()
-          .aspectRatio(contentMode: .fit)
-          .frame(maxWidth: 800)
-          .offset(y: timelineOffset)
-          .opacity(timelineOffset > 0 ? 0 : 1)
-          .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0).delay(0.3))
-            {
-              timelineOffset = 0
-            }
+        DayflowContentPreviewFrame(cornerRadius: 18) {
+          Image("OnboardingTimeline")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+        }
+        .frame(maxWidth: 800)
+        .offset(y: timelineOffset)
+        .opacity(timelineOffset > 0 ? 0 : 1)
+        .onAppear {
+          withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0).delay(0.3))
+          {
+            timelineOffset = 0
           }
+        }
       }
     }
   }
@@ -681,11 +676,11 @@ struct OnboardingPrototypeDownloadReasonStep: View {
         VStack(spacing: 4) {
           Text("你希望从 Dayflow 中获得什么？")
             .font(.custom("Figtree", size: 20))
-            .foregroundColor(Color(hex: "89380E"))
+            .foregroundColor(DayflowOnboardingToken.title)
 
           Text("这能帮助我们把体验更贴合你的工作习惯。")
             .font(.custom("Figtree", size: 16))
-            .foregroundColor(Color(hex: "89380E").opacity(0.78))
+            .foregroundColor(DayflowOnboardingToken.secondaryText)
         }
         .multilineTextAlignment(.center)
 
@@ -698,7 +693,9 @@ struct OnboardingPrototypeDownloadReasonStep: View {
         otherField
       }
       .frame(maxWidth: 760)
-      .padding(.horizontal, 24)
+      .padding(.horizontal, 28)
+      .padding(.vertical, 28)
+      .dayflowOnboardingPanel()
 
       Spacer()
 
@@ -713,8 +710,8 @@ struct OnboardingPrototypeDownloadReasonStep: View {
             .font(.custom("Figtree", size: 14))
             .fontWeight(.semibold)
         },
-        background: Color(hex: "402C00"),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 59,
@@ -742,11 +739,11 @@ struct OnboardingPrototypeDownloadReasonStep: View {
       HStack(spacing: 10) {
         Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
           .font(.system(size: 17, weight: .semibold))
-          .foregroundColor(Color(hex: "402C00"))
+          .foregroundColor(isSelected ? DayflowOnboardingToken.accent : DayflowOnboardingToken.secondaryText)
 
         Text(option.displayName)
           .font(.custom("Figtree", size: 15))
-          .foregroundColor(Color(hex: "492304"))
+          .foregroundColor(DayflowOnboardingToken.title)
           .fixedSize(horizontal: false, vertical: true)
 
         Spacer(minLength: 0)
@@ -754,22 +751,7 @@ struct OnboardingPrototypeDownloadReasonStep: View {
       .padding(.horizontal, 14)
       .padding(.vertical, 10)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(
-        RoundedRectangle(cornerRadius: 8, style: .continuous)
-          .fill(isSelected ? Color(hex: "FFE5CF").opacity(0.48) : Color.white.opacity(0.42))
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 8, style: .continuous)
-          .stroke(isSelected ? Color(hex: "FFCCA7") : Color(hex: "E4D3C2"), lineWidth: 1)
-      )
-      .shadow(
-        color: isSelected
-          ? Color(red: 1, green: 0.416, blue: 0).opacity(0.22)
-          : Color(hex: "AF7246").opacity(0.12),
-        radius: isSelected ? 3 : 2,
-        x: 0,
-        y: 0
-      )
+      .dayflowOnboardingOptionCard(isSelected: isSelected, cornerRadius: 10)
     }
     .buttonStyle(.plain)
     .pointingHandCursor()
@@ -778,20 +760,11 @@ struct OnboardingPrototypeDownloadReasonStep: View {
   private var otherField: some View {
     TextField("告诉我更多", text: $otherText)
       .font(.custom("Figtree", size: 16))
-      .foregroundColor(Color(hex: "492304"))
+      .foregroundColor(DayflowOnboardingToken.title)
       .textFieldStyle(.plain)
       .padding(.horizontal, 12)
       .frame(height: 36)
-      .background(Color.white.opacity(0.42))
-      .cornerRadius(5)
-      .overlay(
-        RoundedRectangle(cornerRadius: 5)
-          .stroke(Color(hex: "E4D3C2"), lineWidth: 1)
-      )
-      .shadow(
-        color: Color(hex: "AF7246").opacity(0.15),
-        radius: 2, x: 0, y: 0
-      )
+      .dayflowOnboardingTextField()
       .opacity(selectedReasons.contains(.other) ? 1 : 0)
       .disabled(!selectedReasons.contains(.other))
       .allowsHitTesting(selectedReasons.contains(.other))
@@ -888,10 +861,10 @@ struct OnboardingPrototypeReferralStep: View {
         .frame(height: 39)
 
       Text("回答一个快速问题")
-        .font(.custom("InstrumentSerif-Regular", size: 40))
+        .font(.system(size: 40, weight: .semibold, design: .rounded))
         .tracking(-1.2)
         .multilineTextAlignment(.center)
-        .foregroundColor(Color(hex: "492304"))
+        .foregroundColor(DayflowOnboardingToken.title)
         .lineSpacing(40 * 0.2)
         .frame(maxWidth: 708)
         .fixedSize(horizontal: false, vertical: true)
@@ -908,7 +881,9 @@ struct OnboardingPrototypeReferralStep: View {
         )
       }
       .frame(maxWidth: 720)
-      .padding(.horizontal, 24)
+      .padding(.horizontal, 28)
+      .padding(.vertical, 28)
+      .dayflowOnboardingPanel()
 
       Spacer()
 
@@ -923,8 +898,8 @@ struct OnboardingPrototypeReferralStep: View {
             .font(.custom("Figtree", size: 14))
             .fontWeight(.semibold)
         },
-        background: Color(hex: "402C00"),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 59,
@@ -957,14 +932,14 @@ struct CompletionView: View {
       // Title section
       VStack(spacing: 8) {
         Text("你已准备就绪")
-          .font(.custom("InstrumentSerif-Regular", size: 36))
-          .foregroundColor(.black.opacity(0.9))
+          .font(.custom("HanziPen SC", size: 36))
+          .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
 
         Text(
           "想要拿到有用的分析，请让 Dayflow 在后台运行一到两小时来收集上下文后再回来查看。"
         )
         .font(.custom("Figtree", size: 15))
-        .foregroundColor(.black.opacity(0.6))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         .multilineTextAlignment(.center)
         .fixedSize(horizontal: false, vertical: true)
       }
@@ -978,8 +953,8 @@ struct CompletionView: View {
             .font(.custom("Figtree", size: 16))
             .fontWeight(.semibold)
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 40,

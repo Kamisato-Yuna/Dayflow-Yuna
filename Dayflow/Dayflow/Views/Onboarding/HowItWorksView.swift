@@ -19,19 +19,19 @@ struct HowItWorksView: View {
   var onBack: () -> Void
   var onNext: () -> Void
 
-  private let cards: [(icon: String, title: String, body: String)] = [
+  private let cards: [(systemIcon: String, title: String, body: String)] = [
     (
-      "OnboardingHow",
+      "bolt.fill",
       "安装后即可使用",
       "Dayflow 会定期截图以理解你正在进行的工作，所有内容均私有保存于你的设备。你可随时在偏好设置中关闭此功能。"
     ),
     (
-      "OnboardingSecurity",
+      "lock.shield.fill",
       "默认隐私保护",
       "Dayflow 可完全基于本地 AI 运行，这意味着你的数据不会离开你的设备。下方可查看源代码，欢迎给我们点 Star。"
     ),
     (
-      "OnboardingUnderstanding",
+      "sparkles",
       "洞察你的工作",
       "它能分辨“教程”和“分心内容”，帮助你更准确地理解自己当下正在做的事情。"
     ),
@@ -41,10 +41,10 @@ struct HowItWorksView: View {
     ScrollView(.vertical, showsIndicators: false) {
       VStack(spacing: 40) {
         Text(fullText)
-          .font(.custom("InstrumentSerif-Regular", size: 48))
+          .font(.custom("HanziPen SC", size: 48))
           .multilineTextAlignment(.center)
           .frame(maxWidth: .infinity, minHeight: 60)
-          .foregroundColor(.black)
+          .foregroundColor(DayflowOnboardingToken.title)
           .opacity(titleOpacity)
           .onAppear {
             withAnimation(.easeOut(duration: 0.6)) {
@@ -57,7 +57,7 @@ struct HowItWorksView: View {
         VStack(spacing: 16) {
           ForEach(cards.indices, id: \.self) { idx in
             HowItWorksCard(
-              iconImage: cards[idx].icon,
+              systemIcon: cards[idx].systemIcon,
               title: cards[idx].title,
               description: cards[idx].body
             )
@@ -74,9 +74,9 @@ struct HowItWorksView: View {
         DayflowSurfaceButton(
           action: onBack,
           content: { Text("返回").font(.custom("Figtree", size: 14)).fontWeight(.semibold) },
-          background: .white,
-          foreground: Color(red: 0.25, green: 0.17, blue: 0),
-          borderColor: .clear,
+          background: Color(nsColor: .controlBackgroundColor).opacity(0.72),
+          foreground: DayflowOnboardingToken.secondaryButtonText,
+          borderColor: Color(nsColor: .separatorColor).opacity(0.5),
           cornerRadius: 8,
           horizontalPadding: 20,
           verticalPadding: 12,
@@ -94,14 +94,17 @@ struct HowItWorksView: View {
           },
           content: {
             HStack(spacing: 12) {
-              Image("GithubIcon").resizable().aspectRatio(contentMode: .fit).frame(
-                width: 20, height: 20
-              ).colorInvert()
+              DayflowExternalImageBadge(
+                imageName: "GithubIcon",
+                size: 24,
+                cornerRadius: 7,
+                contentScale: 0.68
+              )
               Text("在 GitHub 上给 Dayflow 点赞").font(.custom("Figtree", size: 14)).fontWeight(.medium)
             }
           },
-          background: Color(red: 0.25, green: 0.17, blue: 0),
-          foreground: .white,
+          background: DayflowOnboardingToken.primaryButtonFill,
+          foreground: DayflowOnboardingToken.primaryButtonText,
           borderColor: .clear,
           cornerRadius: 8,
           horizontalPadding: 24,
@@ -114,8 +117,8 @@ struct HowItWorksView: View {
         DayflowSurfaceButton(
           action: onNext,
           content: { Text("下一步").font(.custom("Figtree", size: 14)).fontWeight(.semibold) },
-          background: Color(red: 0.25, green: 0.17, blue: 0),
-          foreground: .white,
+          background: DayflowOnboardingToken.primaryButtonFill,
+          foreground: DayflowOnboardingToken.primaryButtonText,
           borderColor: .clear,
           cornerRadius: 8,
           horizontalPadding: 20,
@@ -132,7 +135,6 @@ struct HowItWorksView: View {
       .padding(.horizontal, 40)
       .padding(.bottom, 40)
     }
-    .preferredColorScheme(.light)
   }
 }
 

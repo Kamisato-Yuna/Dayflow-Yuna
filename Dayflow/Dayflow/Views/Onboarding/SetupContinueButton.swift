@@ -27,22 +27,23 @@ struct SetupContinueButton: View {
         Text(title)
           .font(.custom("Figtree", size: 16))
           .fontWeight(.semibold)
-          .foregroundColor(.white)
+          .foregroundColor(DayflowOnboardingToken.primaryButtonText)
+          .lineLimit(1)
+          .minimumScaleFactor(0.82)
+          .allowsTightening(true)
       }
-      .padding(.horizontal, 59)
+      .padding(.horizontal, 28)
       .padding(.vertical, 18)
-      .frame(width: 160, alignment: .center)
+      .frame(minWidth: 160, alignment: .center)
       .background(
-        Color(red: 0.25, green: 0.17, blue: 0)
+        DayflowOnboardingToken.primaryButtonFill
       )
       .cornerRadius(12)
-      .shadow(color: .black.opacity(0.25), radius: 0.25, x: 0, y: 0.5)
-      .shadow(color: .black.opacity(0.16), radius: 0.5, x: 0, y: 1)
-      .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 2)
+      .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 2)
       .overlay(
         RoundedRectangle(cornerRadius: 12)
           .inset(by: 0.75)
-          .stroke(.white.opacity(0.17), lineWidth: 1.5)
+          .stroke(.white.opacity(0.16), lineWidth: 1.2)
       )
       .opacity(isEnabled ? 1.0 : 0.4)
     }

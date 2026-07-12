@@ -212,7 +212,7 @@ final class ChatToolExecutor {
 
     for card in cards {
       output += "- \(card.startTimestamp) to \(card.endTimestamp): \(card.title)\n"
-      output += "  Category: \(card.category)"
+      output += "  Category: \(CategoryAliasResolver.displayName(for: card.category))"
       if !card.subcategory.isEmpty {
         output += " (\(card.subcategory))"
       }

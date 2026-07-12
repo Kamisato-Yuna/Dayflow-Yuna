@@ -39,9 +39,9 @@ struct TimelineReviewSummaryCard: View {
     static let headerSpacing: CGFloat = 2
     static let contentSpacing: CGFloat = 16
 
-    static let titleColor = Color(hex: "333333")
-    static let subtitleColor = Color(hex: "707070")
-    static let linkColor = Color(hex: "F96E00")
+    static let titleColor = DayflowDailyToken.title
+    static let subtitleColor = DayflowDailyToken.secondaryText
+    static let linkColor = DayflowDailyToken.accent
 
     static let barHeight: CGFloat = 39
     static let barCornerRadius: CGFloat = 4
@@ -89,7 +89,7 @@ struct TimelineReviewSummaryCard: View {
   private var header: some View {
     VStack(alignment: .leading, spacing: Design.headerSpacing) {
       Text("你的复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundColor(Design.titleColor)
 
       subtitle
@@ -199,10 +199,10 @@ struct TimelineReviewSummaryCard: View {
       ratio: max(CGFloat(summary.distractedRatio), 0),
       durationText: durationText(summary.distractedDuration),
       style: metricStyle(
-        baseColor: Color(hex: "FF8772"),
-        shadow: Color(red: 148 / 255, green: 87 / 255, blue: 77 / 255).opacity(0.25),
-        legendFill: Color(hex: "FF8772").opacity(0.4),
-        legendStroke: Color(hex: "FF8772"),
+        baseColor: DayflowDailyToken.distraction,
+        shadow: DayflowDailyToken.distraction.opacity(0.18),
+        legendFill: DayflowDailyToken.distraction.opacity(0.28),
+        legendStroke: DayflowDailyToken.distraction,
         placeholder: placeholder
       )
     )
@@ -213,10 +213,10 @@ struct TimelineReviewSummaryCard: View {
       ratio: max(CGFloat(summary.neutralRatio), 0),
       durationText: durationText(summary.neutralDuration),
       style: metricStyle(
-        baseColor: Color(hex: "EAE0DB"),
-        shadow: Color(red: 225 / 255, green: 210 / 255, blue: 203 / 255).opacity(0.25),
-        legendFill: Color(hex: "DDDBDA").opacity(0.4),
-        legendStroke: Color(hex: "DDDBDA"),
+        baseColor: Color(nsColor: .tertiaryLabelColor),
+        shadow: Color.black.opacity(0.08),
+        legendFill: Color(nsColor: .tertiaryLabelColor).opacity(0.24),
+        legendStroke: Color(nsColor: .tertiaryLabelColor).opacity(0.75),
         placeholder: placeholder
       )
     )
@@ -227,10 +227,10 @@ struct TimelineReviewSummaryCard: View {
       ratio: max(CGFloat(summary.productiveRatio), 0),
       durationText: durationText(summary.productiveDuration),
       style: metricStyle(
-        baseColor: Color(hex: "42D0BB"),
-        shadow: Color(red: 77 / 255, green: 156 / 255, blue: 145 / 255).opacity(0.25),
-        legendFill: Color(hex: "42D0BB").opacity(0.4),
-        legendStroke: Color(hex: "42D0BB"),
+        baseColor: DayflowDailyToken.success,
+        shadow: DayflowDailyToken.success.opacity(0.18),
+        legendFill: DayflowDailyToken.success.opacity(0.28),
+        legendStroke: DayflowDailyToken.success,
         placeholder: placeholder
       )
     )
@@ -245,10 +245,10 @@ struct TimelineReviewSummaryCard: View {
     legendStroke: Color,
     placeholder: Bool
   ) -> ReviewMetricStyle {
-    let barColor = placeholder ? Color(hex: "EAE0DB") : baseColor
+    let barColor = placeholder ? Color(nsColor: .tertiaryLabelColor).opacity(0.55) : baseColor
     let barShadow =
       placeholder
-      ? Color(red: 225 / 255, green: 210 / 255, blue: 203 / 255).opacity(0.25)
+      ? Color.black.opacity(0.06)
       : shadow
     let gradient = LinearGradient(
       colors: [barColor.opacity(0.5), barColor],
@@ -320,5 +320,5 @@ struct TimelineReviewSummaryCard: View {
     .frame(width: 322)
   }
   .padding(24)
-  .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+  .dayflowWindowBackground()
 }

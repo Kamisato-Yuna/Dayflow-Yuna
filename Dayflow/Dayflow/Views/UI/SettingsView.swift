@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  Dayflow
 //
-//  Settings screen with onboarding-inspired styling and split layout
+//  Settings screen with compact material styling and split layout
 //
 
 import Foundation
@@ -42,7 +42,6 @@ struct SettingsView: View {
 
   var body: some View {
     contentWithSheets
-      .environment(\.colorScheme, .light)
   }
 
   private var contentWithSheets: some View {
@@ -115,7 +114,7 @@ struct SettingsView: View {
   }
 
   private var mainContent: some View {
-    HStack(alignment: .top, spacing: 32) {
+    HStack(alignment: .top, spacing: 20) {
       sidebar
         .frame(maxHeight: .infinity, alignment: .topLeading)
 
@@ -123,8 +122,9 @@ struct SettingsView: View {
 
       Spacer(minLength: 0)
     }
-    .padding(.trailing, 40)
+    .padding(20)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .dayflowWindowBackground()
   }
 
   @ViewBuilder
@@ -134,30 +134,28 @@ struct SettingsView: View {
         tabContent
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-      .padding(.top, 24)
-      .padding(.trailing, 16)
-      .padding(.bottom, 24)
-      .frame(maxWidth: 760, maxHeight: .infinity, alignment: .topLeading)
+      .padding(22)
+      .frame(maxWidth: 780, maxHeight: .infinity, alignment: .topLeading)
+      .dayflowContentPanel(cornerRadius: 14)
     } else {
       ScrollView(.vertical, showsIndicators: false) {
         VStack(alignment: .leading, spacing: 24) {
           tabContent
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 24)
-        .padding(.trailing, 16)
-        .padding(.bottom, 24)
+        .padding(22)
         .frame(maxWidth: .infinity, minHeight: 0, alignment: .topLeading)
       }
-      .frame(maxWidth: 600, maxHeight: .infinity, alignment: .topLeading)
+      .frame(maxWidth: 640, maxHeight: .infinity, alignment: .topLeading)
+      .dayflowContentPanel(cornerRadius: 14)
     }
   }
 
   private var sidebar: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("设置")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
-        .foregroundColor(.black.opacity(0.9))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
+        .foregroundColor(SettingsStyle.text)
         .padding(.leading, 10)
         .padding(.bottom, 18)
 
@@ -173,9 +171,9 @@ struct SettingsView: View {
         .padding(.leading, 10)
     }
     .padding(.top, 0)
-    .padding(.bottom, 16)
-    .padding(.horizontal, 4)
-    .frame(width: 160, alignment: .topLeading)
+    .padding(12)
+    .frame(width: 172, alignment: .topLeading)
+    .dayflowSidebarSurface(cornerRadius: 14)
   }
 
   private var sidebarFooter: some View {
@@ -183,7 +181,7 @@ struct SettingsView: View {
     return VStack(alignment: .leading, spacing: 8) {
       Text("Dayflow v\(version)")
         .font(.custom("Figtree", size: 11))
-        .foregroundColor(.black.opacity(0.4))
+        .foregroundColor(SettingsStyle.meta)
 
       Button {
         NotificationCenter.default.post(name: .showWhatsNew, object: nil)
@@ -195,7 +193,7 @@ struct SettingsView: View {
           Image(systemName: "arrow.up.right")
             .font(.system(size: 9, weight: .semibold))
         }
-        .foregroundColor(Color(red: 0.25, green: 0.17, blue: 0))
+        .foregroundColor(SettingsStyle.ink)
       }
       .buttonStyle(.plain)
       .pointingHandCursor()
@@ -211,15 +209,21 @@ struct SettingsView: View {
       Text(tab.title)
         .font(.custom("Figtree", size: 13))
         .fontWeight(.semibold)
-        .foregroundColor(.black.opacity(selectedTab == tab ? 0.9 : 0.55))
+        .foregroundColor(selectedTab == tab ? SettingsStyle.text : SettingsStyle.secondary)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 8)
         .padding(.horizontal, 10)
         .background {
           if selectedTab == tab {
             RoundedRectangle(cornerRadius: 7)
-              .fill(Color.black.opacity(0.06))
+              .fill(SettingsStyle.selectedFill)
               .matchedGeometryEffect(id: "sidebarSelection", in: sidebarSelectionNamespace)
+          }
+        }
+        .overlay {
+          if selectedTab == tab {
+            RoundedRectangle(cornerRadius: 7, style: .continuous)
+              .stroke(SettingsStyle.ink.opacity(0.24), lineWidth: 0.8)
           }
         }
     }

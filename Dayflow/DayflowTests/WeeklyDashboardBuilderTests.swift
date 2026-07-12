@@ -68,6 +68,31 @@ final class WeeklyDashboardBuilderTests: XCTestCase {
     XCTAssertEqual(Set(snapshot.sankey.apps.map(\.id)).count, snapshot.sankey.apps.count)
   }
 
+  func testLegacyAndCurrentCategoryNamesMergeInWeeklyBuckets() {
+    let weekRange = WeeklyDateRange.containing(Date(timeIntervalSince1970: 1_770_000_000))
+    let day = DateFormatter.yyyyMMdd.string(from: weekRange.weekStart)
+    let categories = [
+      TimelineCategory(name: "研究与分析", colorHex: "56CFEE", order: 0)
+    ]
+    let cards = [
+      card(day: day, category: "Research & Analysis", appName: "Notebook", minutes: 30),
+      card(day: day, category: "研究与分析", appName: "Metrics", minutes: 45),
+    ]
+
+    let snapshot = WeeklyDashboardBuilder.build(
+      cards: cards,
+      previousWeekCards: [],
+      categories: categories,
+      weekRange: weekRange
+    )
+
+    XCTAssertEqual(snapshot.donut.items.count, 1)
+    XCTAssertEqual(snapshot.donut.items.first?.name, "研究与分析")
+    XCTAssertEqual(snapshot.donut.items.first?.minutes, 75)
+    XCTAssertEqual(snapshot.overview.legendItems.map(\.name), ["研究与分析"])
+    XCTAssertEqual(snapshot.workflow.rows.flatMap(\.cells).compactMap(\.categoryName).first, "研究与分析")
+  }
+
   private func card(
     day: String,
     category: String = "Focus",

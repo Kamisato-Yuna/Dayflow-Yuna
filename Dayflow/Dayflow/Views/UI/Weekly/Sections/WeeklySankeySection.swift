@@ -8,6 +8,8 @@ struct WeeklySankeySection: View {
   private let snapshot: WeeklySankeySnapshot?
   private let showsControls: Bool
   private let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(
     snapshot: WeeklySankeySnapshot? = nil,
@@ -42,19 +44,14 @@ struct WeeklySankeySection: View {
       WeeklySankeyCard(model: model, width: width)
     }
     .frame(width: width, alignment: .topLeading)
-    .background(Color.white.opacity(0.6))
-    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 4, style: .continuous)
-        .stroke(Color(hex: "EBE6E3"), lineWidth: 1)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 
   private var controls: some View {
     HStack(spacing: 8) {
       Text(model.seedLabel)
         .font(.custom("Figtree-Medium", size: 11))
-        .foregroundStyle(Color(hex: "B16845"))
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
       Spacer(minLength: 12)
 
@@ -84,21 +81,27 @@ struct WeeklySankeySection: View {
     Button(action: action) {
       Text(title)
         .font(.custom("Figtree-Medium", size: 11))
-        .foregroundStyle(dataset == targetDataset ? Color(hex: "FF6B14") : Color(hex: "D77A43"))
+        .foregroundStyle(dataset == targetDataset ? DayflowWeeklyToken.accent : DayflowWeeklyToken.chartText)
         .padding(.horizontal, 9)
         .frame(height: 23)
         .background(
           RoundedRectangle(cornerRadius: 7, style: .continuous)
             .fill(
-              dataset == targetDataset
-                ? Color(hex: "FFECD8").opacity(0.98) : Color(hex: "FCEDDF").opacity(0.72))
+              DayflowWeeklyToken.controlFill(
+                isSelected: dataset == targetDataset,
+                colorScheme: colorScheme,
+                reduceTransparency: reduceTransparency
+              ))
         )
         .overlay(
           RoundedRectangle(cornerRadius: 7, style: .continuous)
             .stroke(
               dataset == targetDataset
-                ? Color(hex: "FF7A2F").opacity(0.42)
-                : Color(hex: "F7E3CF"),
+                ? DayflowWeeklyToken.accent.opacity(0.52)
+                : DayflowWeeklyToken.controlBorder(
+                  colorScheme: colorScheme,
+                  increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+                ),
               lineWidth: 1
             )
         )
@@ -123,6 +126,7 @@ private enum WeeklySankeyDataset {
 private struct WeeklySankeyCard: View {
   let model: WeeklySankeyModel
   let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
 
   @State private var hoveredNodeID: String?
   @State private var pinnedNodeID: String?
@@ -195,11 +199,11 @@ private struct WeeklySankeyCard: View {
       }
 
       Text("周报细分")
-        .font(.custom("InstrumentSerif-Regular", size: 20))
-        .foregroundStyle(Color(hex: "B46531"))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
+        .foregroundStyle(DayflowWeeklyToken.title)
         .offset(
-          x: scale.displayX(72),
-          y: scale.displayY(64)
+          x: DayflowWeeklySectionChrome.titleLeading,
+          y: DayflowWeeklySectionChrome.titleTop
         )
     }
     .frame(
@@ -241,12 +245,10 @@ private struct WeeklySankeyCard: View {
     context.fill(
       sourcePath,
       with: .linearGradient(
-        Gradient(stops: [
-          .init(color: Color(hex: "E6DBD1").opacity(0.48), location: 0),
-          .init(color: Color(hex: "EFE9E3").opacity(0.34), location: 0.42),
-          .init(color: Color(hex: "F4EEE9").opacity(0.2), location: 0.76),
-          .init(color: Color(hex: "F7F2ED").opacity(0.08), location: 1),
-        ]),
+        Gradient(stops: DayflowWeeklyToken.sankeyUnderlayStops(
+          colorScheme: colorScheme,
+          isSource: true
+        )),
         startPoint: scale.point(x: model.source.bar.maxX, y: 0),
         endPoint: scale.point(x: firstCategory.bar.minX, y: 0)
       )
@@ -267,11 +269,10 @@ private struct WeeklySankeyCard: View {
     context.fill(
       rightPath,
       with: .linearGradient(
-        Gradient(stops: [
-          .init(color: Color(hex: "EFE7E0").opacity(0.08), location: 0),
-          .init(color: Color(hex: "F4EEE9").opacity(0.11), location: 0.46),
-          .init(color: Color(hex: "EFE7E0").opacity(0.07), location: 1),
-        ]),
+        Gradient(stops: DayflowWeeklyToken.sankeyUnderlayStops(
+          colorScheme: colorScheme,
+          isSource: false
+        )),
         startPoint: scale.point(
           x: firstCategory.bar.minX + WeeklySankeyLayout.base.categories.width,
           y: 0
@@ -439,7 +440,7 @@ private struct WeeklySankeyPlainLabel: View {
     VStack(alignment: .leading, spacing: 2) {
       Text(node.name)
         .font(.custom("Figtree-Regular", size: 10))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(1)
 
       metaLine(fontSize: 10)
@@ -457,12 +458,12 @@ private struct WeeklySankeyPlainLabel: View {
     HStack(alignment: .top, spacing: 4) {
       Text(node.metric)
       Rectangle()
-        .fill(Color(hex: "CFC7C1"))
+        .fill(DayflowWeeklyToken.chartSecondaryText.opacity(0.42))
         .frame(width: 0.5, height: 11)
       Text(node.percent)
     }
     .font(.custom("Figtree-Regular", size: fontSize))
-    .foregroundStyle(Color(hex: "717171"))
+    .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
     .lineLimit(1)
   }
 }
@@ -482,18 +483,18 @@ private struct WeeklySankeyAppLabel: View {
       HStack(alignment: .firstTextBaseline, spacing: 5) {
         Text(node.name)
           .font(.custom("Figtree-Regular", size: 10))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.chartText)
           .lineLimit(1)
 
         HStack(alignment: .firstTextBaseline, spacing: 3) {
           Text(node.metric)
           Rectangle()
-            .fill(Color(hex: "CFC7C1"))
+            .fill(DayflowWeeklyToken.chartSecondaryText.opacity(0.42))
             .frame(width: 0.5, height: 10)
           Text(node.percent)
         }
         .font(.custom("Figtree-Regular", size: 9))
-        .foregroundStyle(Color(hex: "717171"))
+        .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
         .lineLimit(1)
       }
       .lineLimit(1)
@@ -519,10 +520,12 @@ private struct WeeklySankeyIconView: View {
     switch icon {
     case .asset(let name):
       if let image = NSImage(named: name) {
-        Image(nsImage: image)
-          .resizable()
-          .interpolation(.high)
-          .scaledToFit()
+        DayflowExternalIconBadge(size: 14, cornerRadius: 3, contentScale: 0.72) {
+          Image(nsImage: image)
+            .resizable()
+            .interpolation(.high)
+            .scaledToFit()
+        }
       } else {
         fallbackMonogram("?")
       }
@@ -856,15 +859,15 @@ private enum WeeklySankeyModelFactory {
       WeeklySankeyCategoryInput(
         id: "coding", name: "Coding/Debugging", minutes: 686, barColorHex: "93BCFF"),
       WeeklySankeyCategoryInput(
-        id: "research", name: "Research", minutes: 581, barColorHex: "6CDACD"),
+        id: "research", name: "研究", minutes: 581, barColorHex: "6CDACD"),
       WeeklySankeyCategoryInput(
-        id: "communication", name: "Communication", minutes: 34, barColorHex: "DE9DFC"),
+        id: "communication", name: "沟通", minutes: 34, barColorHex: "DE9DFC"),
       WeeklySankeyCategoryInput(
         id: "code_review", name: "Code Review", minutes: 13, barColorHex: "BFB6AE"),
       WeeklySankeyCategoryInput(
-        id: "personal", name: "Personal", minutes: 321, barColorHex: "FFC6B7"),
+        id: "personal", name: "个人", minutes: 321, barColorHex: "FFC6B7"),
       WeeklySankeyCategoryInput(
-        id: "distractions", name: "Distraction", minutes: 466, barColorHex: "FF5950"),
+        id: "distractions", name: "分心", minutes: 466, barColorHex: "FF5950"),
     ]
 
     let apps = [
@@ -937,8 +940,8 @@ private enum WeeklySankeyModelFactory {
 
     return build(
       id: "dayflow-timeline-apr20-apr24",
-      seedLabel: "Timeline data",
-      sourceName: "Apr 20-24",
+      seedLabel: "时间线数据",
+      sourceName: "4月20日-24日",
       categories: categories,
       apps: apps,
       links: links
@@ -948,17 +951,17 @@ private enum WeeklySankeyModelFactory {
   static func figmaBaseline() -> WeeklySankeyModel {
     let categoryTemplates = [
       WeeklySankeyCategoryInput(
-        id: "research", name: "Research", minutes: 430, barColorHex: "93BCFF"),
+        id: "research", name: "研究", minutes: 430, barColorHex: "93BCFF"),
       WeeklySankeyCategoryInput(
-        id: "communication", name: "Communication", minutes: 360, barColorHex: "6CDACD"),
+        id: "communication", name: "沟通", minutes: 360, barColorHex: "6CDACD"),
       WeeklySankeyCategoryInput(
-        id: "design", name: "Design", minutes: 720, barColorHex: "DE9DFC"),
+        id: "design", name: "设计", minutes: 720, barColorHex: "DE9DFC"),
       WeeklySankeyCategoryInput(
-        id: "testing", name: "Testing", minutes: 240, barColorHex: "FFA189"),
+        id: "testing", name: "测试", minutes: 240, barColorHex: "FFA189"),
       WeeklySankeyCategoryInput(
-        id: "distractions", name: "Distractions", minutes: 150, barColorHex: "FF5950"),
+        id: "distractions", name: "分心", minutes: 150, barColorHex: "FF5950"),
       WeeklySankeyCategoryInput(
-        id: "personal", name: "Personal", minutes: 180, barColorHex: "FFC6B7"),
+        id: "personal", name: "个人", minutes: 180, barColorHex: "FFC6B7"),
     ]
     let links = [
       link("research", "chatgpt", 180),
@@ -981,7 +984,7 @@ private enum WeeklySankeyModelFactory {
 
     return build(
       id: "figma-baseline",
-      seedLabel: "Figma baseline",
+      seedLabel: "Figma 基线",
       sourceName: "周报",
       categories: categoryTemplates,
       apps: apps,
@@ -993,19 +996,19 @@ private enum WeeklySankeyModelFactory {
     var random = WeeklySankeyRandom(seed: seed)
     let categoryTemplates = [
       WeeklySankeyCategoryInput(
-        id: "research", name: "Research", minutes: 0, barColorHex: "93BCFF"),
+        id: "research", name: "研究", minutes: 0, barColorHex: "93BCFF"),
       WeeklySankeyCategoryInput(
-        id: "communication", name: "Communication", minutes: 0, barColorHex: "6CDACD"),
+        id: "communication", name: "沟通", minutes: 0, barColorHex: "6CDACD"),
       WeeklySankeyCategoryInput(
-        id: "design", name: "Design", minutes: 0, barColorHex: "DE9DFC"),
+        id: "design", name: "设计", minutes: 0, barColorHex: "DE9DFC"),
       WeeklySankeyCategoryInput(
-        id: "general", name: "General", minutes: 0, barColorHex: "BFB6AE"),
+        id: "general", name: "常规", minutes: 0, barColorHex: "BFB6AE"),
       WeeklySankeyCategoryInput(
-        id: "testing", name: "Testing", minutes: 0, barColorHex: "FFA189"),
+        id: "testing", name: "测试", minutes: 0, barColorHex: "FFA189"),
       WeeklySankeyCategoryInput(
-        id: "distractions", name: "Distractions", minutes: 0, barColorHex: "FF5950"),
+        id: "distractions", name: "分心", minutes: 0, barColorHex: "FF5950"),
       WeeklySankeyCategoryInput(
-        id: "personal", name: "Personal", minutes: 0, barColorHex: "FFC6B7"),
+        id: "personal", name: "个人", minutes: 0, barColorHex: "FFC6B7"),
     ]
     let categories = categoryTemplates.enumerated().map { index, category in
       let wave = 0.72 + sin(Double(seed) * 0.37 + Double(index) * 1.21) * 0.22
@@ -1502,9 +1505,12 @@ private enum WeeklySankeyModelFactory {
     let hours = roundedMinutes / 60
     let remainingMinutes = roundedMinutes % 60
     if hours <= 0 {
-      return "\(remainingMinutes)min"
+      return "\(remainingMinutes)分钟"
     }
-    return "\(hours)hr \(remainingMinutes)min"
+    if remainingMinutes == 0 {
+      return "\(hours)小时"
+    }
+    return "\(hours)小时 \(remainingMinutes)分钟"
   }
 
   private static func formatPercent(minutes: Int, totalMinutes: Int) -> String {
@@ -1583,5 +1589,5 @@ private func sankeyColumnUnderlayPath(
 #Preview("Weekly Sankey", traits: .fixedLayout(width: 958, height: 545)) {
   WeeklySankeySection()
     .padding(24)
-    .background(Color(hex: "FBF6EF"))
+    .dayflowWindowBackground()
 }

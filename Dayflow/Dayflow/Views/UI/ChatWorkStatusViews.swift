@@ -16,7 +16,7 @@ struct WorkStatusCard: View {
         if status.stage == .error, let message = status.errorMessage, !message.isEmpty {
           Text(message)
             .font(.custom("Figtree", size: 12).weight(.semibold))
-            .foregroundColor(Color(hex: "C62828"))
+            .foregroundColor(ChatSurfacePalette.critical)
         }
 
         if !status.tools.isEmpty {
@@ -35,7 +35,7 @@ struct WorkStatusCard: View {
                 .font(.system(size: 9, weight: .semibold))
             }
             .font(.custom("Figtree", size: 11).weight(.semibold))
-            .foregroundColor(Color(hex: "8B5E3C"))
+            .foregroundColor(ChatSurfacePalette.secondaryText)
           }
           .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
           .pointingHandCursor()
@@ -45,22 +45,17 @@ struct WorkStatusCard: View {
         {
           Text(status.thinkingText.trimmingCharacters(in: .whitespacesAndNewlines))
             .font(.system(size: 10, design: .monospaced))
-            .foregroundColor(Color(hex: "666666"))
+            .foregroundColor(ChatSurfacePalette.primaryText)
             .textSelection(.enabled)
             .padding(8)
-            .background(Color(hex: "FFFFFF").opacity(0.6))
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .chatMessageSurface(cornerRadius: 8)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 14)
       .padding(.vertical, 12)
-      .background(backgroundColor)
-      .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-      .overlay(
-        RoundedRectangle(cornerRadius: 16, style: .continuous)
-          .stroke(borderColor, lineWidth: 1)
-      )
+      .chatMessageSurface(cornerRadius: 16)
+      .overlay(statusBorder)
 
       Spacer(minLength: 60)
     }
@@ -80,7 +75,7 @@ struct WorkStatusCard: View {
         }
       }
       .font(.custom("Figtree", size: 12).weight(.semibold))
-      .foregroundColor(Color(hex: "4A4A4A"))
+      .foregroundColor(ChatSurfacePalette.primaryText)
 
       Spacer()
     }
@@ -124,28 +119,24 @@ struct WorkStatusCard: View {
   var accentColor: Color {
     switch status.stage {
     case .error:
-      return Color(hex: "C62828")
+      return ChatSurfacePalette.critical
     default:
-      return Color(hex: "F96E00")
-    }
-  }
-
-  var backgroundColor: Color {
-    switch status.stage {
-    case .error:
-      return Color(hex: "FFEBEE")
-    default:
-      return Color(hex: "FFF4E9")
+      return ChatSurfacePalette.accent
     }
   }
 
   var borderColor: Color {
     switch status.stage {
     case .error:
-      return Color(hex: "FFCDD2")
+      return ChatSurfacePalette.critical.opacity(0.30)
     default:
-      return Color(hex: "F96E00").opacity(0.2)
+      return ChatSurfacePalette.accent.opacity(0.22)
     }
+  }
+
+  var statusBorder: some View {
+    RoundedRectangle(cornerRadius: 16, style: .continuous)
+      .stroke(borderColor, lineWidth: 1)
   }
 }
 
@@ -178,19 +169,18 @@ struct ToolStatusRow: View {
       if showDetails {
         Text(tool.command)
           .font(.system(size: 10, design: .monospaced))
-          .foregroundColor(Color(hex: "666666"))
+          .foregroundColor(ChatSurfacePalette.secondaryText)
           .textSelection(.enabled)
           .lineLimit(3)
 
         if !trimmedOutput.isEmpty {
           Text(trimmedOutput)
             .font(.system(size: 10, design: .monospaced))
-            .foregroundColor(Color(hex: "555555"))
+            .foregroundColor(ChatSurfacePalette.primaryText)
             .lineLimit(6)
             .textSelection(.enabled)
             .padding(6)
-            .background(Color(hex: "FFFFFF").opacity(0.6))
-            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+            .chatMessageSurface(cornerRadius: 6)
         }
       }
     }
@@ -206,24 +196,24 @@ struct ToolStatusRow: View {
     case .running:
       ProgressView()
         .scaleEffect(0.6)
-        .tint(Color(hex: "F96E00"))
+        .tint(ChatSurfacePalette.accent)
     case .completed:
       Image(systemName: "checkmark.circle.fill")
         .font(.system(size: 12, weight: .semibold))
-        .foregroundColor(Color(hex: "34C759"))
+        .foregroundColor(ChatSurfacePalette.positive)
     case .failed:
       Image(systemName: "xmark.circle.fill")
         .font(.system(size: 12, weight: .semibold))
-        .foregroundColor(Color(hex: "C62828"))
+        .foregroundColor(ChatSurfacePalette.critical)
     }
   }
 
   var textColor: Color {
     switch tool.state {
     case .failed:
-      return Color(hex: "C62828")
+      return ChatSurfacePalette.critical
     default:
-      return Color(hex: "4A4A4A")
+      return ChatSurfacePalette.primaryText
     }
   }
 }

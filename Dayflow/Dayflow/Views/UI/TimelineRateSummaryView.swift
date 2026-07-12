@@ -5,6 +5,7 @@
 //  Lightweight footer for rating a generated summary.
 //
 
+import AppKit
 import SwiftUI
 
 enum TimelineRatingDirection: String, Codable, Sendable {
@@ -22,6 +23,8 @@ struct ThumbRatingButtons: View {
   var selectedDirection: TimelineRatingDirection?
   var isEnabled: Bool = true
   var onRate: (TimelineRatingDirection) -> Void
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   var body: some View {
     HStack(spacing: 0) {
@@ -37,19 +40,29 @@ struct ThumbRatingButtons: View {
       guard isEnabled else { return }
       onRate(direction)
     }) {
-      Image("ThumbsUp")
-        .renderingMode(.original)
-        .resizable()
-        .scaledToFit()
+      Image(systemName: direction == .up ? "hand.thumbsup.fill" : "hand.thumbsdown.fill")
+        .font(.system(size: 13, weight: .semibold))
+        .symbolRenderingMode(.hierarchical)
+        .foregroundStyle(isSelected ? DayflowSurfaceAccent.primary : Color(nsColor: .secondaryLabelColor))
         .frame(width: 14, height: 14)
-        .scaleEffect(x: direction == .down ? -1 : 1, y: direction == .down ? -1 : 1)
         .padding(4)
         .frame(width: 22, height: 22)
         .background(
           Circle()
-            .fill(isSelected ? Color.white : Color.clear)
+            .fill(
+              isSelected
+                ? DayflowContentToken.secondaryFill(
+                  colorScheme: colorScheme,
+                  reduceTransparency: reduceTransparency
+                )
+                : Color.clear
+            )
             .shadow(
-              color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 6, x: 0, y: 3)
+              color: isSelected && !reduceTransparency ? Color.black.opacity(0.08) : Color.clear,
+              radius: 6,
+              x: 0,
+              y: 3
+            )
         )
     }
     .buttonStyle(.plain)
@@ -71,6 +84,9 @@ struct TimelineRateSummaryView: View {
   @State private var selectedDirection: TimelineRatingDirection? = nil
   @State private var deleteButtonState: TimelineDeleteButtonState = .idle
   @State private var deleteResetTask: Task<Void, Never>? = nil
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   private var canDelete: Bool {
     isEnabled && onDelete != nil && deleteButtonState != .deleting
@@ -94,7 +110,7 @@ struct TimelineRateSummaryView: View {
 
         ThumbRatingButtons(selectedDirection: selectedDirection, isEnabled: isEnabled) {
           direction in
-          withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+          withAnimation(reduceMotion ? nil : .spring(response: 0.25, dampingFraction: 0.8)) {
             selectedDirection = direction
           }
           onRate?(direction)
@@ -104,13 +120,27 @@ struct TimelineRateSummaryView: View {
     .padding(.horizontal, 12)
     .padding(.vertical, 3)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Color(red: 0.98, green: 0.98, blue: 0.98))
+    .background(DayflowContentToken.cardFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
     .overlay(
       Rectangle()
         .inset(by: 0.5)
-        .stroke(Color(red: 0.93, green: 0.93, blue: 0.93), lineWidth: 1)
+        .stroke(
+          DayflowContentToken.cardBorder(
+            colorScheme: colorScheme,
+            increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+          ),
+          lineWidth: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast ? 1.2 : 1
+        )
     )
-    .shadow(color: Color.white.opacity(1.0), radius: 9, x: 0, y: -4)
+    .shadow(
+      color: reduceTransparency ? .clear : Color.black.opacity(colorScheme == .dark ? 0.24 : 0.08),
+      radius: 9,
+      x: 0,
+      y: -4
+    )
     .opacity(isEnabled ? 1 : 0.6)
     .onChange(of: activityID) {
       selectedDirection = nil
@@ -191,7 +221,7 @@ struct TimelineRateSummaryView: View {
 
     switch deleteButtonState {
     case .idle:
-      withAnimation(.easeInOut(duration: 0.22)) {
+      withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.22)) {
         deleteButtonState = .confirming
       }
       deleteResetTask = Task {
@@ -199,13 +229,13 @@ struct TimelineRateSummaryView: View {
         guard !Task.isCancelled else { return }
         await MainActor.run {
           guard deleteButtonState == .confirming else { return }
-          withAnimation(.easeInOut(duration: 0.22)) {
+          withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.22)) {
             deleteButtonState = .idle
           }
         }
       }
     case .confirming:
-      withAnimation(.easeInOut(duration: 0.22)) {
+      withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.22)) {
         deleteButtonState = .deleting
       }
       onDelete?()
@@ -214,7 +244,7 @@ struct TimelineRateSummaryView: View {
         guard !Task.isCancelled else { return }
         await MainActor.run {
           guard deleteButtonState == .deleting else { return }
-          withAnimation(.easeInOut(duration: 0.22)) {
+          withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.22)) {
             deleteButtonState = .idle
           }
         }

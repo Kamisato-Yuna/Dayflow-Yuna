@@ -134,6 +134,24 @@ private struct DotPattern: View {
   }
 }
 
+private enum CategorySetupGlassToken {
+  static let title = Color.white.opacity(0.94)
+  static let text = Color.white.opacity(0.88)
+  static let secondaryText = Color.white.opacity(0.64)
+  static let tertiaryText = Color.white.opacity(0.48)
+  static let cardFill = Color.black.opacity(0.22)
+  static let cardFillHover = Color.black.opacity(0.28)
+  static let panelFill = Color.black.opacity(0.14)
+  static let fieldFill = Color.white.opacity(0.12)
+  static let fieldText = Color.white.opacity(0.92)
+  static let fieldPlaceholder = Color.white.opacity(0.44)
+  static let border = Color.white.opacity(0.18)
+  static let strongBorder = Color.white.opacity(0.34)
+  static let accentText = Color.accentColor.opacity(0.92)
+  static let actionText = Color.accentColor.opacity(0.96)
+  static let destructiveText = Color.white.opacity(0.82)
+}
+
 private struct ColorPickerView: View {
   // Props (mirroring your defaults)
   var size: CGFloat = 280
@@ -371,7 +389,7 @@ private struct ColorSwatch: View {
           .foregroundColor(.white)
           .padding(.vertical, 4)
           .padding(.horizontal, 8)
-          .background(Color.black.opacity(0.8))
+          .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
           .clipShape(RoundedRectangle(cornerRadius: 4))
           .offset(y: -30)
           .allowsHitTesting(false)
@@ -382,6 +400,39 @@ private struct ColorSwatch: View {
       onDragStart()
       return NSItemProvider(object: hex as NSString)
     }
+  }
+}
+
+private struct CategorySetupIconButton: View {
+  let systemName: String
+  let accessibilityLabel: String
+  let tint: Color
+  let action: () -> Void
+
+  @State private var isHovered = false
+
+  var body: some View {
+    Button(action: action) {
+      Image(systemName: systemName)
+        .font(.system(size: 14, weight: .semibold))
+        .symbolRenderingMode(.monochrome)
+        .foregroundColor(tint)
+        .frame(width: 30, height: 30)
+        .background(isHovered ? CategorySetupGlassToken.cardFillHover : CategorySetupGlassToken.cardFill)
+        .dayflowFloatingControl(cornerRadius: 8, groupingSpacing: 6)
+        .overlay(
+          RoundedRectangle(cornerRadius: 8)
+            .stroke(CategorySetupGlassToken.border, lineWidth: 0.8)
+        )
+        .accessibilityLabel(accessibilityLabel)
+    }
+    .buttonStyle(.plain)
+    .scaleEffect(isHovered ? 1.04 : 1)
+    .animation(.easeOut(duration: 0.16), value: isHovered)
+    .onHover { hovering in
+      isHovered = hovering
+    }
+    .pointingHandCursor()
   }
 }
 
@@ -423,7 +474,7 @@ private struct EditableCategoryCard: View {
         TextField("", text: $draftName)
           .font(Font.custom("Figtree", size: 14).weight(.bold))
           .textFieldStyle(.plain)
-          .foregroundColor(.black)
+          .foregroundColor(CategorySetupGlassToken.fieldText)
           .submitLabel(.next)
           .focused($focusedField, equals: .name)
           .onSubmit {
@@ -436,9 +487,10 @@ private struct EditableCategoryCard: View {
           focusedField = nil
           onSave()
         } label: {
-          Image("CategoriesCheckmark")
-            .resizable()
-            .frame(width: 20, height: 20)
+          Image(systemName: "checkmark.circle.fill")
+            .font(.system(size: 19, weight: .semibold))
+            .symbolRenderingMode(.hierarchical)
+            .foregroundStyle(CategorySetupGlassToken.accentText)
             .accessibilityLabel("保存分类编辑")
         }
         .buttonStyle(.plain)
@@ -449,36 +501,38 @@ private struct EditableCategoryCard: View {
         if draftDetails.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
           Text("与职业相关的专业、学习或工作任务（编码、设计、会议）。")
             .font(Font.custom("Figtree", size: 12).weight(.medium))
-            .foregroundColor(Color.black.opacity(0.35))
+            .foregroundColor(CategorySetupGlassToken.fieldPlaceholder)
             .padding(.horizontal, 12)
             .padding(.top, 12)
         }
 
         TextEditor(text: $draftDetails)
           .font(Font.custom("Figtree", size: 12).weight(.medium))
-          .foregroundColor(.black)
+          .foregroundColor(CategorySetupGlassToken.fieldText)
           .padding(.horizontal, 10)
           .padding(.top, 10)
           .padding(.bottom, 12)
           .frame(minHeight: 55)
-          .background(Color.white)
+          .background(CategorySetupGlassToken.fieldFill)
           .focused($focusedField, equals: .description)
           .scrollContentBackground(.hidden)
       }
       .background(
         RoundedRectangle(cornerRadius: 6)
-          .stroke(Color(red: 0.89, green: 0.86, blue: 0.85), lineWidth: 0.5)
+          .fill(CategorySetupGlassToken.fieldFill)
+      )
+      .overlay(
+        RoundedRectangle(cornerRadius: 6)
+          .stroke(CategorySetupGlassToken.border, lineWidth: 0.8)
       )
     }
     .padding(16)
     .frame(alignment: .leading)
-    .background(Color.white)
-    .cornerRadius(8)
-    .shadow(color: Color(red: 0.86, green: 0.8, blue: 0.76), radius: 3, x: 0, y: 0)
+    .background(CategorySetupGlassToken.cardFillHover)
+    .dayflowCard(cornerRadius: 8)
     .overlay(
       RoundedRectangle(cornerRadius: 8)
-        .inset(by: 0.25)
-        .stroke(Color(red: 0.89, green: 0.86, blue: 0.85), lineWidth: 0.5)
+        .stroke(CategorySetupGlassToken.strongBorder, lineWidth: 1)
     )
   }
 
@@ -487,7 +541,9 @@ private struct EditableCategoryCard: View {
       VStack(alignment: .leading, spacing: 4) {
         Text(category.name)
           .font(Font.custom("Figtree", size: 12).weight(.bold))
-          .foregroundColor(.black)
+          .foregroundColor(CategorySetupGlassToken.title)
+          .lineLimit(1)
+          .minimumScaleFactor(0.86)
           .frame(maxWidth: .infinity, alignment: .center)
 
         Text(
@@ -495,47 +551,40 @@ private struct EditableCategoryCard: View {
             ? "添加说明，帮助 Dayflow 理解你的工作流。" : category.details
         )
         .font(Font.custom("Figtree", size: 12).weight(.medium))
-        .foregroundColor(Color(red: 0.35, green: 0.35, blue: 0.35))
+        .foregroundColor(CategorySetupGlassToken.secondaryText)
         .frame(maxWidth: .infinity, alignment: .center)
-        .lineLimit(2)
+        .lineLimit(3)
+        .fixedSize(horizontal: false, vertical: true)
       }
 
       Spacer()
 
       if !category.isSystem {
-        Button {
+        CategorySetupIconButton(
+          systemName: "pencil",
+          accessibilityLabel: "编辑分类",
+          tint: CategorySetupGlassToken.actionText
+        ) {
           onStartEdit()
-        } label: {
-          Image("CategoriesEdit")
-            .resizable()
-            .frame(width: 20, height: 20)
-            .accessibilityLabel("编辑分类")
         }
-        .buttonStyle(.plain)
-        .pointingHandCursor()
 
-        Button {
+        CategorySetupIconButton(
+          systemName: "trash.fill",
+          accessibilityLabel: "删除分类",
+          tint: CategorySetupGlassToken.destructiveText
+        ) {
           onDelete()
-        } label: {
-          Image("CategoriesDelete")
-            .resizable()
-            .frame(width: 20, height: 20)
-            .accessibilityLabel("删除分类")
         }
-        .buttonStyle(.plain)
-        .pointingHandCursor()
       }
     }
     .padding(.horizontal, 20)
     .padding(.vertical, 12)
     .frame(maxWidth: .infinity, alignment: .center)
-    .background(Color.white)
-    .cornerRadius(4)
-    .shadow(color: Color.black.opacity(0.06), radius: 2, x: 0, y: 0)
+    .background(CategorySetupGlassToken.cardFill)
+    .dayflowCard(cornerRadius: 8)
     .overlay(
-      RoundedRectangle(cornerRadius: 4)
-        .inset(by: 0.25)
-        .stroke(Color(red: 0.89, green: 0.89, blue: 0.89), lineWidth: 0.5)
+      RoundedRectangle(cornerRadius: 8)
+        .stroke(CategorySetupGlassToken.border, lineWidth: 0.8)
     )
     .contentShape(Rectangle())
     .onTapGesture {
@@ -565,7 +614,7 @@ private struct ColorAssignmentCard: View {
       .overlay(
         RoundedRectangle(cornerRadius: 6)
           .inset(by: 0.75)
-          .stroke(.white, lineWidth: 1.5)
+          .stroke(Color(nsColor: .windowBackgroundColor), lineWidth: 1.5)
       )
   }
 
@@ -577,15 +626,18 @@ private struct ColorAssignmentCard: View {
         VStack(alignment: .leading, spacing: 4) {
           Text(category.name)
             .font(Font.custom("Figtree", size: 12).weight(.bold))
-            .foregroundColor(.black)
+            .foregroundColor(CategorySetupGlassToken.title)
+            .lineLimit(1)
+            .minimumScaleFactor(0.86)
 
           if showDetails
             && !category.details.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
           {
             Text(category.details)
               .font(Font.custom("Figtree", size: 12).weight(.medium))
-              .foregroundColor(Color(red: 0.35, green: 0.35, blue: 0.35))
-              .lineLimit(2)
+              .foregroundColor(CategorySetupGlassToken.secondaryText)
+              .lineLimit(3)
+              .fixedSize(horizontal: false, vertical: true)
           }
         }
 
@@ -595,12 +647,13 @@ private struct ColorAssignmentCard: View {
     .padding(.horizontal, 20)
     .padding(.vertical, 16)
     .frame(maxWidth: .infinity, alignment: .center)
-    .background(Color.white)
+    .background(isTargeted ? CategorySetupGlassToken.cardFillHover : CategorySetupGlassToken.cardFill)
+    .dayflowCard(cornerRadius: 8)
     .overlay(
       RoundedRectangle(cornerRadius: 8)
         .stroke(
           isTargeted
-            ? Color(red: 0.6, green: 0.5, blue: 0.4) : Color(red: 0.89, green: 0.89, blue: 0.89),
+            ? Color.accentColor.opacity(0.72) : CategorySetupGlassToken.border,
           lineWidth: isTargeted ? 1.5 : 0.8)
     )
     .cornerRadius(8)
@@ -751,7 +804,7 @@ struct ColorOrganizerRoot: View {
         if stage == .details && showsTitles {
           Text("自定义你的分类")
             .font(Font.custom("Instrument Serif", size: 44))
-            .foregroundColor(.black)
+            .foregroundColor(CategorySetupGlassToken.title)
             .frame(maxWidth: .infinity, alignment: .center)
         }
 
@@ -784,8 +837,10 @@ struct ColorOrganizerRoot: View {
         Group {
           if presentationStyle == .sheet {
             RoundedRectangle(cornerRadius: 20)
-              .fill(Color.white)
-              .shadow(color: Color.black.opacity(0.15), radius: 20, x: 0, y: 8)
+              .fill(.regularMaterial)
+            RoundedRectangle(cornerRadius: 20)
+              .fill(Color(nsColor: .controlBackgroundColor).opacity(0.58))
+              .shadow(color: Color.black.opacity(0.10), radius: 20, x: 0, y: 8)
           }
         }
       )
@@ -800,26 +855,26 @@ struct ColorOrganizerRoot: View {
         VStack(alignment: .leading, spacing: 6) {
           Text("第一部分，共 2 步")
             .font(Font.custom("Figtree", size: 14).weight(.bold))
-            .foregroundColor(Color(red: 0.98, green: 0.43, blue: 0))
+            .foregroundColor(CategorySetupGlassToken.accentText)
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text("编辑标题与说明")
             .font(Font.custom("Instrument Serif", size: 30))
-            .foregroundColor(.black)
+            .foregroundColor(CategorySetupGlassToken.title)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
       }
 
       VStack(alignment: .leading, spacing: 16) {
         instructionRow(
-          icon: "CategoriesOrganize",
+          systemName: "square.grid.2x2.fill",
           text:
             "Dayflow 会基于你填写的分类标题与说明整理活动记录。"
         )
         .frame(maxWidth: isCompact ? .infinity : 280, alignment: .leading)
 
         instructionRow(
-          icon: "CategoriesTextSelect",
+          systemName: "text.alignleft",
           text:
             "请尽可能在说明里补充细节，帮助 Dayflow 更好理解你的工作流与习惯。"
         )
@@ -828,22 +883,36 @@ struct ColorOrganizerRoot: View {
 
       Text("此步骤可选。你可在使用 Dayflow 时随时调整分类或新增分类。")
       .font(Font.custom("Figtree", size: 12).weight(.medium))
-      .foregroundColor(Color(red: 0.48, green: 0.48, blue: 0.48))
+      .foregroundColor(CategorySetupGlassToken.secondaryText)
+      .lineLimit(nil)
+      .fixedSize(horizontal: false, vertical: true)
       .frame(maxWidth: isCompact ? .infinity : 280, alignment: .leading)
     }
   }
 
-  private func instructionRow(icon: String, text: String) -> some View {
-    HStack(alignment: .top, spacing: 12) {
-      Image(icon)
-        .resizable()
-        .frame(width: 28, height: 28)
+  private func instructionRow(systemName: String, text: String) -> some View {
+    HStack(alignment: .top, spacing: 10) {
+      Image(systemName: systemName)
+        .font(.system(size: 17, weight: .semibold))
+        .symbolRenderingMode(.hierarchical)
+        .foregroundStyle(CategorySetupGlassToken.accentText)
+        .frame(width: 24, height: 24)
+        .padding(6)
+        .background(CategorySetupGlassToken.cardFill)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(
+          RoundedRectangle(cornerRadius: 10)
+            .stroke(CategorySetupGlassToken.border, lineWidth: 0.8)
+        )
 
       Text(text)
         .font(Font.custom("Figtree", size: 14).weight(.medium))
-        .foregroundColor(.black)
+        .foregroundColor(CategorySetupGlassToken.text)
+        .lineLimit(nil)
+        .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+    .padding(.vertical, 2)
   }
 
   private func colorPickerPanel(isCompact: Bool, showTitles: Bool) -> some View {
@@ -852,12 +921,12 @@ struct ColorOrganizerRoot: View {
         VStack(alignment: .leading, spacing: 6) {
           Text("第二部分，共 2 步")
             .font(Font.custom("Figtree", size: 14).weight(.bold))
-            .foregroundColor(Color(red: 0.98, green: 0.43, blue: 0))
+            .foregroundColor(CategorySetupGlassToken.accentText)
             .frame(maxWidth: .infinity, alignment: .leading)
 
           Text("编辑颜色")
             .font(Font.custom("Instrument Serif", size: 30))
-            .foregroundColor(.black)
+            .foregroundColor(CategorySetupGlassToken.title)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
       }
@@ -896,7 +965,7 @@ struct ColorOrganizerRoot: View {
             : "在上方画布中点击并拖动来调整色盘，再将颜色拖到分类上。"
         )
         .font(Font.custom("Figtree", size: 13).weight(.medium))
-        .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.3))
+        .foregroundColor(CategorySetupGlassToken.secondaryText)
 
         LazyVGrid(
           columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8
@@ -931,29 +1000,21 @@ struct ColorOrganizerRoot: View {
       HStack(spacing: 8) {
         Image(systemName: "plus")
           .font(.system(size: 10, weight: .bold))
-          .foregroundColor(Color(red: 0.49, green: 0.33, blue: 0.16))
+          .foregroundColor(CategorySetupGlassToken.actionText)
 
         Text("创建新分类")
           .font(Font.custom("Figtree", size: 14).weight(.bold))
-          .foregroundColor(Color(red: 0.49, green: 0.33, blue: 0.16))
+          .foregroundColor(CategorySetupGlassToken.actionText)
       }
-      .padding(.horizontal, 14)
-      .padding(.vertical, 8)
-      .background(
-        LinearGradient(
-          gradient: Gradient(stops: [
-            .init(color: Color(red: 1, green: 0.94, blue: 0.79), location: 0),
-            .init(color: Color(red: 1, green: 0.72, blue: 0.43), location: 1),
-          ]),
-          startPoint: .leading,
-          endPoint: .trailing
-        )
-      )
-      .cornerRadius(6)
+      .lineLimit(1)
+      .padding(.horizontal, 16)
+      .padding(.vertical, 10)
+      .frame(minWidth: 142)
+      .background(CategorySetupGlassToken.cardFill)
+      .dayflowFloatingControl(cornerRadius: 8, groupingSpacing: 8)
       .overlay(
-        RoundedRectangle(cornerRadius: 6)
-          .inset(by: 0.5)
-          .stroke(Color(red: 0.95, green: 0.71, blue: 0.56), lineWidth: 1)
+        RoundedRectangle(cornerRadius: 8)
+          .stroke(CategorySetupGlassToken.border, lineWidth: 0.8)
       )
       .opacity(canAddMoreCategories ? 1 : 0.45)
     }
@@ -980,14 +1041,6 @@ struct ColorOrganizerRoot: View {
 
     return VStack(alignment: .leading, spacing: 16) {
       ZStack(alignment: .top) {
-        RoundedRectangle(cornerRadius: 16)
-          .fill(Color.white.opacity(0.2))
-          .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
-
-        RoundedRectangle(cornerRadius: 16)
-          .stroke(Color(red: 0.94, green: 0.91, blue: 0.87), lineWidth: 1)
-          .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
-
         ScrollView(showsIndicators: false) {
           VStack(spacing: 8) {
             ForEach(categories) { category in
@@ -1006,13 +1059,19 @@ struct ColorOrganizerRoot: View {
           .padding(.bottom, 24)
         }
       }
+      .background(CategorySetupGlassToken.panelFill)
+      .dayflowContentPanel(cornerRadius: 16)
+      .overlay(
+        RoundedRectangle(cornerRadius: 16)
+          .stroke(CategorySetupGlassToken.border, lineWidth: 1)
+      )
       .frame(maxWidth: .infinity, alignment: .topLeading)
       .frame(maxWidth: isCompact ? .infinity : 708)
       .frame(height: containerHeight, alignment: .topLeading)
 
       Text("此步骤可选。你可在使用 Dayflow 时随时修改颜色。")
         .font(Font.custom("Figtree", size: 12).weight(.medium))
-        .foregroundColor(Color(red: 0.48, green: 0.48, blue: 0.48))
+        .foregroundColor(CategorySetupGlassToken.secondaryText)
         .frame(maxWidth: .infinity, alignment: .leading)
 
       HStack(spacing: 16) {
@@ -1045,14 +1104,6 @@ struct ColorOrganizerRoot: View {
     return ScrollViewReader { proxy in
       VStack(alignment: .leading, spacing: 24) {
         ZStack(alignment: .top) {
-          RoundedRectangle(cornerRadius: 16)
-            .fill(Color.white.opacity(0.2))
-            .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
-
-          RoundedRectangle(cornerRadius: 16)
-            .stroke(Color(red: 0.94, green: 0.91, blue: 0.87), lineWidth: 1)
-            .frame(maxWidth: .infinity, minHeight: containerHeight, maxHeight: containerHeight)
-
           ScrollView(showsIndicators: false) {
             VStack(spacing: 8) {
               if categories.isEmpty {
@@ -1079,6 +1130,12 @@ struct ColorOrganizerRoot: View {
             .padding(.bottom, 16)
           }
         }
+        .background(CategorySetupGlassToken.panelFill)
+        .dayflowContentPanel(cornerRadius: 16)
+        .overlay(
+          RoundedRectangle(cornerRadius: 16)
+            .stroke(CategorySetupGlassToken.border, lineWidth: 1)
+        )
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .frame(maxWidth: isCompact ? .infinity : 708)
         .frame(height: containerHeight, alignment: .topLeading)
@@ -1117,12 +1174,16 @@ struct ColorOrganizerRoot: View {
   private var emptyState: some View {
     Text("先添加一个分类开始。")
       .font(Font.custom("Figtree", size: 13).weight(.medium))
-      .foregroundColor(Color(red: 0.35, green: 0.35, blue: 0.35))
+      .foregroundColor(CategorySetupGlassToken.secondaryText)
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding()
       .background(
         RoundedRectangle(cornerRadius: 8)
-          .stroke(Color(red: 0.89, green: 0.89, blue: 0.89), lineWidth: 0.5)
+          .fill(CategorySetupGlassToken.cardFill)
+      )
+      .overlay(
+        RoundedRectangle(cornerRadius: 8)
+          .stroke(CategorySetupGlassToken.border, lineWidth: 0.8)
       )
   }
 
@@ -1132,8 +1193,13 @@ struct ColorOrganizerRoot: View {
     case .embedded:
       Color.clear
     case .sheet:
-      Color.black.opacity(0.16)
-        .ignoresSafeArea()
+      ZStack {
+        Color(nsColor: .windowBackgroundColor).opacity(0.10)
+        Rectangle()
+          .fill(.regularMaterial)
+          .opacity(0.45)
+      }
+      .ignoresSafeArea()
     }
   }
 
@@ -1155,18 +1221,14 @@ struct ColorOrganizerRoot: View {
       Button(action: isEnabled ? action : {}) {
         Text(title)
           .font(Font.custom("Figtree", size: 16).weight(.semibold))
-          .foregroundColor(Color(red: 0.26, green: 0.26, blue: 0.26))
+          .foregroundColor(CategorySetupGlassToken.text)
+          .lineLimit(1)
+          .minimumScaleFactor(0.82)
+          .allowsTightening(true)
           .padding(.horizontal, 59)
           .padding(.vertical, 18)
-          .frame(width: 160, alignment: .center)
-          .background(
-            RoundedRectangle(cornerRadius: 12)
-              .fill(Color.white.opacity(0.85))
-              .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                  .stroke(Color(red: 0.88, green: 0.88, blue: 0.88), lineWidth: 1)
-              )
-          )
+          .frame(minWidth: 160, alignment: .center)
+          .dayflowFloatingControl(cornerRadius: 12, groupingSpacing: 8)
           .opacity(isEnabled ? 1.0 : 0.4)
       }
       .buttonStyle(.plain)

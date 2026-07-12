@@ -1,5 +1,3 @@
-import AVFoundation
-import AVKit
 import CryptoKit
 import SwiftUI
 
@@ -38,6 +36,7 @@ struct JournalView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+    .dayflowWindowBackground()
     .sheet(isPresented: $showRemindersSheet) {
       JournalRemindersView(
         onSave: {
@@ -65,18 +64,19 @@ struct JournalView: View {
       // Header: "Dayflow Journal" with BETA badge
       HStack(alignment: .top, spacing: 4) {
         Text("Dayflow 日志")
-          .font(.custom("InstrumentSerif-Italic", size: 38))
-          .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
+          .font(.custom("HanziPen SC", size: 38))
+          .italic()
+          .foregroundColor(JournalViewTokens.title)
 
         // BETA badge
         Text("测试版")
           .font(.custom("Figtree-Bold", size: 11))
-          .foregroundColor(.white)
+          .foregroundColor(JournalViewTokens.badgeText)
           .padding(.horizontal, 8)
           .padding(.vertical, 4)
           .background(
             RoundedRectangle(cornerRadius: 6)
-              .fill(Color(red: 0.98, green: 0.55, blue: 0.20))
+              .fill(JournalViewTokens.badgeFill)
           )
           .rotationEffect(.degrees(-12))
           .offset(x: -4, y: -4)
@@ -85,7 +85,7 @@ struct JournalView: View {
       // Subtitle
       Text(betaNoticeCopy)
         .font(.custom("Figtree-Regular", size: 15))
-        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12).opacity(0.8))
+        .foregroundColor(JournalViewTokens.secondaryText)
         .multilineTextAlignment(.center)
         .frame(maxWidth: 480)
         .padding(.horizontal, 24)
@@ -100,82 +100,49 @@ struct JournalView: View {
     }
     .padding()
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-    .background(
-      GeometryReader { geo in
-        Image("JournalPreview")
-          .resizable()
-          .scaledToFill()
-          .frame(width: geo.size.width, height: geo.size.height)
-          .clipped()
-          .allowsHitTesting(false)
-      }
-    )
+    .dayflowWindowBackground()
   }
 
   // MARK: - Access Code Card
-  // JournalLock is the entire card image (gradient bg + lock icon baked in)
   private var accessCodeCard: some View {
-    ZStack(alignment: .bottom) {
-      // Card background image (contains gradient + lock icon)
-      Image("JournalLock")
-        .resizable()
-        .aspectRatio(contentMode: .fit)
+    VStack(spacing: 22) {
+      Image(systemName: "lock.circle")
+        .font(.system(size: 42, weight: .regular))
+        .foregroundStyle(JournalViewTokens.accent)
 
-      // Overlay content: title, text field, button (anchored to bottom)
       VStack(spacing: 16) {
-        // Title
         Text("输入访问码")
           .font(.custom("Figtree-SemiBold", size: 20))
-          .foregroundColor(Color(red: 0.85, green: 0.45, blue: 0.25))
+          .foregroundColor(JournalViewTokens.title)
 
-        // Text field
         TextField("", text: $accessCode)
           .textFieldStyle(.plain)
           .font(.custom("Figtree-Medium", size: 15))
-          .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.10))
+          .foregroundColor(JournalViewTokens.title)
           .multilineTextAlignment(.center)
           .padding(.horizontal, 14)
           .padding(.vertical, 12)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.white)
-          )
-          .padding(.horizontal, 80)
+          .dayflowOnboardingTextField()
+          .padding(.horizontal, 24)
           .submitLabel(.go)
           .onSubmit { validateCode() }
 
-        // Submit button
         Button(action: validateCode) {
           Text("获取抢先体验")
             .font(.custom("Figtree-SemiBold", size: 15))
-            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
+            .foregroundColor(JournalViewTokens.primaryButtonText)
             .padding(.horizontal, 28)
             .padding(.vertical, 10)
-            .background(
-              Capsule()
-                .fill(
-                  LinearGradient(
-                    colors: [
-                      Color(red: 1.0, green: 0.92, blue: 0.82),
-                      Color(red: 1.0, green: 0.85, blue: 0.70),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                  )
-                )
-                .overlay(
-                  Capsule()
-                    .stroke(Color(red: 0.90, green: 0.75, blue: 0.55), lineWidth: 1)
-                )
-            )
+            .background(Capsule().fill(JournalViewTokens.primaryButtonFill))
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
       }
-      .padding(.bottom, 28)
     }
     .frame(width: 380)
-    .shadow(color: Color.black.opacity(0.08), radius: 16, x: 0, y: 6)
+    .padding(.horizontal, 28)
+    .padding(.vertical, 30)
+    .dayflowContentPanel(cornerRadius: 18)
   }
 
   // MARK: - Unlocked Content
@@ -230,8 +197,8 @@ private struct JournalOnboardingView: View {
 
       // Title
       Text("设定今天的意图")
-        .font(.custom("InstrumentSerif-Regular", size: 42))
-        .foregroundColor(Color(red: 0.85, green: 0.45, blue: 0.15))
+        .font(.system(size: 42, weight: .semibold, design: .rounded))
+        .foregroundColor(JournalViewTokens.title)
         .multilineTextAlignment(.center)
 
       // Description
@@ -239,7 +206,7 @@ private struct JournalOnboardingView: View {
         "Dayflow 帮你追踪每日和长期目标，留出复盘空间，并生成每天的总结。"
       )
       .font(.custom("Figtree-Regular", size: 16))
-      .foregroundColor(Color(red: 0.25, green: 0.15, blue: 0.10).opacity(0.8))
+      .foregroundColor(JournalViewTokens.secondaryText)
       .multilineTextAlignment(.center)
       .frame(maxWidth: 640)
       .padding(.horizontal, 24)
@@ -250,26 +217,10 @@ private struct JournalOnboardingView: View {
       Button(action: onStartOnboarding) {
         Text("开始引导")
           .font(.custom("Figtree-SemiBold", size: 16))
-          .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.12))
+          .foregroundColor(JournalViewTokens.primaryButtonText)
           .padding(.horizontal, 32)
           .padding(.vertical, 12)
-          .background(
-            Capsule()
-              .fill(
-                LinearGradient(
-                  colors: [
-                    Color(red: 1.0, green: 0.96, blue: 0.92),
-                    Color(red: 1.0, green: 0.90, blue: 0.82),
-                  ],
-                  startPoint: .top,
-                  endPoint: .bottom
-                )
-              )
-              .overlay(
-                Capsule()
-                  .stroke(Color(red: 0.92, green: 0.85, blue: 0.78), lineWidth: 1)
-              )
-          )
+          .background(Capsule().fill(JournalViewTokens.primaryButtonFill))
       }
       .buttonStyle(.plain)
       .pointingHandCursor()
@@ -277,180 +228,34 @@ private struct JournalOnboardingView: View {
       Spacer()
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .padding(.horizontal, 40)
+    .padding(.vertical, 36)
+    .dayflowContentPanel(cornerRadius: 22)
+    .padding(24)
   }
 }
 
-// MARK: - Journal Onboarding Video View
+// MARK: - Journal Onboarding Animation View
 
-struct JournalOnboardingVideoView: View {
+struct JournalOnboardingAnimationView: View {
   var onComplete: () -> Void
 
-  @State private var player: AVPlayer?
   @State private var hasCompleted = false
-  @State private var playbackTimer: Timer?
-  @State private var timeObserverToken: Any?
-  @State private var endObserverToken: NSObjectProtocol?
-  @State private var statusObservation: NSKeyValueObservation?
 
   var body: some View {
-    ZStack {
-      // Black background in case video doesn't load
-      Color.black.ignoresSafeArea()
-
-      if let player = player {
-        JournalVideoPlayerView(player: player)
-          .ignoresSafeArea()
+    DayflowLineAnimationView(
+      variant: .journalOnboarding,
+      onCompleted: { _ in
+        completeVideo()
       }
-    }
-    .onAppear {
-      setupVideo()
-    }
-    .onDisappear {
-      cleanup()
-    }
-  }
-
-  private func setupVideo() {
-    // Try root, then Videos subfolder, then mov fallback
-    guard
-      let videoURL = Bundle.main.url(forResource: "JournalOnboardingVideo", withExtension: "mp4")
-        ?? Bundle.main.url(
-          forResource: "JournalOnboardingVideo", withExtension: "mp4", subdirectory: "Videos")
-        ?? Bundle.main.url(forResource: "JournalOnboardingVideo", withExtension: "mov")
-        ?? Bundle.main.url(
-          forResource: "JournalOnboardingVideo", withExtension: "mov", subdirectory: "Videos")
-    else {
-      print("⚠️ [JournalOnboardingVideoView] Video not found in bundle, completing immediately")
-      completeVideo()
-      return
-    }
-
-    let playerItem = AVPlayerItem(url: videoURL)
-    player = AVPlayer(playerItem: playerItem)
-
-    // Mute to prevent interrupting user's music
-    player?.isMuted = true
-    player?.volume = 0
-
-    // Prevent system-level pause/interruptions
-    player?.automaticallyWaitsToMinimizeStalling = false
-    player?.actionAtItemEnd = .none
-
-    // Monitor when near the end to start transition early
-    let interval = CMTime(seconds: 0.1, preferredTimescale: 600)
-    timeObserverToken = player?.addPeriodicTimeObserver(forInterval: interval, queue: .main) {
-      time in
-      guard let duration = self.player?.currentItem?.duration,
-        duration.isValid && duration.isNumeric
-      else { return }
-
-      let currentSeconds = time.seconds
-      let totalSeconds = duration.seconds
-
-      // Start transition 0.3 seconds before the end
-      if currentSeconds >= totalSeconds - 0.3 && currentSeconds < totalSeconds {
-        self.completeVideo()
-      }
-    }
-
-    // Fallback: monitor actual completion
-    endObserverToken = NotificationCenter.default.addObserver(
-      forName: .AVPlayerItemDidPlayToEndTime,
-      object: playerItem,
-      queue: .main
-    ) { _ in
-      completeVideo()
-    }
-
-    // Monitor for errors
-    statusObservation = playerItem.observe(\.status) { item, _ in
-      if item.status == .failed {
-        print(
-          "❌ [JournalOnboardingVideoView] Video failed: \(item.error?.localizedDescription ?? "Unknown")"
-        )
-        DispatchQueue.main.async {
-          self.completeVideo()
-        }
-      }
-    }
-
-    // Start playing
-    player?.play()
-
-    // Timer to force resume if paused
-    playbackTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-      if self.player?.rate == 0 && !self.hasCompleted {
-        self.player?.play()
-      }
-    }
+    )
   }
 
   private func completeVideo() {
     guard !hasCompleted else { return }
     hasCompleted = true
-
-    playbackTimer?.invalidate()
-    playbackTimer = nil
-
-    player?.pause()
     AnalyticsService.shared.capture("journal_onboarding_completed")
     onComplete()
-  }
-
-  private func cleanup() {
-    if let token = timeObserverToken {
-      player?.removeTimeObserver(token)
-      timeObserverToken = nil
-    }
-    if let token = endObserverToken {
-      NotificationCenter.default.removeObserver(token)
-      endObserverToken = nil
-    }
-    statusObservation = nil
-    player?.pause()
-    player = nil
-  }
-}
-
-// MARK: - Non-Interactive Video Player
-
-private struct JournalVideoPlayerView: NSViewRepresentable {
-  let player: AVPlayer
-
-  func makeNSView(context: Context) -> JournalNonInteractivePlayerView {
-    let view = JournalNonInteractivePlayerView()
-    view.player = player
-    view.controlsStyle = .none
-    view.videoGravity = .resizeAspectFill
-    view.showsFullScreenToggleButton = false
-    view.allowsPictureInPicturePlayback = false
-    view.wantsLayer = true
-    return view
-  }
-
-  func updateNSView(_ nsView: JournalNonInteractivePlayerView, context: Context) {}
-}
-
-private class JournalNonInteractivePlayerView: AVPlayerView {
-  override func hitTest(_ point: NSPoint) -> NSView? {
-    // Prevent all mouse interactions
-    return nil
-  }
-
-  override func keyDown(with event: NSEvent) {
-    // Ignore all keyboard events (including spacebar)
-  }
-
-  override func mouseDown(with event: NSEvent) {
-    // Ignore mouse clicks
-  }
-
-  override func rightMouseDown(with event: NSEvent) {
-    // Ignore right clicks
-  }
-
-  override var acceptsFirstResponder: Bool {
-    return false
   }
 }
 
@@ -469,6 +274,16 @@ struct Shake: GeometryEffect {
           amount * sin(animatableData * .pi * shakesPerUnit),
         y: 0))
   }
+}
+
+private enum JournalViewTokens {
+  static let title = Color(nsColor: .labelColor)
+  static let secondaryText = Color(nsColor: .secondaryLabelColor)
+  static let accent = Color.accentColor
+  static let badgeFill = Color.accentColor.opacity(0.16)
+  static let badgeText = Color(nsColor: .labelColor)
+  static let primaryButtonFill = Color(nsColor: .labelColor)
+  static let primaryButtonText = Color(nsColor: .windowBackgroundColor)
 }
 
 #Preview {

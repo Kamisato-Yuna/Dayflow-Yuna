@@ -26,7 +26,7 @@ struct JournalRemindersView: View {
     VStack(spacing: 24) {
       VStack(spacing: 6) {
         Text("设置提醒")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .kerning(-0.22)
           .foregroundColor(JournalReminderTokens.primaryText)
         Text("设置重复通知，提醒自己设定意图并进行复盘。")
@@ -62,12 +62,7 @@ struct JournalRemindersView: View {
       }
       .padding(.horizontal, 24)
       .padding(.vertical, 28)
-      .background(Color.white)
-      .cornerRadius(6)
-      .overlay(
-        RoundedRectangle(cornerRadius: 6)
-          .stroke(Color(hex: "F2F2F2"), lineWidth: 1)
-      )
+      .dayflowCard(cornerRadius: 10)
 
       HStack(spacing: 12) {
         // Test button (fires notification in 3 seconds)
@@ -97,7 +92,7 @@ struct JournalRemindersView: View {
           .buttonStyle(
             JournalReminderPillButtonStyle(
               background: JournalReminderTokens.saveFill,
-              foreground: .white
+              foreground: JournalReminderTokens.saveText
             )
           )
           .journalHoverable()
@@ -106,14 +101,7 @@ struct JournalRemindersView: View {
     }
     .padding(.horizontal, 28)
     .padding(.vertical, 24)
-    .background(
-      RoundedRectangle(cornerRadius: 6)
-        .fill(JournalReminderTokens.canvas)
-        .overlay(
-          RoundedRectangle(cornerRadius: 6)
-            .stroke(Color.white, lineWidth: 1)
-        )
-    )
+    .dayflowModalSurface(cornerRadius: 14)
     .environment(\.colorScheme, .light)
     .onAppear(perform: loadSavedPreferences)
   }
@@ -537,24 +525,25 @@ extension JournalRemindersView {
 }
 
 private enum JournalReminderTokens {
-  static let canvas = Color(hex: "FAF7F3")
-  static let accent = Color(hex: "FFB859")
-  static let saveFill = Color(hex: "553000")
-  static let cancelFill = Color(hex: "F1ECE7")
-  static let cancelBorder = Color(hex: "E1D7CC")
-  static let cancelText = Color(hex: "9F8D80")
-  static let neutral = Color(hex: "F2EFEE")
-  static let secondaryText = Color(hex: "9F8D80")
-  static let primaryText = Color(hex: "333333")
-  static let inputBackground = Color(hex: "F9F3EC")
-  static let inputStroke = Color(hex: "FF9B4C")
-  static let inactiveStroke = Color(hex: "E8DCCF")
-  static let focusStroke = Color(red: 1, green: 0.61, blue: 0.3)
-  static let timeSeparator = Color(hex: "B7A391")
-  static let dropdownIndicator = Color(hex: "8F6B4A")
-  static let dayIdleBackground = Color(hex: "FBF7F1")
-  static let dayIdleStroke = Color(hex: "F6E1CA")
-  static let dayIdleText = Color(hex: "B9A595")
+  static let canvas = Color(nsColor: .windowBackgroundColor)
+  static let accent = Color.accentColor
+  static let saveFill = Color(nsColor: .labelColor)
+  static let cancelFill = Color(nsColor: .controlBackgroundColor).opacity(0.72)
+  static let cancelBorder = Color(nsColor: .separatorColor).opacity(0.24)
+  static let cancelText = Color(nsColor: .secondaryLabelColor)
+  static let neutral = Color(nsColor: .controlBackgroundColor)
+  static let secondaryText = Color(nsColor: .secondaryLabelColor)
+  static let primaryText = Color(nsColor: .labelColor)
+  static let saveText = Color(nsColor: .windowBackgroundColor)
+  static let inputBackground = Color(nsColor: .controlBackgroundColor).opacity(0.76)
+  static let inputStroke = Color.accentColor
+  static let inactiveStroke = Color(nsColor: .separatorColor).opacity(0.22)
+  static let focusStroke = Color.accentColor.opacity(0.72)
+  static let timeSeparator = Color(nsColor: .tertiaryLabelColor)
+  static let dropdownIndicator = Color(nsColor: .secondaryLabelColor)
+  static let dayIdleBackground = Color(nsColor: .controlBackgroundColor).opacity(0.62)
+  static let dayIdleStroke = Color(nsColor: .separatorColor).opacity(0.22)
+  static let dayIdleText = Color(nsColor: .secondaryLabelColor)
 }
 
 // MARK: - Hover interactions
@@ -588,7 +577,7 @@ struct JournalRemindersView_Previews: PreviewProvider {
     JournalRemindersView()
       .padding()
       .frame(width: 480, height: 376)
-      .background(Color(hex: "E9E5E0"))
+      .background(Color(nsColor: .windowBackgroundColor))
       .preferredColorScheme(.light)
       .previewDisplayName("Journal Reminders")
   }

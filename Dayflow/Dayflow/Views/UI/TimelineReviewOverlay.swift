@@ -105,8 +105,12 @@ struct TimelineReviewOverlay: View {
   }
 
   private var overlayBackground: some View {
-    Rectangle()
-      .fill(Color(hex: "FBE9E0").opacity(0.92))
+    ZStack {
+      Color(nsColor: .windowBackgroundColor).opacity(0.72)
+      Rectangle()
+        .fill(.regularMaterial)
+        .opacity(0.82)
+    }
       .ignoresSafeArea()
   }
 
@@ -119,15 +123,11 @@ struct TimelineReviewOverlay: View {
         } label: {
           Image(systemName: "xmark")
             .font(.system(size: 12, weight: .semibold))
-            .foregroundColor(Color(hex: "FF6D00").opacity(0.8))
+            .foregroundColor(DayflowSurfaceAccent.primary)
             .frame(width: 28, height: 28)
-            .background(
-              Circle()
-                .fill(Color.white.opacity(0.7))
-                .overlay(Circle().stroke(Color(hex: "DABCA4"), lineWidth: 1))
-            )
         }
         .buttonStyle(.plain)
+        .dayflowFloatingControl(cornerRadius: 14, groupingSpacing: 8)
         .pointingHandCursor()
         .padding(.trailing, 22)
         .padding(.top, 16)
@@ -218,7 +218,7 @@ struct TimelineReviewOverlay: View {
     VStack(spacing: 14) {
       Text("滑动时间线中的每张卡片，回顾你的一天。")
         .font(.custom("Figtree", size: 14).weight(.medium))
-        .foregroundColor(Color(hex: "98806D"))
+        .foregroundColor(DayflowSurfaceAccent.primary)
         .lineLimit(1)
         .minimumScaleFactor(0.95)
 
@@ -234,13 +234,13 @@ struct TimelineReviewOverlay: View {
     return VStack(spacing: 30) {
       VStack(spacing: 12) {
         Text("全部完成！")
-          .font(.custom("InstrumentSerif-Regular", size: 40))
-          .foregroundColor(Color(hex: "333333"))
+          .font(.system(size: 40, weight: .semibold, design: .rounded))
+          .foregroundColor(Color(nsColor: .labelColor))
         Text(
           "你已回顾目前所有活动。\n时间线右侧面板会根据你的评价更新。"
         )
         .font(.custom("Figtree", size: 16).weight(.medium))
-        .foregroundColor(Color(hex: "333333"))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         .multilineTextAlignment(.center)
       }
 
@@ -251,24 +251,12 @@ struct TimelineReviewOverlay: View {
       } label: {
         Text("关闭")
           .font(.custom("Figtree", size: 14).weight(.semibold))
-          .foregroundColor(Color(hex: "333333"))
+          .foregroundColor(Color(nsColor: .labelColor))
           .padding(.horizontal, 24)
           .padding(.vertical, 10)
-          .background(
-            Capsule()
-              .fill(
-                LinearGradient(
-                  colors: [Color(hex: "FFF9F1").opacity(0.9), Color(hex: "FDE8D1").opacity(0.9)],
-                  startPoint: .topLeading,
-                  endPoint: .bottomTrailing
-                )
-              )
-              .overlay(
-                Capsule().stroke(Color(hex: "FF8904").opacity(0.5), lineWidth: 1.25)
-              )
-          )
       }
       .buttonStyle(.plain)
+      .dayflowFloatingControl(cornerRadius: 16, groupingSpacing: 8)
       .pointingHandCursor()
     }
     .frame(maxWidth: 500)
@@ -277,11 +265,11 @@ struct TimelineReviewOverlay: View {
   private var emptyState: some View {
     VStack(spacing: 12) {
       Text("暂时没有可回顾的内容")
-        .font(.custom("InstrumentSerif-Regular", size: 28))
-        .foregroundColor(Color(hex: "333333"))
+        .font(.system(size: 28, weight: .semibold, design: .rounded))
+        .foregroundColor(Color(nsColor: .labelColor))
       Text("等时间线出现几张卡片后再回来看看。")
         .font(.custom("Figtree", size: 14).weight(.medium))
-        .foregroundColor(Color(hex: "707070"))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
     }
   }
 

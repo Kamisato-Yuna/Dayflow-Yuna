@@ -40,23 +40,31 @@ struct LLMProviderSetupView: View {
       HStack(alignment: .center, spacing: 0) {
         // Back button container matching sidebar width
         HStack {
-          Button(action: handleBack) {
-            HStack(spacing: 12) {
-              Image(systemName: "chevron.left")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.black.opacity(0.7))
-                .frame(width: 20, alignment: .center)
+          DayflowSurfaceButton(
+            action: handleBack,
+            content: {
+              HStack(spacing: 12) {
+                Image(systemName: "chevron.left")
+                  .font(.system(size: 12, weight: .semibold))
+                  .foregroundColor(Color(nsColor: .labelColor).opacity(0.7))
+                  .frame(width: 20, alignment: .center)
 
-              Text("返回")
-                .font(.custom("Figtree", size: 15))
-                .fontWeight(.medium)
-                .foregroundColor(.black.opacity(0.7))
-            }
-          }
-          .buttonStyle(DayflowPressScaleButtonStyle(pressedScale: 0.97))
+                Text("返回")
+                  .font(.custom("Figtree", size: 15))
+                  .fontWeight(.medium)
+                  .foregroundColor(Color(nsColor: .labelColor).opacity(0.7))
+              }
+            },
+            background: Color(nsColor: .controlBackgroundColor).opacity(0.72),
+            foreground: Color(nsColor: .labelColor).opacity(0.7),
+            borderColor: Color(nsColor: .separatorColor).opacity(0.5),
+            cornerRadius: 8,
+            horizontalPadding: 20,
+            verticalPadding: 10,
+            isSecondaryStyle: true
+          )
           // Position where sidebar items start: 20 + 16 = 36px
           .padding(.leading, 36)  // Align with sidebar item structure
-          .pointingHandCursor()
 
           Spacer()
         }
@@ -67,7 +75,7 @@ struct LLMProviderSetupView: View {
           Text(headerTitle)
             .font(.custom("Figtree", size: 32))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
 
           Spacer()
         }
@@ -109,7 +117,7 @@ struct LLMProviderSetupView: View {
       setupState.configureSteps(for: activeProviderType)
       animateAppearance()
     }
-    .preferredColorScheme(.light)
+    .dayflowWindowBackground()
   }
 
   var nextButtonText: String {
@@ -135,8 +143,8 @@ struct LLMProviderSetupView: View {
             Text("完成设置").font(.custom("Figtree", size: 14)).fontWeight(.semibold)
           }
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 24,
@@ -154,8 +162,8 @@ struct LLMProviderSetupView: View {
             }
           }
         },
-        background: Color(red: 0.25, green: 0.17, blue: 0),
-        foreground: .white,
+        background: DayflowOnboardingToken.primaryButtonFill,
+        foreground: DayflowOnboardingToken.primaryButtonText,
         borderColor: .clear,
         cornerRadius: 8,
         horizontalPadding: 24,
@@ -178,12 +186,12 @@ struct LLMProviderSetupView: View {
           Text("选择本地模型引擎")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
           Text(
             "对于本地使用，LM Studio 最可靠；Ollama 在 onboarding 中已知会遇到无法关闭“思考模式”的问题，并且性能不稳定。"
           )
           .font(.custom("Figtree", size: 14))
-          .foregroundColor(.black.opacity(0.6))
+          .foregroundColor(Color(nsColor: .secondaryLabelColor))
         }
         HStack(alignment: .center, spacing: 12) {
           DayflowSurfaceButton(
@@ -212,8 +220,8 @@ struct LLMProviderSetupView: View {
                 .font(.custom("Figtree", size: 14))
                 .fontWeight(.semibold)
             },
-            background: Color(red: 0.25, green: 0.17, blue: 0),
-            foreground: .white,
+            background: DayflowOnboardingToken.primaryButtonFill,
+            foreground: DayflowOnboardingToken.primaryButtonText,
             borderColor: .clear,
             cornerRadius: 8,
             showOverlayStroke: true
@@ -223,7 +231,7 @@ struct LLMProviderSetupView: View {
           "你已经有本地服务了吗？请确认其兼容 OpenAI 接口。下一步可设置自定义基础地址。"
         )
         .font(.custom("Figtree", size: 13))
-        .foregroundColor(.black.opacity(0.6))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
         HStack {
           Spacer()
           nextButton
@@ -234,11 +242,11 @@ struct LLMProviderSetupView: View {
         Text("安装 Qwen3-VL 4B")
           .font(.custom("Figtree", size: 24))
           .fontWeight(.semibold)
-          .foregroundColor(.black.opacity(0.9))
+          .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
         if setupState.localEngine == .ollama {
           Text("安装并启动 Ollama 后，在终端运行以下命令下载模型（约 5GB）：")
             .font(.custom("Figtree", size: 14))
-            .foregroundColor(.black.opacity(0.6))
+            .foregroundColor(Color(nsColor: .secondaryLabelColor))
           TerminalCommandView(
             title: "执行以下命令：",
             subtitle: "用于为 Ollama 下载 Qwen3-VL 4B",
@@ -248,7 +256,7 @@ struct LLMProviderSetupView: View {
           VStack(alignment: .leading, spacing: 16) {
             Text("安装 LM Studio 后，下载推荐模型：")
               .font(.custom("Figtree", size: 14))
-              .foregroundColor(.black.opacity(0.6))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
 
             DayflowSurfaceButton(
               action: openLMStudioModelDownload,
@@ -259,8 +267,8 @@ struct LLMProviderSetupView: View {
                     .fontWeight(.semibold)
                 }
               },
-              background: Color(red: 0.25, green: 0.17, blue: 0),
-              foreground: .white,
+              background: DayflowOnboardingToken.primaryButtonFill,
+              foreground: DayflowOnboardingToken.primaryButtonText,
               borderColor: .clear,
               cornerRadius: 8,
               horizontalPadding: 24,
@@ -271,13 +279,13 @@ struct LLMProviderSetupView: View {
             VStack(alignment: .leading, spacing: 6) {
               Text("此操作会打开 LM Studio，并提示你下载该模型（约 3GB）。")
                 .font(.custom("Figtree", size: 13))
-                .foregroundColor(.black.opacity(0.65))
+                .foregroundColor(Color(nsColor: .secondaryLabelColor))
 
               Text(
                 "下载完成后，在 LM Studio 开启“Local Server”（默认地址 http://localhost:1234）"
               )
               .font(.custom("Figtree", size: 13))
-              .foregroundColor(.black.opacity(0.65))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
             }
             .padding(.top, 4)
 
@@ -286,13 +294,13 @@ struct LLMProviderSetupView: View {
               Text("手动设置：")
                 .font(.custom("Figtree", size: 12))
                 .fontWeight(.semibold)
-                .foregroundColor(.black.opacity(0.5))
+                .foregroundColor(Color(nsColor: .tertiaryLabelColor))
               Text("1. 打开 LM Studio 的 Models 标签页")
                 .font(.custom("Figtree", size: 12))
-                .foregroundColor(.black.opacity(0.45))
+                .foregroundColor(Color(nsColor: .tertiaryLabelColor))
               Text("2. 搜索“Qwen3-VL-4B”，安装 Instruct 版本")
                 .font(.custom("Figtree", size: 12))
-                .foregroundColor(.black.opacity(0.45))
+                .foregroundColor(Color(nsColor: .tertiaryLabelColor))
             }
             .padding(.top, 8)
           }
@@ -301,12 +309,12 @@ struct LLMProviderSetupView: View {
             Text(LocalizedCopy.localVisionModelDescription)
               .font(.custom("Figtree", size: 16))
               .fontWeight(.semibold)
-              .foregroundColor(.black.opacity(0.85))
+              .foregroundColor(Color(nsColor: .labelColor).opacity(0.85))
             Text(
               "请确认你的服务端暴露了 OpenAI Chat Completions API，并安装了 Qwen3-VL 4B（若需要旧版模型可选 Qwen2.5-VL 3B）。"
             )
             .font(.custom("Figtree", size: 14))
-            .foregroundColor(.black.opacity(0.75))
+            .foregroundColor(Color(nsColor: .secondaryLabelColor))
           }
         }
         HStack {
@@ -347,21 +355,21 @@ struct LLMProviderSetupView: View {
           HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
               .font(.system(size: 12))
-              .foregroundColor(Color(hex: "E91515"))
+              .foregroundColor(DayflowSurfaceAccent.critical)
 
             Text(message)
               .font(.custom("Figtree", size: 13))
-              .foregroundColor(Color(hex: "E91515"))
+              .foregroundColor(DayflowSurfaceAccent.critical)
           }
           .padding(.horizontal, 16)
           .padding(.vertical, 10)
           .background(
             RoundedRectangle(cornerRadius: 4)
-              .fill(Color(hex: "E91515").opacity(0.1))
+              .fill(DayflowSurfaceAccent.critical.opacity(0.1))
           )
           .overlay(
             RoundedRectangle(cornerRadius: 4)
-              .stroke(Color(hex: "E91515").opacity(0.3), lineWidth: 1)
+              .stroke(DayflowSurfaceAccent.critical.opacity(0.3), lineWidth: 1)
           )
         }
 
@@ -371,7 +379,7 @@ struct LLMProviderSetupView: View {
           )
           .font(.custom("Figtree", size: 16))
           .fontWeight(.semibold)
-          .foregroundColor(.black.opacity(0.85))
+          .foregroundColor(Color(nsColor: .labelColor).opacity(0.85))
 
           Picker("Gemini 模型", selection: $setupState.geminiModel) {
             ForEach(GeminiModel.allCases, id: \.self) { model in
@@ -382,7 +390,7 @@ struct LLMProviderSetupView: View {
 
           Text(GeminiModelPreference(primary: setupState.geminiModel).fallbackSummary)
             .font(.custom("Figtree", size: 13))
-            .foregroundColor(.black.opacity(0.55))
+            .foregroundColor(Color(nsColor: .secondaryLabelColor))
         }
         .onChange(of: setupState.geminiModel) {
           setupState.persistGeminiModelSelection(source: "onboarding_picker")
@@ -400,11 +408,11 @@ struct LLMProviderSetupView: View {
           Text("下载模型")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
 
           Text("该模型可帮助 Dayflow 理解你当前屏幕内容")
             .font(.custom("Figtree", size: 14))
-            .foregroundColor(.black.opacity(0.6))
+            .foregroundColor(Color(nsColor: .secondaryLabelColor))
         }
 
         TerminalCommandView(
@@ -426,11 +434,11 @@ struct LLMProviderSetupView: View {
           Text(title)
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
           if !description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             Text(description)
               .font(.custom("Figtree", size: 14))
-              .foregroundColor(.black.opacity(0.6))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
               .fixedSize(horizontal: false, vertical: true)
               .multilineTextAlignment(.leading)
               .lineLimit(nil)
@@ -439,7 +447,7 @@ struct LLMProviderSetupView: View {
               (Text("高级用户可任意选择") + Text("具备视觉能力").fontWeight(.bold)
                 + Text("的 LLM，但基于内部测试更推荐使用 Qwen3-VL 4B。"))
                 .font(.custom("Figtree", size: 14))
-                .foregroundColor(.black.opacity(0.6))
+                .foregroundColor(Color(nsColor: .secondaryLabelColor))
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.leading)
             }
@@ -470,7 +478,7 @@ struct LLMProviderSetupView: View {
                 VStack(alignment: .leading, spacing: 12) {
                   Text("你正在使用哪种工具？")
                     .font(.custom("Figtree", size: 14))
-                    .foregroundColor(.black.opacity(0.65))
+                    .foregroundColor(Color(nsColor: .secondaryLabelColor))
                   Picker("引擎", selection: $setupState.localEngine) {
                     Text("LM Studio").tag(LocalEngine.lmstudio)
                     Text("自定义模型").tag(LocalEngine.custom)
@@ -530,26 +538,26 @@ struct LLMProviderSetupView: View {
           Text("获取你的 Gemini 密钥")
             .font(.custom("Figtree", size: 24))
             .fontWeight(.semibold)
-            .foregroundColor(.black.opacity(0.9))
+            .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
 
           Text(
             "你可使用该方式免费使用 Dayflow。你只需一个 Google 账号，无需提供信用卡。"
           )
           .font(.custom("Figtree", size: 14))
-          .foregroundColor(.black.opacity(0.6))
+          .foregroundColor(Color(nsColor: .secondaryLabelColor))
         }
 
         VStack(alignment: .leading, spacing: 16) {
           HStack(alignment: .top, spacing: 12) {
             Text("1.")
               .font(.custom("Figtree", size: 14))
-              .foregroundColor(.black.opacity(0.6))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
               .frame(width: 20, alignment: .leading)
 
             Group {
               Text(LocalizedCopy.openGoogleAIStudio)
                 .font(.custom("Figtree", size: 14))
-                .foregroundColor(.black.opacity(0.8))
+                .foregroundColor(Color(nsColor: .labelColor).opacity(0.8))
                 + Text(LocalizedCopy.googleAIStudioDomain)
                 .font(.custom("Figtree", size: 14))
                 .foregroundColor(Color(red: 1, green: 0.42, blue: 0.02))
@@ -562,23 +570,23 @@ struct LLMProviderSetupView: View {
           HStack(alignment: .top, spacing: 12) {
             Text("2.")
               .font(.custom("Figtree", size: 14))
-              .foregroundColor(.black.opacity(0.6))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
               .frame(width: 20, alignment: .leading)
 
             Text("点击右上角“获取密钥”")
               .font(.custom("Figtree", size: 14))
-              .foregroundColor(.black.opacity(0.8))
+              .foregroundColor(Color(nsColor: .labelColor).opacity(0.8))
           }
 
           HStack(alignment: .top, spacing: 12) {
             Text("3.")
               .font(.custom("Figtree", size: 14))
-              .foregroundColor(.black.opacity(0.6))
+              .foregroundColor(Color(nsColor: .secondaryLabelColor))
               .frame(width: 20, alignment: .leading)
 
             Text("创建新的密钥并复制")
               .font(.custom("Figtree", size: 14))
-              .foregroundColor(.black.opacity(0.8))
+              .foregroundColor(Color(nsColor: .labelColor).opacity(0.8))
           }
         }
         .padding(.vertical, 12)
@@ -594,8 +602,8 @@ struct LLMProviderSetupView: View {
                   .semibold)
               }
             },
-            background: Color(red: 0.25, green: 0.17, blue: 0),
-            foreground: .white,
+            background: DayflowOnboardingToken.primaryButtonFill,
+            foreground: DayflowOnboardingToken.primaryButtonText,
             borderColor: .clear,
             cornerRadius: 8,
             horizontalPadding: 24,

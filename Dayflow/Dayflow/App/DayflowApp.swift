@@ -185,9 +185,9 @@ struct DayflowApp: App {
             }
         }
 
-        // Journal onboarding video (full window coverage, above sidebar)
+        // Journal onboarding animation (full window coverage, above sidebar)
         if journalCoordinator.showOnboardingVideo {
-          JournalOnboardingVideoView(onComplete: {
+          JournalOnboardingAnimationView(onComplete: {
             withAnimation(.easeOut(duration: 0.3)) {
               journalCoordinator.showOnboardingVideo = false
               hasCompletedJournalOnboarding = true
@@ -197,19 +197,12 @@ struct DayflowApp: App {
           .transition(.opacity)
         }
       }
-      // Inline background behind the main app UI only
       .background {
         MainWindowRegistrationView()
 
         if didOnboard {
-          ZStack {
-            Image("MainUIBackground")
-              .resizable()
-              .scaledToFill()
-
-            Color(red: 0.98, green: 0.96, blue: 0.93)
-              .opacity(0.4)
-          }
+          Color.clear
+            .dayflowWindowBackground()
           .ignoresSafeArea()
           .allowsHitTesting(false)
           .accessibilityHidden(true)
@@ -232,6 +225,7 @@ struct DayflowApp: App {
     .windowStyle(.hiddenTitleBar)
     .windowResizability(.contentMinSize)
     .defaultSize(width: 1195, height: 675)
+    .defaultLaunchBehavior(.presented)
 
     .commands {
       // Remove the "New Window" command if you want a single window app
@@ -346,10 +340,22 @@ final class MainWindowController {
   func showMainWindow() {
     guard let openWindowAction else {
       hasPendingOpenRequest = true
+      bringMainWindowToFront()
       return
     }
 
     openWindowAction(id: "main")
+    DispatchQueue.main.async {
+      self.bringMainWindowToFront()
+    }
+  }
+
+  private func bringMainWindowToFront() {
+    guard let window = NSApp.windows.first(where: { $0.title == "Dayflow" }) else { return }
+    if window.isMiniaturized {
+      window.deminiaturize(nil)
+    }
+    window.makeKeyAndOrderFront(nil)
   }
 }
 

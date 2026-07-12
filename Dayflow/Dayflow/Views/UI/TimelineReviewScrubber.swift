@@ -42,16 +42,11 @@ final class TimelineReviewScrubberNSView: NSView {
     wantsLayer = true
     layerContentsRedrawPolicy = .onSetNeedsDisplay
 
-    trackLayer.backgroundColor =
-      NSColor(red: 163 / 255, green: 151 / 255, blue: 141 / 255, alpha: 0.5).cgColor
+    applyThemeColors()
     layer?.addSublayer(trackLayer)
 
-    progressLayer.backgroundColor =
-      NSColor(red: 255 / 255, green: 109 / 255, blue: 0 / 255, alpha: 0.65).cgColor
     layer?.addSublayer(progressLayer)
 
-    pillLayer.backgroundColor =
-      NSColor(red: 249 / 255, green: 110 / 255, blue: 0 / 255, alpha: 1.0).cgColor
     pillLayer.cornerRadius = 4
     layer?.addSublayer(pillLayer)
 
@@ -65,6 +60,11 @@ final class TimelineReviewScrubberNSView: NSView {
 
   required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+  override func viewDidChangeEffectiveAppearance() {
+    super.viewDidChangeEffectiveAppearance()
+    applyThemeColors()
+  }
+
   override func viewDidChangeBackingProperties() {
     super.viewDidChangeBackingProperties()
     let scale = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2.0
@@ -73,7 +73,16 @@ final class TimelineReviewScrubberNSView: NSView {
 
   override func layout() {
     super.layout()
+    applyThemeColors()
     updateScrubberFrames()
+  }
+
+  private func applyThemeColors() {
+    let accent = NSColor.controlAccentColor
+    trackLayer.backgroundColor = NSColor.separatorColor.withAlphaComponent(0.58).cgColor
+    progressLayer.backgroundColor = accent.withAlphaComponent(0.78).cgColor
+    pillLayer.backgroundColor = accent.cgColor
+    textLayer.foregroundColor = NSColor.white.cgColor
   }
 
   func updateScrubberFrames() {

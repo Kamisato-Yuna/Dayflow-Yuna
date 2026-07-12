@@ -64,8 +64,7 @@ struct WeeklyView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-    .background(Color(hex: "FBF6EF"))
-    .environment(\.colorScheme, .light)
+    .dayflowWindowBackground()
     .animation(.easeInOut(duration: 0.22), value: isWeeklyAccessUnlocked)
     .onAppear {
       refreshWeeklyAccessState()
@@ -102,78 +101,85 @@ struct WeeklyView: View {
               )
               .frame(width: layout.contentWidth, height: WeeklyAdaptiveLayout.dataGateHeight)
             } else {
-              topSummarySection(layout: layout)
+              if isLoading {
+                loadingSections(layout: layout)
+              } else {
+                topSummarySection(layout: layout)
 
-              WeeklyExportableGraphic(
-                layout: layout,
-                title: "周工作流",
-                headerTitle: dashboardSnapshot.workflow.title,
-                downloadButtonOrigin: CGPoint(x: 79, y: 16),
-                fileName: exportFileName("weekly-workflow"),
-                exportWidth: WeeklyWorkflowSection.exportWidth(for: dashboardSnapshot.workflow),
-                displayHeight: WeeklyAdaptiveLayout.workflowHeight,
-                exportHeight: WeeklyAdaptiveLayout.workflowHeight,
-                watermarkPlacement: .bottomTrailing
-              ) { width in
-                WeeklyWorkflowSection(snapshot: dashboardSnapshot.workflow, width: width)
-              } exportContent: { width in
-                WeeklyWorkflowSection(
-                  snapshot: dashboardSnapshot.workflow,
-                  width: width,
-                  usesScrollContainers: false
-                )
-              }
+                WeeklyExportableGraphic(
+                  layout: layout,
+                  title: "周工作流",
+                  headerTitle: dashboardSnapshot.workflow.title,
+                  titleAnchor: .standard,
+                  fileName: exportFileName("weekly-workflow"),
+                  exportWidth: WeeklyWorkflowSection.exportWidth(for: dashboardSnapshot.workflow),
+                  displayHeight: WeeklyAdaptiveLayout.workflowDisplayHeight,
+                  exportHeight: WeeklyAdaptiveLayout.workflowExportHeight,
+                  watermarkPlacement: .bottomTrailing
+                ) { width in
+                  WeeklyWorkflowSection(snapshot: dashboardSnapshot.workflow, width: width)
+                } exportContent: { width in
+                  WeeklyWorkflowSection(
+                    snapshot: dashboardSnapshot.workflow,
+                    width: width,
+                    usesScrollContainers: false
+                  )
+                }
 
-              WeeklyExportableGraphic(
-                layout: layout,
-                title: "专注热力图",
-                headerTitle: dashboardSnapshot.heatmap.title,
-                downloadButtonOrigin: CGPoint(x: 44, y: 34),
-                fileName: exportFileName("focus-heatmap"),
-                exportWidth: WeeklyFocusHeatmapSection.exportWidth(for: dashboardSnapshot.heatmap),
-                displayHeight: WeeklyAdaptiveLayout.heatmapHeight,
-                exportHeight: WeeklyAdaptiveLayout.heatmapHeight,
-                watermarkPlacement: .bottomTrailing
-              ) { width in
-                WeeklyFocusHeatmapSection(snapshot: dashboardSnapshot.heatmap, width: width)
-              } exportContent: { width in
-                WeeklyFocusHeatmapSection(
-                  snapshot: dashboardSnapshot.heatmap,
-                  width: width,
-                  usesScrollContainers: false
-                )
-              }
+                WeeklyExportableGraphic(
+                  layout: layout,
+                  title: "专注热力图",
+                  headerTitle: dashboardSnapshot.heatmap.title,
+                  titleAnchor: .standard,
+                  fileName: exportFileName("focus-heatmap"),
+                  exportWidth: WeeklyFocusHeatmapSection.exportWidth(for: dashboardSnapshot.heatmap),
+                  displayHeight: WeeklyAdaptiveLayout.heatmapHeight,
+                  exportHeight: WeeklyAdaptiveLayout.heatmapHeight,
+                  watermarkPlacement: .bottomTrailing
+                ) { width in
+                  WeeklyFocusHeatmapSection(snapshot: dashboardSnapshot.heatmap, width: width)
+                } exportContent: { width in
+                  WeeklyFocusHeatmapSection(
+                    snapshot: dashboardSnapshot.heatmap,
+                    width: width,
+                    usesScrollContainers: false
+                  )
+                }
 
-              WeeklyExportableGraphic(
-                layout: layout,
-                title: "专注细分",
-                headerTitle: dashboardSnapshot.treemap.title,
-                downloadButtonOrigin: CGPoint(x: 40, y: 34),
-                fileName: exportFileName("focus-breakdown"),
-                displayHeight: WeeklyAdaptiveLayout.treemapHeight,
-                exportHeight: WeeklyAdaptiveLayout.treemapHeight,
-                watermarkPlacement: .bottomTrailing
-              ) { width in
-                WeeklyTreemapSection(snapshot: dashboardSnapshot.treemap, width: width)
-              }
+                WeeklyExportableGraphic(
+                  layout: layout,
+                  title: "专注细分",
+                  headerTitle: dashboardSnapshot.treemap.title,
+                  titleAnchor: .standard,
+                  fileName: exportFileName("focus-breakdown"),
+                  displayHeight: WeeklyAdaptiveLayout.treemapHeight,
+                  exportHeight: WeeklyAdaptiveLayout.treemapHeight,
+                  watermarkPlacement: .bottomTrailing
+                ) { width in
+                  WeeklyTreemapSection(snapshot: dashboardSnapshot.treemap, width: width)
+                } exportContent: { width in
+                  WeeklyTreemapSection(
+                    snapshot: dashboardSnapshot.treemap,
+                    width: width,
+                    paletteColorScheme: .light
+                  )
+                }
 
-              WeeklyExportableGraphic(
-                layout: layout,
-                title: "周报细分",
-                downloadButtonOrigin: CGPoint(
-                  x: layout.contentWidth * 72 / 1748,
-                  y: layout.contentWidth * 64 / 1748
-                ),
-                fileName: exportFileName("weekly-breakdown"),
-                displayHeight: layout.sankeyHeight,
-                exportHeight: WeeklyAdaptiveLayout.designSankeyHeight,
-                watermarkPlacement: .bottomLeading
-              ) { width in
-                WeeklySankeySection(
-                  snapshot: dashboardSnapshot.sankey,
-                  showsControls: false,
-                  width: width
-                )
+                WeeklyExportableGraphic(
+                  layout: layout,
+                  title: "周报细分",
+                  titleAnchor: .standard,
+                  fileName: exportFileName("weekly-breakdown"),
+                  displayHeight: layout.sankeyHeight,
+                  exportHeight: WeeklyAdaptiveLayout.designSankeyHeight,
+                  watermarkPlacement: .bottomLeading
+                ) { width in
+                  WeeklySankeySection(
+                    snapshot: dashboardSnapshot.sankey,
+                    showsControls: false,
+                    width: width
+                  )
+                }
               }
             }
           }
@@ -212,7 +218,7 @@ struct WeeklyView: View {
     WeeklyExportableFixedGraphic(
       availableWidth: width,
       title: "周分布",
-      downloadButtonOrigin: CGPoint(x: 18, y: 16),
+      titleAnchor: .donut,
       fileName: exportFileName("weekly-distribution"),
       designWidth: WeeklyAdaptiveLayout.donutCardWidth,
       designHeight: WeeklyAdaptiveLayout.topRowHeight,
@@ -234,7 +240,7 @@ struct WeeklyView: View {
       availableWidth: width,
       title: "上下文图表",
       headerTitle: "上下文切换与分心对比",
-      downloadButtonOrigin: CGPoint(x: 24, y: 16),
+      titleAnchor: .contextChart,
       fileName: exportFileName("context-charts"),
       designWidth: WeeklyAdaptiveLayout.designContentWidth,
       designHeight: WeeklyAdaptiveLayout.topRowHeight,
@@ -244,6 +250,22 @@ struct WeeklyView: View {
         snapshot: dashboardSnapshot.contextCharts,
         width: cardWidth
       )
+    }
+  }
+
+  private func loadingSections(layout: WeeklyAdaptiveLayout) -> some View {
+    VStack(spacing: 14) {
+      WeeklySectionLoadingView(
+        title: "正在整理本周周报",
+        message: "正在汇总工作流、专注热力图和应用分类。"
+      )
+      .frame(width: layout.contentWidth, height: WeeklyAdaptiveLayout.loadingSectionHeight)
+
+      WeeklySectionPlaceholderView(
+        title: "图表即将出现",
+        message: "数据准备好后会展示周工作流、热力图与各分类常用应用。"
+      )
+      .frame(width: layout.contentWidth, height: WeeklyAdaptiveLayout.placeholderSectionHeight)
     }
   }
 
@@ -454,23 +476,15 @@ private struct WeeklyDataRequirementView: View {
 
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: 10, style: .continuous)
-        .fill(Color(hex: "FFF7EF"))
-        .overlay(
-          RoundedRectangle(cornerRadius: 10, style: .continuous)
-            .stroke(Color.white, lineWidth: 1)
-        )
-        .shadow(color: Color(hex: "80450D").opacity(0.12), radius: 12, x: 0, y: 2)
-
       VStack(spacing: 18) {
         VStack(spacing: 5) {
           Text("继续记录以解锁本周周报")
-            .font(.custom("InstrumentSerif-Regular", size: 24))
-            .foregroundStyle(Color(hex: "333333"))
+            .font(.system(size: 24, weight: .semibold, design: .rounded))
+            .foregroundStyle(DayflowWeeklyToken.title)
 
           Text("所选周至少需要 15 小时记录活动，才能生成周报洞察。")
             .font(.custom("Figtree-Regular", size: 14))
-            .foregroundStyle(Color(hex: "796E64"))
+            .foregroundStyle(DayflowWeeklyToken.secondaryText)
             .multilineTextAlignment(.center)
             .lineLimit(2)
         }
@@ -481,11 +495,12 @@ private struct WeeklyDataRequirementView: View {
 
         Text(remainingText)
           .font(.custom("Figtree-Medium", size: 13))
-          .foregroundStyle(Color(hex: "8A7768"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
       }
       .padding(.horizontal, 28)
       .frame(maxWidth: 540)
     }
+    .dayflowContentPanel(cornerRadius: 10)
   }
 
   private func durationText(_ minutes: Int) -> String {
@@ -509,11 +524,13 @@ private struct WeeklyDataRequirementView: View {
 }
 
 private struct WeeklyDataRequirementPill: View {
+  @Environment(\.colorScheme) private var colorScheme
+
   let text: String
 
   var body: some View {
     Text(text)
-      .font(.custom("InstrumentSerif-Regular", size: 22))
+      .font(.system(size: 22, weight: .semibold, design: .rounded))
       .foregroundStyle(Color(hex: "FF7856"))
       .lineLimit(1)
       .minimumScaleFactor(0.75)
@@ -521,17 +538,19 @@ private struct WeeklyDataRequirementPill: View {
       .frame(height: 58)
       .background(
         Capsule(style: .continuous)
-          .fill(Color(hex: "FFEBD6"))
+          .fill(DayflowWeeklyToken.subtleAccentFill(colorScheme: colorScheme))
       )
       .overlay(
         Capsule(style: .continuous)
-          .stroke(Color(hex: "FF8904").opacity(0.5), lineWidth: 1)
+          .stroke(DayflowWeeklyToken.accent.opacity(0.38), lineWidth: 1)
       )
-      .shadow(color: Color(hex: "FDE7D1"), radius: 8, x: 0, y: 2)
   }
 }
 
 private struct WeeklyDataRequirementProgressBar: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   let progress: Double
 
   var body: some View {
@@ -541,7 +560,10 @@ private struct WeeklyDataRequirementProgressBar: View {
 
       ZStack(alignment: .leading) {
         Capsule(style: .continuous)
-          .fill(Color(hex: "EAE0DD"))
+          .fill(DayflowWeeklyToken.progressTrackFill(
+            colorScheme: colorScheme,
+            reduceTransparency: reduceTransparency
+          ))
 
         LinearGradient(
           colors: [Color(hex: "C6D9FF"), Color(hex: "FF9A78")],
@@ -559,7 +581,7 @@ private struct WeeklyDataRequirementProgressBar: View {
               .renderingMode(.template)
               .resizable()
               .scaledToFit()
-              .foregroundStyle(Color.white)
+              .foregroundStyle(Color(nsColor: .windowBackgroundColor))
               .frame(width: 13.5, height: 13.5)
           )
           .shadow(color: Color(hex: "FF6E00").opacity(0.18), radius: 5, x: 0, y: 2)
@@ -570,16 +592,119 @@ private struct WeeklyDataRequirementProgressBar: View {
   }
 }
 
+private struct WeeklySectionLoadingView: View {
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @State private var isAnimating = false
+
+  let title: String
+  let message: String
+
+  var body: some View {
+    WeeklySectionStatusCard(title: title, message: message) {
+      ZStack {
+        Circle()
+          .stroke(DayflowWeeklyToken.accent.opacity(0.18), lineWidth: 5)
+
+        Circle()
+          .trim(from: 0.08, to: 0.72)
+          .stroke(
+            AngularGradient(
+              colors: [
+                DayflowWeeklyToken.accent.opacity(0.2),
+                DayflowWeeklyToken.accent,
+                DayflowWeeklyToken.accent.opacity(0.2),
+              ],
+              center: .center
+            ),
+            style: StrokeStyle(lineWidth: 5, lineCap: .round)
+          )
+          .rotationEffect(.degrees(isAnimating ? 360 : 0))
+
+        Image(systemName: "chart.xyaxis.line")
+          .font(.system(size: 14, weight: .semibold))
+          .foregroundStyle(DayflowWeeklyToken.accent)
+      }
+      .onAppear {
+        guard !reduceMotion else { return }
+        withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) {
+          isAnimating = true
+        }
+      }
+    }
+  }
+}
+
+private struct WeeklySectionPlaceholderView: View {
+  let title: String
+  let message: String
+
+  var body: some View {
+    WeeklySectionStatusCard(title: title, message: message) {
+      Image(systemName: "rectangle.3.group")
+        .font(.system(size: 18, weight: .semibold))
+        .foregroundStyle(DayflowWeeklyToken.accent.opacity(0.82))
+        .frame(width: 38, height: 38)
+        .dayflowFloatingControl(cornerRadius: 8)
+    }
+  }
+}
+
+private struct WeeklySectionStatusCard<Icon: View>: View {
+  let title: String
+  let message: String
+  let icon: Icon
+
+  init(
+    title: String,
+    message: String,
+    @ViewBuilder icon: () -> Icon
+  ) {
+    self.title = title
+    self.message = message
+    self.icon = icon()
+  }
+
+  var body: some View {
+    HStack(alignment: .center, spacing: 16) {
+      icon
+        .frame(width: 46, height: 46)
+
+      VStack(alignment: .leading, spacing: 4) {
+        Text(title)
+          .font(.system(size: 17, weight: .semibold, design: .rounded))
+          .foregroundStyle(DayflowWeeklyToken.title)
+          .lineLimit(1)
+          .minimumScaleFactor(0.85)
+
+        Text(message)
+          .font(.custom("Figtree-Regular", size: 13))
+          .foregroundStyle(DayflowWeeklyToken.secondaryText)
+          .lineLimit(2)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .layoutPriority(1)
+    }
+    .padding(.horizontal, 24)
+    .padding(.vertical, 18)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
+  }
+}
+
 private struct WeeklyAdaptiveLayout {
   static let designContentWidth: CGFloat = 958
   static let donutCardWidth: CGFloat = 461
   static let topRowHeight: CGFloat = 300
   static let topRowSpacing: CGFloat = 27
-  static let workflowHeight: CGFloat = 292
+  static let workflowDisplayHeight: CGFloat = 262
+  static let workflowExportHeight: CGFloat = 292
   static let suggestionsHeight: CGFloat = 328
   static let treemapHeight: CGFloat = 549
   static let heatmapHeight: CGFloat = 238
-  static let dataGateHeight: CGFloat = 360
+  static let dataGateHeight: CGFloat = 280
+  static let loadingSectionHeight: CGFloat = 126
+  static let placeholderSectionHeight: CGFloat = 92
   static let designSankeyHeight: CGFloat = designContentWidth * 933 / 1748
   static let maximumContentWidth: CGFloat = 1500
 
@@ -639,7 +764,7 @@ private struct WeeklyExportableGraphic<Content: View>: View {
   let layout: WeeklyAdaptiveLayout
   let title: String
   let headerTitle: String
-  let downloadButtonOrigin: CGPoint
+  let titleAnchor: WeeklyGraphicTitleAnchor
   let fileName: String
   let exportWidth: CGFloat
   let displayHeight: CGFloat
@@ -654,7 +779,7 @@ private struct WeeklyExportableGraphic<Content: View>: View {
     layout: WeeklyAdaptiveLayout,
     title: String,
     headerTitle: String? = nil,
-    downloadButtonOrigin: CGPoint,
+    titleAnchor: WeeklyGraphicTitleAnchor,
     fileName: String,
     exportWidth: CGFloat = WeeklyAdaptiveLayout.designContentWidth,
     displayHeight: CGFloat,
@@ -666,7 +791,7 @@ private struct WeeklyExportableGraphic<Content: View>: View {
     self.layout = layout
     self.title = title
     self.headerTitle = headerTitle ?? title
-    self.downloadButtonOrigin = downloadButtonOrigin
+    self.titleAnchor = titleAnchor
     self.fileName = fileName
     self.exportWidth = exportWidth
     self.displayHeight = displayHeight
@@ -680,7 +805,7 @@ private struct WeeklyExportableGraphic<Content: View>: View {
     layout: WeeklyAdaptiveLayout,
     title: String,
     headerTitle: String? = nil,
-    downloadButtonOrigin: CGPoint,
+    titleAnchor: WeeklyGraphicTitleAnchor,
     fileName: String,
     exportWidth: CGFloat = WeeklyAdaptiveLayout.designContentWidth,
     displayHeight: CGFloat,
@@ -692,7 +817,7 @@ private struct WeeklyExportableGraphic<Content: View>: View {
       layout: layout,
       title: title,
       headerTitle: headerTitle,
-      downloadButtonOrigin: downloadButtonOrigin,
+      titleAnchor: titleAnchor,
       fileName: fileName,
       exportWidth: exportWidth,
       displayHeight: displayHeight,
@@ -710,16 +835,12 @@ private struct WeeklyExportableGraphic<Content: View>: View {
         height: displayHeight,
         alignment: .topLeading
       )
-      .frame(
-        width: layout.contentWidth,
-        height: displayHeight,
-        alignment: .topLeading
-      )
+      .clipped()
       .overlay(alignment: .topLeading) {
         WeeklyGraphicDownloadOverlay(
           title: title,
           headerTitle: headerTitle,
-          origin: downloadButtonOrigin,
+          titleAnchor: titleAnchor,
           isVisible: isHovering
         ) {
           WeeklyGraphicExporter.savePNG(
@@ -739,6 +860,7 @@ private struct WeeklyExportableGraphic<Content: View>: View {
           isHovering = hovering
         }
       }
+      .contentShape(Rectangle())
   }
 }
 
@@ -746,7 +868,7 @@ private struct WeeklyExportableFixedGraphic<Content: View>: View {
   let availableWidth: CGFloat
   let title: String
   let headerTitle: String
-  let downloadButtonOrigin: CGPoint
+  let titleAnchor: WeeklyGraphicTitleAnchor
   let fileName: String
   let designWidth: CGFloat
   let designHeight: CGFloat
@@ -759,7 +881,7 @@ private struct WeeklyExportableFixedGraphic<Content: View>: View {
     availableWidth: CGFloat,
     title: String,
     headerTitle: String? = nil,
-    downloadButtonOrigin: CGPoint,
+    titleAnchor: WeeklyGraphicTitleAnchor,
     fileName: String,
     designWidth: CGFloat,
     designHeight: CGFloat,
@@ -769,7 +891,7 @@ private struct WeeklyExportableFixedGraphic<Content: View>: View {
     self.availableWidth = availableWidth
     self.title = title
     self.headerTitle = headerTitle ?? title
-    self.downloadButtonOrigin = downloadButtonOrigin
+    self.titleAnchor = titleAnchor
     self.fileName = fileName
     self.designWidth = designWidth
     self.designHeight = designHeight
@@ -780,16 +902,12 @@ private struct WeeklyExportableFixedGraphic<Content: View>: View {
   var body: some View {
     content(availableWidth)
       .frame(width: availableWidth, height: designHeight, alignment: .topLeading)
-      .frame(
-        width: availableWidth,
-        height: designHeight,
-        alignment: .topLeading
-      )
+      .clipped()
       .overlay(alignment: .topLeading) {
         WeeklyGraphicDownloadOverlay(
           title: title,
           headerTitle: headerTitle,
-          origin: downloadButtonOrigin,
+          titleAnchor: titleAnchor,
           isVisible: isHovering
         ) {
           WeeklyGraphicExporter.savePNG(
@@ -806,20 +924,21 @@ private struct WeeklyExportableFixedGraphic<Content: View>: View {
           isHovering = hovering
         }
       }
+      .contentShape(Rectangle())
   }
 }
 
 private struct WeeklyGraphicDownloadOverlay: View {
   let title: String
   let headerTitle: String
-  let origin: CGPoint
+  let titleAnchor: WeeklyGraphicTitleAnchor
   let isVisible: Bool
   let action: () -> Void
 
   var body: some View {
     HStack(spacing: 8) {
       Text(headerTitle)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: titleAnchor.fontSize, weight: .semibold, design: .rounded))
         .lineLimit(1)
         .fixedSize()
         .opacity(0)
@@ -827,10 +946,24 @@ private struct WeeklyGraphicDownloadOverlay: View {
 
       WeeklyGraphicDownloadButton(title: title, action: action)
     }
-    .offset(x: origin.x, y: origin.y)
+    .offset(x: titleAnchor.leading, y: titleAnchor.top)
     .opacity(isVisible ? 1 : 0)
     .allowsHitTesting(isVisible)
   }
+}
+
+private struct WeeklyGraphicTitleAnchor {
+  let leading: CGFloat
+  let top: CGFloat
+  let fontSize: CGFloat
+
+  static let standard = WeeklyGraphicTitleAnchor(
+    leading: DayflowWeeklySectionChrome.titleLeading,
+    top: DayflowWeeklySectionChrome.titleTop,
+    fontSize: 20
+  )
+  static let donut = WeeklyGraphicTitleAnchor(leading: 18, top: 16, fontSize: 20)
+  static let contextChart = WeeklyGraphicTitleAnchor(leading: 24, top: 16, fontSize: 20)
 }
 
 private struct WeeklyGraphicDownloadButton: View {
@@ -840,16 +973,11 @@ private struct WeeklyGraphicDownloadButton: View {
   var body: some View {
     Button(action: action) {
       Image(systemName: "arrow.down.to.line")
-        .font(.system(size: 10, weight: .medium))
-        .foregroundStyle(Color(hex: "DF8351"))
+        .font(.system(size: 10, weight: .semibold))
+        .foregroundStyle(DayflowWeeklyToken.accent)
         .frame(width: 12, height: 12)
         .frame(width: 24, height: 20)
-        .background(Color(hex: "FFF5EA"))
-        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-        .overlay(
-          RoundedRectangle(cornerRadius: 6, style: .continuous)
-            .stroke(Color(hex: "F7E4CE"), lineWidth: 0.75)
-        )
+        .dayflowFloatingControl(cornerRadius: 6)
         .contentShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
     .buttonStyle(.plain)
@@ -871,12 +999,12 @@ private enum WeeklyGraphicExporter {
   ) {
     let exportView = content()
       .frame(width: size.width, height: size.height, alignment: .topLeading)
-      .background(Color(hex: "FBF6EF"))
+      .background(Color(nsColor: .windowBackgroundColor))
       .overlay(alignment: watermarkPlacement.alignment) {
         WeeklyExportWatermark()
           .padding(watermarkPlacement.padding)
       }
-      .environment(\.colorScheme, .light)
+      .preferredColorScheme(.light)
 
     let renderer = ImageRenderer(content: exportView)
     renderer.proposedSize = ProposedViewSize(width: size.width, height: size.height)
@@ -950,12 +1078,12 @@ private enum WeeklyExportWatermarkPlacement {
 }
 
 private struct WeeklyExportWatermark: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   var body: some View {
     HStack(spacing: 6) {
-      Image("DayflowLogo")
-        .resizable()
-        .scaledToFit()
-        .frame(width: 16, height: 16)
+      DayflowBrandIconView(imageName: "DayflowLogo", size: 16, cornerRadius: 4)
 
       WeeklyGeneratedWithDayflowText()
     }
@@ -964,30 +1092,39 @@ private struct WeeklyExportWatermark: View {
     .frame(height: 26)
     .background(
       Capsule(style: .continuous)
-        .fill(Color.white.opacity(0.94))
+        .fill(Color(nsColor: .controlBackgroundColor))
     )
     .overlay(
       Capsule(style: .continuous)
         .stroke(Color(hex: "EBE6E3"), lineWidth: 1)
     )
-    .shadow(color: Color.black.opacity(0.05), radius: 6, y: 2)
+    .shadow(
+      color: DayflowWeeklyToken.displayShadow(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      radius: 6,
+      y: 2
+    )
   }
 }
 
 private struct WeeklyGeneratedWithDayflowText: View {
+  @Environment(\.colorScheme) private var colorScheme
+
   var body: some View {
     HStack(spacing: 3) {
       Text("由")
         .font(.custom("Figtree-SemiBold", size: 10))
-        .foregroundStyle(Color(hex: "786A61"))
+        .foregroundStyle(DayflowWeeklyToken.exportWatermarkText(colorScheme: colorScheme))
 
       Text("Dayflow")
         .font(.custom("Figtree-Bold", size: 10))
-        .foregroundStyle(Color(hex: "B46531"))
+        .foregroundStyle(DayflowWeeklyToken.exportWatermarkBrand(colorScheme: colorScheme))
 
       Text("生成")
         .font(.custom("Figtree-SemiBold", size: 10))
-        .foregroundStyle(Color(hex: "786A61"))
+        .foregroundStyle(DayflowWeeklyToken.exportWatermarkText(colorScheme: colorScheme))
     }
   }
 }

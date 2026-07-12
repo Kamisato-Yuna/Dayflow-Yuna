@@ -53,6 +53,7 @@ struct ChatView: View {
   @State var chatFeedbackShareLogs = true
   @State var chatFeedbackMode: TimelineFeedbackMode = .form
   @Environment(\.accessibilityReduceMotion) var reduceMotion
+  @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
     ZStack {
@@ -125,6 +126,5 @@ struct ChatView: View {
     } message: {
       Text("切换到 \(pendingProviderLabel) 会清除此对话的上下文。")
     }
-    .environment(\.colorScheme, .light)
   }
 }

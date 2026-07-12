@@ -23,11 +23,11 @@ struct MessageBubble: View {
       Spacer(minLength: 60)
       Text(message.content)
         .font(.custom("Figtree", size: 13).weight(.medium))
-        .foregroundColor(.white)
+        .foregroundColor(Color(nsColor: .windowBackgroundColor))
         .textSelection(.enabled)
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .background(Color(hex: "F98D3D"))
+        .background(Color(nsColor: .labelColor))
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
   }
@@ -47,12 +47,7 @@ struct MessageBubble: View {
       }
       .padding(.horizontal, 14)
       .padding(.vertical, 10)
-      .background(Color.white)
-      .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-      .overlay(
-        RoundedRectangle(cornerRadius: 16, style: .continuous)
-          .stroke(Color(hex: "E8E8E8"), lineWidth: 1)
-      )
+      .chatMessageSurface(cornerRadius: 16)
       .contextMenu {
         Button("复制") {
           copyAssistantMessageToPasteboard()
@@ -192,7 +187,7 @@ struct AssistantMessageFeedbackRow: View {
       if showsThanks {
         Text("感谢")
           .font(.custom("Figtree", size: 11).weight(.semibold))
-          .foregroundColor(Color(hex: "9A7C60"))
+          .foregroundColor(ChatSurfacePalette.secondaryText)
           .transition(thanksTransition)
       }
     }
@@ -219,15 +214,15 @@ struct AssistantMessageIconButton: View {
     Button(action: action) {
       Image(systemName: systemName)
         .font(.system(size: 11, weight: .semibold))
-        .foregroundColor(Color(hex: "8F8F8F"))
+        .foregroundColor(ChatSurfacePalette.secondaryText)
         .frame(width: 22, height: 22)
         .background(
           Circle()
-            .fill(isHovered ? Color.white : Color.clear)
+            .fill(isHovered ? Color(nsColor: .controlBackgroundColor).opacity(0.75) : Color.clear)
         )
         .overlay(
           Circle()
-            .stroke(Color(hex: "E4E4E4"), lineWidth: isHovered ? 1 : 0)
+            .stroke(ChatSurfacePalette.separator, lineWidth: isHovered ? 1 : 0)
         )
     }
     .buttonStyle(.plain)

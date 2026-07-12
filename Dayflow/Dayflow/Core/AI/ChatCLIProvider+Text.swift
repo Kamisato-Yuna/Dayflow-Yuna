@@ -166,8 +166,8 @@ extension ChatCLIProvider {
   func formatTimestampForPrompt(_ unixTime: Int) -> String {
     let date = Date(timeIntervalSince1970: TimeInterval(unixTime))
     let formatter = DateFormatter()
-    formatter.dateFormat = "h:mm a"
-    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "HH:mm"
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
     formatter.timeZone = TimeZone.current
     return formatter.string(from: date)
   }

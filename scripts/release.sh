@@ -8,7 +8,7 @@ set -euo pipefail
 # - Builds, signs, notarizes DMG
 # - Signs update (Sparkle) using Keychain-stored PEM
 # - Creates GitHub Release and uploads DMG (draft)
-# - Prepends new item to docs/appcast.xml and pushes
+# - Updates the dedicated GitHub Pages appcast for Dayflow-Yuna
 # - Publishes the release (undrafts)
 #
 # Requirements:
@@ -24,13 +24,17 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPO_ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
 
 PLIST=${PLIST:-"$REPO_ROOT/Dayflow/Dayflow/Info.plist"}
-APP_NAME=${APP_NAME:-Dayflow}
+APP_NAME=${APP_NAME:-Dayflow-Yuna}
 SCHEME=${SCHEME:-Dayflow}
 CONFIG=${CONFIG:-Release}
 # Optional: override Keychain account name for sign_update; defaults to "ed25519"
 SIGN_ACCOUNT=${SIGN_ACCOUNT:-}
 MSV=${MSV:-13.0}
 DMG_NAME=${DMG_NAME:-"${APP_NAME}.dmg"}
+APPCAST_REPO=${APPCAST_REPO:-Kamisato-Yuna/dayflow-yuna-updates}
+APPCAST_FILE=${APPCAST_FILE:-appcast-yuna.xml}
+APPCAST_PATH=${APPCAST_PATH:-"$REPO_ROOT/build/$APPCAST_FILE"}
+APPCAST_URL=${APPCAST_URL:-"https://kamisato-yuna.github.io/dayflow-yuna-updates/$APPCAST_FILE"}
 
 MODE=bump_minor
 DRY_RUN=0
@@ -90,9 +94,13 @@ fi
 [[ -n "$CURRENT_SHORT" ]] || err "Unable to determine marketing version (CFBundleShortVersionString or MARKETING_VERSION)"
 if [[ -z "$CURRENT_BUILD" ]]; then CURRENT_BUILD=0; fi
 
-# Ensure build number monotonically increases across releases by considering
-# the highest sparkle:version present in the existing appcast.
-APPCAST_PATH="$REPO_ROOT/docs/appcast.xml"
+# Fetch the dedicated Yuna appcast so build numbers stay monotonic within its
+# own update channel instead of inheriting the original Dayflow release history.
+mkdir -p "$(dirname "$APPCAST_PATH")"
+APPCAST_CONTENT=$(gh api "repos/${APPCAST_REPO}/contents/${APPCAST_FILE}" --jq .content 2>/dev/null || true)
+if [[ -n "$APPCAST_CONTENT" ]]; then
+  printf "%s" "$APPCAST_CONTENT" | base64 -D > "$APPCAST_PATH"
+fi
 if [[ -f "$APPCAST_PATH" ]]; then
   APPCAST_MAX_BUILD=$(grep -Eo 'sparkle:version="[0-9]+"' "$APPCAST_PATH" | sed -E 's/[^0-9]//g' | sort -n | tail -1 || true)
   if [[ -n "$APPCAST_MAX_BUILD" ]]; then
@@ -141,7 +149,7 @@ set_plist CFBundleVersion "$NEW_BUILD"
 git add "$PLIST" "$PBP" 2>/dev/null || true
 git commit -m "release: bump to v$NEW_SHORT ($NEW_BUILD)" || true
 
-TAG="v$NEW_SHORT"
+TAG="yuna-v$NEW_SHORT"
 
 echo "[2/8] Building, signing, and creating DMG…"
 if [[ $NO_NOTARIZE -eq 1 ]]; then
@@ -193,24 +201,29 @@ RELEASE_URL=$(gh release view "$TAG" --json url --jq .url)
 
 [[ -n "$ASSET_URL" ]] || err "Failed to obtain canonical browser_download_url for $DMG_NAME"
 
-echo "[7/8] Updating appcast (docs/appcast.xml)…"
+echo "[7/8] Updating dedicated Yuna appcast (${APPCAST_REPO}/${APPCAST_FILE})…"
 "$SCRIPT_DIR/update_appcast.sh" \
   --dmg "$REPO_ROOT/$DMG_NAME" \
   --url "$ASSET_URL" \
   --short "$NEW_SHORT" \
   --build "$NEW_BUILD" \
   --signature "$ED_SIG" \
+  --title "Dayflow-Yuna Updates" \
   --msv "$MSV" \
   --notes "$RELEASE_URL" \
-  --out "$REPO_ROOT/docs/appcast.xml"
+  --out "$APPCAST_PATH"
 
-git add "$REPO_ROOT/docs/appcast.xml" "$REPO_ROOT/docs/.nojekyll" 2>/dev/null || true
-git commit -m "release: update appcast for v$NEW_SHORT" || true
+APPCAST_SHA=$(gh api "repos/${APPCAST_REPO}/contents/${APPCAST_FILE}" --jq .sha)
+APPCAST_BASE64=$(base64 -i "$APPCAST_PATH" | tr -d '\n')
+gh api --method PUT "repos/${APPCAST_REPO}/contents/${APPCAST_FILE}" \
+  -f message="release: update Dayflow-Yuna appcast for v$NEW_SHORT" \
+  -f content="$APPCAST_BASE64" \
+  -f sha="$APPCAST_SHA" >/dev/null
 git tag -f "$TAG" || true
 git push origin HEAD
 git push origin "$TAG" --force
 
 echo "[8/8] Post-release sanity check…"
-echo "Feed URL should be reachable at: https://dayflow.so/appcast.xml"
+echo "Feed URL should be reachable at: $APPCAST_URL"
 
 echo "[8/8] Done. Version $NEW_SHORT ($NEW_BUILD) released."

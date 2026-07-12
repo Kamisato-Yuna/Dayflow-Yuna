@@ -5,11 +5,11 @@ struct WeeklyTreemapSnapshot {
   let categories: [WeeklyTreemapCategory]
 
   static let figmaPreview = WeeklyTreemapSnapshot(
-    title: "Most used per category",
+    title: "各分类常用应用",
     categories: [
       WeeklyTreemapCategory(
         id: "design",
-        name: "Design",
+        name: "设计",
         palette: .design,
         apps: [
           WeeklyTreemapApp(
@@ -28,7 +28,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "communication",
-        name: "Communication",
+        name: "沟通",
         palette: .communication,
         apps: [
           WeeklyTreemapApp(
@@ -53,7 +53,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "testing",
-        name: "Testing",
+        name: "测试",
         palette: .testing,
         apps: [
           WeeklyTreemapApp(
@@ -78,7 +78,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "research",
-        name: "Research",
+        name: "研究",
         palette: .research,
         apps: [
           WeeklyTreemapApp(
@@ -103,7 +103,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "general",
-        name: "Research",
+        name: "研究",
         palette: .general,
         apps: [
           WeeklyTreemapApp(
@@ -124,11 +124,11 @@ struct WeeklyTreemapSnapshot {
   )
 
   static let dominantCategoryPreview = WeeklyTreemapSnapshot(
-    title: "Most used per category",
+    title: "各分类常用应用",
     categories: [
       WeeklyTreemapCategory(
         id: "design",
-        name: "Design",
+        name: "设计",
         palette: .design,
         apps: [
           WeeklyTreemapApp(
@@ -145,7 +145,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "communication",
-        name: "Communication",
+        name: "沟通",
         palette: .communication,
         apps: [
           WeeklyTreemapApp(id: "zoom", name: "Zoom", duration: hours(4, 5), change: .negative(12)),
@@ -156,7 +156,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "testing",
-        name: "Testing",
+        name: "测试",
         palette: .testing,
         apps: [
           WeeklyTreemapApp(
@@ -169,7 +169,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "research",
-        name: "Research",
+        name: "研究",
         palette: .research,
         apps: [
           WeeklyTreemapApp(
@@ -184,11 +184,11 @@ struct WeeklyTreemapSnapshot {
   )
 
   static let tinyTailPreview = WeeklyTreemapSnapshot(
-    title: "Most used per category",
+    title: "各分类常用应用",
     categories: [
       WeeklyTreemapCategory(
         id: "research",
-        name: "Research",
+        name: "研究",
         palette: .research,
         apps: [
           WeeklyTreemapApp(
@@ -212,7 +212,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "communication",
-        name: "Communication",
+        name: "沟通",
         palette: .communication,
         apps: [
           WeeklyTreemapApp(id: "zoom", name: "Zoom", duration: hours(5, 40), change: .neutral(5)),
@@ -225,7 +225,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "design",
-        name: "Design",
+        name: "设计",
         palette: .design,
         apps: [
           WeeklyTreemapApp(
@@ -238,11 +238,11 @@ struct WeeklyTreemapSnapshot {
   )
 
   static let crowdedPreview = WeeklyTreemapSnapshot(
-    title: "Most used per category",
+    title: "各分类常用应用",
     categories: [
       WeeklyTreemapCategory(
         id: "design",
-        name: "Design",
+        name: "设计",
         palette: .design,
         apps: [
           WeeklyTreemapApp(
@@ -257,7 +257,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "communication",
-        name: "Communication",
+        name: "沟通",
         palette: .communication,
         apps: [
           WeeklyTreemapApp(id: "zoom", name: "Zoom", duration: hours(7, 45), change: .negative(6)),
@@ -270,7 +270,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "testing",
-        name: "Testing",
+        name: "测试",
         palette: .testing,
         apps: [
           WeeklyTreemapApp(
@@ -284,7 +284,7 @@ struct WeeklyTreemapSnapshot {
       ),
       WeeklyTreemapCategory(
         id: "research",
-        name: "Research",
+        name: "研究",
         palette: .research,
         apps: [
           WeeklyTreemapApp(

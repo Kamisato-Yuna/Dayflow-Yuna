@@ -61,7 +61,7 @@ extension AnyTransition {
 struct WetInkText: View {
   let text: String
   var font: Font = .custom("Figtree-Regular", size: 15)
-  var color: Color = Color(red: 0.18, green: 0.11, blue: 0.06)
+  var color: Color = JournalDayTokens.bodyText
   var lineHeight: CGFloat = 5
 
   @State private var displayedText: String = ""
@@ -125,13 +125,7 @@ struct JournalPillButtonStyle: ButtonStyle {
       .foregroundStyle(JournalDayTokens.primaryText.opacity(0.8))
       .padding(.horizontal, horizontalPadding)
       .padding(.vertical, verticalPadding)
-      .background(Color(red: 1, green: 0.96, blue: 0.92).opacity(0.6))
-      .cornerRadius(100)
-      .overlay(
-        RoundedRectangle(cornerRadius: 100)
-          .inset(by: 0.5)
-          .stroke(Color(red: 0.95, green: 0.86, blue: 0.84), lineWidth: 1)
-      )
+      .dayflowFloatingControl(cornerRadius: 100)
       .dayflowPressScale(
         configuration.isPressed,
         pressedScale: 0.96,
@@ -163,7 +157,7 @@ struct JournalDayView: View {
         toolbar
 
         Text(manager.headline)
-          .font(.custom("InstrumentSerif-Regular", size: 36))
+          .font(.system(size: 36, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalDayTokens.primaryText)
           .transaction { transaction in
             transaction.animation = nil
@@ -321,9 +315,9 @@ extension JournalDayView {
           onSetReminders?()
         }) {
           HStack(alignment: .center, spacing: 4) {
-            Image("JournalReminderIcon")
-              .resizable()
-              .renderingMode(.template)
+            Image(systemName: "bell.badge.fill")
+              .font(.system(size: 13, weight: .semibold))
+              .symbolRenderingMode(.hierarchical)
               .foregroundStyle(JournalDayTokens.reminderText)
               .frame(width: 16, height: 16)
 
@@ -400,7 +394,7 @@ private struct MacTextView: NSViewRepresentable {
     let textView = JournalClickableTextView()
     textView.delegate = context.coordinator
     textView.font = font
-    textView.textColor = NSColor(red: 0.18, green: 0.11, blue: 0.06, alpha: 1.0)
+    textView.textColor = .labelColor
     textView.drawsBackground = false
     textView.isRichText = false
     textView.isAutomaticQuoteSubstitutionEnabled = false
@@ -418,8 +412,8 @@ private struct MacTextView: NSViewRepresentable {
     }
 
     textView.selectedTextAttributes = [
-      .backgroundColor: NSColor(red: 1.0, green: 0.93, blue: 0.82, alpha: 1.0),
-      .foregroundColor: NSColor(red: 0.18, green: 0.11, blue: 0.06, alpha: 1.0),
+      .backgroundColor: NSColor.controlAccentColor.withAlphaComponent(0.22),
+      .foregroundColor: NSColor.labelColor,
     ]
 
     if autoFocus {
@@ -498,8 +492,7 @@ private struct IntentionsEditForm: View {
             .font(.system(size: 14, weight: .medium))
             .foregroundStyle(JournalDayTokens.bodyText.opacity(0.5))
             .frame(width: 32, height: 32)
-            .background(Color.white.opacity(0.6))
-            .clipShape(Circle())
+            .dayflowFloatingControl(cornerRadius: 16)
         }
         .buttonStyle(.plain)
         .pointingHandCursor()
@@ -535,24 +528,7 @@ private struct IntentionsEditForm: View {
       .padding(.vertical, 24)
       .frame(maxWidth: .infinity, alignment: .topLeading)
     }
-    .background(
-      LinearGradient(
-        stops: [
-          .init(color: Color.white.opacity(0.3), location: 0.00),
-          .init(color: Color.white.opacity(0.8), location: 0.50),
-          .init(color: Color.white.opacity(0.3), location: 1.00),
-        ],
-        startPoint: UnitPoint(x: 1, y: 0.14),
-        endPoint: UnitPoint(x: 0, y: 0.78)
-      )
-    )
-    .cornerRadius(8)
-    .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 0)
-    .overlay(
-      RoundedRectangle(cornerRadius: 8)
-        .inset(by: 0.5)
-        .stroke(Color.white, lineWidth: 1)
-    )
+    .dayflowCard(cornerRadius: 8)
   }
 
   private static let intentionsPlaceholders = [
@@ -565,7 +541,7 @@ private struct IntentionsEditForm: View {
   private var sectionIntentions: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("今日意图")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
         .padding(.leading, titleLeading)
 
@@ -582,7 +558,7 @@ private struct IntentionsEditForm: View {
     VStack(alignment: .leading, spacing: 0) {
       HStack(spacing: 6) {
         Text("今日备注")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalDayTokens.sectionHeader)
           .padding(.leading, titleLeading)
       }
@@ -599,7 +575,7 @@ private struct IntentionsEditForm: View {
     VStack(alignment: .leading, spacing: 0) {
       HStack(spacing: 6) {
         Text("长期目标")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalDayTokens.sectionHeader)
           .padding(.leading, titleLeading)
       }
@@ -730,24 +706,7 @@ private struct JournalLeftCardView: View {
       .frame(maxWidth: .infinity, alignment: .topLeading)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(
-      LinearGradient(
-        stops: [
-          .init(color: Color.white.opacity(0.3), location: 0.00),
-          .init(color: Color.white.opacity(0.8), location: 0.51),
-          .init(color: Color.white.opacity(0.3), location: 1.00),
-        ],
-        startPoint: UnitPoint(x: 1, y: 0.14),
-        endPoint: UnitPoint(x: 0, y: 0.78)
-      )
-    )
-    .cornerRadius(12)
-    .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 0)
-    .overlay(
-      RoundedRectangle(cornerRadius: 12)
-        .inset(by: 0.5)
-        .stroke(Color.white, lineWidth: 1)
-    )
+    .dayflowCard(cornerRadius: 12)
     .applyIf(namespace != nil) { view in
       view.matchedGeometryEffect(id: "card_bg", in: namespace!)
     }
@@ -763,7 +722,7 @@ private struct JournalLeftCardView: View {
   private func section(_ title: String, content: () -> some View) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
       content()
     }
@@ -793,13 +752,7 @@ private struct JournalRightCard<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.white.opacity(0.92))
-    .cornerRadius(12)
-    .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 0)
-    .overlay(
-      RoundedRectangle(cornerRadius: 12)
-        .stroke(Color.white.opacity(0.8), lineWidth: 1)
-    )
+    .dayflowCard(cornerRadius: 12)
   }
 }
 
@@ -812,7 +765,7 @@ private struct ReflectionPromptCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text("今日复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader.opacity(0.4))
 
       Text(
@@ -844,7 +797,7 @@ private struct ReflectionEditorCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text("你的复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
       JournalTextEditor(
@@ -888,7 +841,7 @@ private struct ReflectionSavedCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text("你的复盘")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
       if hasReflections {
@@ -954,7 +907,7 @@ private struct SummaryCard: View {
     VStack(alignment: .leading, spacing: 22) {
       VStack(alignment: .leading, spacing: 8) {
         Text("Dayflow 总结")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.custom("HanziPen SC", size: 22))
           .foregroundStyle(JournalDayTokens.sectionHeader)
 
         if let summary {
@@ -969,7 +922,7 @@ private struct SummaryCard: View {
 
       VStack(alignment: .leading, spacing: 8) {
         Text("你的复盘")
-          .font(.custom("InstrumentSerif-Regular", size: 22))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .foregroundStyle(JournalDayTokens.sectionHeader)
 
         if let reflections, !reflections.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -1008,7 +961,7 @@ private struct IntroView: View {
   var body: some View {
     VStack(spacing: 20) {
       Text("设定每日意图并追踪进展")
-        .font(.custom("InstrumentSerif-Regular", size: 34))
+        .font(.system(size: 34, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
         .multilineTextAlignment(.center)
       Text(
@@ -1043,7 +996,7 @@ private struct SummaryView: View {
   var body: some View {
     VStack(spacing: 20) {
       Text("昨天的总结")
-        .font(.custom("InstrumentSerif-Regular", size: 30))
+        .font(.system(size: 30, weight: .semibold, design: .rounded))
         .foregroundStyle(JournalDayTokens.sectionHeader)
 
       ScrollView(.vertical, showsIndicators: false) {
@@ -1093,11 +1046,11 @@ private struct JournalDayCircleButton: View {
       ZStack {
         Circle().fill(JournalDayTokens.navCircleFill)
         Circle().stroke(JournalDayTokens.navCircleStroke, lineWidth: 1)
-        Image("JournalArrow")
-          .renderingMode(.template).resizable().aspectRatio(contentMode: .fit)
+        Image(systemName: direction == .right ? "chevron.right" : "chevron.left")
+          .font(.system(size: 10, weight: .bold))
+          .symbolRenderingMode(.hierarchical)
           .frame(width: 9, height: 9)
           .foregroundStyle(JournalDayTokens.navArrow.opacity(isDisabled ? 0.35 : 1))
-          .scaleEffect(x: direction == .right ? -1 : 1, y: 1)
       }
       .frame(width: 26, height: 26)
       .shadow(color: JournalDayTokens.navCircleShadow, radius: 2, x: 0, y: 0)
@@ -1119,7 +1072,7 @@ private struct JournalDaySegmentedControl: View {
             .font(.custom("Figtree-Regular", size: 12))
             .tracking(-0.12)
             .foregroundStyle(
-              selection == option ? Color.white : JournalDayTokens.segmentInactiveText
+              selection == option ? JournalDayTokens.segmentActiveText : JournalDayTokens.segmentInactiveText
             )
             .padding(.horizontal, 14).padding(.vertical, 4)
             .frame(width: 64, alignment: .center)
@@ -1136,7 +1089,7 @@ private struct JournalDaySegmentedControl: View {
     .padding(2)
     .background(
       Capsule().fill(JournalDayTokens.segmentContainerFill).overlay(
-        Capsule().inset(by: 0.5).stroke(Color.white.opacity(0.6), lineWidth: 1))
+        Capsule().inset(by: 0.5).stroke(JournalDayTokens.segmentBorder, lineWidth: 1))
     )
     .shadow(color: Color.black.opacity(0.10), radius: 2, x: 0, y: 1)
   }
@@ -1155,26 +1108,28 @@ enum JournalDayViewPeriod: String, CaseIterable, Identifiable {
 }
 
 private enum JournalDayTokens {
-  static let primaryText = Color(red: 0.18, green: 0.09, blue: 0.03)
-  static let reminderText = Color(red: 0.35, green: 0.20, blue: 0.05)
-  static let bodyText = Color(red: 0.18, green: 0.11, blue: 0.06)
-  static let bullet = Color(red: 0.96, green: 0.57, blue: 0.24)
-  static let sectionHeader = Color(red: 0.85, green: 0.44, blue: 0.04)
-  static let divider = Color(red: 0.90, green: 0.85, blue: 0.80)
-  static let navCircleFill = Color(red: 0.996, green: 0.976, blue: 0.953)
-  static let navCircleStroke = Color.white
+  static let primaryText = Color(nsColor: .labelColor)
+  static let reminderText = Color(nsColor: .labelColor)
+  static let bodyText = Color(nsColor: .labelColor)
+  static let bullet = Color.accentColor
+  static let sectionHeader = Color(nsColor: .labelColor)
+  static let divider = Color(nsColor: .separatorColor).opacity(0.68)
+  static let navCircleFill = Color(nsColor: .controlBackgroundColor).opacity(0.72)
+  static let navCircleStroke = Color(nsColor: .separatorColor).opacity(0.22)
   static let navCircleShadow = Color.black.opacity(0.04)
-  static let navArrow = Color(red: 1.0, green: 0.74, blue: 0.35)
-  static let segmentActiveFill = Color(red: 1, green: 0.72, blue: 0.35)
-  static let segmentInactiveFill = Color(red: 0.95, green: 0.94, blue: 0.93)
-  static let segmentInactiveText = Color(red: 0.80, green: 0.78, blue: 0.77)
-  static let segmentContainerFill = Color(red: 1.0, green: 0.976, blue: 0.953)
+  static let navArrow = Color.accentColor
+  static let segmentActiveFill = Color.accentColor
+  static let segmentActiveText = Color(nsColor: .selectedControlTextColor)
+  static let segmentInactiveFill = Color(nsColor: .controlBackgroundColor).opacity(0.62)
+  static let segmentInactiveText = Color(nsColor: .secondaryLabelColor)
+  static let segmentContainerFill = Color(nsColor: .controlBackgroundColor).opacity(0.50)
+  static let segmentBorder = Color(nsColor: .separatorColor).opacity(0.22)
 }
 
 struct JournalDayView_Previews: PreviewProvider {
   static var previews: some View {
     JournalDayView()
-      .background(Color(red: 0.96, green: 0.94, blue: 0.92))
+      .background(Color(nsColor: .windowBackgroundColor))
       .previewLayout(.sizeThatFits)
       .preferredColorScheme(.light)
       .frame(width: 800, height: 600)

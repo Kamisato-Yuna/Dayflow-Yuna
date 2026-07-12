@@ -4,6 +4,8 @@ struct WeeklyWorkflowSection: View {
   let snapshot: WeeklyWorkflowSnapshot
   let width: CGFloat
   let usesScrollContainers: Bool
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(
     snapshot: WeeklyWorkflowSnapshot,
@@ -35,20 +37,17 @@ struct WeeklyWorkflowSection: View {
   private enum Design {
     static let sectionWidth: CGFloat = 958
     static let cornerRadius: CGFloat = 4
-    static let borderColor = Color(hex: "E8E1DA")
-    static let backgroundColor = Color.white.opacity(0.78)
-    static let dividerColor = Color(hex: "E5DFD9")
-    static let titleColor = Color(hex: "B46531")
-    static let textColor = Color.black.opacity(0.9)
-    static let mutedTextColor = Color(hex: "7F7062")
-    static let totalTitleColor = Color(hex: "777777")
-    static let totalNameColor = Color(hex: "1F1B18")
-    static let emptyCellColor = Color(red: 0.95, green: 0.93, blue: 0.92)
-    static let axisColor = Color(hex: "E0D9D5")
+    static let dividerColor = DayflowWeeklyToken.separator
+    static let titleColor = DayflowWeeklyToken.title
+    static let textColor = DayflowWeeklyToken.axisText
+    static let mutedTextColor = DayflowWeeklyToken.footerText
+    static let totalTitleColor = DayflowWeeklyToken.footerText
+    static let totalNameColor = DayflowWeeklyToken.footerEmphasisText
+    static let axisColor = DayflowWeeklyToken.separator
 
-    static let titleTopPadding: CGFloat = 16
-    static let titleLeadingPadding: CGFloat = gridPadding.leading + labelWidth + labelToGridSpacing
-    static let gridPadding = EdgeInsets(top: 53, leading: 36, bottom: 6, trailing: 52)
+    static let titleTopPadding: CGFloat = DayflowWeeklySectionChrome.titleTop
+    static let titleLeadingPadding: CGFloat = DayflowWeeklySectionChrome.titleLeading
+    static let gridPadding = EdgeInsets(top: 76, leading: 36, bottom: 6, trailing: 52)
     static let footerPadding = EdgeInsets(top: 14, leading: 16, bottom: 12, trailing: 16)
     static let labelWidth: CGFloat = 30
     static let labelToGridSpacing: CGFloat = 13
@@ -86,23 +85,15 @@ struct WeeklyWorkflowSection: View {
 
       footerPanel
     }
-    .background(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(Design.backgroundColor)
-    )
+    .frame(width: width, alignment: .topLeading)
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
     .overlay(alignment: .topLeading) {
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Design.titleColor)
         .padding(.top, Design.titleTopPadding)
         .padding(.leading, Design.titleLeadingPadding)
     }
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-        .allowsHitTesting(false)
-    )
-    .frame(width: width, alignment: .topLeading)
   }
 
   private var gridPanel: some View {
@@ -163,7 +154,7 @@ struct WeeklyWorkflowSection: View {
           ForEach(snapshot.timeLabels) { label in
             Text(label.label)
               .font(.custom("Figtree-Regular", size: 10))
-              .foregroundStyle(Color.black.opacity(0.78))
+              .foregroundStyle(DayflowWeeklyToken.axisText)
               .frame(width: Design.axisLabelWidth, alignment: axisAlignment(for: label))
               .offset(x: axisOffset(for: label))
           }
@@ -199,7 +190,7 @@ struct WeeklyWorkflowSection: View {
         .foregroundStyle(Design.mutedTextColor)
       } else {
         Text("本周总计")
-          .font(.custom("InstrumentSerif-Regular", size: 14))
+          .font(.system(size: 14, weight: .medium, design: .rounded))
           .foregroundStyle(Design.totalTitleColor)
 
         ForEach(snapshot.totals) { total in
@@ -226,7 +217,10 @@ struct WeeklyWorkflowSection: View {
 
   private func cellFill(for cell: WeeklyWorkflowCell) -> Color {
     guard let colorHex = cell.colorHex, cell.occupancy > 0 else {
-      return Design.emptyCellColor
+      return DayflowWeeklyToken.emptyCellFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
     }
 
     let occupancy = min(max(cell.occupancy, 0), 1)
@@ -269,7 +263,7 @@ struct WeeklyWorkflowSection: View {
       return "\(row.label) \(slotRangeText(slotIndex))：无活动"
     }
     return
-      "\(row.label) \(slotRangeText(slotIndex)): \(categoryName), \(durationText(cell.minutes))"
+      "\(row.label) \(slotRangeText(slotIndex))：\(categoryName)，\(durationText(cell.minutes))"
   }
 
   private func slotRangeText(_ slotIndex: Int) -> String {
@@ -282,13 +276,11 @@ struct WeeklyWorkflowSection: View {
     let totalMinutes = Int(minute)
     let hour24 = (totalMinutes / 60) % 24
     let minutePart = totalMinutes % 60
-    let hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12
-    let suffix = hour24 < 12 ? "am" : "pm"
 
     if minutePart == 0 {
-      return "\(hour12)\(suffix)"
+      return "\(hour24)点"
     }
-    return String(format: "%d:%02d%@", hour12, minutePart, suffix)
+    return String(format: "%d:%02d", hour24, minutePart)
   }
 
   private func durationText(_ minutes: Int) -> String {
@@ -296,12 +288,12 @@ struct WeeklyWorkflowSection: View {
     let remainingMinutes = minutes % 60
 
     if hours > 0, remainingMinutes > 0 {
-      return "\(hours)h \(remainingMinutes)m"
+      return "\(hours)小时 \(remainingMinutes)分钟"
     }
     if hours > 0 {
-      return "\(hours)h"
+      return "\(hours)小时"
     }
-    return "\(remainingMinutes)m"
+    return "\(remainingMinutes)分钟"
   }
 }
 
@@ -312,31 +304,31 @@ extension WeeklyWorkflowSnapshot {
     endMinute: 22.0 * 60.0,
     slotMinutes: 15,
     timeLabels: [
-      .init(id: "9", label: "9am", minute: 9.0 * 60.0),
-      .init(id: "10", label: "10am", minute: 10.0 * 60.0),
-      .init(id: "11", label: "11am", minute: 11.0 * 60.0),
-      .init(id: "12", label: "12pm", minute: 12.0 * 60.0),
-      .init(id: "13", label: "1pm", minute: 13.0 * 60.0),
-      .init(id: "14", label: "2pm", minute: 14.0 * 60.0),
-      .init(id: "15", label: "3pm", minute: 15.0 * 60.0),
-      .init(id: "16", label: "4pm", minute: 16.0 * 60.0),
-      .init(id: "17", label: "5pm", minute: 17.0 * 60.0),
-      .init(id: "18", label: "6pm", minute: 18.0 * 60.0),
-      .init(id: "19", label: "7pm", minute: 19.0 * 60.0),
-      .init(id: "20", label: "8pm", minute: 20.0 * 60.0),
-      .init(id: "21", label: "9pm", minute: 21.0 * 60.0),
-      .init(id: "22", label: "10pm", minute: 22.0 * 60.0),
+      .init(id: "9", label: "9点", minute: 9.0 * 60.0),
+      .init(id: "10", label: "10点", minute: 10.0 * 60.0),
+      .init(id: "11", label: "11点", minute: 11.0 * 60.0),
+      .init(id: "12", label: "12点", minute: 12.0 * 60.0),
+      .init(id: "13", label: "13点", minute: 13.0 * 60.0),
+      .init(id: "14", label: "14点", minute: 14.0 * 60.0),
+      .init(id: "15", label: "15点", minute: 15.0 * 60.0),
+      .init(id: "16", label: "16点", minute: 16.0 * 60.0),
+      .init(id: "17", label: "17点", minute: 17.0 * 60.0),
+      .init(id: "18", label: "18点", minute: 18.0 * 60.0),
+      .init(id: "19", label: "19点", minute: 19.0 * 60.0),
+      .init(id: "20", label: "20点", minute: 20.0 * 60.0),
+      .init(id: "21", label: "21点", minute: 21.0 * 60.0),
+      .init(id: "22", label: "22点", minute: 22.0 * 60.0),
     ],
     rows: WeeklyWorkflowRow.previewRows,
     totals: [
-      .init(id: "coding", name: "Coding", minutes: 704, duration: "11h 44m", colorHex: "6C8CFF"),
+      .init(id: "coding", name: "编码", minutes: 704, duration: "11小时 44分钟", colorHex: "6C8CFF"),
       .init(
-        id: "communication", name: "Communication", minutes: 436, duration: "7h 16m",
+        id: "communication", name: "沟通", minutes: 436, duration: "7小时 16分钟",
         colorHex: "FFA189"),
-      .init(id: "idle", name: "Idle", minutes: 388, duration: "6h 28m", colorHex: "A8B2C2"),
-      .init(id: "research", name: "Research", minutes: 272, duration: "4h 32m", colorHex: "B984FF"),
+      .init(id: "idle", name: "空闲", minutes: 388, duration: "6小时 28分钟", colorHex: "A8B2C2"),
+      .init(id: "research", name: "研究", minutes: 272, duration: "4小时 32分钟", colorHex: "B984FF"),
       .init(
-        id: "distraction", name: "Distraction", minutes: 165, duration: "2h 45m",
+        id: "distraction", name: "分心", minutes: 165, duration: "2小时 45分钟",
         colorHex: "FF5950"),
     ]
   )
@@ -345,7 +337,7 @@ extension WeeklyWorkflowSnapshot {
 extension WeeklyWorkflowRow {
   static let previewRows: [WeeklyWorkflowRow] = [
     .preview(
-      id: "mon", label: "Mon",
+      id: "mon", label: "周一",
       runs: [
         .init(0..<8, "F2EFED", 0),
         .init(8..<17, "FFA189", 0.85),
@@ -354,7 +346,7 @@ extension WeeklyWorkflowRow {
         .init(39..<48, "B984FF", 0.68),
       ]),
     .preview(
-      id: "tue", label: "Tue",
+      id: "tue", label: "周二",
       runs: [
         .init(5..<15, "6C8CFF", 0.76),
         .init(15..<22, "FFA189", 0.66),
@@ -362,7 +354,7 @@ extension WeeklyWorkflowRow {
         .init(39..<47, "6C8CFF", 0.88),
       ]),
     .preview(
-      id: "wed", label: "Wed",
+      id: "wed", label: "周三",
       runs: [
         .init(2..<10, "A8B2C2", 0.5),
         .init(12..<24, "6C8CFF", 0.8),
@@ -370,7 +362,7 @@ extension WeeklyWorkflowRow {
         .init(36..<45, "FF5950", 0.72),
       ]),
     .preview(
-      id: "thu", label: "Thur",
+      id: "thu", label: "周四",
       runs: [
         .init(6..<18, "B984FF", 0.74),
         .init(20..<30, "FFA189", 0.7),
@@ -378,7 +370,7 @@ extension WeeklyWorkflowRow {
         .init(44..<50, "A8B2C2", 0.48),
       ]),
     .preview(
-      id: "fri", label: "Fri",
+      id: "fri", label: "周五",
       runs: [
         .init(4..<15, "6C8CFF", 0.82),
         .init(16..<25, "FFA189", 0.6),
@@ -386,13 +378,13 @@ extension WeeklyWorkflowRow {
         .init(38..<45, "B984FF", 0.64),
       ]),
     .preview(
-      id: "sat", label: "Sat",
+      id: "sat", label: "周六",
       runs: [
         .init(13..<20, "7EE6F2", 0.55),
         .init(25..<30, "B984FF", 0.42),
       ]),
     .preview(
-      id: "sun", label: "Sun",
+      id: "sun", label: "周日",
       runs: [
         .init(16..<24, "A8B2C2", 0.46),
         .init(30..<36, "7EE6F2", 0.5),
@@ -445,5 +437,5 @@ private struct WeeklyWorkflowPreviewRun {
 #Preview("Weekly Workflow Section", traits: .fixedLayout(width: 958, height: 292)) {
   WeeklyWorkflowSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
 }

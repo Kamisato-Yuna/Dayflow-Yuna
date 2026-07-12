@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// Reusable "Where did you find Dayflow?" survey component.
@@ -12,6 +13,8 @@ struct ReferralSurveyView: View {
   @State private var internalCustomReferral: String = ""
   @State private var randomizedOptions = ReferralOption.randomizedConcreteOptions()
   @State private var hasSubmitted = false
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private let externalSelectedReferral: Binding<ReferralOption?>?
   private let externalCustomReferral: Binding<String>?
@@ -141,7 +144,10 @@ struct ReferralSurveyView: View {
   private var submitBackground: Color {
     canSubmit
       ? Color(red: 0.25, green: 0.17, blue: 0)
-      : Color(red: 0.88, green: 0.84, blue: 0.78)
+      : DayflowContentToken.secondaryFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
   }
 
   @ViewBuilder
@@ -165,12 +171,14 @@ struct ReferralSurveyView: View {
         .padding(.horizontal, 12)
         .background(
           RoundedRectangle(cornerRadius: 8, style: .continuous)
-            .fill(isSelected ? Color(red: 1.0, green: 0.95, blue: 0.9) : Color.white)
+            .fill(referralOptionFill(isSelected: isSelected))
         )
         .overlay(
           RoundedRectangle(cornerRadius: 8, style: .continuous)
             .stroke(
-              Color(red: 0.25, green: 0.17, blue: 0).opacity(isSelected ? 0.22 : 0.1), lineWidth: 1)
+              referralOptionBorder(isSelected: isSelected),
+              lineWidth: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast ? 1.2 : 1
+            )
         )
       }
       .buttonStyle(PlainButtonStyle())
@@ -186,6 +194,26 @@ struct ReferralSurveyView: View {
     if !option.requiresDetail {
       customReferral = ""
     }
+  }
+
+  private func referralOptionFill(isSelected: Bool) -> Color {
+    if isSelected {
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.26 : 0.14)
+    }
+    return DayflowContentToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
+  }
+
+  private func referralOptionBorder(isSelected: Bool) -> Color {
+    if isSelected {
+      return DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.70 : 0.48)
+    }
+    return DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+    )
   }
 
   private var detailField: some View {

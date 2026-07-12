@@ -6,14 +6,14 @@ struct WeeklyFocusHeatmapSection: View {
   let width: CGFloat
   let cellGap: CGFloat
   let usesScrollContainers: Bool
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private enum Design {
     static let cardWidth: CGFloat = 958
     static let cardHeight: CGFloat = 238
     static let cornerRadius: CGFloat = 4
-    static let borderColor = Color(hex: "EBE6E3")
-    static let backgroundColor = Color.white.opacity(0.75)
-    static let titleColor = Color(hex: "B46531")
+    static let titleColor = DayflowWeeklyToken.title
 
     static let topPadding: CGFloat = 34
     static let leadingPadding: CGFloat = 44
@@ -97,20 +97,13 @@ struct WeeklyFocusHeatmapSection: View {
     .padding(.trailing, Design.trailingPadding)
     .padding(.bottom, Design.bottomPadding)
     .frame(width: width, height: Design.cardHeight, alignment: .topLeading)
-    .background(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .fill(Design.backgroundColor)
-    )
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: 6)
   }
 
   private var header: some View {
     HStack(alignment: .top) {
       Text(snapshot.title)
-        .font(.custom("InstrumentSerif-Regular", size: 20))
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(Design.titleColor)
 
       Spacer(minLength: 24)
@@ -143,7 +136,7 @@ struct WeeklyFocusHeatmapSection: View {
         Text(snapshot.distractedLabel)
       }
       .font(.custom("Figtree-Regular", size: 10))
-      .foregroundStyle(Color.black)
+      .foregroundStyle(DayflowWeeklyToken.legendText)
       .frame(width: legendWidth)
     }
   }
@@ -174,7 +167,7 @@ struct WeeklyFocusHeatmapSection: View {
       ForEach(snapshot.rows) { row in
         Text(row.label)
           .font(.custom("Figtree-Regular", size: 10))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.axisText)
           .frame(width: Design.labelsWidth, height: Design.rowHeight, alignment: .leading)
       }
     }
@@ -199,7 +192,7 @@ struct WeeklyFocusHeatmapSection: View {
         ForEach(snapshot.timeLabels) { label in
           Text(label.label)
             .font(.custom("Figtree-Regular", size: 10))
-            .foregroundStyle(Color.black)
+            .foregroundStyle(DayflowWeeklyToken.axisText)
             .frame(width: 34, alignment: axisAlignment(for: label))
             .offset(x: axisOffset(for: label))
         }
@@ -240,7 +233,10 @@ struct WeeklyFocusHeatmapSection: View {
     let intensity = abs(clampedValue)
 
     if intensity < DesignColor.neutralThreshold {
-      return DesignColor.neutral
+      return DayflowWeeklyToken.emptyCellFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      )
     }
 
     let progress = colorProgress(for: intensity)
@@ -357,28 +353,28 @@ struct WeeklyFocusHeatmapSnapshot {
   let rows: [WeeklyFocusHeatmapRow]
 
   static let figmaPreview = WeeklyFocusHeatmapSnapshot(
-    title: "Focus and distraction heat map",
-    focusedLabel: "Focused work",
-    distractedLabel: "Distracted",
+    title: "专注与分心热力图",
+    focusedLabel: "专注工作",
+    distractedLabel: "分心",
     startMinute: 9.0 * 60.0,
     endMinute: 18.0 * 60.0,
     bucketMinutes: 5.0,
     timeLabels: [
-      .init(id: "9", label: "9am", minute: 9.0 * 60.0),
-      .init(id: "10", label: "10am", minute: 10.0 * 60.0),
-      .init(id: "11", label: "11am", minute: 11.0 * 60.0),
-      .init(id: "12", label: "12pm", minute: 12.0 * 60.0),
-      .init(id: "13", label: "1pm", minute: 13.0 * 60.0),
-      .init(id: "14", label: "2pm", minute: 14.0 * 60.0),
-      .init(id: "15", label: "3pm", minute: 15.0 * 60.0),
-      .init(id: "16", label: "4pm", minute: 16.0 * 60.0),
-      .init(id: "17", label: "5pm", minute: 17.0 * 60.0),
-      .init(id: "18", label: "6pm", minute: 18.0 * 60.0),
+      .init(id: "9", label: "9点", minute: 9.0 * 60.0),
+      .init(id: "10", label: "10点", minute: 10.0 * 60.0),
+      .init(id: "11", label: "11点", minute: 11.0 * 60.0),
+      .init(id: "12", label: "12点", minute: 12.0 * 60.0),
+      .init(id: "13", label: "13点", minute: 13.0 * 60.0),
+      .init(id: "14", label: "14点", minute: 14.0 * 60.0),
+      .init(id: "15", label: "15点", minute: 15.0 * 60.0),
+      .init(id: "16", label: "16点", minute: 16.0 * 60.0),
+      .init(id: "17", label: "17点", minute: 17.0 * 60.0),
+      .init(id: "18", label: "18点", minute: 18.0 * 60.0),
     ],
     rows: [
       .init(
         id: "sun",
-        label: "Sun",
+        label: "周日",
         values: buckets(
           runs: [
             .neutral(0..<19),
@@ -391,7 +387,7 @@ struct WeeklyFocusHeatmapSnapshot {
       ),
       .init(
         id: "mon",
-        label: "Mon",
+        label: "周一",
         values: buckets(
           runs: [
             .focused(2..<11, 0.20),
@@ -407,7 +403,7 @@ struct WeeklyFocusHeatmapSnapshot {
       ),
       .init(
         id: "tue",
-        label: "Tue",
+        label: "周二",
         values: buckets(
           runs: [
             .focused(0..<7, 0.12),
@@ -424,7 +420,7 @@ struct WeeklyFocusHeatmapSnapshot {
       ),
       .init(
         id: "wed",
-        label: "Wed",
+        label: "周三",
         values: buckets(
           runs: [
             .focused(0..<10, 0.10),
@@ -443,7 +439,7 @@ struct WeeklyFocusHeatmapSnapshot {
       ),
       .init(
         id: "thu",
-        label: "Thu",
+        label: "周四",
         values: buckets(
           runs: [
             .focused(8..<14, 0.96),
@@ -460,7 +456,7 @@ struct WeeklyFocusHeatmapSnapshot {
       ),
       .init(
         id: "fri",
-        label: "Fri",
+        label: "周五",
         values: buckets(
           runs: [
             .focused(0..<5, 0.24),
@@ -481,7 +477,7 @@ struct WeeklyFocusHeatmapSnapshot {
       ),
       .init(
         id: "sat",
-        label: "Sat",
+        label: "周六",
         values: buckets(
           runs: [
             .neutral(0..<6),
@@ -538,7 +534,6 @@ private enum DesignColor {
   static let edgeFadeStrength = 0.65
   static let neutralThreshold = 0.045
 
-  static let neutral = Color(hex: "F2F2F2")
   static let focusSoft = Color(hex: "E3DBFD")
   static let focusDark = Color(hex: "4276E9")
   static let distractionSoft = Color(hex: "F8D1CA")
@@ -573,7 +568,7 @@ private struct WeeklyFocusHeatmapGapPreview: View {
       )
     }
     .padding(24)
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
   }
 }
 

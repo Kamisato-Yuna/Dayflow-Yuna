@@ -11,7 +11,8 @@ import SwiftUI
 
 private let cachedFocusTimeFormatter: DateFormatter = {
   let formatter = DateFormatter()
-  formatter.dateFormat = "h:mm a"
+  formatter.dateFormat = "HH:mm"
+  formatter.locale = Locale(identifier: "zh_Hans_CN")
   return formatter
 }()
 
@@ -42,12 +43,10 @@ struct LongestFocusCard: View {
 
   private enum Design {
     // Colors
-    static let backgroundColor = Color(hex: "f7f7f7")
-    static let borderColor = Color(hex: "ececec")
-    static let titleColor = Color(hex: "333333")
-    static let orangeSolid = Color(hex: "f3854b")
-    static let orangeLight = Color(hex: "f3854b").opacity(0.4)
-    static let axisColor = Color(hex: "9A9393")
+    static let titleColor = DayflowDailyToken.title
+    static let focusSolid = DayflowDailyToken.focus
+    static let focusLight = DayflowDailyToken.focus.opacity(0.38)
+    static let axisColor = DayflowDailyToken.separator
 
     // Sizing
     static let cardWidth: CGFloat = 322
@@ -122,13 +121,13 @@ struct LongestFocusCard: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       Text("最长专注时长")
-        .font(.custom("InstrumentSerif-Regular", size: 16))
+        .font(.system(size: 16, weight: .medium, design: .rounded))
         .foregroundColor(Design.titleColor)
         .offset(x: Design.titleX, y: Design.titleY)
 
       Text(formattedDuration)
-        .font(.custom("InstrumentSerif-Regular", size: 24))
-        .foregroundColor(Design.orangeSolid)
+        .font(.system(size: 26, weight: .semibold, design: .rounded))
+        .foregroundColor(Design.focusSolid)
         .offset(x: Design.valueX, y: Design.valueY)
 
       timelineVisualization
@@ -136,12 +135,7 @@ struct LongestFocusCard: View {
         .offset(x: Design.timelineX, y: Design.timelineY)
     }
     .frame(width: Design.cardWidth, height: Design.cardHeight, alignment: .topLeading)
-    .background(Design.backgroundColor)
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cardCornerRadius)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
-    .clipShape(RoundedRectangle(cornerRadius: Design.cardCornerRadius))
+    .dayflowContentPanel(cornerRadius: Design.cardCornerRadius)
   }
 
   // MARK: - Timeline Visualization
@@ -202,7 +196,7 @@ struct LongestFocusCard: View {
               bottomTrailingRadius: 0,
               topTrailingRadius: Design.blockCornerRadius
             )
-            .fill(isLongest ? Design.orangeSolid : Design.orangeLight)
+            .fill(isLongest ? Design.focusSolid : Design.focusLight)
             .frame(
               width: max(blockFrame.width, Design.minimumBlockWidth),
               height: isLongest ? Design.tallBlockHeight : Design.shortBlockHeight
@@ -221,7 +215,7 @@ struct LongestFocusCard: View {
     ZStack {
       Text(cachedFocusTimeFormatter.string(from: block.startTime))
         .font(.custom("Figtree-Bold", size: 10))
-        .foregroundColor(Design.orangeSolid)
+        .foregroundColor(Design.focusSolid)
         .position(
           x: Design.labelStartCenterX,
           y: Design.labelTop + (Design.labelHeight / 2)
@@ -229,7 +223,7 @@ struct LongestFocusCard: View {
 
       Text(cachedFocusTimeFormatter.string(from: block.endTime))
         .font(.custom("Figtree-Bold", size: 10))
-        .foregroundColor(Design.orangeSolid)
+        .foregroundColor(Design.focusSolid)
         .position(
           x: Design.labelEndCenterX,
           y: Design.labelTop + (Design.labelHeight / 2)
@@ -300,14 +294,14 @@ struct LongestFocusCard: View {
   LongestFocusCard(focusBlocks: sampleBlocks)
     .frame(width: 322)
     .padding(20)
-    .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+    .dayflowWindowBackground()
 }
 
 #Preview("Empty State") {
   LongestFocusCard(focusBlocks: [])
     .frame(width: 322)
     .padding(20)
-    .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+    .dayflowWindowBackground()
 }
 
 #Preview("Single Block") {
@@ -325,5 +319,5 @@ struct LongestFocusCard: View {
   LongestFocusCard(focusBlocks: singleBlock)
     .frame(width: 322)
     .padding(20)
-    .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+    .dayflowWindowBackground()
 }

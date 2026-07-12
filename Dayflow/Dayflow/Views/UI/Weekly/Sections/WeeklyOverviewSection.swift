@@ -2,20 +2,18 @@ import AppKit
 import SwiftUI
 
 struct WeeklyOverviewSection: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
   let snapshot: WeeklyOverviewSnapshot
 
   private enum Design {
     static let sectionWidth: CGFloat = 958
     static let cornerRadius: CGFloat = 4
-    static let titleColor = Color(hex: "B46531")
-    static let borderColor = Color(hex: "EBE6E3")
-    static let topCardBackground = Color.white.opacity(0.6)
-    static let footerBackground = Color(hex: "FAF7F5")
-    static let bodyTextColor = Color(hex: "333333")
-    static let secondaryTextColor = Color(hex: "777777")
-    static let chartRowFill = Color(hex: "F2F2F2")
-    static let chartRowBorder = Color(hex: "E5E4E3")
-    static let accentUnderline = Color(hex: "F0A54D")
+    static let titleColor = DayflowWeeklyToken.title
+    static let bodyTextColor = DayflowWeeklyToken.text
+    static let secondaryTextColor = DayflowWeeklyToken.secondaryText
+    static let accentUnderline = DayflowWeeklyToken.accent
     static let summaryDividerX: CGFloat = 295
 
     static let topPadding = EdgeInsets(top: 32, leading: 40, bottom: 32, trailing: 40)
@@ -32,7 +30,7 @@ struct WeeklyOverviewSection: View {
     static let footerHeight: CGFloat = 65
 
     static let dayLabels = [
-      "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm",
+      "9点", "10点", "11点", "12点", "13点", "14点", "15点", "16点", "17点", "18点",
     ]
   }
 
@@ -72,7 +70,7 @@ struct WeeklyOverviewSection: View {
     VStack(alignment: .leading, spacing: Design.headerSpacing) {
       HStack(alignment: .bottom) {
         Text("时间分布")
-          .font(.custom("InstrumentSerif-Regular", size: 20))
+          .font(.system(size: 20, weight: .semibold, design: .rounded))
           .foregroundStyle(Design.titleColor)
 
         Spacer(minLength: 20)
@@ -84,11 +82,27 @@ struct WeeklyOverviewSection: View {
     }
     .padding(Design.topPadding)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Design.topCardBackground)
+    .background {
+      if reduceTransparency {
+        topCardShape.fill(DayflowWeeklyToken.cardFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
+      } else {
+        topCardShape.fill(.regularMaterial)
+        topCardShape.fill(DayflowWeeklyToken.cardFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
+      }
+    }
     .clipShape(topCardShape)
     .overlay {
       topCardShape
-        .stroke(Design.borderColor, lineWidth: 1)
+        .stroke(DayflowWeeklyToken.border(
+          colorScheme: colorScheme,
+          increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+        ), lineWidth: 1)
     }
   }
 
@@ -116,9 +130,15 @@ struct WeeklyOverviewSection: View {
     .frame(height: Design.footerHeight)
     .background(
       HStack(spacing: 0) {
-        Design.footerBackground
+        DayflowWeeklyToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        )
           .frame(width: Design.summaryDividerX)
-        Design.footerBackground
+        DayflowWeeklyToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        )
       }
     )
     .clipShape(footerShape)
@@ -149,7 +169,10 @@ struct WeeklyOverviewSection: View {
           path.move(to: CGPoint(x: Design.summaryDividerX, y: 0))
           path.addLine(to: CGPoint(x: Design.summaryDividerX, y: height))
         }
-        .stroke(Design.borderColor, lineWidth: 1)
+        .stroke(DayflowWeeklyToken.border(
+          colorScheme: colorScheme,
+          increaseContrast: NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+        ), lineWidth: 1)
       }
     }
   }
@@ -195,10 +218,8 @@ private struct WeeklyOverviewTimelineChart: View {
     static let axisWidth: CGFloat = 837
     static let rowHeight: CGFloat = 18
     static let segmentHeight: CGFloat = 12
-    static let rowFill = Color(hex: "F2F2F2")
-    static let rowBorder = Color(hex: "E5E4E3")
     static let axisLabels = [
-      "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm",
+      "9点", "10点", "11点", "12点", "13点", "14点", "15点", "16点", "17点", "18点",
     ]
   }
 
@@ -209,7 +230,7 @@ private struct WeeklyOverviewTimelineChart: View {
           ForEach(snapshot.rows) { row in
             Text(row.label)
               .font(.custom("Figtree-Regular", size: 12))
-              .foregroundStyle(Color.black)
+              .foregroundStyle(DayflowWeeklyToken.chartText)
               .frame(width: Design.dayLabelWidth, height: 14, alignment: .leading)
           }
         }
@@ -225,7 +246,7 @@ private struct WeeklyOverviewTimelineChart: View {
             ForEach(Design.axisLabels, id: \.self) { label in
               Text(label)
                 .font(.custom("Figtree-Regular", size: 10))
-                .foregroundStyle(Color.black)
+                .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
               if label != Design.axisLabels.last {
                 Spacer(minLength: 0)
               }
@@ -240,7 +261,7 @@ private struct WeeklyOverviewTimelineChart: View {
           HStack(spacing: 6) {
             Text(item.name)
               .font(.custom("Figtree-Regular", size: 10))
-              .foregroundStyle(Color.black)
+              .foregroundStyle(DayflowWeeklyToken.chartText)
 
             RoundedRectangle(cornerRadius: 1.5, style: .continuous)
               .fill(Color(hex: item.colorHex))
@@ -256,6 +277,8 @@ private struct WeeklyOverviewTimelineChart: View {
 
 private struct WeeklyOverviewTimelineBar: View {
   let row: WeeklyOverviewRow
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private enum Design {
     static let barWidth: CGFloat = 836
@@ -263,18 +286,19 @@ private struct WeeklyOverviewTimelineBar: View {
     static let segmentHeight: CGFloat = 12
     static let visibleStartMinute = 9.0 * 60.0
     static let visibleEndMinute = 18.0 * 60.0
-    static let fill = Color(hex: "F2F2F2")
-    static let border = Color(hex: "E5E4E3")
   }
 
   var body: some View {
     ZStack(alignment: .leading) {
       RoundedRectangle(cornerRadius: 2, style: .continuous)
-        .fill(Design.fill)
+        .fill(DayflowWeeklyToken.emptyCellFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        ))
         .frame(width: Design.barWidth, height: Design.rowHeight)
         .overlay {
           RoundedRectangle(cornerRadius: 2, style: .continuous)
-            .stroke(Design.border, lineWidth: 0.5)
+            .stroke(DayflowWeeklyToken.chartDivider(colorScheme: colorScheme), lineWidth: 0.5)
         }
 
       ForEach(row.segments) { segment in
@@ -316,19 +340,19 @@ private struct WeeklyOverviewTabStrip: View {
       HStack(spacing: 12) {
         Text("全部")
           .font(.custom("Figtree-Bold", size: 12))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartText)
 
         Text("最长专注时段")
           .font(.custom("Figtree-Medium", size: 12))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
         Text("最少上下文切换")
           .font(.custom("Figtree-Medium", size: 12))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
         Text("最多上下文切换")
           .font(.custom("Figtree-Medium", size: 12))
-          .foregroundStyle(Color(hex: "333333"))
+          .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
       }
 
       Rectangle()
@@ -345,19 +369,19 @@ private struct WeeklyOverviewSummaryGroup: View {
   var body: some View {
     HStack(alignment: .top, spacing: 20) {
       Text(title)
-        .font(.custom("InstrumentSerif-Regular", size: 16))
-        .foregroundStyle(Color(hex: "B46531"))
+        .font(.system(size: 16, weight: .medium, design: .rounded))
+        .foregroundStyle(DayflowWeeklyToken.title)
 
       HStack(alignment: .top, spacing: 20) {
         ForEach(metrics) { metric in
           VStack(alignment: .leading, spacing: 8) {
             Text(metric.label)
               .font(.custom("Figtree-Regular", size: 12))
-              .foregroundStyle(Color(hex: "777777"))
+              .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
             Text(metric.value)
-              .font(.custom("InstrumentSerif-Regular", size: 18))
-              .foregroundStyle(Color(hex: "333333"))
+              .font(.system(size: 18, weight: .semibold, design: .rounded))
+              .foregroundStyle(DayflowWeeklyToken.chartText)
               .lineLimit(1)
           }
         }
@@ -380,8 +404,8 @@ extension WeeklyOverviewSnapshot {
     rows: [
       WeeklyOverviewRow(
         id: "mon",
-        label: "Mon",
-        weekdayName: "Monday",
+        label: "周一",
+        weekdayName: "星期一",
         segments: [
           segment("mon-alignment-1", "alignment", "6CDACD", 555, 573),
           segment("mon-testing", "testing", "FFA189", 574, 725),
@@ -393,8 +417,8 @@ extension WeeklyOverviewSnapshot {
       ),
       WeeklyOverviewRow(
         id: "tue",
-        label: "Tue",
-        weekdayName: "Tuesday",
+        label: "周二",
+        weekdayName: "星期二",
         segments: [
           segment("tue-testing", "testing", "FFA189", 547, 731),
           segment("tue-design", "design", "DE9DFC", 732, 760),
@@ -404,8 +428,8 @@ extension WeeklyOverviewSnapshot {
       ),
       WeeklyOverviewRow(
         id: "wed",
-        label: "Wed",
-        weekdayName: "Wednesday",
+        label: "周三",
+        weekdayName: "星期三",
         segments: [
           segment("wed-alignment-1", "alignment", "6CDACD", 555, 572),
           segment("wed-design-1", "design", "DE9DFC", 574, 754),
@@ -418,8 +442,8 @@ extension WeeklyOverviewSnapshot {
       ),
       WeeklyOverviewRow(
         id: "thu",
-        label: "Thu",
-        weekdayName: "Thursday",
+        label: "周四",
+        weekdayName: "星期四",
         segments: [
           segment("thu-alignment-1", "alignment", "6CDACD", 542, 603),
           segment("thu-design-1", "design", "DE9DFC", 604, 736),
@@ -433,8 +457,8 @@ extension WeeklyOverviewSnapshot {
       ),
       WeeklyOverviewRow(
         id: "fri",
-        label: "Fri",
-        weekdayName: "Friday",
+        label: "周五",
+        weekdayName: "星期五",
         segments: [
           segment("fri-alignment-1", "alignment", "6CDACD", 547, 567),
           segment("fri-design", "design", "DE9DFC", 569, 766),
@@ -445,18 +469,18 @@ extension WeeklyOverviewSnapshot {
       ),
     ],
     legendItems: [
-      WeeklyOverviewLegendItem(id: "research", name: "Research", colorHex: "93BCFF"),
-      WeeklyOverviewLegendItem(id: "design", name: "Design", colorHex: "DE9DFC"),
-      WeeklyOverviewLegendItem(id: "alignment", name: "Alignment", colorHex: "6CDACD"),
-      WeeklyOverviewLegendItem(id: "testing", name: "Testing", colorHex: "FFA189"),
-      WeeklyOverviewLegendItem(id: "general", name: "General", colorHex: "BFB6AE"),
+      WeeklyOverviewLegendItem(id: "research", name: "研究", colorHex: "93BCFF"),
+      WeeklyOverviewLegendItem(id: "design", name: "设计", colorHex: "DE9DFC"),
+      WeeklyOverviewLegendItem(id: "alignment", name: "协作", colorHex: "6CDACD"),
+      WeeklyOverviewLegendItem(id: "testing", name: "测试", colorHex: "FFA189"),
+      WeeklyOverviewLegendItem(id: "general", name: "常规", colorHex: "BFB6AE"),
     ],
     contextSwitchTotal: 52,
     contextSwitchAverage: 7,
     totalFocusMinutes: 1478,
-    longestFocus: WeeklyOverviewFocusSummary(weekdayName: "Wednesday", minutes: 245),
+    longestFocus: WeeklyOverviewFocusSummary(weekdayName: "星期三", minutes: 245),
     primaryFocus: WeeklyOverviewCategorySummary(
-      name: "Design",
+      name: "设计",
       minutes: 734,
       colorHex: "DE9DFC"
     )
@@ -482,5 +506,5 @@ extension WeeklyOverviewSnapshot {
 #Preview("Weekly Overview Section", traits: .fixedLayout(width: 958, height: 339)) {
   WeeklyOverviewSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "F7F3F0"))
+    .dayflowWindowBackground()
 }

@@ -4,6 +4,8 @@ import SwiftUI
 struct WeeklyContextChartsSection: View {
   let snapshot: WeeklyContextChartsSnapshot
   let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   init(snapshot: WeeklyContextChartsSnapshot, width: CGFloat = 958) {
     self.snapshot = snapshot
@@ -23,11 +25,8 @@ struct WeeklyContextChartsSection: View {
     static let xAxisTopSpacing: CGFloat = 8
     static let lineWidth: CGFloat = 2
     static let pointSize: CGFloat = 42
-    static let borderColor = Color(hex: "EBE6E3")
-    static let backgroundColor = Color.white.opacity(0.78)
-    static let footerBackgroundColor = Color.white.opacity(0.58)
-    static let axisColor = Color(hex: "5A534C").opacity(0.9)
-    static let labelColor = Color.black
+    static let axisColor = DayflowWeeklyToken.separator
+    static let labelColor = DayflowWeeklyToken.text
   }
 
   private var chartWidth: CGFloat {
@@ -60,8 +59,8 @@ struct WeeklyContextChartsSection: View {
     VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: Design.chartTopSpacing) {
         Text("上下文切换与分心对比")
-          .font(.custom("InstrumentSerif-Regular", size: 20))
-          .foregroundStyle(Color(hex: "B46531"))
+          .font(.system(size: 20, weight: .semibold, design: .rounded))
+          .foregroundStyle(DayflowWeeklyToken.title)
           .lineLimit(1)
           .minimumScaleFactor(0.82)
           .padding(.bottom, Design.titleSpacing - Design.chartTopSpacing)
@@ -72,22 +71,16 @@ struct WeeklyContextChartsSection: View {
       .padding(.top, Design.topPadding)
       .padding(.horizontal, Design.horizontalPadding)
       .frame(width: width, height: Design.height - Design.footerHeight, alignment: .topLeading)
-      .background(Design.backgroundColor)
       .overlay(alignment: .bottom) {
         Rectangle()
-          .fill(Color(hex: "EBE6E3"))
+          .fill(DayflowWeeklyToken.separator)
           .frame(height: 1)
       }
 
       footer
     }
     .frame(width: width, height: Design.height, alignment: .topLeading)
-    .background(Design.backgroundColor)
-    .clipShape(RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: Design.cornerRadius, style: .continuous)
-        .stroke(Design.borderColor, lineWidth: 1)
-    )
+    .dayflowWeeklySectionSurface(cornerRadius: Design.cornerRadius)
   }
 
   private var legend: some View {
@@ -184,7 +177,7 @@ struct WeeklyContextChartsSection: View {
 
       Text(snapshot.comparison.insight)
         .font(.custom("Figtree-Regular", size: 14))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
         .lineLimit(2)
         .minimumScaleFactor(0.82)
 
@@ -192,7 +185,10 @@ struct WeeklyContextChartsSection: View {
     }
     .padding(.horizontal, 24)
     .frame(width: width, height: Design.footerHeight, alignment: .center)
-    .background(Design.footerBackgroundColor)
+    .background(DayflowWeeklyToken.secondaryChartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
   }
 }
 
@@ -206,6 +202,8 @@ private struct WeeklyContextLineSeries: Identifiable {
 private struct WeeklyContextDistributionCard: View {
   let snapshot: WeeklyContextDistributionSnapshot
   let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private enum Design {
     static let width: CGFloat = 340
@@ -214,7 +212,7 @@ private struct WeeklyContextDistributionCard: View {
     static let plotHeight: CGFloat = 283
     static let contextColor = Color(hex: "B097FF")
     static let distractionColor = Color(hex: "FF7C5A")
-    static let axisColor = Color(hex: "C9C2BC")
+    static let axisColor = DayflowWeeklyToken.separator
   }
 
   init(snapshot: WeeklyContextDistributionSnapshot, width: CGFloat = Design.width) {
@@ -227,14 +225,14 @@ private struct WeeklyContextDistributionCard: View {
   }
 
   private var hourTicks: [String] {
-    ["6pm", "5pm", "4pm", "3pm", "2pm", "1pm", "12pm", "11am", "10am"]
+    ["18点", "17点", "16点", "15点", "14点", "13点", "12点", "11点", "10点"]
   }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("上下文切换与分心分布")
-        .font(.custom("InstrumentSerif-Regular", size: 18))
-        .foregroundStyle(Color(hex: "B46531"))
+        .font(.system(size: 18, weight: .semibold, design: .rounded))
+        .foregroundStyle(DayflowWeeklyToken.title)
         .padding(.leading, 25)
         .padding(.top, 18)
 
@@ -250,7 +248,7 @@ private struct WeeklyContextDistributionCard: View {
           ForEach(hourTicks, id: \.self) { tick in
             Text(tick)
               .font(.custom("Figtree-Regular", size: 8))
-              .foregroundStyle(Color.black)
+              .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
 
             if tick != hourTicks.last {
               Spacer(minLength: 0)
@@ -268,7 +266,7 @@ private struct WeeklyContextDistributionCard: View {
         ForEach(snapshot.days, id: \.self) { day in
           Text(day)
             .font(.custom("Figtree-Regular", size: 10))
-            .foregroundStyle(Color.black)
+            .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
             .frame(maxWidth: .infinity)
         }
       }
@@ -277,7 +275,10 @@ private struct WeeklyContextDistributionCard: View {
       .padding(.leading, 70)
     }
     .frame(width: width, height: Design.height, alignment: .topLeading)
-    .background(Color.white.opacity(0.75))
+    .background(DayflowWeeklyToken.chartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
     .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
   }
 
@@ -335,7 +336,7 @@ private struct WeeklyContextDistributionCard: View {
 
       Text(title)
         .font(.custom("Figtree-Regular", size: 10))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
     }
   }
 }
@@ -343,6 +344,8 @@ private struct WeeklyContextDistributionCard: View {
 private struct WeeklyContextComparisonBarCard: View {
   let snapshot: WeeklyContextComparisonSnapshot
   let width: CGFloat
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   private enum Design {
     static let width: CGFloat = 574
@@ -350,7 +353,7 @@ private struct WeeklyContextComparisonBarCard: View {
     static let mainHeight: CGFloat = 369
     static let barAreaHeight: CGFloat = 204
     static let maxBarHeight: CGFloat = 180
-    static let axisColor = Color(hex: "C9C2BC")
+    static let axisColor = DayflowWeeklyToken.separator
   }
 
   init(snapshot: WeeklyContextComparisonSnapshot, width: CGFloat = Design.width) {
@@ -366,8 +369,8 @@ private struct WeeklyContextComparisonBarCard: View {
     VStack(spacing: 0) {
       VStack(alignment: .leading, spacing: 0) {
         Text("上下文切换与分心对比")
-          .font(.custom("InstrumentSerif-Regular", size: 18))
-          .foregroundStyle(Color(hex: "B46531"))
+          .font(.system(size: 18, weight: .semibold, design: .rounded))
+          .foregroundStyle(DayflowWeeklyToken.title)
           .padding(.top, 22)
           .padding(.leading, 25)
 
@@ -380,10 +383,9 @@ private struct WeeklyContextComparisonBarCard: View {
           .frame(maxWidth: .infinity)
       }
       .frame(width: width, height: Design.mainHeight, alignment: .topLeading)
-      .background(Color.white.opacity(0.75))
       .overlay(alignment: .bottom) {
         Rectangle()
-          .fill(Color(hex: "EBE6E3"))
+          .fill(DayflowWeeklyToken.separator)
           .frame(height: 1)
       }
 
@@ -407,7 +409,7 @@ private struct WeeklyContextComparisonBarCard: View {
 
           Text(day.day)
             .font(.custom("Figtree-Regular", size: 12))
-            .foregroundStyle(Color.black)
+            .foregroundStyle(DayflowWeeklyToken.chartSecondaryText)
             .padding(.top, 10)
         }
       }
@@ -455,8 +457,8 @@ private struct WeeklyContextComparisonBarCard: View {
 
   private var legend: some View {
     HStack(spacing: 24) {
-      legendItem("Number of times distracted", color: Color(hex: "FF653B"))
-      legendItem("Number of context shifts", color: Color(hex: "A88CFF"))
+      legendItem("分心次数", color: Color(hex: "FF653B"))
+      legendItem("上下文切换次数", color: Color(hex: "A88CFF"))
     }
   }
 
@@ -468,7 +470,7 @@ private struct WeeklyContextComparisonBarCard: View {
 
       Text(title)
         .font(.custom("Figtree-Regular", size: 10))
-        .foregroundStyle(Color.black)
+        .foregroundStyle(DayflowWeeklyToken.chartText)
     }
   }
 
@@ -482,7 +484,7 @@ private struct WeeklyContextComparisonBarCard: View {
 
         Text(snapshot.insight)
           .font(.custom("Figtree-Regular", size: 12))
-          .foregroundStyle(Color.black)
+          .foregroundStyle(DayflowWeeklyToken.chartText)
           .lineSpacing(1)
           .frame(maxWidth: .infinity, alignment: .leading)
       }
@@ -491,7 +493,10 @@ private struct WeeklyContextComparisonBarCard: View {
     }
     .padding(.horizontal, 18)
     .frame(width: width, height: 58, alignment: .center)
-    .background(Color(hex: "FAF7F5"))
+    .background(DayflowWeeklyToken.secondaryChartFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    ))
   }
 }
 
@@ -512,32 +517,32 @@ struct WeeklyContextDistributionSnapshot {
   let events: [WeeklyContextDistributionEvent]
 
   static let figmaPreview = WeeklyContextDistributionSnapshot(
-    days: ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],
+    days: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
     start: "10:00",
     end: "18:00",
     events: [
-      .init(day: "Mon", kind: .context, time: "10:45"),
-      .init(day: "Mon", kind: .distraction, time: "11:55"),
-      .init(day: "Mon", kind: .context, time: "13:55"),
-      .init(day: "Mon", kind: .distraction, time: "15:08"),
-      .init(day: "Mon", kind: .context, time: "16:40"),
-      .init(day: "Tue", kind: .context, time: "12:55"),
-      .init(day: "Tue", kind: .distraction, time: "14:45"),
-      .init(day: "Tue", kind: .context, time: "15:50"),
-      .init(day: "Wed", kind: .distraction, time: "10:55"),
-      .init(day: "Wed", kind: .context, time: "11:45"),
-      .init(day: "Wed", kind: .distraction, time: "13:20"),
-      .init(day: "Wed", kind: .context, time: "14:55"),
-      .init(day: "Wed", kind: .distraction, time: "15:55"),
-      .init(day: "Thu", kind: .distraction, time: "11:20"),
-      .init(day: "Thu", kind: .context, time: "14:15"),
-      .init(day: "Thu", kind: .distraction, time: "16:18"),
-      .init(day: "Fri", kind: .context, time: "10:28"),
-      .init(day: "Fri", kind: .distraction, time: "11:55"),
-      .init(day: "Fri", kind: .distraction, time: "14:20"),
-      .init(day: "Fri", kind: .context, time: "16:58"),
-      .init(day: "Sat", kind: .context, time: "12:10"),
-      .init(day: "Sun", kind: .distraction, time: "15:35"),
+      .init(day: "周一", kind: .context, time: "10:45"),
+      .init(day: "周一", kind: .distraction, time: "11:55"),
+      .init(day: "周一", kind: .context, time: "13:55"),
+      .init(day: "周一", kind: .distraction, time: "15:08"),
+      .init(day: "周一", kind: .context, time: "16:40"),
+      .init(day: "周二", kind: .context, time: "12:55"),
+      .init(day: "周二", kind: .distraction, time: "14:45"),
+      .init(day: "周二", kind: .context, time: "15:50"),
+      .init(day: "周三", kind: .distraction, time: "10:55"),
+      .init(day: "周三", kind: .context, time: "11:45"),
+      .init(day: "周三", kind: .distraction, time: "13:20"),
+      .init(day: "周三", kind: .context, time: "14:55"),
+      .init(day: "周三", kind: .distraction, time: "15:55"),
+      .init(day: "周四", kind: .distraction, time: "11:20"),
+      .init(day: "周四", kind: .context, time: "14:15"),
+      .init(day: "周四", kind: .distraction, time: "16:18"),
+      .init(day: "周五", kind: .context, time: "10:28"),
+      .init(day: "周五", kind: .distraction, time: "11:55"),
+      .init(day: "周五", kind: .distraction, time: "14:20"),
+      .init(day: "周五", kind: .context, time: "16:58"),
+      .init(day: "周六", kind: .context, time: "12:10"),
+      .init(day: "周日", kind: .distraction, time: "15:35"),
     ]
   )
 }
@@ -560,16 +565,16 @@ struct WeeklyContextComparisonSnapshot {
 
   static let figmaPreview = WeeklyContextComparisonSnapshot(
     days: [
-      .init(day: "Mon", distracted: 12, shifts: 15),
-      .init(day: "Tue", distracted: 8, shifts: 10),
-      .init(day: "Wed", distracted: 16, shifts: 28),
-      .init(day: "Thur", distracted: 12, shifts: 5),
-      .init(day: "Fri", distracted: 3, shifts: 10),
-      .init(day: "Sat", distracted: 12, shifts: 12),
-      .init(day: "Sun", distracted: 6, shifts: 8),
+      .init(day: "周一", distracted: 12, shifts: 15),
+      .init(day: "周二", distracted: 8, shifts: 10),
+      .init(day: "周三", distracted: 16, shifts: 28),
+      .init(day: "周四", distracted: 12, shifts: 5),
+      .init(day: "周五", distracted: 3, shifts: 10),
+      .init(day: "周六", distracted: 12, shifts: 12),
+      .init(day: "周日", distracted: 6, shifts: 8),
     ],
     insight:
-      "Tue had the most interruptions, with 22 context shifts and 53 distractions."
+      "周二被打断最多，共有 22 次上下文切换和 53 次分心。"
   )
 }
 
@@ -589,5 +594,5 @@ private func minutes(_ time: String) -> Int {
 #Preview("Context Charts", traits: .fixedLayout(width: 958, height: 427)) {
   WeeklyContextChartsSection(snapshot: .figmaPreview)
     .padding(24)
-    .background(Color(hex: "FBF6EF"))
+    .dayflowWindowBackground()
 }

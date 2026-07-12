@@ -5,71 +5,92 @@
 //  Pill badge showing number of cards to review with stacked cards icon
 //
 
+import AppKit
 import SwiftUI
 
 struct CardsToReviewBadge: View {
   let count: Int
 
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  private var increaseContrast: Bool {
+    NSWorkspace.shared.accessibilityDisplayShouldIncreaseContrast
+  }
+
   var body: some View {
     HStack(alignment: .center, spacing: 6) {
-      // Stacked cards icon with number
       stackedCardsIcon
 
-      // Label text
       Text("张卡片待复盘")
         .font(.custom("Figtree", size: 10).weight(.medium))
-        .foregroundColor(.white)
+        .foregroundColor(.primary)
     }
     .padding(.horizontal, 12)
     .padding(.vertical, 10)
-    .background(
-      LinearGradient(
-        stops: [
-          Gradient.Stop(color: Color(red: 1, green: 0.6, blue: 0.44), location: 0.00),
-          Gradient.Stop(color: Color(red: 0.74, green: 0.67, blue: 1), location: 1.00),
-        ],
-        startPoint: UnitPoint(x: 0.05, y: 0),
-        endPoint: UnitPoint(x: 0.95, y: 1)
-      )
-    )
-    .cornerRadius(20)
-    .shadow(color: Color(red: 0.91, green: 0.79, blue: 0.7), radius: 1.5, x: 0, y: 2)
-    .overlay(
-      RoundedRectangle(cornerRadius: 20)
-        .inset(by: 0.75)
-        .stroke(Color(red: 1, green: 0.85, blue: 0.83), lineWidth: 1.5)
-    )
+    .dayflowFloatingControl(cornerRadius: 20)
   }
 
   private var stackedCardsIcon: some View {
     ZStack(alignment: .bottom) {
-      // Back card (rotated, behind) - 15.75 x 14 (h x w)
-      // Positioned so leftmost point pokes out only 3px
-      RoundedRectangle(cornerRadius: 3.5)
-        .fill(Color.white)
-        .frame(width: 14, height: 15.75)
+      reviewCardShape
+        .fill(reviewCardFill.opacity(0.78))
+        .overlay {
+          reviewCardShape.stroke(reviewCardBorder.opacity(0.65), lineWidth: reviewCardLineWidth)
+        }
+        .frame(width: 14, height: 16)
         .rotationEffect(.degrees(-11.64))
         .offset(x: -3, y: 0)
 
-      // Front card with number - 18 x 14 (h x w)
-      ZStack {
-        RoundedRectangle(cornerRadius: 3.5)
-          .fill(Color.white)
-      }
-      .frame(width: 14, height: 18)
-      .overlay(
-        RoundedRectangle(cornerRadius: 3.5)
-          .inset(by: -0.63)
-          .stroke(Color(red: 0.97, green: 0.61, blue: 0.51), lineWidth: 1.25)
-      )
-      .overlay(
-        Text("\(count)")
-          .font(.custom("Figtree", size: 9).weight(.heavy))
-          .foregroundColor(Color(red: 0.98, green: 0.6, blue: 0.49))
-      )
-      .offset(x: 4, y: 0)
+      reviewCardShape
+        .fill(reviewCardFill)
+        .frame(width: 14, height: 18)
+        .overlay {
+          reviewCardShape.stroke(reviewCardAccentBorder, lineWidth: reviewCardLineWidth)
+        }
+        .overlay(alignment: .topLeading) {
+          reviewCardShape
+            .stroke(reviewCardHighlight, lineWidth: reviewCardLineWidth)
+            .blendMode(.screen)
+        }
+        .overlay {
+          Text("\(count)")
+            .font(.custom("Figtree", size: 9).weight(.heavy))
+            .foregroundColor(DayflowSurfaceAccent.primary)
+        }
+        .offset(x: 4, y: 0)
     }
     .frame(width: 21, height: 20)
+  }
+
+  private var reviewCardShape: RoundedRectangle {
+    RoundedRectangle(cornerRadius: 3.5, style: .continuous)
+  }
+
+  private var reviewCardFill: Color {
+    DayflowContentToken.secondaryFill(
+      colorScheme: colorScheme,
+      reduceTransparency: reduceTransparency
+    )
+  }
+
+  private var reviewCardBorder: Color {
+    DayflowContentToken.cardBorder(
+      colorScheme: colorScheme,
+      increaseContrast: increaseContrast
+    )
+  }
+
+  private var reviewCardAccentBorder: Color {
+    DayflowSurfaceAccent.primary.opacity(increaseContrast ? 0.92 : 0.74)
+  }
+
+  private var reviewCardHighlight: Color {
+    DayflowSurfaceAccent.primary.opacity(colorScheme == .dark ? 0.24 : 0.18)
+  }
+
+  private var reviewCardLineWidth: CGFloat {
+    increaseContrast ? 1.5 : 1.25
   }
 }
 
@@ -155,10 +176,18 @@ private struct CardsToReviewBadgePreview: View {
         .frame(width: 200)
       }
       .padding()
-      .background(Color.gray.opacity(0.1))
+      .background(
+        DayflowContentToken.secondaryFill(
+          colorScheme: colorScheme,
+          reduceTransparency: reduceTransparency
+        )
+      )
       .cornerRadius(12)
     }
     .padding(60)
-    .background(Color(red: 0.98, green: 0.96, blue: 0.94))
+    .dayflowWindowBackground()
   }
+
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 }

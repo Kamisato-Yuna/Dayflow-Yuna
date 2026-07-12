@@ -7,6 +7,8 @@ struct DailyView: View {
   @AppStorage("isDailyUnlocked") var isUnlocked: Bool = false
   @Binding var selectedDate: Date
   @EnvironmentObject var categoryStore: CategoryStore
+  @Environment(\.colorScheme) var colorScheme
+  @Environment(\.accessibilityReduceTransparency) var reduceTransparency
 
   @State var accessFlowStep: DailyAccessFlowStep = .intro
   @State var lockScreenConfettiTrigger: Int = 0
@@ -47,7 +49,7 @@ struct DailyView: View {
   let priorStandupHistoryLimit = 3
   static let maxDateTitleWidth: CGFloat = {
     let referenceText = "星期三，9月30日"
-    let font = NSFont(name: "InstrumentSerif-Regular", size: 26) ?? NSFont.systemFont(ofSize: 26)
+    let font = NSFont.systemFont(ofSize: 26, weight: .semibold)
     let width = referenceText.size(withAttributes: [.font: font]).width
     return ceil(width) + 6
   }()
@@ -63,7 +65,7 @@ struct DailyView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-    .environment(\.colorScheme, .light)
+    .dayflowWindowBackground()
     .onAppear {
       refreshDailyAccessProgress()
       dailyRecapProvider = DailyRecapGenerator.shared.selectedProvider()

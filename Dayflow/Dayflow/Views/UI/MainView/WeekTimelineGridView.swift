@@ -112,6 +112,8 @@ struct WeekTimelineGridView: View {
   @State private var measuredExpandedHeights: [String: CGFloat] = [:]
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
   @AppStorage("showTimelineAppIcons") private var showTimelineAppIcons = true
   @EnvironmentObject private var appState: AppState
@@ -269,7 +271,7 @@ struct WeekTimelineGridView: View {
         HStack(spacing: WeekTimelineConfig.weekdayInlineSpacing) {
           Text(day.weekdayLabel)
             .font(.custom("Figtree", size: 12).weight(.medium))
-            .foregroundColor(Color(hex: "333333"))
+            .foregroundColor(.secondary)
 
           dayNumberBadge(for: day)
         }
@@ -294,7 +296,7 @@ struct WeekTimelineGridView: View {
     } else {
       Text(day.dayNumber)
         .font(.custom("Figtree", size: 12).weight(.medium))
-        .foregroundColor(Color(hex: "333333"))
+        .foregroundColor(.secondary)
     }
   }
 
@@ -344,7 +346,7 @@ struct WeekTimelineGridView: View {
         ForEach(0..<(WeekTimelineConfig.endHour - WeekTimelineConfig.startHour), id: \.self) { _ in
           VStack(spacing: 0) {
             Rectangle()
-              .fill(Color.black.opacity(0.1))
+              .fill(Color(nsColor: .separatorColor).opacity(0.42))
               .frame(height: 1)
             Spacer(minLength: 0)
           }
@@ -356,7 +358,7 @@ struct WeekTimelineGridView: View {
       HStack(spacing: 0) {
         ForEach(0..<8, id: \.self) { index in
           Rectangle()
-            .fill(Color.black.opacity(0.1))
+            .fill(Color(nsColor: .separatorColor).opacity(0.42))
             .frame(width: index == 0 ? 0 : 1)
 
           if index < 7 {
@@ -376,7 +378,7 @@ struct WeekTimelineGridView: View {
         let hourIndex = hour - WeekTimelineConfig.startHour
         Text(formatHour(hour))
           .font(.custom("Figtree", size: 9))
-          .foregroundColor(Color(hex: "594838"))
+          .foregroundColor(.secondary)
           .padding(.trailing, 6)
           .padding(.top, 2)
           .frame(width: WeekTimelineConfig.timeColumnWidth, alignment: .trailing)
@@ -948,16 +950,13 @@ struct WeekTimelineGridView: View {
 
   private func formatHour(_ hour: Int) -> String {
     let normalizedHour = hour >= 24 ? hour - 24 : hour
-    let adjustedHour =
-      normalizedHour > 12 ? normalizedHour - 12 : (normalizedHour == 0 ? 12 : normalizedHour)
-    let period = normalizedHour >= 12 ? "PM" : "AM"
-    return "\(adjustedHour):00 \(period)"
+    return "\(normalizedHour)点"
   }
 
   nonisolated private static func formatRange(start: Date, end: Date) -> String {
     let formatter = DateFormatter()
-    formatter.dateFormat = "h:mm a"
-    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "HH:mm"
+    formatter.locale = Locale(identifier: "zh_Hans_CN")
     return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
   }
 
@@ -979,15 +978,18 @@ struct WeekTimelineGridView: View {
     let fallback = categoryStore.categories.first ?? CategoryPersistence.defaultCategories.first!
     let category = matched ?? fallback
     let accentNSColor = NSColor(hex: category.colorHex) ?? .systemBlue
-    let fillColor =
-      accentNSColor.blended(with: 0.88, of: .white) ?? accentNSColor.withAlphaComponent(0.12)
-    let borderColor = accentNSColor.blended(with: 0.62, of: .white) ?? accentNSColor
 
     return WeekTimelineCardPalette(
       accent: Color(nsColor: accentNSColor),
-      fill: Color(nsColor: fillColor),
-      border: Color(nsColor: borderColor),
-      title: Color(hex: "333333")
+      fill: DayflowContentToken.timelineCardFill(
+        colorScheme: colorScheme,
+        reduceTransparency: reduceTransparency
+      ),
+      border: DayflowContentToken.timelineCardBorder(
+        colorScheme: colorScheme,
+        isSelected: false
+      ),
+      title: Color(nsColor: .labelColor)
     )
   }
 }
@@ -1138,13 +1140,13 @@ private struct WeekTimelineActivityCard: View {
     // stroke, and no left accent bar. Kept as three inline branches rather
     // than a dedicated Modifier so it's obvious at read-time what's
     // special-cased.
-    .background(isFailedCard ? Color(hex: "FFECE4") : palette.fill)
+    .background(isFailedCard ? Color(nsColor: .systemRed).opacity(0.10) : palette.fill)
     .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
     .overlay(
       RoundedRectangle(cornerRadius: 2, style: .continuous)
         .stroke(
           isFailedCard
-            ? Color(red: 1, green: 0.16, blue: 0.11)
+            ? Color(nsColor: .systemRed).opacity(0.9)
             : (isSelected ? palette.accent : palette.border),
           style: isFailedCard
             ? StrokeStyle(lineWidth: 0.5, dash: [2.5, 2.5])
@@ -1263,12 +1265,12 @@ private struct WeekTimelineHoverPrototypeHarness: View {
       VStack(alignment: .leading, spacing: 4) {
         Text("悬停展开原型")
           .font(.custom("Figtree", size: 13).weight(.semibold))
-          .foregroundColor(Color(hex: "333333"))
+          .foregroundColor(.primary)
         Text(
           "悬停短卡片时，卡片会展开显示完整标题。已有文字不移动，只在下方显示新行。"
         )
         .font(.custom("Figtree", size: 11))
-        .foregroundColor(Color(hex: "6B5548"))
+        .foregroundColor(.secondary)
       }
 
       WeekTimelineGridView(
@@ -1281,11 +1283,11 @@ private struct WeekTimelineHoverPrototypeHarness: View {
         onClearSelection: { selectedActivity = nil },
         previewPositionedActivities: Self.mockActivities()
       )
-      .background(Color(hex: "FFF6EE"))
+      .dayflowCard(cornerRadius: 8)
     }
     .padding(16)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color(hex: "FAF3EB"))
+    .dayflowWindowBackground()
     .preferredColorScheme(.light)
   }
 
@@ -1309,58 +1311,58 @@ private struct WeekTimelineHoverPrototypeHarness: View {
       Spec(
         column: 1, startMinutes: 6 * 60, durationMinutes: 45,
         title: "Refining UI mockups for the weekly view",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
 
       // Tuesday (col 2) — stacked cluster of short cards (displace showcase)
       Spec(
         column: 2, startMinutes: 6 * 60, durationMinutes: 12,
         title: "Refining UI mockups — iteration 1 of the hover card",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
       Spec(
         column: 2, startMinutes: 6 * 60 + 12, durationMinutes: 10,
         title: "Refining UI mockups — iteration 2",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
       Spec(
         column: 2, startMinutes: 6 * 60 + 22, durationMinutes: 8,
         title: "Refining UI mockups — quick pass",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
       Spec(
         column: 2, startMinutes: 6 * 60 + 30, durationMinutes: 11,
         title: "Refining UI mockups — small tweaks",
-        category: "Work", favicon: "figma.com"),
+        category: "工作", favicon: "figma.com"),
 
       // Wednesday (col 3) — medium card followed closely by a tiny one
       Spec(
         column: 3, startMinutes: 7 * 60, durationMinutes: 30,
         title: "Browsing X looking for design inspiration around calendars",
-        category: "Distraction", favicon: "x.com"),
+        category: "分心", favicon: "x.com"),
       Spec(
         column: 3, startMinutes: 7 * 60 + 32, durationMinutes: 6,
         title: "Quick Slack check",
-        category: "Communication", favicon: "slack.com"),
+        category: "沟通", favicon: "slack.com"),
 
       // Thursday (col 4) — mid-length card that fits comfortably
       Spec(
         column: 4, startMinutes: 8 * 60, durationMinutes: 28,
         title:
           "Researching, creating roadmap, and summarizing documents with Chat GPT for the next planning cycle",
-        category: "Research", favicon: "chat.openai.com"),
+        category: "研究", favicon: "chat.openai.com"),
 
       // Friday (col 5) — very short card isolated
       Spec(
         column: 5, startMinutes: 7 * 60 + 30, durationMinutes: 5,
         title: "Messaging Alex on Slack about the design review",
-        category: "Communication", favicon: "slack.com"),
+        category: "沟通", favicon: "slack.com"),
 
       // Saturday (col 6) — two back-to-back short cards
       Spec(
         column: 6, startMinutes: 9 * 60, durationMinutes: 9,
         title: "Comparing screenshots",
-        category: "Work", favicon: nil),
+        category: "工作", favicon: nil),
       Spec(
         column: 6, startMinutes: 9 * 60 + 9, durationMinutes: 7,
         title: "Next card preview",
-        category: "Work", favicon: nil),
+        category: "工作", favicon: nil),
     ]
 
     return specs.enumerated().map { index, spec in
@@ -1412,12 +1414,7 @@ private struct WeekTimelineHoverPrototypeHarness: View {
     let absoluteMinutes = minutes + 4 * 60
     let hour24 = (absoluteMinutes / 60) % 24
     let minute = absoluteMinutes % 60
-    let period = hour24 >= 12 ? "PM" : "AM"
-    let hour12: Int = {
-      let raw = hour24 % 12
-      return raw == 0 ? 12 : raw
-    }()
-    return String(format: "%d:%02d %@", hour12, minute, period)
+    return String(format: "%02d:%02d", hour24, minute)
   }
 }
 

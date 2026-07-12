@@ -27,8 +27,8 @@ struct DayDistractionSummarySection: View {
     static let editorWidth: CGFloat = 358
     static let editorOffsetX: CGFloat = -18
     static let editorOffsetY: CGFloat = 28
-    static let titleColor = Color(hex: "333333")
-    static let subtitleColor = Color(hex: "707070")
+    static let titleColor = DayflowDailyToken.title
+    static let subtitleColor = DayflowDailyToken.secondaryText
   }
 
   var body: some View {
@@ -49,7 +49,7 @@ struct DayDistractionSummarySection: View {
         patternDescription: patternDescription
       )
       .frame(maxWidth: .infinity)
-      .opacity(isSelectionEmpty ? 0.45 : 1)
+      .opacity(isSelectionEmpty ? 0.72 : 1)
     }
     .overlay(alignment: .topLeading) {
       if isEditingCategories {
@@ -70,7 +70,7 @@ struct DayDistractionSummarySection: View {
   private var header: some View {
     HStack(alignment: .center, spacing: 6) {
       Text("目前分心情况")
-        .font(.custom("InstrumentSerif-Regular", size: 22))
+        .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundColor(Design.titleColor)
 
       Spacer()

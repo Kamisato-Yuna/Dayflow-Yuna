@@ -19,7 +19,7 @@ struct AppKitComposerTextField: NSViewRepresentable {
     textField.stringValue = text
     textField.font =
       NSFont(name: "Figtree-Medium", size: 16) ?? NSFont.systemFont(ofSize: 16, weight: .medium)
-    textField.textColor = NSColor(hex: "2F2A24") ?? .labelColor
+    textField.textColor = .labelColor
     textField.alignment = .left
     textField.lineBreakMode = .byTruncatingTail
     textField.maximumNumberOfLines = 1
@@ -35,7 +35,7 @@ struct AppKitComposerTextField: NSViewRepresentable {
       placeholder,
       font: NSFont(name: "Figtree-Medium", size: 16)
         ?? NSFont.systemFont(ofSize: 16, weight: .medium),
-      color: NSColor(hex: "9B948D") ?? .secondaryLabelColor
+      color: .secondaryLabelColor
     )
     return textField
   }

@@ -29,11 +29,11 @@ struct APIKeyInputView: View {
       Text(title)
         .font(.custom("Figtree", size: 16))
         .fontWeight(.semibold)
-        .foregroundColor(.black.opacity(0.9))
+        .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
 
       Text(subtitle)
         .font(.custom("Figtree", size: 14))
-        .foregroundColor(.black.opacity(0.6))
+        .foregroundColor(Color(nsColor: .secondaryLabelColor))
 
       // Input field container
       VStack(alignment: .leading, spacing: 8) {
@@ -61,7 +61,7 @@ struct APIKeyInputView: View {
           Button(action: { showPassword.toggle() }) {
             Image(systemName: showPassword ? "eye.slash" : "eye")
               .font(.system(size: 14, weight: .medium))
-              .foregroundColor(.black.opacity(0.4))
+              .foregroundColor(Color(nsColor: .tertiaryLabelColor))
           }
           .buttonStyle(.plain)
           .pointingHandCursor()
@@ -74,15 +74,14 @@ struct APIKeyInputView: View {
             .font(.system(size: 16))
             .foregroundColor(
               validationState == .valid
-                ? Color(red: 0.34, green: 1, blue: 0.45) : Color(hex: "E91515")
+                ? DayflowSurfaceAccent.positive : DayflowSurfaceAccent.critical
             )
             .transition(.scale.combined(with: .opacity))
           }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.white.opacity(0.8))
-        .cornerRadius(8)
+        .dayflowOnboardingTextField()
         .overlay(
           RoundedRectangle(cornerRadius: 8)
             .stroke(borderColor, lineWidth: isFocused ? 2 : 1)
@@ -92,21 +91,21 @@ struct APIKeyInputView: View {
         if validationState == .invalid {
           Text("密钥长度至少为 10 个字符以上")
             .font(.custom("Figtree", size: 12))
-            .foregroundColor(Color(hex: "E91515"))
+            .foregroundColor(DayflowSurfaceAccent.critical)
             .transition(.opacity)
         }
       }
       .animation(.easeOut(duration: 0.2), value: validationState)
 
       // Help text
-        HStack(spacing: 4) {
+      HStack(spacing: 4) {
         Image(systemName: "lock.shield.fill")
           .font(.system(size: 12))
-          .foregroundColor(Color(red: 0.34, green: 1, blue: 0.45).opacity(0.7))
+          .foregroundColor(DayflowSurfaceAccent.positive.opacity(0.72))
 
         Text("你的密钥会经过加密后存储在系统钥匙串，不会上传到任何地方")
-        .font(.custom("Figtree", size: 12))
-        .foregroundColor(.black.opacity(0.5))
+          .font(.custom("Figtree", size: 12))
+          .foregroundColor(Color(nsColor: .tertiaryLabelColor))
       }
     }
   }
@@ -115,14 +114,14 @@ struct APIKeyInputView: View {
     if isFocused {
       switch validationState {
       case .valid:
-        return Color(red: 0.34, green: 1, blue: 0.45).opacity(0.6)
+        return DayflowSurfaceAccent.positive.opacity(0.6)
       case .invalid:
-        return Color(hex: "E91515").opacity(0.6)
+        return DayflowSurfaceAccent.critical.opacity(0.6)
       case .none:
-        return Color(red: 1, green: 0.42, blue: 0.02).opacity(0.6)
+        return DayflowOnboardingToken.accent.opacity(0.6)
       }
     } else {
-      return Color.black.opacity(0.1)
+      return Color(nsColor: .separatorColor).opacity(0.34)
     }
   }
 

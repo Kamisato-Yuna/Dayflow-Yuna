@@ -42,7 +42,7 @@ enum LocalLLMTestImageFactory {
     NSGraphicsContext.saveGraphicsState()
     if let context = NSGraphicsContext(bitmapImageRep: bitmap) {
       NSGraphicsContext.current = context
-      NSColor.white.setFill()
+      NSColor(calibratedWhite: 1, alpha: 1).setFill()
       rect.fill()
       context.flushGraphics()
     }
@@ -85,8 +85,8 @@ struct LocalLLMTestView: View {
     self.onTestComplete = onTestComplete
   }
 
-  let accentColor = Color(red: 0.25, green: 0.17, blue: 0)
-  let successAccentColor = Color(red: 0.34, green: 1, blue: 0.45)
+  let accentColor = DayflowOnboardingToken.primaryButtonFill
+  let successAccentColor = DayflowSurfaceAccent.positive
   var trimmedAPIKey: String {
     apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
   }

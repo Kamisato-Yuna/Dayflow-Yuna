@@ -6,6 +6,7 @@
 //  Used in both OnboardingLLMSelectionView and SettingsView
 //
 
+import AppKit
 import SwiftUI
 
 enum ProviderCardButtonMode {
@@ -73,11 +74,11 @@ struct FlexibleProviderCard: View {
     }
     .frame(maxWidth: .infinity)
     .background(cardBackground)
-    .cornerRadius(4)
+    .cornerRadius(10)
     .overlay(cardOverlay)
     .modifier(CardShadowModifier(isSelected: isSelected))
     .animation(.spring(response: 0.3, dampingFraction: 0.9), value: isSelected)
-    .contentShape(RoundedRectangle(cornerRadius: 4))
+    .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     .allowsHitTesting(shouldAllowHitTesting)
     .pointingHandCursor(enabled: shouldShowPointer)
     .onTapGesture { handleCardTap() }
@@ -130,7 +131,7 @@ struct FlexibleProviderCard: View {
       Text(title)
         .font(.custom("Figtree", size: 18))
         .fontWeight(.semibold)
-        .foregroundColor(.black.opacity(0.9))
+        .foregroundColor(Color(nsColor: .labelColor).opacity(0.9))
         .lineLimit(2)
         .truncationMode(.tail)
       Spacer()
@@ -154,11 +155,11 @@ struct FlexibleProviderCard: View {
         HStack(spacing: 4) {
           Image(systemName: "checkmark.circle.fill")
             .font(.system(size: 12))
-            .foregroundColor(.green)
+            .foregroundColor(DayflowSurfaceAccent.positive)
           Text(customStatusText ?? "当前已选择")
             .font(.custom("Figtree", size: 12))
             .fontWeight(.medium)
-            .foregroundColor(.black.opacity(0.6))
+            .foregroundColor(Color(nsColor: .secondaryLabelColor))
         }
       }
       Spacer()
@@ -190,7 +191,7 @@ struct FlexibleProviderCard: View {
           .foregroundColor(buttonForegroundColor)
           .frame(maxWidth: .infinity)
       },
-      background: buttonBackgroundColor,
+      background: DayflowOnboardingToken.primaryButtonFill,
       foreground: buttonForegroundColor,
       borderColor: .clear,
       cornerRadius: 8,
@@ -247,7 +248,7 @@ struct FlexibleProviderCard: View {
   }
 
   private var buttonBackgroundColor: Color {
-    return Color(red: 0.25, green: 0.17, blue: 0)
+    return DayflowOnboardingToken.primaryButtonFill
   }
 
   @ViewBuilder
@@ -255,7 +256,10 @@ struct FlexibleProviderCard: View {
     if isSelected {
       SelectedCardBackground()
     } else {
-      Color.white.opacity(0.3)
+      DayflowContentToken.cardFill(
+        colorScheme: .light,
+        reduceTransparency: NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
+      )
     }
   }
 
@@ -264,9 +268,9 @@ struct FlexibleProviderCard: View {
     if isSelected {
       SelectedCardOverlay()
     } else {
-      RoundedRectangle(cornerRadius: 4)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
         .inset(by: 0.5)
-        .stroke(Color.black.opacity(0.06), lineWidth: 1)
+        .stroke(Color(nsColor: .separatorColor).opacity(0.36), lineWidth: 1)
     }
   }
 }
@@ -334,7 +338,7 @@ struct BadgeView: View {
 
   private var badgeBackground: some View {
     ZStack {
-      Color.white.opacity(0.69)
+      Color(nsColor: .controlBackgroundColor).opacity(0.70)
 
       LinearGradient(
         stops: gradientColors,
@@ -354,18 +358,18 @@ struct BadgeView: View {
     switch type {
     case .green:
       return [
-        Gradient.Stop(color: Color(red: 0.34, green: 1, blue: 0.45), location: 0.00),
-        Gradient.Stop(color: Color(red: 1, green: 0.98, blue: 0.95).opacity(0), location: 1.00),
+        Gradient.Stop(color: DayflowSurfaceAccent.positive, location: 0.00),
+        Gradient.Stop(color: Color(nsColor: .controlBackgroundColor).opacity(0), location: 1.00),
       ]
     case .orange:
       return [
         Gradient.Stop(color: Color(red: 1, green: 0.49, blue: 0.34), location: 0.00),
-        Gradient.Stop(color: Color(red: 1, green: 0.98, blue: 0.95).opacity(0), location: 1.00),
+        Gradient.Stop(color: Color(nsColor: .controlBackgroundColor).opacity(0), location: 1.00),
       ]
     case .blue:
       return [
         Gradient.Stop(color: Color(red: 0.34, green: 0.56, blue: 1), location: 0.00),
-        Gradient.Stop(color: Color(red: 1, green: 0.98, blue: 0.95).opacity(0), location: 1.00),
+        Gradient.Stop(color: Color(nsColor: .controlBackgroundColor).opacity(0), location: 1.00),
       ]
     }
   }
@@ -373,7 +377,7 @@ struct BadgeView: View {
   private var shadowColor: Color {
     switch type {
     case .green:
-      return Color(red: 0.34, green: 1, blue: 0.45)
+      return DayflowSurfaceAccent.positive
     case .orange:
       return Color(red: 1, green: 0.53, blue: 0)
     case .blue:
@@ -384,7 +388,7 @@ struct BadgeView: View {
   private var strokeColor: Color {
     switch type {
     case .green:
-      return Color(red: 0.34, green: 1, blue: 0.45).opacity(0.3)
+      return DayflowSurfaceAccent.positive.opacity(0.3)
     case .orange:
       return Color(red: 1, green: 0.25, blue: 0.02).opacity(0.3)
     case .blue:
@@ -454,13 +458,11 @@ struct ProviderIconView: View {
   private var iconContent: some View {
     switch icon {
     case "dayflow_asset":
-      Image("DayflowLogo")
-        .resizable()
-        .renderingMode(.original)
-        .interpolation(.high)
-        .antialiased(true)
-        .scaledToFit()
-        .frame(width: 40 * scale, height: 40 * scale)
+      DayflowBrandIconView(
+        imageName: "DayflowLogo",
+        size: 40 * scale,
+        cornerRadius: 10 * scale
+      )
     case "gemini_asset":
       logoBox(name: "GeminiLogo")
     case "chatgpt_claude_asset":
@@ -475,42 +477,22 @@ struct ProviderIconView: View {
 
   @ViewBuilder
   private func logoBox(name: String) -> some View {
-    Image(name)
-      .resizable()
-      .renderingMode(.original)
-      .interpolation(.high)
-      .antialiased(true)
-      .scaledToFit()
-      .frame(width: 28 * scale, height: 28 * scale)
-      .padding(6 * scale)
-      .background(.white.opacity(0.9))
-      .cornerRadius(6 * scale)
-      .shadow(color: Color.black.opacity(0.05), radius: 2 * scale, x: 0, y: 2 * scale)
-      .overlay(
-        RoundedRectangle(cornerRadius: 6 * scale)
-          .stroke(Color.black.opacity(0.05), lineWidth: 0.5 * scale)
-      )
+    DayflowExternalImageBadge(
+      imageName: name,
+      size: 40 * scale,
+      cornerRadius: 8 * scale,
+      contentScale: 0.70
+    )
   }
 
   @ViewBuilder
   private func logoBox(systemName: String) -> some View {
-    Image(systemName: systemName)
-      .font(.system(size: 20 * scale, weight: .medium))
-      .foregroundColor(.black.opacity(0.7))
-      .frame(width: 40 * scale, height: 40 * scale)
-      .background(.white.opacity(0.6))
-      .cornerRadius(3 * scale)
-      .shadow(
-        color: Color(red: 0.92, green: 0.91, blue: 0.91),
-        radius: 1 * scale,
-        x: -1 * scale,
-        y: 2 * scale
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 3 * scale)
-          .inset(by: 0.23)
-          .stroke(.white.opacity(0.87), lineWidth: 0.46508 * scale)
-      )
+    DayflowSystemIconBadge(
+      systemName: systemName,
+      size: 40 * scale,
+      cornerRadius: 8 * scale,
+      symbolSize: 20 * scale
+    )
   }
 }
 
@@ -530,13 +512,13 @@ struct FeatureRowView: View {
       Image(systemName: feature.isAvailable ? "checkmark" : "xmark")
         .font(.system(size: 12 * scale, weight: .bold))
         .foregroundColor(
-          feature.isAvailable ? Color(red: 0.34, green: 1, blue: 0.45) : Color(hex: "E91515")
+          feature.isAvailable ? DayflowSurfaceAccent.positive : DayflowSurfaceAccent.critical
         )
         .frame(width: 16 * scale)
 
       Text(feature.text)
         .font(.custom("Figtree", size: 14 * scale * fontScale))
-        .foregroundColor(.black.opacity(0.75))
+        .foregroundColor(Color(nsColor: .labelColor).opacity(0.75))
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -546,13 +528,13 @@ struct FeatureRowView: View {
 struct SelectedCardBackground: View {
   var body: some View {
     ZStack {
-      Color(hex: "FCF2E3")
-      Color.white.opacity(0.69)
+      Color(nsColor: .controlBackgroundColor).opacity(0.86)
+      DayflowSurfaceAccent.primary.opacity(0.10)
       LinearGradient(
         stops: [
           Gradient.Stop(color: Color.clear, location: 0.25),
-          Gradient.Stop(color: Color(hex: "FF7506").opacity(0.05), location: 0.7),
-          Gradient.Stop(color: Color(hex: "FF7506").opacity(0.15), location: 1.0),
+          Gradient.Stop(color: DayflowSurfaceAccent.primary.opacity(0.05), location: 0.7),
+          Gradient.Stop(color: DayflowSurfaceAccent.primary.opacity(0.15), location: 1.0),
         ],
         startPoint: UnitPoint(x: 0, y: 0.5),
         endPoint: UnitPoint(x: 1, y: 0.5)
@@ -564,31 +546,31 @@ struct SelectedCardBackground: View {
 struct SelectedCardOverlay: View {
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: 4)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
         .inset(by: 0.5)
-        .stroke(Color(hex: "EBE9E6"), lineWidth: 1)
+        .stroke(Color(nsColor: .separatorColor).opacity(0.45), lineWidth: 1)
 
-      RoundedRectangle(cornerRadius: 4)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
         .inset(by: 0.5)
-        .stroke(Color(hex: "FFEBC9"), lineWidth: 1)
+        .stroke(DayflowSurfaceAccent.primary.opacity(0.24), lineWidth: 1)
 
-      RoundedRectangle(cornerRadius: 4)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
         .inset(by: 0.5)
         .stroke(
           AngularGradient(
             stops: [
-              .init(color: Color(hex: "FFF1D3").opacity(0.50), location: 0.00),
-              .init(color: Color(hex: "FF8904").opacity(0.50), location: 0.03),
-              .init(color: Color(hex: "FF8904").opacity(0.35), location: 0.09),
-              .init(color: .white, location: 0.17),
-              .init(color: .white.opacity(0.75), location: 0.23),
-              .init(color: .white.opacity(0.50), location: 0.25),
-              .init(color: .white.opacity(0.50), location: 0.30),
-              .init(color: Color(hex: "FF8904").opacity(0.35), location: 0.52),
-              .init(color: Color(hex: "FFE0A5"), location: 0.58),
-              .init(color: .white, location: 0.80),
-              .init(color: Color(hex: "FFF1D3").opacity(0.50), location: 0.91),
-              .init(color: Color(hex: "FFF1D3").opacity(0.50), location: 1.00),
+              .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.62), location: 0.00),
+              .init(color: DayflowSurfaceAccent.primary.opacity(0.50), location: 0.03),
+              .init(color: DayflowSurfaceAccent.primary.opacity(0.34), location: 0.09),
+              .init(color: Color(nsColor: .windowBackgroundColor), location: 0.17),
+              .init(color: Color(nsColor: .windowBackgroundColor).opacity(0.75), location: 0.23),
+              .init(color: Color(nsColor: .windowBackgroundColor).opacity(0.50), location: 0.25),
+              .init(color: Color(nsColor: .windowBackgroundColor).opacity(0.50), location: 0.30),
+              .init(color: DayflowSurfaceAccent.primary.opacity(0.34), location: 0.52),
+              .init(color: DayflowSurfaceAccent.primary.opacity(0.22), location: 0.58),
+              .init(color: Color(nsColor: .windowBackgroundColor), location: 0.80),
+              .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.62), location: 0.91),
+              .init(color: Color(nsColor: .controlBackgroundColor).opacity(0.62), location: 1.00),
             ],
             center: .center,
             startAngle: .degrees(0),
@@ -606,19 +588,19 @@ struct CardShadowModifier: ViewModifier {
   func body(content: Content) -> some View {
     content
       .shadow(
-        color: isSelected ? Color(red: 0.47, green: 0.27, blue: 0.09).opacity(0.21) : Color.clear,
+        color: isSelected ? Color.black.opacity(0.12) : Color.clear,
         radius: 5,
         x: 4,
         y: 3
       )
       .shadow(
-        color: isSelected ? Color(red: 0.47, green: 0.27, blue: 0.09).opacity(0.18) : Color.clear,
+        color: isSelected ? Color.black.opacity(0.08) : Color.clear,
         radius: 9.5,
         x: 14,
         y: 12
       )
       .shadow(
-        color: isSelected ? Color(red: 0.48, green: 0.27, blue: 0.1).opacity(0.11) : Color.clear,
+        color: isSelected ? DayflowSurfaceAccent.primary.opacity(0.08) : Color.clear,
         radius: 12.5,
         x: 32,
         y: 27

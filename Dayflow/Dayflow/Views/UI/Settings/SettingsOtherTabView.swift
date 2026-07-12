@@ -81,9 +81,14 @@ struct SettingsOtherTabView: View {
     ) {
       HStack(spacing: 10) {
         TextField("例如：简体中文", text: $viewModel.outputLanguageOverride)
-          .textFieldStyle(.roundedBorder)
+          .textFieldStyle(.plain)
           .disableAutocorrection(true)
+          .font(.custom("Figtree", size: 13))
+          .foregroundColor(SettingsStyle.text)
+          .padding(.horizontal, 12)
+          .padding(.vertical, 8)
           .frame(maxWidth: 220)
+          .settingsControlSurface(isActive: isOutputLanguageFocused, cornerRadius: 8)
           .focused($isOutputLanguageFocused)
           .onChange(of: viewModel.outputLanguageOverride) {
             viewModel.markOutputLanguageOverrideEdited()

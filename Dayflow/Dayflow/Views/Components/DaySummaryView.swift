@@ -51,15 +51,15 @@ struct DaySummaryView: View {
     static let horizontalPadding: CGFloat = 18
     static let topPadding: CGFloat = 18
     static let bottomPadding: CGFloat = 48
-    static let sectionSpacing: CGFloat = 26
+    static let sectionSpacing: CGFloat = 24
     static let targetsHeight: CGFloat = 213
     static let headerSpacing: CGFloat = 6
     static let donutSectionSpacing: CGFloat = 20
 
-    static let dividerColor = Color(hex: "E7E5E3")
+    static let dividerColor = DayflowDailyToken.separator.opacity(0.72)
 
-    static let titleColor = Color(hex: "333333")
-    static let subtitleColor = Color(hex: "707070")
+    static let titleColor = DayflowDailyToken.title
+    static let subtitleColor = DayflowDailyToken.secondaryText
 
     static let focusGapMinutes: Int = 5
     static let timelineDayStartMinutes: Int = 4 * 60
@@ -411,7 +411,7 @@ struct DaySummaryView: View {
     VStack(alignment: .leading, spacing: Design.donutSectionSpacing) {
       VStack(alignment: .leading, spacing: Design.headerSpacing) {
         Text("今天到目前为止")
-          .font(.custom("InstrumentSerif-Regular", size: 24))
+          .font(.system(size: 24, weight: .semibold, design: .rounded))
           .foregroundColor(Design.titleColor)
       }
 
@@ -434,12 +434,12 @@ struct DaySummaryView: View {
   private var emptyChartPlaceholder: some View {
     VStack(spacing: 12) {
       Circle()
-        .stroke(Color.gray.opacity(0.2), lineWidth: 20)
+        .stroke(DayflowDailyToken.separator.opacity(0.30), lineWidth: 20)
         .frame(width: 140, height: 140)
 
       Text("暂无活动数据")
         .font(.custom("Figtree", size: 12))
-        .foregroundColor(Color.gray.opacity(0.6))
+        .foregroundColor(Design.subtitleColor)
     }
     .padding(.vertical, 20)
   }
@@ -450,6 +450,8 @@ struct DaySummaryView: View {
       cardsToReviewCount: cardsToReviewCount,
       onReviewTap: onReviewTap
     )
+    .padding(12)
+    .dayflowCard(cornerRadius: 8)
   }
 
   // MARK: - Focus Section
@@ -1345,12 +1347,12 @@ struct DaySummaryView: View {
 
 #Preview("Day Summary") {
   let sampleCategories: [TimelineCategory] = [
-    TimelineCategory(name: "Research", colorHex: "#8BAAFF", order: 0),
-    TimelineCategory(name: "Coding", colorHex: "#CF8FFF", order: 1),
-    TimelineCategory(name: "Code review", colorHex: "#90DDF0", order: 2),
-    TimelineCategory(name: "Debugging", colorHex: "#6E66D4", order: 3),
-    TimelineCategory(name: "Distraction", colorHex: "#FF5950", order: 4),
-    TimelineCategory(name: "Idle", colorHex: "#A0AEC0", order: 5, isSystem: true, isIdle: true),
+    TimelineCategory(name: "研究", colorHex: "#8BAAFF", order: 0),
+    TimelineCategory(name: "编码", colorHex: "#CF8FFF", order: 1),
+    TimelineCategory(name: "代码审查", colorHex: "#90DDF0", order: 2),
+    TimelineCategory(name: "调试", colorHex: "#6E66D4", order: 3),
+    TimelineCategory(name: "分心", colorHex: "#FF5950", order: 4),
+    TimelineCategory(name: "空闲", colorHex: "#A0AEC0", order: 5, isSystem: true, isIdle: true),
   ]
 
   DaySummaryView(
@@ -1363,5 +1365,5 @@ struct DaySummaryView: View {
     onReviewTap: {}
   )
   .frame(width: 358, height: 700)
-  .background(Color(red: 0.98, green: 0.97, blue: 0.96))
+  .dayflowWindowBackground()
 }
