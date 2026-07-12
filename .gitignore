@@ -18,6 +18,9 @@ build_universal/
 scripts/release.env
 signed/
 
+# Local-only working notes; keep published and project documentation in docs/ tracked.
+docs/local/
+
 # Ignore Claude prompt notes
 CLAUDE.md
 claude.md
