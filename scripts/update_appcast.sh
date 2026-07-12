@@ -11,6 +11,7 @@ set -euo pipefail
 #     --short 1.2.3 \
 #     --build 123 \
 #     --signature <BASE64_EDDSA_SIG> \
+#     [--title "Dayflow Updates"] \
 #     [--msv 13.0] \
 #     [--notes https://github.com/you/repo/releases/tag/v1.2.3] \
 #     [--out docs/appcast.xml]
@@ -22,6 +23,7 @@ BUILD_VER=""
 SIG=""
 MSV=""
 NOTES_LINK=""
+TITLE="Dayflow Updates"
 OUT="docs/appcast.xml"
 
 while [[ $# -gt 0 ]]; do
@@ -31,6 +33,7 @@ while [[ $# -gt 0 ]]; do
     --short) SHORT_VER="$2"; shift 2 ;;
     --build) BUILD_VER="$2"; shift 2 ;;
     --signature) SIG="$2"; shift 2 ;;
+    --title) TITLE="$2"; shift 2 ;;
     --msv) MSV="$2"; shift 2 ;;
     --notes) NOTES_LINK="$2"; shift 2 ;;
     --out) OUT="$2"; shift 2 ;;
@@ -51,7 +54,6 @@ fi
 LEN=$(stat -f%z "$DMG" 2>/dev/null || wc -c <"$DMG")
 DATE_RFC=$(LC_ALL=C date -u "+%a, %d %b %Y %H:%M:%S %z")
 
-TITLE="Dayflow Updates"
 LANG="en"
 
 mkdir -p "$(dirname "$OUT")"
@@ -98,4 +100,3 @@ if [[ "$OUT_DIR" == *"docs"* ]]; then
 fi
 
 echo "Updated appcast: $OUT"
-

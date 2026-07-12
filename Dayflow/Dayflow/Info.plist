@@ -34,7 +34,7 @@
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://dayflow.so/appcast.xml</string>
+	<string>https://kamisato-yuna.github.io/dayflow-yuna-updates/appcast-yuna.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>lf33Kn/Gx26j9zfGtsNNc6Lk2QTBHyXkFxxwnsXmdYA=</string>
 	<key>SUScheduledCheckInterval</key>
